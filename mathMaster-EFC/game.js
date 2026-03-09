@@ -1,14 +1,14 @@
 /**
  * MathMaster - Juego Educativo de Matemáticas
- * Desarrollado por: EFC
- * Versión: 2.0
+ * Desarrollado por: EFC / Games Hub
+ * Versión: 3.0
  *
  * Modo: Desafío por Puntuación Fija
  * El jugador debe responder correctamente un número fijo de preguntas (20/30/40)
  * Si responde incorrectamente, puede reintentar hasta acertar
  * El cronómetro es ascendente (sin presión de tiempo)
  *
- * v2.0: Sistema de usuarios, logros, audio y accesibilidad
+ * v3.0: Firebase Auth + Firestore, sistema de puntos, platform header integrado
  */
 
 // ==================== CONFIGURACIÓN DE NIVELES ====================
@@ -17,6 +17,8 @@ const LEVEL_CONFIG = {
     1: {
         name: "Básica y Tablas",
         description: "Sumas/Restas de 1 a 10. Resultado siempre positivo. Multiplicación y división de factores de 1 a 10.",
+        mezclaName: "Sumas y Restas simples",
+        mezclaDescription: "Suma y resta de 1 a 10",
         suma: { min: 1, max: 10, decimals: 0, allowNegative: false },
         resta: { min: 1, max: 10, decimals: 0, allowNegative: false },
         multiplicacion: { factor1: { min: 1, max: 10 }, factor2: { min: 1, max: 10 } },
@@ -25,6 +27,8 @@ const LEVEL_CONFIG = {
     2: {
         name: "Números Medianos",
         description: "Sumas/Restas de 1 a 100. Resultado siempre positivo. Multiplicación hasta 15. División con cociente entero.",
+        mezclaName: "Sumas y Restas medianas",
+        mezclaDescription: "Suma y resta de 1 a 100",
         suma: { min: 1, max: 100, decimals: 0, allowNegative: false },
         resta: { min: 1, max: 100, decimals: 0, allowNegative: false },
         multiplicacion: { factor1: { min: 1, max: 10 }, factor2: { min: 1, max: 15 } },
@@ -33,6 +37,8 @@ const LEVEL_CONFIG = {
     3: {
         name: "Grandes Enteros",
         description: "Sumas/Restas de 1 a 1,000. Factores de multiplicación hasta 30. División con cociente entero.",
+        mezclaName: "Sumas y Restas grandes",
+        mezclaDescription: "Suma y resta de 1 a 1.000",
         suma: { min: 1, max: 1000, decimals: 0, allowNegative: false },
         resta: { min: 1, max: 1000, decimals: 0, allowNegative: false },
         multiplicacion: { factor1: { min: 1, max: 30 }, factor2: { min: 1, max: 30 } },
@@ -41,6 +47,8 @@ const LEVEL_CONFIG = {
     4: {
         name: "Decimales Simples",
         description: "Números hasta 10,000 con decimales simples (X.X). División con 1 decimal en resultado.",
+        mezclaName: "Cadenas fáciles",
+        mezclaDescription: "Cadenas de 3 números: a + b − c",
         suma: { min: 1, max: 100, decimals: 1, allowNegative: false },
         resta: { min: 1, max: 100, decimals: 1, allowNegative: false },
         multiplicacion: { factor1: { min: 1, max: 100 }, factor2: { min: 1, max: 100 } },
@@ -49,6 +57,8 @@ const LEVEL_CONFIG = {
     5: {
         name: "Decimales Complejos",
         description: "Números hasta 100,000 con decimales (X.XXX). Multiplicación de números grandes. División con 2 decimales.",
+        mezclaName: "Cadenas largas",
+        mezclaDescription: "Cadenas de 4+ números con resultado negativo posible",
         suma: { min: 1, max: 1000, decimals: 3, allowNegative: false },
         resta: { min: 1, max: 1000, decimals: 3, allowNegative: false },
         multiplicacion: { factor1: { min: 1, max: 1000 }, factor2: { min: 1, max: 100 } },
@@ -57,6 +67,8 @@ const LEVEL_CONFIG = {
     6: {
         name: "Números Negativos",
         description: "Suma y Resta con números negativos frecuentes (Ej: -10 + 25). Multiplicación de 3 dígitos. División con 3 decimales.",
+        mezclaName: "Con × y ÷",
+        mezclaDescription: "Suma, resta, mult y div sin paréntesis: a × b + c",
         suma: { min: -50, max: 100, decimals: 0, allowNegative: true },
         resta: { min: -50, max: 100, decimals: 0, allowNegative: true },
         multiplicacion: { factor1: { min: 100, max: 999 }, factor2: { min: 100, max: 999 } },
@@ -65,37 +77,63 @@ const LEVEL_CONFIG = {
     7: {
         name: "Cadenas de Operaciones",
         description: "Cadenas de suma/resta (Ej: 15 - 8 + 3). Multiplicación de 4x2 dígitos. División con decimales en divisor.",
+        mezclaName: "Más operaciones",
+        mezclaDescription: "Cadenas con las 4 operaciones",
         suma: { min: 1, max: 50, decimals: 0, allowNegative: true, chain: true },
         resta: { min: 1, max: 50, decimals: 0, allowNegative: true, chain: true },
         multiplicacion: { factor1: { min: 1000, max: 9999 }, factor2: { min: 10, max: 99 } },
         division: { divisor: { min: 1, max: 100 }, resultDecimals: 2, decimalDivisor: true }
     },
     8: {
-        name: "Jerarquía Básica",
-        description: "Operaciones combinadas sin paréntesis. Ej: 5 × 6 + 10 = ? o 100 ÷ 4 - 5 = ?",
+        name: "4 Dígitos y Mezcla básica",
+        description: "Operaciones combinadas sin paréntesis. Ej: 5 × 6 + 10 = ? o 100 ÷ 4 - 5 = ? En operación individual: números de 4 dígitos.",
+        mezclaName: "Paréntesis básicos",
+        mezclaDescription: "Con paréntesis: a × (b + c)",
         suma: { min: 1, max: 50, decimals: 0, allowNegative: false },
         resta: { min: 1, max: 50, decimals: 0, allowNegative: false },
         multiplicacion: { factor1: { min: 1, max: 20 }, factor2: { min: 1, max: 20 } },
         division: { divisor: { min: 2, max: 10 }, resultDecimals: 0 },
-        mixed: true
+        mixed: true,
+        specificOps: {
+            suma:           { min: 1000, max: 9999, decimals: 0, allowNegative: false },
+            resta:          { min: 1000, max: 9999, decimals: 0, allowNegative: false },
+            multiplicacion: { factor1: { min: 100, max: 9999 }, factor2: { min: 100, max: 999 } },
+            division:       { divisor: { min: 10, max: 99 }, resultDecimals: 0, bigQuotient: true }
+        }
     },
     9: {
-        name: "Pre-Álgebra",
-        description: "Resolver la incógnita X. Ej: X + 15 = 27, 50 - X = 12, 4X = 48, X ÷ 5 = 15",
+        name: "5 Dígitos y Pre-Álgebra",
+        description: "Resolver la incógnita X. Ej: X + 15 = 27, 50 - X = 12, 4X = 48, X ÷ 5 = 15. En operación individual: números de 5 dígitos.",
+        mezclaName: "Pre-álgebra mix",
+        mezclaDescription: "Incógnita X con las 4 operaciones",
         suma: { min: 1, max: 100, decimals: 0, allowNegative: false },
         resta: { min: 1, max: 100, decimals: 0, allowNegative: false },
         multiplicacion: { factor1: { min: 1, max: 12 }, factor2: { min: 1, max: 20 } },
         division: { divisor: { min: 2, max: 15 }, resultDecimals: 0 },
-        algebra: true
+        algebra: true,
+        specificOps: {
+            suma:           { min: 10000, max: 99999, decimals: 0, allowNegative: false },
+            resta:          { min: 10000, max: 99999, decimals: 0, allowNegative: false },
+            multiplicacion: { factor1: { min: 1000, max: 9999 }, factor2: { min: 100, max: 999 } },
+            division:       { divisor: { min: 10, max: 999 }, resultDecimals: 0, bigQuotient: true }
+        }
     },
     10: {
-        name: "PEMDAS/BODMAS",
-        description: "Jerarquía de operaciones con paréntesis. Ej: 5 × (4 + 3) - 10 ÷ 2 = ?",
+        name: "Maestro: Grandes Números y PEMDAS",
+        description: "Jerarquía de operaciones con paréntesis. Ej: 5 × (4 + 3) - 10 ÷ 2 = ? En operación individual: números muy grandes con cadenas.",
+        mezclaName: "PEMDAS completo",
+        mezclaDescription: "Jerarquía completa con paréntesis y las 4 operaciones",
         suma: { min: 1, max: 20, decimals: 0, allowNegative: false },
         resta: { min: 1, max: 20, decimals: 0, allowNegative: false },
         multiplicacion: { factor1: { min: 1, max: 10 }, factor2: { min: 1, max: 10 } },
         division: { divisor: { min: 2, max: 10 }, resultDecimals: 0 },
-        pemdas: true
+        pemdas: true,
+        specificOps: {
+            suma:           { min: 10000, max: 99999, decimals: 0, allowNegative: false, chain: true },
+            resta:          { min: 10000, max: 99999, decimals: 0, allowNegative: false, chain: true },
+            multiplicacion: { factor1: { min: 1000, max: 9999 }, factor2: { min: 1000, max: 9999 } },
+            division:       { divisor: { min: 10, max: 999 }, resultDecimals: 0, bigQuotient: true }
+        }
     }
 };
 
@@ -105,7 +143,8 @@ const OPERATION_ICONS = {
     resta: '−',
     multiplicacion: '×',
     division: '÷',
-    tablas: 'T'
+    tablas: 'T',
+    mezcla: '±'
 };
 
 // Función helper para obtener nombres de operaciones traducidos
@@ -119,7 +158,8 @@ function getOperationName(operation) {
         resta: 'Resta',
         multiplicacion: 'Multiplicación',
         division: 'División',
-        tablas: 'Tablas de Multiplicar'
+        tablas: 'Tablas de Multiplicar',
+        mezcla: 'Mezcla'
     };
     return names[operation] || operation;
 }
@@ -295,12 +335,12 @@ function initDOM() {
 async function init() {
     initDOM();
 
-    // Inicializar base de datos
+    // Init storage (Firestore + localStorage fallback)
     try {
-        await MathMasterDB.init();
+        await MathMasterStorage.init();
         appState.dbReady = true;
     } catch (e) {
-        console.warn('IndexedDB no disponible, modo invitado forzado:', e);
+        console.warn('Storage not available, guest mode forced:', e);
     }
 
     setupEventListeners();
@@ -310,11 +350,30 @@ async function init() {
     // Inicializar selector de idioma
     initLanguageSelector();
 
-    // Escuchar cambios de idioma
+    // Escuchar cambios de idioma (plataforma y juego)
     document.addEventListener('languageChanged', onLanguageChanged);
+    document.addEventListener('platformLanguageChanged', e => {
+        if (typeof MathMasterI18n !== 'undefined') {
+            MathMasterI18n.setLanguage(e.detail.language);
+        }
+    });
 
-    // Mostrar usuarios existentes en login
-    await refreshUsersList();
+    // --- Firebase auth state ---
+    // Auth is handled by the platform header. Games always start (as guest if not signed in).
+    if (typeof PlatformAuth !== 'undefined') {
+        PlatformAuth.onAuthStateChanged(async user => {
+            if (user) {
+                // User signed in → load profile and go to selection
+                await loginUser(user.uid);
+            } else {
+                // Not signed in → play as guest directly, no login screen required
+                playAsGuest();
+            }
+        });
+    } else {
+        // Firebase not configured → guest mode
+        playAsGuest();
+    }
 }
 
 /**
@@ -389,11 +448,11 @@ function updateDynamicTexts() {
 
 function setupEventListeners() {
     // === Login ===
-    DOM.createUserBtn.addEventListener('click', createNewUser);
-    DOM.playGuestBtn.addEventListener('click', playAsGuest);
-    DOM.newUsernameInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') createNewUser();
+    document.getElementById('google-signin-btn')?.addEventListener('click', () => {
+        MathMasterAudio.playClick();
+        signInWithGoogle();
     });
+    DOM.playGuestBtn.addEventListener('click', playAsGuest);
 
     // === Barra superior ===
     DOM.settingsBtn.addEventListener('click', openSettings);
@@ -550,13 +609,17 @@ function setupEventListeners() {
 // ==================== GESTIÓN DE USUARIOS ====================
 
 async function refreshUsersList() {
-    if (!appState.dbReady || !DOM.usersList) return;
+    if (!DOM.usersList) return;
 
     try {
-        const users = await MathMasterDB.getAllUsers();
+        const users = await MathMasterStorage.getAllUsers();
         const t = (key, params) => MathMasterI18n.t(key, params);
         const currentLang = MathMasterI18n.getCurrentLanguage();
         const locale = currentLang === 'eu-ES' ? 'eu' : currentLang;
+
+        // Remove loading spinner (innerHTML replacement below also removes it,
+        // but this guard handles any edge case before branching)
+        document.getElementById('users-loading')?.remove();
 
         if (users.length === 0) {
             DOM.usersList.innerHTML = `
@@ -599,64 +662,46 @@ async function refreshUsersList() {
         }
     } catch (e) {
         console.error('Error cargando usuarios:', e);
+        document.getElementById('users-loading')?.remove();
     }
 }
 
-async function createNewUser() {
-    const username = DOM.newUsernameInput.value.trim();
-    const t = (key) => MathMasterI18n.t(key);
-
-    if (!username) {
-        alert(t('enterUsername'));
-        return;
-    }
-
-    if (username.length < 2 || username.length > 20) {
-        alert(t('usernameLengthError'));
-        return;
-    }
-
-    if (!appState.dbReady) {
-        playAsGuest();
-        return;
-    }
-
+async function signInWithGoogle() {
+    const btn = document.getElementById('google-signin-btn');
+    if (btn) { btn.disabled = true; btn.textContent = PlatformI18n.t('loading'); }
     try {
-        const userId = await MathMasterDB.createUser(username);
-        DOM.newUsernameInput.value = '';
+        if (typeof PlatformAuth === 'undefined' || !window.FIREBASE_READY) {
+            throw new Error('Firebase not configured');
+        }
+        const user = await PlatformAuth.signInWithGoogle();
         MathMasterAudio.playCorrect();
-        await loginUser(userId);
+        await loginUser(user.uid);
     } catch (e) {
-        if (e.name === 'ConstraintError') {
-            alert(t('usernameExists'));
-        } else {
-            console.error('Error creando usuario:', e);
-            playAsGuest();
+        console.error('Google sign-in error:', e);
+        if (btn) { btn.disabled = false; btn.innerHTML = `<span data-i18n="signInWithGoogle">Entrar con Google</span>`; }
+        if (typeof PlatformHeader !== 'undefined') {
+            PlatformHeader.showToast(PlatformI18n.t('errorSignIn'), 'error');
         }
     }
 }
 
 async function loginUser(userId) {
     try {
-        const user = await MathMasterDB.getUser(userId);
-        if (!user) throw new Error('Usuario no encontrado');
+        const user = await MathMasterStorage.getUser(userId);
+        if (!user) throw new Error('User not found');
 
         appState.currentUser = user;
         appState.isGuest = false;
 
-        // Actualizar último login
-        user.lastLogin = new Date().toISOString();
-        await MathMasterDB.updateUser(user);
+        await MathMasterStorage.updateUser(user);
 
-        // Cargar logros del usuario
-        const achievements = await MathMasterDB.getAchievements(userId);
+        const achievements = await MathMasterStorage.getAchievements(userId);
         MathMasterAchievements.init(achievements?.unlockedAchievements || []);
 
-        // Actualizar UI
         updateUserBadge();
         showScreen('selection');
     } catch (e) {
-        console.error('Error al iniciar sesión:', e);
+        console.error('Login error:', e);
         playAsGuest();
     }
 }
@@ -674,6 +719,10 @@ function logout() {
     appState.isGuest = false;
     MathMasterAchievements.init([]);
     updateUserBadge();
+    // Firebase sign-out
+    if (typeof PlatformAuth !== 'undefined') {
+        PlatformAuth.signOut().catch(() => {});
+    }
     refreshUsersList();
     showScreen('login');
 }
@@ -685,6 +734,15 @@ function updateUserBadge() {
     if (appState.currentUser) {
         DOM.userBadge.classList.remove('hidden');
         DOM.currentUserName.textContent = appState.currentUser.username;
+
+        // Show Google photo if available
+        const avatarEl = document.getElementById('user-avatar-badge');
+        if (avatarEl && appState.currentUser.photoURL) {
+            avatarEl.innerHTML = `<img src="${appState.currentUser.photoURL}" alt=""
+                style="width:24px;height:24px;border-radius:50%;object-fit:cover;vertical-align:middle"
+                aria-hidden="true">`;
+        }
+
         if (DOM.settingsCurrentUser) {
             DOM.settingsCurrentUser.textContent = appState.currentUser.username;
         }
@@ -721,7 +779,7 @@ function hideUserMenu() {
 }
 
 async function confirmDeleteUser(userId) {
-    const user = await MathMasterDB.getUser(userId);
+    const user = await MathMasterStorage.getUser(userId);
     if (!user) return;
     const t = (key, params) => MathMasterI18n.t(key, params);
 
@@ -729,7 +787,7 @@ async function confirmDeleteUser(userId) {
         t('deleteProfileConfirmTitle'),
         t('deleteProfileConfirmMessage', { username: user.username }),
         async () => {
-            await MathMasterDB.deleteUser(userId);
+            await MathMasterStorage.deleteUser(userId);
             await refreshUsersList();
         }
     );
@@ -743,7 +801,7 @@ function confirmDeleteAccount() {
         t('deleteAccountConfirmTitle'),
         t('deleteAccountConfirmMessage'),
         async () => {
-            await MathMasterDB.deleteUser(appState.currentUser.odId);
+            await MathMasterStorage.deleteUser(appState.currentUser.odId);
             closeSettings();
             logout();
         }
@@ -767,6 +825,17 @@ function selectOperation(operation) {
         DOM.levelSection.classList.remove('hidden');
         DOM.tableSection.classList.add('hidden');
         gameState.selectedTable = null;
+
+        // Refresh description if a level is already selected
+        if (gameState.level) {
+            if (operation === 'mezcla') {
+                const levelCfg = LEVEL_CONFIG[gameState.level];
+                DOM.levelDescription.textContent = levelCfg?.mezclaDescription || levelCfg?.description || '';
+            } else {
+                const levelInfo = MathMasterI18n.getLevelInfo(gameState.level);
+                DOM.levelDescription.textContent = levelInfo.description;
+            }
+        }
     }
 
     validateStartButton();
@@ -779,9 +848,14 @@ function selectLevel(level) {
         btn.classList.toggle('selected', parseInt(btn.dataset.level) === level);
     });
 
-    // Obtener descripción traducida
-    const levelInfo = MathMasterI18n.getLevelInfo(level);
-    DOM.levelDescription.textContent = levelInfo.description;
+    // Obtener descripción traducida (mezcla usa su propia descripción)
+    if (gameState.operation === 'mezcla') {
+        const levelCfg = LEVEL_CONFIG[level];
+        DOM.levelDescription.textContent = levelCfg?.mezclaDescription || levelCfg?.description || '';
+    } else {
+        const levelInfo = MathMasterI18n.getLevelInfo(level);
+        DOM.levelDescription.textContent = levelInfo.description;
+    }
 
     validateStartButton();
 }
@@ -854,6 +928,22 @@ function pauseGame() {
     DOM.pauseTime.textContent = formatTime(gameState.elapsedSeconds);
 
     DOM.pauseOverlay.classList.remove('hidden');
+
+    // Focus trap on pause overlay
+    const pauseOv = DOM.pauseOverlay;
+    if (pauseOv) {
+        const firstBtn = pauseOv.querySelector('button');
+        if (firstBtn) firstBtn.focus();
+        pauseOv._trapFn = e => {
+            if (e.key !== 'Tab') return;
+            const btns = Array.from(pauseOv.querySelectorAll('button:not([disabled])'));
+            if (!btns.length) return;
+            const first = btns[0], last = btns[btns.length - 1];
+            if (e.shiftKey) { if (document.activeElement === first) { e.preventDefault(); last.focus(); } }
+            else            { if (document.activeElement === last)  { e.preventDefault(); first.focus(); } }
+        };
+        pauseOv.addEventListener('keydown', pauseOv._trapFn);
+    }
 }
 
 function resumeGame() {
@@ -862,6 +952,13 @@ function resumeGame() {
     gameState.isPaused = false;
     const pauseDuration = Date.now() - gameState.pausedTime;
     gameState.startTime += pauseDuration;
+
+    // Clean up focus trap
+    const pauseOv = DOM.pauseOverlay;
+    if (pauseOv && pauseOv._trapFn) {
+        pauseOv.removeEventListener('keydown', pauseOv._trapFn);
+        delete pauseOv._trapFn;
+    }
 
     DOM.pauseOverlay.classList.add('hidden');
     startTimer();
@@ -908,28 +1005,36 @@ async function endGame() {
             : 0
     };
 
+    // Calculate points (even for guests, shown in results)
+    const pointsResult = typeof PlatformFirestore !== 'undefined'
+        ? PlatformFirestore.calculatePoints(gameResult)
+        : { points: 0, xp: 0 };
+    gameResult.points = pointsResult.points;
+    gameResult.xp     = pointsResult.xp;
+
     // Guardar estadísticas y verificar logros si hay usuario
     let newAchievements = [];
     if (appState.currentUser && appState.dbReady) {
         try {
-            const stats = await MathMasterDB.updateStatistics(appState.currentUser.odId, gameResult);
+            const stats = await MathMasterStorage.updateStatistics(appState.currentUser.odId, gameResult);
 
             // Verificar logros
             newAchievements = MathMasterAchievements.checkAchievements(stats, gameResult);
+            gameResult.unlockedAchievements = newAchievements.map(a => a.id);
 
             // Guardar logros desbloqueados
             for (const achievement of newAchievements) {
-                await MathMasterDB.unlockAchievement(appState.currentUser.odId, achievement.id);
+                await MathMasterStorage.unlockAchievement(appState.currentUser.odId, achievement.id);
             }
         } catch (e) {
-            console.error('Error guardando estadísticas:', e);
+            console.error('Error saving stats:', e);
         }
     }
 
     // Leer resultados en voz alta
     MathMasterAudio.speakResults(gameResult);
 
-    displayResults(isNewRecord, newAchievements);
+    displayResults(isNewRecord, newAchievements, pointsResult);
     showScreen('results');
 
     // Mostrar notificaciones de logros
@@ -979,10 +1084,35 @@ function generateQuestion() {
         const result = generateTableQuestion();
         question = result.question;
         answer = result.answer;
+    } else if (gameState.operation === 'mezcla') {
+        const level = LEVEL_CONFIG[gameState.level];
+        const result = generateMezclaQuestion(level, gameState.level);
+        question = result.question;
+        answer = result.answer;
     } else {
         const level = LEVEL_CONFIG[gameState.level];
 
-        if (level.pemdas) {
+        // Levels 8-10 have special modes (mixed/algebra/pemdas) but also have
+        // per-operation configs. If a specific operation is selected, always use it.
+        const specificOp = ['suma','resta','multiplicacion','division'].includes(gameState.operation);
+
+        if (specificOp) {
+            // Use specificOps config when available (levels 8-10 give bigger numbers)
+            const effectiveLevel = (level.specificOps && level.specificOps[gameState.operation])
+                ? { ...level, [gameState.operation]: level.specificOps[gameState.operation] }
+                : level;
+
+            // Always honour the chosen operation regardless of level flags
+            if (effectiveLevel[gameState.operation]?.chain) {
+                const result = generateChainQuestion(effectiveLevel);
+                question = result.question;
+                answer = result.answer;
+            } else {
+                const result = generateBasicQuestion(gameState.operation, effectiveLevel);
+                question = result.question;
+                answer = result.answer;
+            }
+        } else if (level.pemdas) {
             const result = generatePEMDASQuestion(level);
             question = result.question;
             answer = result.answer;
@@ -1079,7 +1209,7 @@ function generateBasicQuestion(operation, level) {
             const divisor = randomInt(config.divisor.min, config.divisor.max);
 
             if (config.resultDecimals === 0) {
-                const quotient = randomInt(1, 20);
+                const quotient = config.bigQuotient ? randomInt(100, 999) : randomInt(1, 20);
                 const dividend = divisor * quotient;
                 answer = quotient;
                 question = `${formatNumber(dividend)} ÷ ${formatNumber(divisor)} = ?`;
@@ -1269,6 +1399,58 @@ function generatePEMDASQuestion(level) {
     return { question, answer };
 }
 
+function generateMezclaQuestion(level, levelNum) {
+    if (levelNum <= 3) {
+        // Solo suma y resta, números según nivel
+        const op = Math.random() > 0.5 ? '+' : '−';
+        const max = levelNum === 1 ? 10 : levelNum === 2 ? 100 : 1000;
+        let a = randomInt(1, max), b = randomInt(1, max);
+        if (op === '−' && b > a) [a, b] = [b, a];
+        const answer = op === '+' ? a + b : a - b;
+        return { question: `${a} ${op} ${b} = ?`, answer };
+    }
+    if (levelNum <= 5) {
+        // Cadenas de 3-4 números con suma y resta
+        const count = levelNum === 4 ? 3 : randomInt(3, 5);
+        const max = 50;
+        let nums = Array.from({length: count}, () => randomInt(1, max));
+        let ops = Array.from({length: count - 1}, () => Math.random() > 0.5 ? '+' : '−');
+        let q = `${nums[0]}`;
+        let ans = nums[0];
+        for (let i = 0; i < ops.length; i++) {
+            q += ` ${ops[i]} ${nums[i + 1]}`;
+            ans = ops[i] === '+' ? ans + nums[i + 1] : ans - nums[i + 1];
+        }
+        return { question: q + ' = ?', answer: ans };
+    }
+    if (levelNum === 6) {
+        // Todas las ops sin paréntesis (jerarquía PEMDAS aplicada correctamente)
+        return generateMixedQuestion(level);
+    }
+    if (levelNum === 7) {
+        // Cadenas con las 4 operaciones
+        const type = randomInt(1, 3);
+        if (type === 1) {
+            const a = randomInt(2, 10), b = randomInt(2, 10), c = randomInt(2, 8), d = randomInt(1, 10);
+            const ans = a * b + c - d;
+            return { question: `${a} × ${b} + ${c} − ${d} = ?`, answer: ans };
+        } else if (type === 2) {
+            const b = randomInt(2, 8), q = randomInt(2, 8), a = b * q, c = randomInt(2, 10), d = randomInt(1, 10);
+            const ans = a / b + c * d;
+            return { question: `${a} ÷ ${b} + ${c} × ${d} = ?`, answer: ans };
+        } else {
+            const a = randomInt(1, 20), b = randomInt(2, 8), c = randomInt(2, 8);
+            const ans = a + b * c;
+            return { question: `${a} + ${b} × ${c} = ?`, answer: ans };
+        }
+    }
+    if (levelNum === 9) {
+        return generateAlgebraQuestion(level);
+    }
+    // Niveles 8 y 10: PEMDAS con paréntesis
+    return generatePEMDASQuestion(level);
+}
+
 // ==================== VERIFICACIÓN DE RESPUESTAS ====================
 
 function checkAnswer() {
@@ -1390,29 +1572,42 @@ function showScreen(screenName) {
         DOM.topBar.style.display = screenName === 'game' ? 'none' : 'flex';
     }
 
-    // Mostrar pantalla correspondiente
+    // Mostrar pantalla correspondiente y mover el foco para lectores de pantalla
+    let activeScreen = null;
     switch (screenName) {
         case 'login':
             DOM.loginScreen?.classList.add('active');
+            activeScreen = DOM.loginScreen;
             break;
         case 'selection':
             DOM.selectionScreen?.classList.add('active');
+            activeScreen = DOM.selectionScreen;
             break;
         case 'game':
             DOM.gameScreen?.classList.add('active');
+            activeScreen = DOM.gameScreen;
             break;
         case 'results':
             DOM.resultsScreen?.classList.add('active');
+            activeScreen = DOM.resultsScreen;
             break;
         case 'stats':
             DOM.statsScreen?.classList.add('active');
+            activeScreen = DOM.statsScreen;
             break;
         case 'achievements':
             DOM.achievementsScreen?.classList.add('active');
+            activeScreen = DOM.achievementsScreen;
             break;
         case 'profile':
             DOM.profileScreen?.classList.add('active');
+            activeScreen = DOM.profileScreen;
             break;
+    }
+    // Move focus to the new screen for screen reader announcement
+    if (activeScreen) {
+        if (!activeScreen.hasAttribute('tabindex')) activeScreen.setAttribute('tabindex', '-1');
+        activeScreen.focus({ preventScroll: true });
     }
 }
 
@@ -1457,8 +1652,18 @@ function updateTTSButton() {
     }
 }
 
-function displayResults(isNewRecord, newAchievements = []) {
+function displayResults(isNewRecord, newAchievements = [], pointsResult = { points: 0, xp: 0 }) {
     const t = (key) => MathMasterI18n.t(key);
+
+    // Show points earned
+    const pointsRow = document.getElementById('results-points-row');
+    const pointsBadge = document.getElementById('results-points-badge');
+    const xpBadge    = document.getElementById('results-xp-badge');
+    if (pointsResult.points > 0 && pointsRow) {
+        pointsRow.classList.remove('hidden');
+        if (pointsBadge) pointsBadge.textContent = `+${pointsResult.points.toLocaleString()} pts`;
+        if (xpBadge)    xpBadge.textContent    = `+${pointsResult.xp} XP`;
+    }
     const accuracy = gameState.totalAttempts > 0
         ? Math.round((gameState.correctAnswers / gameState.totalAttempts) * 100)
         : 0;
@@ -1529,10 +1734,29 @@ async function showProfileScreen() {
 
     try {
         const user = appState.currentUser;
-        const stats = await MathMasterDB.getStatistics(user.odId);
+        const stats = await MathMasterStorage.getStatistics(user.odId);
 
         // Información del usuario
         DOM.profileUsername.textContent = user.username;
+
+        // XP / Level bar
+        if (typeof PlatformFirestore !== 'undefined') {
+            const xp    = user.xp || 0;
+            const level = user.level ?? PlatformFirestore.levelFromXP(xp);
+            const xpForCurrent = PlatformFirestore.XP_THRESHOLDS[level] || 0;
+            const xpForNext    = PlatformFirestore.XP_THRESHOLDS[level + 1];
+            const pct = xpForNext
+                ? Math.round(((xp - xpForCurrent) / (xpForNext - xpForCurrent)) * 100)
+                : 100;
+            const levelBadge = document.getElementById('profile-level-badge');
+            const xpBar      = document.getElementById('profile-xp-bar');
+            const xpText     = document.getElementById('profile-xp-text');
+            if (levelBadge) levelBadge.textContent = `Lv. ${level}`;
+            if (xpBar)      xpBar.style.width      = `${pct}%`;
+            if (xpText)     xpText.textContent      = xpForNext
+                ? `${xp} / ${xpForNext} XP`
+                : `${xp} XP`;
+        }
 
         // Formatear fechas
         const createdDate = new Date(user.createdAt);
@@ -1571,7 +1795,7 @@ async function showStatsScreen() {
     }
 
     try {
-        const stats = await MathMasterDB.getStatistics(appState.currentUser.odId);
+        const stats = await MathMasterStorage.getStatistics(appState.currentUser.odId);
         if (!stats) return;
 
         // Actualizar valores
@@ -1674,8 +1898,8 @@ function checkAndSaveRecord() {
 // ==================== CONFIGURACIÓN ====================
 
 function loadSettings() {
-    // Tema
-    const savedTheme = localStorage.getItem('mathmaster_theme');
+    // Tema: prefer platform-wide key, fallback to game key, then system preference
+    const savedTheme = localStorage.getItem('games_hub_theme') || localStorage.getItem('mathmaster_theme');
     if (savedTheme) {
         setTheme(savedTheme);
     } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
@@ -1731,15 +1955,13 @@ function toggleTheme() {
     const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
     setTheme(newTheme);
-    localStorage.setItem('mathmaster_theme', newTheme);
 }
 
 function setTheme(theme) {
-    if (theme === 'light') {
-        document.documentElement.setAttribute('data-theme', 'light');
-    } else {
-        document.documentElement.removeAttribute('data-theme');
-    }
+    document.documentElement.setAttribute('data-theme', theme === 'light' ? 'light' : 'dark');
+    // Sync with platform-wide key (used by platform header)
+    localStorage.setItem('games_hub_theme', theme === 'light' ? 'light' : 'dark');
+    localStorage.setItem('mathmaster_theme', theme === 'light' ? 'light' : 'dark');
 }
 
 function setHighContrast(enabled) {

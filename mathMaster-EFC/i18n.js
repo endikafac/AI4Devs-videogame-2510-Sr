@@ -47,7 +47,8 @@ const MathMasterI18n = {
                 resta: 'Resta',
                 multiplicacion: 'Multiplicación',
                 division: 'División',
-                tablas: 'Tablas'
+                tablas: 'Tablas',
+                mezcla: 'Mezcla'
             },
 
             // Niveles
@@ -59,9 +60,9 @@ const MathMasterI18n = {
                 5: { name: 'Decimales Complejos', description: 'Números hasta 100,000 con decimales (X.XXX). Multiplicación de números grandes. División con 2 decimales.' },
                 6: { name: 'Números Negativos', description: 'Suma y Resta con números negativos frecuentes (Ej: -10 + 25). Multiplicación de 3 dígitos. División con 3 decimales.' },
                 7: { name: 'Cadenas de Operaciones', description: 'Cadenas de suma/resta (Ej: 15 - 8 + 3). Multiplicación de 4x2 dígitos. División con decimales en divisor.' },
-                8: { name: 'Jerarquía Básica', description: 'Operaciones combinadas sin paréntesis. Ej: 5 × 6 + 10 = ? o 100 ÷ 4 - 5 = ?' },
-                9: { name: 'Pre-Álgebra', description: 'Resolver la incógnita X. Ej: X + 15 = 27, 50 - X = 12, 4X = 48, X ÷ 5 = 15' },
-                10: { name: 'PEMDAS/BODMAS', description: 'Jerarquía de operaciones con paréntesis. Ej: 5 × (4 + 3) - 10 ÷ 2 = ?' }
+                8: { name: '4 Dígitos / Mezcla básica', description: 'Operación individual: números de 4 dígitos (suma/resta 1000-9999, mult 4×3 dígitos). Mezcla: jerarquía sin paréntesis (a×b + c).' },
+                9: { name: '5 Dígitos / Pre-Álgebra', description: 'Operación individual: números de 5 dígitos. Mezcla: incógnita X con las 4 operaciones (X + 15 = 27).' },
+                10: { name: 'Maestro: Grandes Números', description: 'Operación individual: números muy grandes (mult 4×4 dígitos, dividendos enormes). Mezcla: PEMDAS con paréntesis.' }
             },
             selectLevelDescription: 'Selecciona un nivel para ver su descripción',
             selectLevelDesc: 'Selecciona un nivel para ver su descripción',
@@ -237,7 +238,9 @@ const MathMasterI18n = {
             operationLevel: '{operation} - Nivel {level}',
 
             // Footer
-            developedBy: 'Desarrollado por EFC | MathMaster v2.0'
+            signInWithGoogle: 'Entrar con Google',
+            signOut: 'Cerrar sesión',
+            developedBy: 'Games Hub | MathMaster v3.0'
         },
 
         // ==================== ENGLISH (en-US) ====================
@@ -270,7 +273,8 @@ const MathMasterI18n = {
                 resta: 'Subtraction',
                 multiplicacion: 'Multiplication',
                 division: 'Division',
-                tablas: 'Tables'
+                tablas: 'Tables',
+                mezcla: 'Mix'
             },
 
             // Levels
@@ -282,9 +286,9 @@ const MathMasterI18n = {
                 5: { name: 'Complex Decimals', description: 'Numbers up to 100,000 with decimals (X.XXX). Large number multiplication. Division with 2 decimals.' },
                 6: { name: 'Negative Numbers', description: 'Addition and Subtraction with frequent negative numbers (Ex: -10 + 25). 3-digit multiplication. Division with 3 decimals.' },
                 7: { name: 'Operation Chains', description: 'Addition/subtraction chains (Ex: 15 - 8 + 3). 4x2 digit multiplication. Division with decimal divisor.' },
-                8: { name: 'Basic Hierarchy', description: 'Combined operations without parentheses. Ex: 5 × 6 + 10 = ? or 100 ÷ 4 - 5 = ?' },
-                9: { name: 'Pre-Algebra', description: 'Solve for X. Ex: X + 15 = 27, 50 - X = 12, 4X = 48, X ÷ 5 = 15' },
-                10: { name: 'PEMDAS/BODMAS', description: 'Order of operations with parentheses. Ex: 5 × (4 + 3) - 10 ÷ 2 = ?' }
+                8: { name: '4 Digits / Basic Mix', description: 'Single operation: 4-digit numbers. Mix mode: order of operations without parentheses.' },
+                9: { name: '5 Digits / Pre-Algebra', description: 'Single operation: 5-digit numbers. Mix mode: solve for X with all 4 operations.' },
+                10: { name: 'Master: Big Numbers', description: 'Single operation: very large numbers. Mix mode: full PEMDAS with parentheses.' }
             },
             selectLevelDescription: 'Select a level to see its description',
             selectLevelDesc: 'Select a level to see its description',
@@ -460,7 +464,9 @@ const MathMasterI18n = {
             operationLevel: '{operation} - Level {level}',
 
             // Footer
-            developedBy: 'Developed by EFC | MathMaster v2.0'
+            signInWithGoogle: 'Sign in with Google',
+            signOut: 'Sign out',
+            developedBy: 'Games Hub | MathMaster v3.0'
         },
 
         // ==================== EUSKERA (eu-ES) ====================
@@ -493,7 +499,8 @@ const MathMasterI18n = {
                 resta: 'Kenketa',
                 multiplicacion: 'Biderketa',
                 division: 'Zatiketa',
-                tablas: 'Taulak'
+                tablas: 'Taulak',
+                mezcla: 'Nahasketa'
             },
 
             // Mailak
@@ -505,9 +512,9 @@ const MathMasterI18n = {
                 5: { name: 'Dezimal Konplexuak', description: '100.000 arteko zenbakiak dezimalekin (X.XXX). Zenbaki handien biderketa. 2 dezimaldun zatiketa.' },
                 6: { name: 'Zenbaki Negatiboak', description: 'Batuketa eta kenketa zenbaki negatibo ugariekin (Adib: -10 + 25). 3 digituko biderketa. 3 dezimaldun zatiketa.' },
                 7: { name: 'Eragiketa Kateak', description: 'Batuketa/kenketa kateak (Adib: 15 - 8 + 3). 4x2 digituko biderketa. Zatitzaile dezimaldun zatiketa.' },
-                8: { name: 'Oinarrizko Hierarkia', description: 'Eragiketa konbinatuak parentesirik gabe. Adib: 5 × 6 + 10 = ? edo 100 ÷ 4 - 5 = ?' },
-                9: { name: 'Aurre-Aljebra', description: 'Ebatzi X ezezaguna. Adib: X + 15 = 27, 50 - X = 12, 4X = 48, X ÷ 5 = 15' },
-                10: { name: 'PEMDAS/BODMAS', description: 'Eragiketen hierarkia parentesiekin. Adib: 5 × (4 + 3) - 10 ÷ 2 = ?' }
+                8: { name: '4 Digitu / Oinarrizko Nahasketa', description: 'Eragiketa bakarra: 4 digituko zenbakiak. Nahasketa modua: eragiketa-ordena parentesirik gabe.' },
+                9: { name: '5 Digitu / Aurre-Aljebra', description: 'Eragiketa bakarra: 5 digituko zenbakiak. Nahasketa modua: ebatzi X 4 eragiketarekin (X + 15 = 27).' },
+                10: { name: 'Maisua: Zenbaki Handiak', description: 'Eragiketa bakarra: zenbaki oso handiak. Nahasketa modua: PEMDAS osoa parentesiekin.' }
             },
             selectLevelDescription: 'Aukeratu maila bat bere deskribapena ikusteko',
             selectLevelDesc: 'Aukeratu maila bat bere deskribapena ikusteko',
@@ -683,7 +690,9 @@ const MathMasterI18n = {
             operationLevel: '{operation} - {level}. Maila',
 
             // Oina
-            developedBy: 'EFCk garatua | MathMaster v2.0'
+            signInWithGoogle: 'Sartu Googlerekin',
+            signOut: 'Saioa itxi',
+            developedBy: 'Games Hub | MathMaster v3.0'
         }
     },
 
