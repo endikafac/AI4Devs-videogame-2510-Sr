@@ -42,6 +42,18 @@ service cloud.firestore {
       allow delete: if isOwner(userId);
     }
 
+    // Unique nicknames: doc id = normalised nickname. Anyone signed in can check
+    // one by id (get) but nobody can list them. A claim can never be overwritten.
+    match /nicknames/{key} {
+      allow get: if signedIn();
+      allow list: if false;
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['uid', 'createdAt']);
+      allow update: if false;
+      allow delete: if signedIn() && resource.data.uid == request.auth.uid;
+    }
+
     // Weekly challenges: read-only for authenticated users (admin writes)
     match /challenges/{challengeId} {
       allow read: if signedIn();

@@ -249,3 +249,7 @@
 [data-high-contrast="true"] .game-card:not(.game-card-soon):hover {
     box-shadow: 0 0 0 3px var(--hub-brand-color);
 }
+
+/* Privacy link */
+.hub-footer{text-align:center;padding:24px 16px 32px;font-size:.85rem}
+.hub-footer a{color:var(--text-secondary);text-decoration:underline}

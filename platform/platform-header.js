@@ -141,6 +141,11 @@ const PlatformHeader = {
         if (user) {
             this._userProfile = await PlatformFirestore.getOrCreateProfile(user.uid, user)
                 .catch(() => user);
+            if (typeof PlatformIdentity !== 'undefined' && PlatformIdentity.needsSetup(this._userProfile)) {
+                const saved = await PlatformIdentity.showSetup(this._userProfile, this._opts.rootPath);
+                if (!saved) { await this._signOut(); return; }
+                this._userProfile = { ...this._userProfile, ...saved, photoURL: null };
+            }
         } else {
             this._userProfile = null;
         }
@@ -156,7 +161,7 @@ const PlatformHeader = {
         if (u) {
             const level    = PlatformFirestore.levelFromXP(u.xp || 0);
             const lvlName  = PlatformI18n.getLevelName(level);
-            const initials = escHtml((u.username || '?').charAt(0).toUpperCase());
+            const initials = escHtml(u.avatar || (u.username || '?').charAt(0).toUpperCase());
             const avatar   = safeUrl(u.photoURL)
                 ? `<img src="${safeUrl(u.photoURL)}" referrerpolicy="no-referrer" alt="" aria-hidden="true">`
                 : `<span aria-hidden="true">${initials}</span>`;
@@ -167,7 +172,7 @@ const PlatformHeader = {
                         aria-haspopup="true" aria-expanded="false"
                         aria-label="${escHtml(u.username)}, ${t('level')} ${level}: ${lvlName}">
                     <span class="platform-user-avatar">${avatar}</span>
-                    <span class="platform-user-name">${escHtml(u.username)}</span>
+                    <span class="platform-user-name">${escHtml(u.username || t('guest'))}</span>
                     <span class="platform-xp-badge" aria-hidden="true">Lv.${level} · ⭐${pts}</span>
                 </button>
             `;
@@ -195,7 +200,7 @@ const PlatformHeader = {
         if (!dropdown) return;
         dropdown.innerHTML = `
             <div class="platform-dropdown-header">
-                <div class="platform-dropdown-username">${escHtml(u.username)}</div>
+                <div class="platform-dropdown-username">${escHtml(u.avatar || '')} ${escHtml(u.username || t('guest'))}</div>
                 <div class="platform-dropdown-email">${escHtml(u.email)}</div>
                 <div class="platform-dropdown-xp">
                     ${t('level')} ${level}: ${lvlName} · ${u.xp || 0} XP
@@ -207,6 +212,9 @@ const PlatformHeader = {
             </a>
             <a class="platform-dropdown-item" href="${root}platform/achievements.html" role="menuitem">
                 <span aria-hidden="true">🏆</span> ${t('achievements')}
+            </a>
+            <a class="platform-dropdown-item" href="${root}platform/privacy.html" role="menuitem">
+                <span aria-hidden="true">🔒</span> ${t('privacy')}
             </a>
             <button class="platform-dropdown-item" id="pd-signout" role="menuitem">
                 <span aria-hidden="true">🚪</span> ${t('signOut')}

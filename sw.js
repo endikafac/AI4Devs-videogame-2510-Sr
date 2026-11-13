@@ -16,6 +16,7 @@ const PRECACHE_ASSETS = [
     '/fonts/fonts.css',
     '/platform/i18n-platform.js',
     '/platform/platform-header.js',
+    '/platform/identity.js',
 ];
 
 // HTML pages to cache on first visit (not pre-cached to keep install fast)

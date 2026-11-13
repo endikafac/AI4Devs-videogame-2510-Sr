@@ -69,8 +69,8 @@ const PlatformFirestore = {
         }
         const profile = {
             uid,
-            username:    authUser.username,
-            photoURL:    authUser.photoURL || null,
+            username:    '',      // nickname is chosen by the guardian (see identity.js)
+            photoURL:    null,    // never store the Google photo
             createdAt:   new Date().toISOString(),
             lastLogin:   new Date().toISOString(),
             xp:          0,
@@ -182,8 +182,9 @@ const PlatformFirestore = {
             .collection('scores').doc(uid).set({
                 uid,
                 username:    user.username,
-                photoURL:    user.photoURL || null,
-                totalPoints: user.totalPoints + newPoints,
+                avatar:      user.avatar || null,
+                photoURL:    null,
+                totalPoints: user.totalPoints, // already includes newPoints (profile was incremented before)
                 xp:          user.xp,
                 level:       user.level,
                 updatedAt:   new Date().toISOString()

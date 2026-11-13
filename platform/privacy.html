@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacidad — Games Hub</title>
+    <link rel="stylesheet" href="platform.css">
+    <link href="../fonts/fonts.css" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="i18n-platform.js"></script>
+    <script src="auth.js"></script>
+    <script src="firestore.js"></script>
+    <script src="identity.js"></script>
+    <script src="platform-header.js"></script>
+    <style>
+        body { background: var(--bg-page); color: var(--text-primary); font-family: var(--font-body); line-height: 1.6; }
+        .pv { max-width: 780px; margin: 0 auto; padding: 80px 16px 48px; }
+        .pv h1 { font-family: var(--font-display); font-size: 1.5rem; }
+        .pv h2 { font-size: 1.1rem; margin-top: 28px; color: var(--hub-brand-light); }
+        .pv ul { padding-left: 20px; }
+        .pv a { color: var(--hub-brand-light); }
+        .pv-box { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; margin-top: 24px; }
+        .pv-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+        .pv-msg { margin-top: 10px; min-height: 1.3em; }
+        .pv-todo { background: #f59e0b; color: #1e293b; padding: 0 6px; border-radius: 4px; font-weight: 700; }
+        [hidden] { display: none !important; }
+        [data-l] { display: none; }
+        [data-l].on { display: block; }
+    </style>
+</head>
+<body>
+<main id="main-content" class="pv">
+
+<!-- ============================ ESPAÑOL ============================ -->
+<div data-l="es">
+    <h1>Privacidad y protección de datos</h1>
+    <p>Games Hub es una plataforma gratuita de juegos educativos pensada para niños y también para personas adultas. Esta página explica qué datos tratamos y cómo ejercer tus derechos (RGPD y LOPDGDD).</p>
+
+    <h2>Quién es el responsable</h2>
+    <p>Responsable del tratamiento y contacto: <span class="pv-todo">TU_EMAIL_DE_CONTACTO</span></p>
+
+    <h2>Niños y personas adultas responsables</h2>
+    <ul>
+        <li>Las cuentas con sesión (Google) solo pueden crearlas <strong>personas adultas mayores de 14 años o los padres, madres o tutores</strong> de los menores que jueguen.</li>
+        <li>A los niños <strong>nunca</strong> se les pide nombre real, email, foto ni teléfono. Juegan con un <strong>apodo inventado</strong> y un avatar de emoji.</li>
+        <li>Se puede jugar <strong>sin cuenta</strong> (invitado): en ese caso nada sale del dispositivo.</li>
+    </ul>
+
+    <h2>Qué datos tratamos</h2>
+    <ul>
+        <li><strong>Invitado:</strong> tu progreso, puntos y preferencias se guardan solo en tu navegador (almacenamiento local). No los recibimos.</li>
+        <li><strong>Con cuenta:</strong> Google (Firebase Authentication) identifica a la persona adulta. En nuestra base de datos guardamos únicamente: apodo, avatar, puntos, nivel, estadísticas de juego, logros, preferencias y la fecha y versión del consentimiento. <strong>No guardamos el nombre de Google, la foto ni el email.</strong></li>
+        <li>El <strong>apodo</strong> y el avatar son visibles para otras personas con sesión en los rankings.</li>
+        <li>No usamos publicidad, analítica de seguimiento, cookies de terceros ni perfiles de comportamiento. Las fuentes de letra se sirven desde este mismo sitio.</li>
+    </ul>
+
+    <h2>Para qué y con qué base legal</h2>
+    <p>Para guardar tu progreso y mostrar rankings amistosos. Base legal: <strong>consentimiento</strong> de la persona adulta o del tutor (art. 6.1.a y art. 8 RGPD, art. 7 LOPDGDD). Puedes retirarlo en cualquier momento borrando tus datos.</p>
+
+    <h2>Quién más interviene</h2>
+    <p>Google (Firebase Authentication, Firestore y Hosting) actúa como encargado del tratamiento. Puede implicar transferencias internacionales amparadas por las garantías de Google (cláusulas contractuales tipo y marco de privacidad de datos UE-EE. UU.).</p>
+
+    <h2>Cuánto tiempo</h2>
+    <p>Hasta que borres tu cuenta. Los datos de invitado se eliminan al borrar los datos del navegador.</p>
+
+    <h2>Tus derechos</h2>
+    <p>Acceso, rectificación (cambiar apodo o avatar al iniciar sesión), supresión, portabilidad, limitación y oposición. Con sesión iniciada puedes <strong>descargar</strong> y <strong>borrar</strong> tus datos desde aquí abajo. También puedes escribir al contacto indicado, o reclamar ante la <a href="https://www.aepd.es" target="_blank" rel="noopener">Agencia Española de Protección de Datos</a>.</p>
+</div>
+
+<!-- ============================ ENGLISH ============================ -->
+<div data-l="en">
+    <h1>Privacy and data protection</h1>
+    <p>Games Hub is a free platform of educational games for children and adults. This page explains what data we process and how to exercise your rights (GDPR).</p>
+
+    <h2>Controller</h2>
+    <p>Controller and contact: <span class="pv-todo">TU_EMAIL_DE_CONTACTO</span></p>
+
+    <h2>Children and responsible adults</h2>
+    <ul>
+        <li>Signed-in (Google) accounts can only be created by <strong>adults over 14 or the parents or guardians</strong> of the children who play.</li>
+        <li>Children are <strong>never</strong> asked for a real name, email, photo or phone. They play with a <strong>made-up nickname</strong> and an emoji avatar.</li>
+        <li>You can play <strong>without an account</strong> (guest): nothing leaves your device.</li>
+    </ul>
+
+    <h2>What data we process</h2>
+    <ul>
+        <li><strong>Guest:</strong> progress, points and preferences stay in your browser (local storage). We never receive them.</li>
+        <li><strong>Signed in:</strong> Google (Firebase Authentication) identifies the adult. Our database only stores: nickname, avatar, points, level, game statistics, achievements, preferences and the consent date and version. <strong>We do not store the Google name, photo or email.</strong></li>
+        <li>The <strong>nickname</strong> and avatar are visible to other signed-in people in the rankings.</li>
+        <li>No advertising, tracking analytics, third-party cookies or behavioural profiling. Fonts are served from this site.</li>
+    </ul>
+
+    <h2>Purpose and legal basis</h2>
+    <p>To save your progress and show friendly rankings. Legal basis: <strong>consent</strong> of the adult or guardian (Art. 6(1)(a) and Art. 8 GDPR). You can withdraw it at any time by deleting your data.</p>
+
+    <h2>Other parties</h2>
+    <p>Google (Firebase Authentication, Firestore and Hosting) acts as data processor. This may involve international transfers covered by Google's safeguards (standard contractual clauses and the EU-US Data Privacy Framework).</p>
+
+    <h2>Retention</h2>
+    <p>Until you delete your account. Guest data is removed when you clear your browser data.</p>
+
+    <h2>Your rights</h2>
+    <p>Access, rectification (change nickname or avatar when signing in), erasure, portability, restriction and objection. While signed in you can <strong>download</strong> and <strong>delete</strong> your data below. You can also write to the contact above, or complain to your data protection authority.</p>
+</div>
+
+<!-- ============================ EUSKARA ============================ -->
+<div data-l="eu">
+    <h1>Pribatutasuna eta datuen babesa</h1>
+    <p>Games Hub haurrentzako eta helduentzako joko hezigarrien plataforma doakoa da. Orrialde honek azaltzen du zer datu tratatzen ditugun eta nola baliatu zure eskubideak (DBEO).</p>
+
+    <h2>Arduraduna</h2>
+    <p>Tratamenduaren arduraduna eta kontaktua: <span class="pv-todo">TU_EMAIL_DE_CONTACTO</span></p>
+
+    <h2>Haurrak eta heldu arduradunak</h2>
+    <ul>
+        <li>Saioa hasita (Google) dauden kontuak <strong>14 urtetik gorako helduek edo jokatzen duten adingabeen gurasoek edo tutoreek</strong> bakarrik sor ditzakete.</li>
+        <li>Haurrei <strong>ez zaie inoiz</strong> eskatzen benetako izenik, posta elektronikorik, argazkirik edo telefonorik. <strong>Asmatutako ezizen</strong> batekin eta emoji avatar batekin jokatzen dute.</li>
+        <li><strong>Konturik gabe</strong> jokatu daiteke (gonbidatua): ezer ez da zure gailutik ateratzen.</li>
+    </ul>
+
+    <h2>Zer datu tratatzen ditugu</h2>
+    <ul>
+        <li><strong>Gonbidatua:</strong> aurrerapena, puntuak eta hobespenak zure nabigatzailean gordetzen dira (biltegiratze lokala). Ez ditugu jasotzen.</li>
+        <li><strong>Kontuarekin:</strong> Google-k (Firebase Authentication) heldua identifikatzen du. Gure datu-basean hau bakarrik gordetzen dugu: ezizena, avatarra, puntuak, maila, jokoen estatistikak, lorpenak, hobespenak eta baimenaren data eta bertsioa. <strong>Ez ditugu Google-ren izena, argazkia edo posta elektronikoa gordetzen.</strong></li>
+        <li><strong>Ezizena</strong> eta avatarra saioa hasita duten beste pertsonentzat ikusgai daude sailkapenetan.</li>
+        <li>Ez dugu publizitaterik, jarraipen-analitikarik, hirugarrenen cookie-rik edo portaera-profilik erabiltzen. Letra-tipoak gune honetatik zerbitzatzen dira.</li>
+    </ul>
+
+    <h2>Helburua eta oinarri juridikoa</h2>
+    <p>Zure aurrerapena gordetzeko eta sailkapen lagunartekoak erakusteko. Oinarri juridikoa: heldu edo tutorearen <strong>baimena</strong> (DBEO 6.1.a eta 8. artikuluak). Edonoiz kendu dezakezu zure datuak ezabatuta.</p>
+
+    <h2>Beste eragileak</h2>
+    <p>Google-k (Firebase Authentication, Firestore eta Hosting) tratamenduaren eragile gisa jarduten du. Nazioarteko transferentziak izan daitezke, Google-ren bermeek babestuak.</p>
+
+    <h2>Zenbat denbora</h2>
+    <p>Zure kontua ezabatu arte. Gonbidatuaren datuak nabigatzailearen datuak garbitzean ezabatzen dira.</p>
+
+    <h2>Zure eskubideak</h2>
+    <p>Sarbidea, zuzenketa, ezabatzea, eramangarritasuna, murriztea eta aurka egitea. Saioa hasita dagoenean zure datuak <strong>deskarga</strong> eta <strong>ezaba</strong> ditzakezu behean. Kontaktura ere idatz dezakezu, edo datuak babesteko agintaritzari erreklamatu.</p>
+</div>
+
+<!-- ============================ ACCIONES ============================ -->
+<div class="pv-box" id="pv-actions" hidden>
+    <h2 style="margin-top:0" id="pv-t-title"></h2>
+    <p id="pv-t-desc"></p>
+    <div class="pv-row">
+        <button class="pid-btn" id="pv-export"></button>
+        <button class="pid-btn danger" id="pv-delete"></button>
+    </div>
+    <div class="pv-row" id="pv-confirm-row" hidden>
+        <span id="pv-t-confirm"></span>
+        <button class="pid-btn danger" id="pv-delete-yes"></button>
+        <button class="pid-btn ghost" id="pv-delete-no"></button>
+    </div>
+    <div class="pv-msg" id="pv-msg" role="status"></div>
+</div>
+<p id="pv-guest" class="pv-box"></p>
+
+</main>
+<script>
+const TXT = {
+    es: { title: 'Tus datos', desc: 'Descarga una copia de tus datos o bórralos por completo (cuenta, estadísticas, ranking y apodo).', exp: 'Descargar mis datos', del: 'Borrar mi cuenta y mis datos', confirm: 'Esto no se puede deshacer. ¿Seguro?', yes: 'Sí, borrar todo', no: 'Cancelar', done: 'Datos borrados. Hasta pronto.', err: 'No se pudo completar. Inténtalo de nuevo.', guest: 'Estás jugando como invitado: tus datos solo están en este dispositivo. Para borrarlos, limpia los datos del sitio en tu navegador. Si inicias sesión, aquí podrás descargarlos o borrarlos.' },
+    en: { title: 'Your data', desc: 'Download a copy of your data or erase it completely (account, statistics, ranking and nickname).', exp: 'Download my data', del: 'Delete my account and data', confirm: 'This cannot be undone. Are you sure?', yes: 'Yes, delete everything', no: 'Cancel', done: 'Data deleted. See you soon.', err: 'Could not complete. Please try again.', guest: 'You are playing as a guest: your data only lives on this device. To erase it, clear this site\'s data in your browser. If you sign in, you can download or delete it here.' },
+    eu: { title: 'Zure datuak', desc: 'Deskargatu zure datuen kopia bat edo ezabatu guztiz (kontua, estatistikak, sailkapena eta ezizena).', exp: 'Deskargatu nire datuak', del: 'Ezabatu nire kontua eta datuak', confirm: 'Ezin da desegin. Ziur zaude?', yes: 'Bai, ezabatu dena', no: 'Utzi', done: 'Datuak ezabatu dira. Laster arte.', err: 'Ezin izan da osatu. Saiatu berriro.', guest: 'Gonbidatu gisa ari zara jokatzen: zure datuak gailu honetan bakarrik daude. Ezabatzeko, garbitu gune honen datuak nabigatzailean. Saioa hasten baduzu, hemen deskargatu edo ezabatu ahal izango dituzu.' }
+};
+const $ = id => document.getElementById(id);
+const lang = () => (PlatformI18n.currentLanguage || 'es-ES').slice(0, 2);
+function render() {
+    const l = lang(), t = TXT[l] || TXT.es;
+    document.getElementById('html-root').lang = l;
+    document.querySelectorAll('[data-l]').forEach(el => el.classList.toggle('on', el.dataset.l === l));
+    $('pv-t-title').textContent = t.title; $('pv-t-desc').textContent = t.desc;
+    $('pv-export').textContent = t.exp; $('pv-delete').textContent = t.del;
+    $('pv-t-confirm').textContent = t.confirm; $('pv-delete-yes').textContent = t.yes; $('pv-delete-no').textContent = t.no;
+    $('pv-guest').textContent = t.guest;
+}
+function msg(k) { $('pv-msg').textContent = (TXT[lang()] || TXT.es)[k]; }
+let uid = null;
+PlatformAuth.onAuthStateChanged(u => {
+    uid = u ? u.uid : null;
+    $('pv-actions').hidden = !uid;
+    $('pv-guest').hidden = !!uid;
+});
+$('pv-export').addEventListener('click', async () => {
+    try {
+        const data = await PlatformIdentity.exportData(uid);
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
+        a.download = 'games-hub-mis-datos.json';
+        a.click(); URL.revokeObjectURL(a.href);
+    } catch (e) { console.error(e); msg('err'); }
+});
+$('pv-delete').addEventListener('click', () => { $('pv-confirm-row').hidden = false; });
+$('pv-delete-no').addEventListener('click', () => { $('pv-confirm-row').hidden = true; });
+$('pv-delete-yes').addEventListener('click', async () => {
+    try { await PlatformIdentity.deleteAccount(uid); $('pv-confirm-row').hidden = true; msg('done'); }
+    catch (e) { console.error(e); msg('err'); }
+});
+document.addEventListener('platformLanguageChanged', render);
+PlatformHeader.init({ gameName: 'Privacidad', gameIcon: '🔒', rootPath: '../' });
+render();
+</script>
+</body>
+</html>
