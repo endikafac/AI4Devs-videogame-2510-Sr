@@ -70,7 +70,6 @@ const PlatformFirestore = {
         const profile = {
             uid,
             username:    authUser.username,
-            email:       authUser.email,
             photoURL:    authUser.photoURL || null,
             createdAt:   new Date().toISOString(),
             lastLogin:   new Date().toISOString(),

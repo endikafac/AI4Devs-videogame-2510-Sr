@@ -6,6 +6,12 @@
  * Requires: platform.css, i18n-platform.js, firebase-config.js, auth.js, firestore.js
  */
 
+/** Escape text for safe HTML interpolation (XSS protection). */
+const escHtml = v => String(v ?? '').replace(/[&<>"']/g,
+    c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+/** Only allow https avatar URLs. */
+const safeUrl = v => /^https:\/\//i.test(v || '') ? escHtml(v) : '';
+
 const PlatformHeader = {
     _userProfile: null,
     _dropdownOpen: false,
@@ -150,18 +156,18 @@ const PlatformHeader = {
         if (u) {
             const level    = PlatformFirestore.levelFromXP(u.xp || 0);
             const lvlName  = PlatformI18n.getLevelName(level);
-            const initials = (u.username || '?').charAt(0).toUpperCase();
-            const avatar   = u.photoURL
-                ? `<img src="${u.photoURL}" alt="" aria-hidden="true">`
+            const initials = escHtml((u.username || '?').charAt(0).toUpperCase());
+            const avatar   = safeUrl(u.photoURL)
+                ? `<img src="${safeUrl(u.photoURL)}" referrerpolicy="no-referrer" alt="" aria-hidden="true">`
                 : `<span aria-hidden="true">${initials}</span>`;
 
             const pts = (u.totalPoints || 0).toLocaleString();
             area.innerHTML = `
                 <button class="platform-user-btn" id="platform-user-btn"
                         aria-haspopup="true" aria-expanded="false"
-                        aria-label="${u.username}, ${t('level')} ${level}: ${lvlName}">
+                        aria-label="${escHtml(u.username)}, ${t('level')} ${level}: ${lvlName}">
                     <span class="platform-user-avatar">${avatar}</span>
-                    <span class="platform-user-name">${u.username}</span>
+                    <span class="platform-user-name">${escHtml(u.username)}</span>
                     <span class="platform-xp-badge" aria-hidden="true">Lv.${level} · ⭐${pts}</span>
                 </button>
             `;
@@ -189,8 +195,8 @@ const PlatformHeader = {
         if (!dropdown) return;
         dropdown.innerHTML = `
             <div class="platform-dropdown-header">
-                <div class="platform-dropdown-username">${u.username}</div>
-                <div class="platform-dropdown-email">${u.email || ''}</div>
+                <div class="platform-dropdown-username">${escHtml(u.username)}</div>
+                <div class="platform-dropdown-email">${escHtml(u.email)}</div>
                 <div class="platform-dropdown-xp">
                     ${t('level')} ${level}: ${lvlName} · ${u.xp || 0} XP
                     ${xpNext > 0 ? `<span style="color:var(--text-muted)"> (+${xpNext} → next)</span>` : ''}
