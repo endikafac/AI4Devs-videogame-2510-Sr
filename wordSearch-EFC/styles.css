@@ -3,7 +3,7 @@
    Uses platform.css CSS custom properties.
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;600&display=swap');
+@import url('../fonts/fonts.css');
 
 /* ── Page wrapper ─────────────────────────────────────────── */
 .ws-page {

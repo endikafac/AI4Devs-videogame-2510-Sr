@@ -4,7 +4,7 @@
  * Version: bump CACHE_VERSION to force cache refresh after deploys
  */
 
-const CACHE_VERSION = 'v1.0.0';
+const CACHE_VERSION = 'v1.1.0';
 const STATIC_CACHE  = `games-hub-static-${CACHE_VERSION}`;
 const PAGE_CACHE    = `games-hub-pages-${CACHE_VERSION}`;
 
@@ -13,6 +13,7 @@ const PRECACHE_ASSETS = [
     '/icons/icon-192.png',
     '/icons/icon-512.png',
     '/platform/platform.css',
+    '/fonts/fonts.css',
     '/platform/i18n-platform.js',
     '/platform/platform-header.js',
 ];
