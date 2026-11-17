@@ -389,6 +389,7 @@ const TableMasterGame = {
     // ── Pantalla Selección Nivel ──────────────────────────────────────────────
 
     _bindPracticeSelectEvents() {
+        document.getElementById('btn-review')?.addEventListener('click', () => this._startReview());
         document.getElementById('level-grid')?.addEventListener('click', e => {
             const btn = e.target.closest('.tm-level-btn');
             if (!btn) return;
@@ -424,6 +425,8 @@ const TableMasterGame = {
                 { level: 6, name: t('level6Name'), example: t('level6Example') },
             ];
 
+        this._updateReviewBox();
+
         grid.innerHTML = levels.map(l => `
             <button class="tm-level-btn" data-level="${l.level}" aria-label="${l.name}: ${l.example}">
                 <div class="tm-level-badge">${l.level === 31 ? '3B' : l.level}</div>
@@ -436,6 +439,70 @@ const TableMasterGame = {
     },
 
     // ── Práctica ──────────────────────────────────────────────────────────────
+
+    // ── Repaso de errores (guardado solo en este dispositivo) ──────────────────
+
+    _MISTAKES_KEY: 'games_hub_tablemaster_mistakes',
+    _MISTAKES_MAX: 20,
+
+    _loadMistakes() {
+        try {
+            const raw = localStorage.getItem(this._MISTAKES_KEY);
+            const list = raw ? JSON.parse(raw) : [];
+            return Array.isArray(list) ? list : [];
+        } catch (e) { return []; }
+    },
+
+    _saveMistakes(list) {
+        try { localStorage.setItem(this._MISTAKES_KEY, JSON.stringify(list.slice(-this._MISTAKES_MAX))); } catch (e) { /* storage unavailable */ }
+    },
+
+    _exKey(ex) {
+        return ex.op === 'multiply' ? `m${ex.a}x${ex.b}` : `d${ex.dividend}/${ex.divisor}`;
+    },
+
+    /** Called when an exercise ends: store it if there was any wrong step, drop it if solved clean. */
+    _recordExerciseResult(ex, hadMistake) {
+        const key = this._exKey(ex);
+        const list = this._loadMistakes().filter(e => this._exKey(e) !== key);
+        if (hadMistake) list.push(ex);
+        this._saveMistakes(list);
+    },
+
+    _updateReviewBox() {
+        const box = document.getElementById('review-box');
+        if (!box) return;
+        const t = key => TableMasterI18n.t(key);
+        const n = this._loadMistakes().length;
+        document.getElementById('review-title').textContent = t('reviewMistakes');
+        document.getElementById('review-count').textContent = n > 0 ? `${n} ${t('reviewCount')}` : t('reviewNone');
+        document.getElementById('btn-review').disabled = n === 0;
+    },
+
+    _startReview() {
+        const list = this._loadMistakes();
+        if (!list.length) return;
+        const picked = list.slice().sort(() => Math.random() - 0.5).slice(0, 5);
+        const ps = this.state.practice;
+        ps.exercises = picked.map(e => ({ ...e }));
+        ps.operation = picked[0].op;
+        ps.level = picked[0].level;
+        ps.exIndex = 0; ps.score = 0; ps.totalSteps = 0; ps.okSteps = 0;
+        document.getElementById('hud-score').textContent = '0';
+        document.getElementById('hud-progress').textContent = `1/${picked.length}`;
+        this._showScreen('screen-practice');
+        this._renderExercise();
+    },
+
+    /** Suggest the next level according to accuracy. */
+    _levelTip(accuracy) {
+        const t = key => TableMasterI18n.t(key);
+        const order = this.state.practice.operation === 'multiply' ? [1, 2, 3, 31] : [4, 5, 6];
+        const i = order.indexOf(this.state.practice.level);
+        if (accuracy >= 90 && i >= 0 && i < order.length - 1) return t('tipNext');
+        if (accuracy >= 70) return t('tipSame');
+        return t('tipEasier');
+    },
 
     _startPractice() {
         const ps = this.state.practice;
@@ -648,9 +715,10 @@ const TableMasterGame = {
         this._currentStep  = 0;
         this._stepAnswers  = [];
         this._exerciseDone = false;
+        this._exStart = { total: ps.totalSteps, ok: ps.okSteps };
 
         document.getElementById('hud-progress').textContent =
-            `${ps.exIndex + 1}/5`;
+            `${ps.exIndex + 1}/${ps.exercises.length}`;
 
         document.getElementById('practice-feedback')?.classList.add('hidden');
         document.getElementById('practice-controls')?.classList.add('hidden');
@@ -1083,6 +1151,9 @@ const TableMasterGame = {
         const ex  = ps.exercises[ps.exIndex];
         const t   = key => TableMasterI18n.t(key);
 
+        const st = this._exStart || { total: 0, ok: 0 };
+        this._recordExerciseResult(ex, (ps.totalSteps - st.total) !== (ps.okSteps - st.ok));
+
         const fb = document.getElementById('practice-feedback');
         if (fb) {
             fb.className = 'tm-practice-feedback correct-fb';
@@ -1179,6 +1250,9 @@ const TableMasterGame = {
                 ? t('resultGood')
                 : t('resultKeepTrying');
         }
+
+        const tipEl = document.getElementById('result-tip');
+        if (tipEl) tipEl.textContent = this._levelTip(accuracy);
 
         document.getElementById('result-correct').textContent =
             `${ps.okSteps}/${ps.totalSteps}`;
