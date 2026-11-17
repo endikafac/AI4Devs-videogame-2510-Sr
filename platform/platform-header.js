@@ -31,6 +31,7 @@ const PlatformHeader = {
         this._syncLanguage();
         this._applyTheme();
         this._applyHighContrast();
+        try { if (localStorage.getItem('games_hub_large') === '1') document.documentElement.setAttribute('data-large-text', ''); } catch (e) {}
 
         // React to auth state
         if (typeof PlatformAuth !== 'undefined') {

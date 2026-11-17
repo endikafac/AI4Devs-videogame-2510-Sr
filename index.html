@@ -39,12 +39,34 @@
             </div>
         </section>
 
+        <!-- Filters -->
+        <section class="hub-filters" aria-label="Filtros">
+            <div class="filter-row" role="group" aria-labelledby="f-aud-l">
+                <span class="filter-label" id="f-aud-l" data-i18n="fAudience"></span>
+                <button type="button" class="filter-chip active" data-aud="all" aria-pressed="true" data-i18n="fAll"></button>
+                    <button type="button" class="filter-chip" data-aud="kids" aria-pressed="false" data-i18n="fKids"></button>
+                    <button type="button" class="filter-chip" data-aud="teens" aria-pressed="false" data-i18n="fTeens"></button>
+                    <button type="button" class="filter-chip" data-aud="adults" aria-pressed="false" data-i18n="fAdults"></button>
+            </div>
+            <div class="filter-row" role="group" aria-labelledby="f-cat-l">
+                <span class="filter-label" id="f-cat-l" data-i18n="fTopic"></span>
+                <button type="button" class="filter-chip active" data-cat="all" aria-pressed="true" data-i18n="fAll"></button>
+                    <button type="button" class="filter-chip" data-cat="math" aria-pressed="false" data-i18n="cMath"></button>
+                    <button type="button" class="filter-chip" data-cat="lang" aria-pressed="false" data-i18n="cLang"></button>
+                    <button type="button" class="filter-chip" data-cat="science" aria-pressed="false" data-i18n="cScience"></button>
+                    <button type="button" class="filter-chip" data-cat="geo" aria-pressed="false" data-i18n="cGeo"></button>
+                    <button type="button" class="filter-chip" data-cat="arcade" aria-pressed="false" data-i18n="cArcade"></button>
+            </div>
+            <label class="filter-large"><input type="checkbox" id="f-large"> <span data-i18n="fLarge"></span></label>
+            <p class="filter-none" id="f-none" role="status" hidden data-i18n="fNone"></p>
+        </section>
+
         <!-- Game cards -->
         <section class="hub-games" aria-label="Games">
             <div class="hub-games-grid">
 
                 <!-- MathMaster -->
-                <article class="game-card" aria-labelledby="card-mathmaster-title">
+                <article class="game-card" data-cat="math" data-aud="kids teens" aria-labelledby="card-mathmaster-title">
                     <div class="game-card-icon" aria-hidden="true">🧮</div>
                     <div class="game-card-body">
                         <h2 class="game-card-title" id="card-mathmaster-title">MathMaster</h2>
@@ -70,7 +92,7 @@
                 </article>
 
                 <!-- Snake -->
-                <article class="game-card" aria-labelledby="card-snake-title">
+                <article class="game-card" data-cat="arcade" data-aud="kids teens adults" aria-labelledby="card-snake-title">
                     <div class="game-card-icon" aria-hidden="true">🐍</div>
                     <div class="game-card-body">
                         <h2 class="game-card-title" id="card-snake-title">Snake</h2>
@@ -92,7 +114,7 @@
                 </article>
 
                 <!-- TableMaster -->
-                <article class="game-card" aria-labelledby="card-tablemaster-title">
+                <article class="game-card" data-cat="math" data-aud="kids teens" aria-labelledby="card-tablemaster-title">
                     <div class="game-card-icon" aria-hidden="true">✖️</div>
                     <div class="game-card-body">
                         <h2 class="game-card-title" id="card-tablemaster-title">TableMaster</h2>
@@ -114,7 +136,7 @@
                 </article>
 
                 <!-- TypeMaster -->
-                <article class="game-card" aria-labelledby="card-typemaster-title">
+                <article class="game-card" data-cat="lang" data-aud="kids teens adults" aria-labelledby="card-typemaster-title">
                     <div class="game-card-icon" aria-hidden="true">⌨️</div>
                     <div class="game-card-body">
                         <h2 class="game-card-title" id="card-typemaster-title">TypeMaster</h2>
@@ -135,7 +157,7 @@
                 </article>
 
                 <!-- WordSearch -->
-                <article class="game-card" aria-labelledby="card-wordsearch-title">
+                <article class="game-card" data-cat="lang" data-aud="kids teens adults" aria-labelledby="card-wordsearch-title">
                     <div class="game-card-icon" aria-hidden="true">🔍</div>
                     <div class="game-card-body">
                         <h2 class="game-card-title" id="card-wordsearch-title">WordSearch</h2>
@@ -156,7 +178,7 @@
                 </article>
 
                 <!-- Crossword -->
-                <article class="game-card" aria-labelledby="card-crossword-title">
+                <article class="game-card" data-cat="lang" data-aud="teens adults" aria-labelledby="card-crossword-title">
                     <div class="game-card-icon" aria-hidden="true">✏️</div>
                     <div class="game-card-body">
                         <h2 class="game-card-title" id="card-crossword-title">Crucigrama</h2>
@@ -177,7 +199,7 @@
                 </article>
 
                 <!-- GeoQuiz -->
-                <article class="game-card" aria-labelledby="card-geoquiz-title">
+                <article class="game-card" data-cat="geo" data-aud="kids teens adults" aria-labelledby="card-geoquiz-title">
                     <div class="game-card-icon" aria-hidden="true">🗺️</div>
                     <div class="game-card-body">
                         <h2 class="game-card-title" id="card-geoquiz-title">GeoQuiz</h2>
@@ -198,7 +220,7 @@
                 </article>
 
                 <!-- Tabla periódica -->
-                <article class="game-card" aria-labelledby="card-periodic-title">
+                <article class="game-card" data-cat="science" data-aud="kids teens adults" aria-labelledby="card-periodic-title">
                     <div class="game-card-icon" aria-hidden="true">🧪</div>
                     <div class="game-card-body">
                         <h2 class="game-card-title" id="card-periodic-title">Tabla periódica</h2>
@@ -219,7 +241,7 @@
                 </article>
 
                 <!-- Euskera: Nor-Nori-Nork -->
-                <article class="game-card" aria-labelledby="card-euskera-title">
+                <article class="game-card" data-cat="lang" data-aud="kids teens adults" aria-labelledby="card-euskera-title">
                     <div class="game-card-icon flag-icon">
                         <!-- Ikurriña — Basque flag SVG -->
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 60" role="img" aria-label="Ikurriña">
@@ -249,7 +271,7 @@
                 </article>
 
                 <!-- English: Irregular Verbs -->
-                <article class="game-card" aria-labelledby="card-english-title">
+                <article class="game-card" data-cat="lang" data-aud="teens adults" aria-labelledby="card-english-title">
                     <div class="game-card-icon flag-icon">
                         <!-- Union Jack — UK flag SVG -->
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 40" role="img" aria-label="Bandera del Reino Unido">
@@ -413,6 +435,50 @@
 
         applyI18n();
         document.addEventListener('platformLanguageChanged', applyI18n);
+
+        // ── Filters (audience, topic) and large text ─────────────────────────
+        (function () {
+            const state = { aud: 'all', cat: 'all' };
+            const store = {
+                get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } },
+                set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} }
+            };
+            function apply() {
+                let shown = 0;
+                document.querySelectorAll('.game-card[data-cat]').forEach(card => {
+                    const ok = (state.cat === 'all' || card.dataset.cat === state.cat) &&
+                               (state.aud === 'all' || card.dataset.aud.split(' ').includes(state.aud));
+                    card.hidden = !ok;
+                    if (ok) shown++;
+                });
+                document.getElementById('f-none').hidden = shown > 0;
+                document.querySelectorAll('.filter-chip').forEach(b => {
+                    const g = b.dataset.aud !== undefined ? 'aud' : 'cat';
+                    const on = b.dataset[g] === state[g];
+                    b.classList.toggle('active', on);
+                    b.setAttribute('aria-pressed', String(on));
+                });
+            }
+            document.querySelector('.hub-filters').addEventListener('click', e => {
+                const b = e.target.closest('.filter-chip');
+                if (!b) return;
+                if (b.dataset.aud !== undefined) { state.aud = b.dataset.aud; store.set('games_hub_f_aud', state.aud); }
+                else { state.cat = b.dataset.cat; store.set('games_hub_f_cat', state.cat); }
+                apply();
+            });
+            const large = document.getElementById('f-large');
+            function setLarge(on) {
+                document.documentElement.toggleAttribute('data-large-text', on);
+                large.checked = on;
+                store.set('games_hub_large', on ? '1' : '0');
+            }
+            large.addEventListener('change', () => setLarge(large.checked));
+            state.aud = store.get('games_hub_f_aud') || 'all';
+            state.cat = store.get('games_hub_f_cat') || 'all';
+            setLarge(store.get('games_hub_large') === '1');
+            apply();
+        })();
+
 
         // Auth state → show/hide sign-in prompt and user scores
         if (typeof PlatformAuth !== 'undefined') {

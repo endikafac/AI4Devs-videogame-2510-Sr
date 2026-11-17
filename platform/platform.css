@@ -579,3 +579,6 @@ a.platform-dropdown-item:hover { background: var(--bg-raised); }
   background: var(--hub-brand-color); color: #fff; }
 .pid-btn.ghost { background: transparent; color: var(--text-secondary); border: 1px solid var(--border-color); }
 .pid-btn.danger { background: var(--hub-danger); }
+
+/* Large text option (set from the hub, applies to every page that loads platform.css) */
+html[data-large-text]{font-size:125%}

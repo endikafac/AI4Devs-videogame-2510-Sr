@@ -253,3 +253,16 @@
 /* Privacy link */
 .hub-footer{text-align:center;padding:24px 16px 32px;font-size:.85rem}
 .hub-footer a{color:var(--text-secondary);text-decoration:underline}
+
+/* Hub filters */
+.hub-filters{max-width:1100px;margin:0 auto;padding:8px 16px 0;display:flex;flex-direction:column;gap:10px}
+.filter-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.filter-label{font-weight:700;margin-right:4px;color:var(--text-secondary)}
+.filter-chip{padding:8px 14px;min-height:40px;border-radius:999px;border:1px solid var(--border-color);background:var(--bg-surface);color:var(--text-primary);cursor:pointer;font:inherit}
+.filter-chip.active{background:var(--hub-brand-color);border-color:var(--hub-brand-color);color:#fff}
+.filter-chip:focus-visible,.filter-large input:focus-visible{outline:3px solid var(--hub-accent);outline-offset:2px}
+.filter-large{display:flex;align-items:center;gap:8px;cursor:pointer}
+.filter-large input{width:20px;height:20px}
+.filter-none{color:var(--text-secondary);text-align:center}
+.game-card[hidden]{display:none!important}
+[hidden]{display:none!important}
