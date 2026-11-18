@@ -31,7 +31,12 @@ const PlatformHeader = {
         this._syncLanguage();
         this._applyTheme();
         this._applyHighContrast();
-        try { if (localStorage.getItem('games_hub_large') === '1') document.documentElement.setAttribute('data-large-text', ''); } catch (e) {}
+        try {
+            if (localStorage.getItem('games_hub_large') === '1') {
+                document.documentElement.setAttribute('data-large-text', '');
+                document.getElementById('platform-large-btn')?.setAttribute('aria-pressed', 'true');
+            }
+        } catch (e) {}
 
         // React to auth state
         if (typeof PlatformAuth !== 'undefined') {
@@ -83,32 +88,47 @@ const PlatformHeader = {
                         </button>
                     </div>
 
-                    <!-- Language -->
-                    <div class="platform-lang-group" role="group" aria-label="${t('language')}" id="platform-lang-group">
-                        <button class="lang-pill" data-lang="es-ES" aria-label="Castellano" title="Castellano">ES</button>
-                        <button class="lang-pill" data-lang="en-US" aria-label="English"    title="English">EN</button>
-                        <button class="lang-pill" data-lang="eu-ES" aria-label="Euskara"    title="Euskara">EU</button>
-                    </div>
-
-                    <!-- High contrast -->
-                    <button class="platform-icon-btn" id="platform-contrast-btn"
-                            aria-label="${t('highContrast')}" title="${t('highContrast')}"
-                            aria-pressed="false">
-                        ◑
-                    </button>
-
-                    <!-- Theme toggle -->
-                    <button class="platform-icon-btn" id="platform-theme-btn"
-                            aria-label="${t('toggleTheme')}" title="${t('toggleTheme')}">
-                        <span class="theme-icon-dark"  aria-hidden="true">🌙</span>
-                        <span class="theme-icon-light" aria-hidden="true">☀️</span>
-                    </button>
+                    <!-- Settings (language, theme, contrast, large text) -->
+                    <button class="platform-icon-btn" id="platform-settings-btn"
+                            aria-label="${t('settings')}" title="${t('settings')}"
+                            aria-haspopup="true" aria-expanded="false" aria-controls="platform-settings-panel">⚙️</button>
 
                     <!-- User area (filled dynamically) -->
                     <div id="platform-user-area"></div>
                 </nav>
             </div>
         `;
+
+        // Settings panel (kept in the DOM so the existing handlers find their ids)
+        const panel = document.createElement('div');
+        panel.className = 'platform-settings-panel';
+        panel.id = 'platform-settings-panel';
+        panel.hidden = true;
+        panel.innerHTML = `
+            <div class="platform-settings-row">
+                <span>${t('language')}</span>
+                <div class="platform-lang-group" role="group" aria-label="${t('language')}" id="platform-lang-group">
+                    <button class="lang-pill" data-lang="es-ES" aria-label="Castellano" title="Castellano">ES</button>
+                    <button class="lang-pill" data-lang="en-US" aria-label="English"    title="English">EN</button>
+                    <button class="lang-pill" data-lang="eu-ES" aria-label="Euskara"    title="Euskara">EU</button>
+                </div>
+            </div>
+            <div class="platform-settings-row">
+                <span>${t('theme2')}</span>
+                <button class="platform-icon-btn" id="platform-theme-btn" aria-label="${t('toggleTheme')}" title="${t('toggleTheme')}">
+                    <span class="theme-icon-dark"  aria-hidden="true">🌙</span>
+                    <span class="theme-icon-light" aria-hidden="true">☀️</span>
+                </button>
+            </div>
+            <div class="platform-settings-row">
+                <span>${t('highContrast')}</span>
+                <button class="platform-icon-btn" id="platform-contrast-btn" aria-label="${t('highContrast')}" title="${t('highContrast')}" aria-pressed="false">◑</button>
+            </div>
+            <div class="platform-settings-row">
+                <span>${t('largeText')}</span>
+                <button class="platform-icon-btn" id="platform-large-btn" aria-label="${t('largeText')}" title="${t('largeText')}" aria-pressed="false">A+</button>
+            </div>`;
+        document.body.appendChild(panel);
 
         // Insert before everything else in <body>
         document.body.insertBefore(header, document.body.firstChild);
@@ -151,6 +171,7 @@ const PlatformHeader = {
             this._userProfile = null;
         }
         this._renderUserArea();
+        document.dispatchEvent(new CustomEvent('platformProfileReady', { detail: this._userProfile }));
     },
 
     _renderUserArea() {
@@ -181,15 +202,16 @@ const PlatformHeader = {
                 ?.addEventListener('click', e => { e.stopPropagation(); this._toggleDropdown(); });
             this._buildDropdown(u, level, lvlName);
         } else {
+            const here = location.pathname.replace(/^\//, '') + location.search;
+            const next = /^[\w\-./]+(\?[\w=&\-]*)?$/.test(here) && !/entrar\.html/.test(here) ? '?next=' + encodeURIComponent(here) : '';
             area.innerHTML = `
-                <button class="platform-signin-btn" id="platform-signin-btn"
-                        aria-label="${t('signInWithGoogle')}">
+                <a class="platform-signin-btn" id="platform-signin-btn"
+                   href="${this._opts.rootPath}entrar.html${next}"
+                   aria-label="${t('signInWithGoogle')}">
                     ${this._googleIcon()}
-                    <span>${t('signInWithGoogle')}</span>
-                </button>
+                    <span class="platform-signin-text">${t('enter')}</span>
+                </a>
             `;
-            document.getElementById('platform-signin-btn')
-                ?.addEventListener('click', () => this._signIn());
         }
     },
 
@@ -413,11 +435,33 @@ const PlatformHeader = {
             }
         });
 
+        // Settings panel: toggle, close on outside click
+        document.addEventListener('click', e => {
+            const panel = document.getElementById('platform-settings-panel');
+            const btn = document.getElementById('platform-settings-btn');
+            if (!panel || !btn) return;
+            if (e.target.closest('#platform-settings-btn')) {
+                panel.hidden = !panel.hidden;
+                btn.setAttribute('aria-expanded', String(!panel.hidden));
+            } else if (!e.target.closest('#platform-settings-panel')) {
+                panel.hidden = true;
+                btn.setAttribute('aria-expanded', 'false');
+            }
+            if (e.target.closest('#platform-large-btn')) {
+                const on = !document.documentElement.hasAttribute('data-large-text');
+                document.documentElement.toggleAttribute('data-large-text', on);
+                try { localStorage.setItem('games_hub_large', on ? '1' : '0'); } catch (err) {}
+                document.getElementById('platform-large-btn')?.setAttribute('aria-pressed', String(on));
+            }
+        });
+
         // Escape closes dropdown
         document.addEventListener('keydown', e => {
             if (e.key === 'Escape') {
                 this._closeDropdown();
                 this._closeGamesMenu();
+                const sp = document.getElementById('platform-settings-panel');
+                if (sp) sp.hidden = true;
             }
         });
 

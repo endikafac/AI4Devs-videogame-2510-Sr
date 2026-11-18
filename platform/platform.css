@@ -582,3 +582,19 @@ a.platform-dropdown-item:hover { background: var(--bg-raised); }
 
 /* Large text option (set from the hub, applies to every page that loads platform.css) */
 html[data-large-text]{font-size:125%}
+
+/* ── Settings panel + compact mobile header ───────────────────────────────── */
+.platform-settings-panel { position: fixed; top: calc(var(--header-height) + 6px); right: 8px;
+  width: min(320px, calc(100vw - 16px)); background: var(--bg-surface); color: var(--text-primary);
+  border: 1px solid var(--border-color); border-radius: var(--radius-md); box-shadow: var(--shadow-lg);
+  padding: 12px 14px; z-index: 1100; display: flex; flex-direction: column; gap: 12px; }
+.platform-settings-panel[hidden] { display: none; }
+.platform-settings-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.platform-settings-row > span { color: var(--text-secondary); font-size: .95rem; }
+.platform-signin-btn { text-decoration: none; }
+.platform-icon-btn[aria-pressed="true"] { background: var(--hub-brand-color); color: #fff; }
+@media (max-width: 480px) {
+  .platform-signin-text { display: none; }
+  .platform-signin-btn { padding: 6px 10px; }
+  .platform-controls { gap: 6px; }
+}

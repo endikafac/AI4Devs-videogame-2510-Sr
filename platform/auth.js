@@ -16,6 +16,7 @@ const PlatformAuth = {
             console.warn('[Auth] Firebase not configured. Running in local mode.');
             return;
         }
+        GamesHubAuth.getRedirectResult().catch(err => console.warn('[Auth] redirect result:', err && err.code));
         GamesHubAuth.onAuthStateChanged(firebaseUser => {
             this._handleAuthChange(firebaseUser);
         });
@@ -33,6 +34,12 @@ const PlatformAuth = {
             const result = await GamesHubAuth.signInWithPopup(GoogleProvider);
             return this._normalize(result.user);
         } catch (err) {
+            // Phones and in-app browsers often block popups: use the redirect flow instead.
+            if (err && (err.code === 'auth/popup-blocked' ||
+                        err.code === 'auth/operation-not-supported-in-this-environment')) {
+                await GamesHubAuth.signInWithRedirect(GoogleProvider);
+                return null;
+            }
             console.error('[Auth] Google sign-in error:', err);
             throw err;
         }

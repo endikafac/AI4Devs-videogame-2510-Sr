@@ -68,7 +68,7 @@ function shell(){
     </span>
     <span class="fsz" role="group" aria-label="${S.size}"><button class="btn" id="fsm" aria-label="${S.size} −">A−</button><button class="btn" id="fsp" aria-label="${S.size} +">A+</button></span>
     <button class="btn t hide-m" id="b-print">${S.print}</button>
-    <a class="btn" href="../../index.html" aria-label="Games Hub">🎮 Games Hub</a>
+    <a class="btn" href="../../index.html" aria-label="Games Hub">🎮<span class="hide-m"> Games Hub</span></a>
     <a class="btn" href="../index.html" aria-label="home">🏠</a>
   </div>
   <nav class="tabs">${TABS.map(k=>`<a href="${k}.html" ${k===PAGE||(PAGE==="elemento"&&k==="fichas")?'aria-current="page"':""}>${S.tabs[k]}</a>`).join("")}</nav>
