@@ -211,6 +211,15 @@ function renderQuizPage(ctx){
       const pct = score/total;
       const msg = pct>=.9?x.r3:pct>=.6?x.r2:x.r1;
       if(pct>=.6) confetti();
+      try{
+        const u = typeof PlatformAuth!=="undefined" && PlatformAuth.currentUser;
+        if(u && typeof PlatformFirestore!=="undefined"){
+          PlatformFirestore.updateGameStats(u.uid, "tablaPeriodica", {
+            correctAnswers: score, totalQuestions: total, totalAttempts: total,
+            bestStreak: streak, elapsedSeconds: 0, level: 1
+          }).catch(()=>{});
+        }
+      }catch(e){}
       box.innerHTML = `<div class="bigem">${pct>=.9?"🏆":pct>=.6?"🌟":"💪"}</div><div class="q">${x.endH}</div>
         <div class="score" style="font-size:2rem">⭐ ${score} ${x.of} ${total} ${x.right}</div><div class="hintq">${msg}</div>
         <div class="fbtns"><button class="btn y" id="again">${x.again} (${total})</button><button class="btn" id="chg">${x.change}</button></div>`;
