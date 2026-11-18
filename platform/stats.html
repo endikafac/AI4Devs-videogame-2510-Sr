@@ -43,6 +43,8 @@ const GAME_LABELS = {
     wordSearch:   { icon: '🔍', name: 'WordSearch' },
     crossword:    { icon: '✏️', name: 'Crucigrama' },
     geoQuiz:      { icon: '🗺️', name: 'GeoQuiz' },
+    euskera:      { icon: '🏴', name: 'Nor-Nori-Nork' },
+    englishVerbs: { icon: '🇬🇧', name: 'Irregular Verbs' },
 };
 
 function formatTime(seconds) {
@@ -61,7 +63,7 @@ async function renderStats(uid) {
     }
 
     // Global stats (from user profile)
-    const gameIds = ['mathMaster', 'snake', 'tableMaster', 'typingMaster', 'wordSearch', 'crossword', 'geoQuiz'];
+    const gameIds = ['mathMaster', 'snake', 'tableMaster', 'typingMaster', 'wordSearch', 'crossword', 'geoQuiz', 'euskera', 'englishVerbs'];
     let totalGames = 0, totalPoints = 0, totalTime = 0;
 
     html += '<div class="stats-section"><div class="stats-section-title">🌐 General</div><div class="stats-grid" id="global-stats-grid"></div></div>';

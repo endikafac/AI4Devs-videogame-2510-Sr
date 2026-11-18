@@ -729,9 +729,9 @@ const EnglishVerbsGame = (() => {
         }
 
         if (typeof PlatformFirestore !== 'undefined' &&
-            typeof appState !== 'undefined' &&
-            appState.currentUser) {
-            PlatformFirestore.updateGameStats(appState.currentUser.uid, 'english-irregular-verbs', {
+            typeof PlatformAuth !== 'undefined' &&
+            PlatformAuth.currentUser) {
+            PlatformFirestore.updateGameStats(PlatformAuth.currentUser.uid, 'englishVerbs', {
                 correctAnswers: state.correct,
                 totalQuestions: total,
                 totalAttempts: total,

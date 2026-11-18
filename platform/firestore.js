@@ -57,6 +57,13 @@ const PlatformFirestore = {
         return { points, xp };
     },
 
+    // ── Game ids ─────────────────────────────────────────────────────────────
+    // Games and pages used different spellings (tableMaster / tablemaster).
+    // Stored data uses the lowercase form for these two, so every entry point
+    // goes through _gid() and both spellings reach the same document.
+    _ID_ALIASES: { mathMaster: 'mathmaster', tableMaster: 'tablemaster' },
+    _gid(id) { return this._ID_ALIASES[id] || id; },
+
     // ── User profile ─────────────────────────────────────────────────────────
 
     async getOrCreateProfile(uid, authUser) {
@@ -99,6 +106,7 @@ const PlatformFirestore = {
     // ── Game statistics (per game namespace) ─────────────────────────────────
 
     async getGameStats(uid, gameId) {
+        gameId = this._gid(gameId);
         if (!window.GamesHubDB) return this._localLoad(`stats_${gameId}`) || this._defaultStats();
         const snap = await GamesHubDB.collection('users').doc(uid)
             .collection('games').doc(gameId).get();
@@ -106,6 +114,7 @@ const PlatformFirestore = {
     },
 
     async updateGameStats(uid, gameId, gameResult) {
+        gameId = this._gid(gameId);
         const points = this.calculatePoints(gameResult);
         gameResult.points = points.points;
         gameResult.xp     = points.xp;
@@ -139,6 +148,7 @@ const PlatformFirestore = {
     // ── Achievements ─────────────────────────────────────────────────────────
 
     async getAchievements(uid, gameId) {
+        gameId = this._gid(gameId);
         if (!window.GamesHubDB) {
             return this._localLoad(`achievements_${gameId}`) || { unlockedAchievements: [] };
         }
@@ -148,6 +158,7 @@ const PlatformFirestore = {
     },
 
     async unlockAchievement(uid, gameId, achievementId) {
+        gameId = this._gid(gameId);
         if (!window.GamesHubDB) {
             const data = this._localLoad(`achievements_${gameId}`) || { unlockedAchievements: [] };
             if (!data.unlockedAchievements.includes(achievementId)) {
@@ -166,6 +177,7 @@ const PlatformFirestore = {
     // ── Leaderboard ───────────────────────────────────────────────────────────
 
     async getLeaderboard(gameId, limit = 10) {
+        gameId = this._gid(gameId);
         if (!window.GamesHubDB) return [];
         const snap = await GamesHubDB.collection('leaderboard').doc(gameId)
             .collection('scores')

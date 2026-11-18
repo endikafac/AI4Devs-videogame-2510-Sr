@@ -608,16 +608,16 @@ const GeoQuiz = (() => {
 
         // Save to platform if logged in
         try {
-            const uid = (window.appState && appState.currentUser) ? appState.currentUser.uid : null;
+            const uid = (typeof PlatformAuth !== 'undefined' && PlatformAuth.currentUser) ? PlatformAuth.currentUser.uid : null;
             if (uid && window.PlatformFirestore) {
                 PlatformFirestore.updateGameStats(uid, 'geoQuiz', {
-                    points: state.quizScore,
-                    correct: state.quizCorrect,
-                    total,
-                    elapsed,
-                    level: state.quizLevel,
-                    stars,
-                });
+                    correctAnswers: state.quizCorrect,
+                    totalQuestions: total,
+                    totalAttempts:  total,
+                    bestStreak:     0,
+                    elapsedSeconds: elapsed,
+                    level:          state.quizLevel,
+                }).catch(() => {});
             }
             if (window.PlatformAchievements) {
                 PlatformAchievements.checkGameAchievements('geoQuiz', {
