@@ -36,6 +36,7 @@
         <div class="chip-row" id="f-cat" role="group"></div>
     </section>
 
+    <a id="hub-continue" class="hub-continue" hidden></a>
     <section id="hub-grid" class="hub-grid" aria-live="polite"></section>
     <p class="hub-none" id="hub-none" hidden></p>
 </main>
@@ -85,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
             kids: 'Peques (6-9)', teens: 'Jóvenes (10-16)', adults: 'Mayores y adultos',
             math: 'Matemáticas', lang: 'Lengua e idiomas', science: 'Ciencia', geo: 'Geografía', arcade: 'Reflejos',
             age: a => (a.endsWith('+') ? `${a.replace('+', '')}+ años` : `${a} años`),
-            none: 'No hay juegos con ese filtro. Prueba con otro.', privacy: 'Privacidad y mis datos', play: 'Jugar',
+            none: 'No hay juegos con ese filtro. Prueba con otro.', privacy: 'Privacidad y mis datos', play: 'Jugar', cont: 'Seguir jugando a',
             lab: 'Novedad', labTitle: 'Tabla periódica', labDesc: 'Descubre los 118 elementos, sus secretos y moléculas. Con fichas y un minijuego (castellano y euskera).',
             labTable: '🧪 La tabla', labQuiz: '🎮 Minijuego', labSecrets: '🤫 Secretos', labLearn: '🔍 Aprende',
             d: {
@@ -107,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
             kids: 'Little ones (6-9)', teens: 'Teens (10-16)', adults: 'Seniors and adults',
             math: 'Maths', lang: 'Language', science: 'Science', geo: 'Geography', arcade: 'Reflexes',
             age: a => (a.endsWith('+') ? `ages ${a}` : `ages ${a}`),
-            none: 'No games match this filter. Try another one.', privacy: 'Privacy and my data', play: 'Play',
+            none: 'No games match this filter. Try another one.', privacy: 'Privacy and my data', play: 'Play', cont: 'Keep playing',
             lab: 'New', labTitle: 'Periodic table', labDesc: 'Discover the 118 elements, their secrets and molecules. With cards and a mini-game (Spanish and Basque).',
             labTable: '🧪 The table', labQuiz: '🎮 Mini-game', labSecrets: '🤫 Secrets', labLearn: '🔍 Learn',
             d: {
@@ -129,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
             kids: 'Txikiak (6-9)', teens: 'Gazteak (10-16)', adults: 'Nagusiak eta helduak',
             math: 'Matematika', lang: 'Hizkuntzak', science: 'Zientzia', geo: 'Geografia', arcade: 'Erreflexuak',
             age: a => `${a} urte`,
-            none: 'Ez dago iragazki horrekin bat datorren jokorik. Probatu beste bat.', privacy: 'Pribatutasuna eta nire datuak', play: 'Jokatu',
+            none: 'Ez dago iragazki horrekin bat datorren jokorik. Probatu beste bat.', privacy: 'Pribatutasuna eta nire datuak', play: 'Jokatu', cont: 'Jarraitu jolasten:',
             lab: 'Berria', labTitle: 'Taula periodikoa', labDesc: 'Ezagutu 118 elementuak, haien sekretuak eta molekulak. Fitxekin eta joko batekin.',
             labTable: '🧪 Taula', labQuiz: '🎮 Jokoa', labSecrets: '🤫 Sekretuak', labLearn: '🔍 Ikasi',
             d: {
@@ -193,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </article>`;
             }
-            return `<a class="tile c-${g.cat}" href="${g.href}" aria-label="${esc(t.play)} ${esc(g.title)}">
+            return `<a class="tile c-${g.cat}" data-id="${g.id}" href="${g.href}" aria-label="${esc(t.play)} ${esc(g.title)}">
                 <div class="tile-icon" aria-hidden="true">${g.icon}</div>
                 <h2 class="tile-title">${esc(g.title)}</h2>
                 <p class="tile-desc">${esc(t.d[g.id])}</p>
@@ -227,7 +228,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function renderAll() { renderMe(); renderChips(); renderGrid(); }
+    function renderContinue() {
+        const g = GAMES.find(x => x.id === store.get('games_hub_last'));
+        const a = $('hub-continue');
+        if (!g || !g.href) { a.hidden = true; return; }
+        a.hidden = false; a.href = g.href;
+        a.className = 'hub-btn hub-continue c-' + g.cat;
+        a.textContent = '▶ ' + tr().cont + ' ' + g.title;
+    }
+    $('hub-grid').addEventListener('click', e => {
+        const tl = e.target.closest('.tile[data-id]');
+        if (tl) store.set('games_hub_last', tl.dataset.id);
+    });
+
+    function renderAll() { renderMe(); renderChips(); renderGrid(); renderContinue(); }
 
     document.querySelector('.hub-filters').addEventListener('click', e => {
         const b = e.target.closest('.chip');

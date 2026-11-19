@@ -89,3 +89,6 @@ body { background: var(--bg-page); color: var(--text-primary); font-family: var(
 }
 [data-high-contrast="true"] .tile { border: 2px solid var(--text-primary); }
 @media (prefers-reduced-motion: reduce) { .tile { transition: none; } }
+
+.hub-continue { margin-bottom: 14px; width: 100%; background: var(--tc, var(--hub-brand-color)); }
+@media (min-width: 640px) { .hub-continue { width: auto; } }
