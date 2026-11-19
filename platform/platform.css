@@ -598,3 +598,15 @@ html[data-large-text]{font-size:125%}
   .platform-signin-btn { padding: 6px 10px; }
   .platform-controls { gap: 6px; }
 }
+
+/* Touch targets: at least 40px for the shared header controls (override the 375px shrink above) */
+.platform-icon-btn, .platform-settings-panel .platform-icon-btn { min-width: 40px; min-height: 40px; width: 40px; height: 40px; }
+.platform-games-btn { min-height: 40px; min-width: 44px; }
+.platform-signin-btn { min-height: 40px; min-width: 40px; }
+.platform-logo { min-height: 40px; min-width: 40px; display: inline-flex; align-items: center; }
+.platform-lang-group .lang-pill { min-height: 36px; min-width: 36px; }
+@media (max-width: 375px) {
+    .platform-icon-btn { width: 40px; height: 40px; font-size: 1.1rem; }
+    .platform-lang-group .lang-pill { padding: 2px 6px; font-size: .75rem; }
+}
+.hub-footer a { display: inline-block; padding: 12px 8px; }

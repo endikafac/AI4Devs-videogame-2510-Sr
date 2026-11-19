@@ -1088,7 +1088,7 @@
 }
 @media (max-width: 520px) {
     .eu-level-grid {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(4, minmax(0, 1fr));
     }
     .eu-options {
         grid-template-columns: 1fr;
