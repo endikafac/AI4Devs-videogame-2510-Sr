@@ -160,13 +160,16 @@ const PlatformHeader = {
 
     async _onAuthChange(user) {
         if (user) {
-            this._userProfile = await PlatformFirestore.getOrCreateProfile(user.uid, user)
+            this._userProfile = await PlatformFirestore.getOrCreateProfile(user.uid, user, { account: true })
                 .catch(() => user);
             if (typeof PlatformIdentity !== 'undefined' && PlatformIdentity.needsSetup(this._userProfile)) {
                 const saved = await PlatformIdentity.showSetup(this._userProfile, this._opts.rootPath);
                 if (!saved) { await this._signOut(); return; }
                 this._userProfile = { ...this._userProfile, ...saved, photoURL: null };
             }
+            // A child is playing under this account: use their nickname, avatar and progress
+            const kid = await PlatformFirestore.getActivePlayer(user.uid).catch(() => null);
+            if (kid) this._userProfile = { ...this._userProfile, ...kid, uid: user.uid, photoURL: null };
         } else {
             this._userProfile = null;
         }
@@ -230,6 +233,9 @@ const PlatformHeader = {
                     ${xpNext > 0 ? `<span style="color:var(--text-muted)"> (+${xpNext} → next)</span>` : ''}
                 </div>
             </div>
+            ${window.GamesHubDB ? `<button class="platform-dropdown-item" id="pd-players" role="menuitem">
+                <span aria-hidden="true">👨‍👩‍👧</span> ${t('players')}
+            </button>` : ''}
             <a class="platform-dropdown-item" href="${root}platform/stats.html" role="menuitem">
                 <span aria-hidden="true">📊</span> Estadísticas
             </a>
@@ -243,6 +249,12 @@ const PlatformHeader = {
                 <span aria-hidden="true">🚪</span> ${t('signOut')}
             </button>
         `;
+        document.getElementById('pd-players')?.addEventListener('click', async () => {
+            this._closeDropdown();
+            const uid = PlatformAuth.currentUser.uid;
+            const base = await PlatformFirestore.getOrCreateProfile(uid, PlatformAuth.currentUser, { account: true }).catch(() => u);
+            PlatformIdentity.showPlayers(uid, base);
+        });
         document.getElementById('pd-signout')?.addEventListener('click', () => {
             this._closeDropdown();
             this._signOut();

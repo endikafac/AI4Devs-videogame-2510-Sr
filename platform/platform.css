@@ -610,3 +610,13 @@ html[data-large-text]{font-size:125%}
     .platform-lang-group .lang-pill { padding: 2px 6px; font-size: .75rem; }
 }
 .hub-footer a { display: inline-block; padding: 12px 8px; }
+
+/* ── Player switcher ─────────────────────────────────────────────────────── */
+.pid-players { display: flex; flex-direction: column; gap: 8px; margin: 8px 0; }
+.pid-prow { display: flex; gap: 8px; align-items: stretch; }
+.pid-player { flex: 1; display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 8px 12px; text-align: left;
+  border-radius: var(--radius-md); border: 2px solid var(--border-color); background: var(--bg-surface); color: var(--text-primary); font: inherit; cursor: pointer; }
+.pid-player.sel { border-color: var(--hub-brand-color); }
+.pid-player small { display: block; color: var(--text-secondary); font-size: .8rem; }
+.pid-pav { font-size: 1.7rem; }
+.pid-del { min-width: 48px; padding: 0; }

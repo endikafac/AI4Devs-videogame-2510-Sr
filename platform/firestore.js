@@ -64,10 +64,48 @@ const PlatformFirestore = {
     _ID_ALIASES: { mathMaster: 'mathmaster', tableMaster: 'tablemaster' },
     _gid(id) { return this._ID_ALIASES[id] || id; },
 
+    // ── Players (children under a guardian account) ──────────────────────────
+    // users/{uid} is the account holder (adult, consent). Children are
+    // users/{uid}/players/{pid}, each with their own nickname and statistics.
+    // All stat functions go through _ref(uid), which follows the active player.
+
+    _pid(uid) {
+        try {
+            const v = localStorage.getItem('games_hub_player_' + uid);
+            return /^[a-z0-9]{6,20}$/.test(v || '') ? v : '';
+        } catch (e) { return ''; }
+    },
+    setActivePlayer(uid, pid) {
+        try { pid ? localStorage.setItem('games_hub_player_' + uid, pid) : localStorage.removeItem('games_hub_player_' + uid); } catch (e) {}
+    },
+    _ref(uid) {
+        const u = GamesHubDB.collection('users').doc(uid);
+        const pid = this._pid(uid);
+        return pid ? u.collection('players').doc(pid) : u;
+    },
+    _lbId(uid) { const pid = this._pid(uid); return pid ? uid + '_' + pid : uid; },
+    async listPlayers(uid) {
+        if (!window.GamesHubDB) return [];
+        const snap = await GamesHubDB.collection('users').doc(uid).collection('players').get();
+        return snap.docs.map(d => ({ pid: d.id, ...d.data() }));
+    },
+    /** Profile of the active child, or null when the adult plays. */
+    async getActivePlayer(uid) {
+        const pid = this._pid(uid);
+        if (!pid || !window.GamesHubDB) return null;
+        const snap = await GamesHubDB.collection('users').doc(uid).collection('players').doc(pid).get();
+        if (!snap.exists) { this.setActivePlayer(uid, ''); return null; }
+        return { pid, ...snap.data() };
+    },
+
     // ── User profile ─────────────────────────────────────────────────────────
 
-    async getOrCreateProfile(uid, authUser) {
+    async getOrCreateProfile(uid, authUser, opts) {
         if (!window.GamesHubDB) return this._localProfile(authUser);
+        if (!(opts && opts.account)) {
+            const kid = await this.getActivePlayer(uid).catch(() => null);
+            if (kid) return { ...kid, uid };
+        }
         const ref = GamesHubDB.collection('users').doc(uid);
         const snap = await ref.get();
         if (snap.exists) {
@@ -108,8 +146,7 @@ const PlatformFirestore = {
     async getGameStats(uid, gameId) {
         gameId = this._gid(gameId);
         if (!window.GamesHubDB) return this._localLoad(`stats_${gameId}`) || this._defaultStats();
-        const snap = await GamesHubDB.collection('users').doc(uid)
-            .collection('games').doc(gameId).get();
+        const snap = await this._ref(uid).collection('games').doc(gameId).get();
         return snap.exists ? snap.data() : this._defaultStats();
     },
 
@@ -126,17 +163,18 @@ const PlatformFirestore = {
             return { stats, points };
         }
 
-        const ref = GamesHubDB.collection('users').doc(uid).collection('games').doc(gameId);
+        const me = this._ref(uid);
+        const ref = me.collection('games').doc(gameId);
         const snap = await ref.get();
         const stats = snap.exists ? snap.data() : this._defaultStats();
         this._mergeStats(stats, gameResult);
         await ref.set(stats);
 
         // Update global XP and points on user profile
-        await GamesHubDB.collection('users').doc(uid).update({
+        await me.update({
             xp:          firebase.firestore.FieldValue.increment(points.xp),
             totalPoints: firebase.firestore.FieldValue.increment(points.points),
-            level:       this.levelFromXP((await GamesHubDB.collection('users').doc(uid).get()).data().xp + points.xp)
+            level:       this.levelFromXP((await me.get()).data().xp + points.xp)
         });
 
         // Update leaderboard
@@ -152,8 +190,7 @@ const PlatformFirestore = {
         if (!window.GamesHubDB) {
             return this._localLoad(`achievements_${gameId}`) || { unlockedAchievements: [] };
         }
-        const snap = await GamesHubDB.collection('users').doc(uid)
-            .collection('games').doc(gameId).get();
+        const snap = await this._ref(uid).collection('games').doc(gameId).get();
         return { unlockedAchievements: snap.data()?.unlockedAchievements || [] };
     },
 
@@ -167,7 +204,7 @@ const PlatformFirestore = {
             }
             return true;
         }
-        const ref = GamesHubDB.collection('users').doc(uid).collection('games').doc(gameId);
+        const ref = this._ref(uid).collection('games').doc(gameId);
         await ref.set({
             unlockedAchievements: firebase.firestore.FieldValue.arrayUnion(achievementId)
         }, { merge: true });
@@ -188,10 +225,10 @@ const PlatformFirestore = {
     },
 
     async _updateLeaderboard(uid, gameId, newPoints) {
-        const userSnap = await GamesHubDB.collection('users').doc(uid).get();
+        const userSnap = await this._ref(uid).get();
         const user     = userSnap.data();
         await GamesHubDB.collection('leaderboard').doc(gameId)
-            .collection('scores').doc(uid).set({
+            .collection('scores').doc(this._lbId(uid)).set({
                 uid,
                 username:    user.username,
                 avatar:      user.avatar || null,
