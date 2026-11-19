@@ -161,7 +161,7 @@ p.lead{font-size:1.12rem;margin:0 0 10px}
 .curio{background:#fff8d6;display:flex;gap:14px;align-items:center;font-size:1.2rem}
 .curio .em{font-size:2.6rem}
 .minipt{display:grid;grid-template-columns:repeat(18,1fr);gap:3px;max-width:640px}
-.minipt a{aspect-ratio:1;background:var(--c);border:1.5px solid var(--ink);border-radius:4px;display:grid;place-items:center;font-size:.55rem;font-weight:700;text-decoration:none;min-width:0}
+.minipt a{aspect-ratio:1;background:var(--c);border:1.5px solid var(--ink);border-radius:4px;display:grid;place-items:center;font-size:.7rem;font-weight:700;text-decoration:none;min-width:0}
 .minipt a.me{outline:3px solid var(--teal);transform:scale(1.5);z-index:2;background:var(--sun);border-width:2px}
 .minipt i{display:block}
 .nav2{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:22px}
@@ -235,7 +235,7 @@ body[data-page=tabla] .tbl{min-width:900px}
 .mhint{font-size:clamp(1.15rem,2.6vw,1.6rem);margin:6px 0 12px;line-height:1.3}
 .mfacts{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:12px}
 .mfacts span{background:#fff;border:2px solid var(--ink);border-radius:12px;padding:6px 10px}
-.mfacts small{display:block;color:var(--muted);font-weight:700;font-size:.7rem;text-transform:uppercase}
+.mfacts small{display:block;color:var(--muted);font-weight:700;font-size:.78rem;text-transform:uppercase}
 .mfacts b{font-family:"Fredoka",sans-serif;font-size:1.1rem}
 .muses{display:grid;gap:6px;margin-bottom:10px}
 .muses span{display:flex;gap:10px;align-items:center;background:#ffffffcc;border:2px solid var(--ink);border-radius:12px;padding:5px 10px;font-weight:700}
@@ -248,7 +248,7 @@ body[data-page=tabla] .tbl{min-width:900px}
 html{font-size:112.5%;-webkit-text-size-adjust:100%}
 .fsz{display:inline-flex;gap:6px}
 .fsz .btn{padding:5px 10px}
-.mixtag{font-family:"Quicksand",sans-serif;font-size:.7rem;background:#fff;border:2px solid var(--ink);border-radius:999px;padding:0 8px;vertical-align:middle}
+.mixtag{font-family:"Quicksand",sans-serif;font-size:.78rem;background:#fff;border:2px solid var(--ink);border-radius:999px;padding:0 8px;vertical-align:middle}
 .stickynav{position:fixed;left:0;right:0;bottom:0;z-index:35;display:flex;gap:10px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:#fff;border-top:4px solid var(--ink)}
 .stickynav .btn{flex:1;justify-content:center;font-size:1.1rem;padding:12px 8px;min-height:52px}
 body.has-sticky{padding-bottom:92px}
