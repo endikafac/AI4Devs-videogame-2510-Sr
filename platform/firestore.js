@@ -61,7 +61,7 @@ const PlatformFirestore = {
     // Games and pages used different spellings (tableMaster / tablemaster).
     // Stored data uses the lowercase form for these two, so every entry point
     // goes through _gid() and both spellings reach the same document.
-    _ID_ALIASES: { mathMaster: 'mathmaster', tableMaster: 'tablemaster' },
+    _ID_ALIASES: { mathMaster: 'mathmaster', tableMaster: 'tablemaster', vocabMaster: 'vocabmaster' },
     _gid(id) { return this._ID_ALIASES[id] || id; },
 
     // ── Players (children under a guardian account) ──────────────────────────

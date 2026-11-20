@@ -1,0 +1,9 @@
+{"langs":{"en":{"flag":"🇬🇧","name":{"es":"Inglés","en":"English","eu":"Ingelesa"},"tts":"en-GB"}},
+"packs":[
+{"file":"en/animals.json","id":"en-animals","lang":"en","from":"es","icon":"🐶","name":{"es":"Animales","en":"Animals","eu":"Animaliak"},"count":24},
+{"file":"en/colors.json","id":"en-colors","lang":"en","from":"es","icon":"🎨","name":{"es":"Colores y formas","en":"Colours and shapes","eu":"Koloreak eta formak"},"count":24},
+{"file":"en/food.json","id":"en-food","lang":"en","from":"es","icon":"🍎","name":{"es":"Comida","en":"Food","eu":"Janaria"},"count":24},
+{"file":"en/house.json","id":"en-house","lang":"en","from":"es","icon":"🏠","name":{"es":"La casa","en":"The house","eu":"Etxea"},"count":24},
+{"file":"en/body.json","id":"en-body","lang":"en","from":"es","icon":"🧍","name":{"es":"El cuerpo","en":"The body","eu":"Gorputza"},"count":24},
+{"file":"en/numbers.json","id":"en-numbers","lang":"en","from":"es","icon":"🔢","name":{"es":"Números y días","en":"Numbers and days","eu":"Zenbakiak eta egunak"},"count":24}
+]}

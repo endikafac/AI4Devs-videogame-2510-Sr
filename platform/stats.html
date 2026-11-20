@@ -39,6 +39,7 @@ const GAME_LABELS = {
     mathMaster:   { icon: '🧮', name: 'MathMaster' },
     snake:        { icon: '🐍', name: 'Snake' },
     tableMaster:  { icon: '✖',  name: 'TableMaster' },
+    vocabMaster:  { icon: '🗣️', name: 'VocabMaster' },
     typingMaster: { icon: '⌨️', name: 'TypeMaster' },
     wordSearch:   { icon: '🔍', name: 'WordSearch' },
     crossword:    { icon: '✏️', name: 'Crucigrama' },
@@ -64,7 +65,7 @@ async function renderStats(uid) {
     }
 
     // Global stats (from user profile)
-    const gameIds = ['mathMaster', 'snake', 'tableMaster', 'typingMaster', 'wordSearch', 'crossword', 'geoQuiz', 'euskera', 'englishVerbs', 'tablaPeriodica'];
+    const gameIds = ['mathMaster', 'snake', 'tableMaster', 'vocabMaster', 'typingMaster', 'wordSearch', 'crossword', 'geoQuiz', 'euskera', 'englishVerbs', 'tablaPeriodica'];
     let totalGames = 0, totalPoints = 0, totalTime = 0;
 
     html += '<div class="stats-section"><div class="stats-section-title">🌐 General</div><div class="stats-grid" id="global-stats-grid"></div></div>';

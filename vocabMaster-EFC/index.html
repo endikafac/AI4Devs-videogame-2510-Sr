@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="../manifest.json">
+    <meta name="theme-color" content="#ec4899">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="VocabMaster">
+    <link rel="apple-touch-icon" href="../icons/icon-192.png">
+    <meta name="description" content="VocabMaster: aprende vocabulario de idiomas con repaso espaciado, audio y ejercicios variados.">
+    <title>VocabMaster – Games Hub</title>
+    <link rel="stylesheet" href="../platform/platform.css">
+    <link rel="stylesheet" href="styles.css">
+    <link href="../fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<main id="main-content" class="vm-main">
+
+    <section id="vm-home" class="vm-screen">
+        <h1 class="vm-title" id="vm-h1">VocabMaster</h1>
+        <p class="vm-sub" id="vm-sub"></p>
+        <div class="vm-langs" id="vm-langs" role="group"></div>
+        <div class="vm-packs" id="vm-packs"></div>
+        <p class="vm-note" id="vm-note"></p>
+    </section>
+
+    <section id="vm-play" class="vm-screen" hidden>
+        <div class="vm-top">
+            <button class="vm-quit" id="vm-quit" type="button"></button>
+            <div class="vm-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i id="vm-barfill"></i></div>
+            <span class="vm-count" id="vm-count"></span>
+        </div>
+        <div class="vm-card" id="vm-card" aria-live="polite"></div>
+    </section>
+
+    <section id="vm-end" class="vm-screen" hidden>
+        <div class="vm-endbox">
+            <div class="vm-trophy" id="vm-trophy" aria-hidden="true"></div>
+            <h2 id="vm-endtitle"></h2>
+            <p id="vm-endtext"></p>
+            <div class="vm-endlist" id="vm-endlist"></div>
+            <div class="vm-endbtns">
+                <button class="vm-btn" id="vm-again" type="button"></button>
+                <button class="vm-btn ghost" id="vm-home-btn" type="button"></button>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore-compat.js"></script>
+<script src="../platform/firebase-config.js"></script>
+<script src="../platform/i18n-platform.js"></script>
+<script src="../platform/auth.js"></script>
+<script src="../platform/firestore.js"></script>
+<script src="../platform/identity.js"></script>
+<script src="../platform/platform-header.js"></script>
+<script src="game.js"></script>
+<script>
+    PlatformHeader.init({ gameName: 'VocabMaster', gameIcon: '🗣️', rootPath: '../' });
+    VocabMaster.init();
+</script>
+<script src="../platform/register-sw.js"></script>
+</body>
+</html>
