@@ -10,7 +10,9 @@
       "*.py",
       "index-videogames.py",
       ".claude/**",
-      "scripts/**"
+      "scripts/**",
+      "tests/**",
+      "docs/**"
     ],
     "headers": [
       {
