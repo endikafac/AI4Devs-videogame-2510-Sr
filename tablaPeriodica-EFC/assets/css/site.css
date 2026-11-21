@@ -425,3 +425,8 @@ body.has-sticky{padding-bottom:64px}
 
 /* Games Hub integration: keep the header inside narrow screens */
 @media (max-width:640px){.top .row{flex-wrap:wrap;row-gap:6px}.top .brand{flex:1 1 auto;min-width:0}}
+
+/* mobile: let the home grid shrink instead of overflowing */
+.home{grid-template-columns:minmax(0,1fr)}
+.lc a{min-width:0;overflow-wrap:anywhere;font-size:clamp(1rem,4.6vw,1.25rem)}
+@media (max-width:699px){.langs{grid-template-columns:minmax(0,1fr)}.fun-card{min-width:0}}

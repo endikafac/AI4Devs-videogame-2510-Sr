@@ -26,6 +26,7 @@ const PlatformHeader = {
     init(opts = {}) {
         this._opts = { gameName: '', gameIcon: '', rootPath: '../', ...opts };
         this._inject();
+        if (!window.PlatformAnalytics) { const a = document.createElement('script'); a.src = this._opts.rootPath + 'platform/analytics.js'; document.body.appendChild(a); }
         this._buildGamesMenu();
         this._bindEvents();
         this._syncLanguage();
@@ -134,6 +135,7 @@ const PlatformHeader = {
         document.body.appendChild(panel);
 
         // Insert before everything else in <body>
+        document.querySelectorAll('div#platform-header').forEach(el => el.remove());
         document.body.insertBefore(header, document.body.firstChild);
 
         // Toast container

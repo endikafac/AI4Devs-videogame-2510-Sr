@@ -24,7 +24,7 @@ service cloud.firestore {
         && request.resource.data.totalPoints >= 0;
 
       // Everything below (stats per game, child players and their stats): owner only
-      match /{path=**} {
+      match /{sub}/{document=**} {
         allow read, write: if isOwner(userId);
       }
     }
@@ -56,6 +56,27 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(['uid', 'createdAt']);
       allow update: if false;
       allow delete: if signedIn() && resource.data.uid == request.auth.uid;
+    }
+
+    // Anonymous usage analytics. Anyone can create one valid event (no ids, no personal data).
+    // Events are immutable and only admins (doc admins/{uid}, created by hand) can read them.
+    function isAdmin() {
+      return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+    match /analytics_events/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['ts', 'type', 'game', 'lang', 'auth', 'first'])
+        && request.resource.data.type in ['visit', 'play']
+        && request.resource.data.lang in ['es', 'en', 'eu', 'gl', 'ca', 'fr']
+        && shortString(request.resource.data.game, 24)
+        && request.resource.data.auth is bool
+        && request.resource.data.first is bool
+        && request.resource.data.ts == request.time;
+      allow read: if isAdmin();
+      allow update, delete: if false;
+    }
+    match /admins/{uid} {
+      allow read: if isOwner(uid);
+      allow write: if false;
     }
 
     // Weekly challenges: read-only for authenticated users (admin writes)

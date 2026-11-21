@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>Visitas - Games Hub</title>
+    <link rel="stylesheet" href="platform.css">
+    <link href="../fonts/fonts.css" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="i18n-platform.js"></script>
+    <script src="auth.js"></script>
+    <script src="firestore.js"></script>
+    <script src="identity.js"></script>
+    <script src="platform-header.js"></script>
+    <style>
+        body { background: var(--bg-page, #0f172a); color: var(--text-primary, #f8fafc); }
+        .ad { max-width: 960px; margin: 0 auto; padding: 80px 16px 40px; }
+        .ad h1 { font-family: var(--font-display, sans-serif); margin: 0 0 4px; }
+        .ad .sub { color: var(--text-secondary, #94a3b8); margin: 0 0 20px; }
+        .kpis { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-bottom: 24px; }
+        .kpi { background: var(--bg-surface, #1e293b); border: 1px solid var(--border-color, #334155); border-radius: 16px; padding: 14px; }
+        .kpi b { display: block; font-size: 1.8rem; font-family: var(--font-display, sans-serif); }
+        .kpi span { color: var(--text-secondary, #94a3b8); font-size: .8rem; }
+        .panel { background: var(--bg-surface, #1e293b); border: 1px solid var(--border-color, #334155); border-radius: 16px; padding: 14px; margin-bottom: 16px; }
+        .panel h2 { margin: 0 0 10px; font-size: 1rem; }
+        .bars { display: flex; align-items: flex-end; gap: 3px; height: 120px; }
+        .bars i { flex: 1; background: linear-gradient(#a5b4fc, #6366f1); border-radius: 4px 4px 0 0; min-height: 2px; position: relative; }
+        .bars-x { display: flex; gap: 3px; font-size: .62rem; color: var(--text-secondary, #94a3b8); }
+        .bars-x span { flex: 1; text-align: center; overflow: hidden; }
+        .row { display: grid; grid-template-columns: 110px 1fr 44px; gap: 8px; align-items: center; padding: 3px 0; font-size: .88rem; }
+        .row u { display: block; height: 10px; border-radius: 6px; background: #ec4899; text-decoration: none; }
+        .msg { padding: 24px; text-align: center; color: var(--text-secondary, #94a3b8); }
+    </style>
+</head>
+<body>
+<main id="main-content" class="ad">
+    <h1>Visitas</h1>
+    <p class="sub">Últimos 30 días. Datos anónimos: sin cookies, sin identificadores, sin IP.</p>
+    <div id="ad-body" class="msg">Cargando...</div>
+</main>
+<script>
+(function () {
+    const $ = id => document.getElementById(id);
+    const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const pad = n => String(n).padStart(2, '0');
+    const dkey = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+
+    function aggregate(events) {
+        const days = {}, hours = Array(24).fill(0), games = {}, langs = {};
+        let visits = 0, uniq = 0, logged = 0;
+        for (const e of events) {
+            const d = e.ts && e.ts.toDate ? e.ts.toDate() : new Date(e.ts);
+            const k = dkey(d); days[k] = (days[k] || 0) + 1;
+            hours[d.getHours()]++; visits++;
+            if (e.first) uniq++;
+            if (e.auth) logged++;
+            if (e.type === 'play') games[e.game] = (games[e.game] || 0) + 1;
+            langs[e.lang] = (langs[e.lang] || 0) + 1;
+        }
+        return { days, hours, games, langs, visits, uniq, logged };
+    }
+    function bars(map) {
+        const max = Math.max(1, ...Object.values(map).map(Number));
+        return Object.entries(map).sort((a, b) => b[1] - a[1]).slice(0, 12)
+            .map(([k, v]) => '<div class="row"><span>' + esc(k) + '</span><u style="width:' + Math.round(v / max * 100) + '%"></u><b>' + v + '</b></div>').join('') || '<p class="msg">Sin datos</p>';
+    }
+    function render(a) {
+        const today = new Date(), keys = [];
+        for (let i = 29; i >= 0; i--) { const d = new Date(today); d.setDate(d.getDate() - i); keys.push(dkey(d)); }
+        const dmax = Math.max(1, ...keys.map(k => a.days[k] || 0)), hmax = Math.max(1, ...a.hours);
+        $('ad-body').className = '';
+        $('ad-body').innerHTML =
+            '<div class="kpis"><div class="kpi"><b>' + a.visits + '</b><span>Entradas</span></div><div class="kpi"><b>' + a.uniq + '</b><span>Visitantes únicos (dispositivo/día)</span></div>' +
+            '<div class="kpi"><b>' + a.logged + '</b><span>Con cuenta</span></div><div class="kpi"><b>' + (a.visits - a.logged) + '</b><span>Invitados</span></div></div>' +
+            '<div class="panel"><h2>Entradas por día</h2><div class="bars">' + keys.map(k => '<i title="' + k + ': ' + (a.days[k] || 0) + '" style="height:' + Math.round((a.days[k] || 0) / dmax * 100) + '%"></i>').join('') + '</div>' +
+            '<div class="bars-x">' + keys.map(k => '<span>' + k.slice(8) + '</span>').join('') + '</div></div>' +
+            '<div class="panel"><h2>Horas con más actividad</h2><div class="bars">' + a.hours.map((v, h) => '<i title="' + h + ' h: ' + v + '" style="height:' + Math.round(v / hmax * 100) + '%"></i>').join('') + '</div>' +
+            '<div class="bars-x">' + a.hours.map((v, h) => '<span>' + h + '</span>').join('') + '</div></div>' +
+            '<div class="panel"><h2>Juegos más abiertos</h2>' + bars(a.games) + '</div>' +
+            '<div class="panel"><h2>Idiomas</h2>' + bars(a.langs) + '</div>';
+    }
+    async function load(user) {
+        if (!user) { $('ad-body').innerHTML = 'Inicia sesión con tu cuenta de administrador.'; return; }
+        try {
+            const since = new Date(Date.now() - 30 * 864e5);
+            const snap = await GamesHubDB.collection('analytics_events').where('ts', '>=', since).orderBy('ts', 'desc').limit(5000).get();
+            render(aggregate(snap.docs.map(d => d.data())));
+        } catch (e) {
+            $('ad-body').textContent = 'No tienes permiso para ver estas estadísticas (solo administradores).';
+        }
+    }
+    PlatformHeader.init({ gameName: 'Visitas', gameIcon: '📈', rootPath: '../' });
+    PlatformAuth.onAuthStateChanged(load);
+    if (typeof module !== 'undefined') module.exports = { aggregate };
+})();
+</script>
+</body>
+</html>
