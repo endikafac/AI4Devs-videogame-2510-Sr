@@ -58,6 +58,7 @@ const SECTION_LABELS = {
     mathMaster:   { es: '🧮 MathMaster', en: '🧮 MathMaster', eu: '🧮 MathMaster' },
     snake:        { es: '🐍 Snake', en: '🐍 Snake', eu: '🐍 Snake' },
     tableMaster:  { es: '✖ TableMaster', en: '✖ TableMaster', eu: '✖ TableMaster' },
+    vocabMaster:  { es: '🗣️ VocabMaster', en: '🗣️ VocabMaster', eu: '🗣️ VocabMaster' },
     typingMaster: { es: '⌨️ TypeMaster', en: '⌨️ TypeMaster', eu: '⌨️ TypeMaster' },
     wordSearch:   { es: '🔍 WordSearch', en: '🔍 WordSearch', eu: '🔍 WordSearch'  },
     crossword:    { es: '✏️ Crucigrama', en: '✏️ Crossword',  eu: '✏️ Gurutzegrama'},
@@ -71,7 +72,7 @@ function getLang() {
 
 async function renderAchievements(unlockedIds) {
     const lang = getLang();
-    const sections = ['hub', 'mathMaster', 'snake', 'tableMaster', 'typingMaster', 'wordSearch', 'crossword', 'geoQuiz'];
+    const sections = ['hub', 'mathMaster', 'snake', 'tableMaster', 'vocabMaster', 'typingMaster', 'wordSearch', 'crossword', 'geoQuiz'];
     let html = '';
 
     for (const section of sections) {
@@ -113,7 +114,7 @@ async function init() {
         PlatformAuth.onAuthStateChanged(async user => {
             if (user && typeof PlatformFirestore !== 'undefined') {
                 // Load achievements from all games
-                const gameIds = ['mathMaster', 'snake', 'tableMaster', 'typingMaster', 'wordSearch', 'crossword', 'geoQuiz'];
+                const gameIds = ['mathMaster', 'snake', 'tableMaster', 'vocabMaster', 'typingMaster', 'wordSearch', 'crossword', 'geoQuiz'];
                 const allAchievements = new Set();
                 for (const gid of gameIds) {
                     const data = await PlatformFirestore.getAchievements(user.uid, gid).catch(() => ({ unlockedAchievements: [] }));

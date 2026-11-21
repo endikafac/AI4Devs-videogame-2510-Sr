@@ -231,7 +231,32 @@ const VocabMaster = (() => {
                     correctAnswers: S.ok1, totalQuestions: S.total, totalAttempts: S.attempts, bestStreak: S.best,
                     elapsedSeconds: Math.round((Date.now() - S.t0) / 1000), level: 1, operation: S.pack.id });
             } catch (e) { console.warn('[VocabMaster] stats not saved', e); }
+            achieve();
         }
+    }
+
+    const NAMES = { vm_first: ['🌱', 'Primera palabra', 'First word', 'Lehen hitza'], vm_perfect: ['💯', 'Ronda perfecta', 'Perfect round', 'Txanda perfektua'],
+        vm_streak10: ['🔥', 'Imparable', 'Unstoppable', 'Geldiezina'], vm_learn25: ['📘', '25 palabras', '25 words', '25 hitz'], vm_explorer: ['🧭', 'Explorador', 'Explorer', 'Esploratzailea'],
+        vm_master: ['🎓', 'Tema dominado', 'Topic mastered', 'Gaia menperatuta'], vm_learn100: ['🏅', '100 palabras', '100 words', '100 hitz'], vm_legend: ['👑', 'Políglota', 'Polyglot', 'Poliglota'] };
+    async function achieve() {
+        if (!S.user || typeof PlatformFirestore === 'undefined' || !PlatformFirestore.unlockAchievement) return;
+        const learned = Object.values(S.prog).reduce((n, p) => n + Object.values(p).filter(x => x.b >= 3).length, 0);
+        const got = ['vm_first'];
+        if (S.ok1 === S.total) got.push('vm_perfect');
+        if (S.best >= 10) got.push('vm_streak10');
+        if (learned >= 25) got.push('vm_learn25');
+        if (learned >= 100) got.push('vm_learn100');
+        if (learned >= 250) got.push('vm_legend');
+        if (Object.keys(S.prog).length >= 3) got.push('vm_explorer');
+        if (S.pack.words.every(w => ((wp(S.pack.id, w.w) || {}).b || 0) >= 4)) got.push('vm_master');
+        try {
+            const have = (await PlatformFirestore.getAchievements(S.user.uid, 'vocabMaster')).unlockedAchievements || [];
+            for (const id of got.filter(i => !have.includes(i))) {
+                await PlatformFirestore.unlockAchievement(S.user.uid, 'vocabMaster', id);
+                const n = NAMES[id], li = { es: 1, en: 2, eu: 3 }[uiLang()] || 1;
+                if (window.PlatformHeader && PlatformHeader.showToast) PlatformHeader.showToast('🏆 ' + n[0] + ' ' + n[li], 'success', 4500);
+            }
+        } catch (e) { console.warn('[VocabMaster] achievements not saved', e); }
     }
 
     function init() {
