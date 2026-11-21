@@ -1,19 +1,316 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" id="html-root">
 <head>
     <meta charset="UTF-8">
-    <title>Índice de Juegos - AI4Devs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Games Hub: juegos educativos gratuitos para niños y mayores. Matemáticas, lengua, idiomas, geografía y ciencia.">
+    <title>Games Hub</title>
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Games Hub">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+    <link rel="stylesheet" href="platform/platform.css">
     <link rel="stylesheet" href="styles.css">
+    <link href="fonts/fonts.css" rel="stylesheet">
 </head>
 <body>
-    <div id="game-index">
-        <h1>Selecciona tu juego</h1>
-        <ul>
-            <li><a href="snake-EHS/index.html">Snake</a></li>
-        </ul>
-    </div>
-    <footer>
-        <p>© AI4Devs students</p>
-    </footer>
+
+<main id="main-content" class="hub" tabindex="-1">
+
+    <section class="hub-welcome" aria-labelledby="hub-title">
+        <div>
+            <h1 class="hub-title" id="hub-title"></h1>
+            <p class="hub-sub" id="hub-sub"></p>
+        </div>
+        <div class="hub-me" id="hub-me"></div>
+    </section>
+
+    <section class="hub-today" id="hub-today" aria-live="polite"></section>
+
+    <section class="hub-filters" aria-label="Filtros">
+        <div class="hub-search"><span aria-hidden="true">🔎</span><input id="hub-q" type="search" autocomplete="off" maxlength="40"></div>
+        <div class="chip-row" id="f-aud" role="group"></div>
+        <div class="chip-row" id="f-cat" role="group"></div>
+    </section>
+
+    <a id="hub-continue" class="hub-continue" hidden></a>
+    <section id="hub-grid" class="hub-grid" aria-live="polite"></section>
+    <p class="hub-none" id="hub-none" hidden></p>
+</main>
+
+<footer class="hub-footer"><a href="platform/privacy.html" id="hub-privacy"></a></footer>
+
+<!-- Firebase SDK (compat mode) -->
+<script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore-compat.js"></script>
+
+<!-- Platform modules -->
+<script src="platform/firebase-config.js"></script>
+<script src="platform/i18n-platform.js"></script>
+<script src="platform/auth.js"></script>
+<script src="platform/firestore.js"></script>
+<script src="platform/identity.js"></script>
+<script src="platform/platform-header.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    PlatformHeader.init({ gameName: '', gameIcon: '', rootPath: '' });
+
+    const IKURRINA = '<svg viewBox="0 0 90 60" role="img" aria-label="Ikurriña"><rect width="90" height="60" fill="#CC0000"/><line x1="0" y1="0" x2="90" y2="60" stroke="#007840" stroke-width="20"/><line x1="90" y1="0" x2="0" y2="60" stroke="#007840" stroke-width="20"/><rect x="38" y="0" width="14" height="60" fill="white"/><rect x="0" y="23" width="90" height="14" fill="white"/></svg>';
+    const UNION_JACK = '<svg viewBox="0 0 60 40" role="img" aria-label="Union Jack"><rect width="60" height="40" fill="#012169"/><line x1="0" y1="0" x2="60" y2="40" stroke="white" stroke-width="10"/><line x1="60" y1="0" x2="0" y2="40" stroke="white" stroke-width="10"/><rect x="25" y="0" width="10" height="40" fill="white"/><rect x="0" y="15" width="60" height="10" fill="white"/><rect x="27" y="0" width="6" height="40" fill="#C8102E"/><rect x="0" y="17" width="60" height="6" fill="#C8102E"/></svg>';
+
+    // ── Game catalogue (single source of truth for the home page) ───────────────
+    // aud: kids (6-9), teens (10-16), adults (seniors and adults)
+    const GAMES = [
+        { id: 'periodic',    href: 'tablaPeriodica-EFC/', cat: 'science', aud: 'kids teens adults', age: '6+', lab: true },
+        { id: 'mathmaster',  href: 'mathMaster-EFC/index.html',     cat: 'math',    aud: 'kids teens',        age: '6-14',  icon: '🧮', title: 'MathMaster' },
+        { id: 'tablemaster', href: 'tableMaster-EFC/index.html',    cat: 'math',    aud: 'kids teens',        age: '7-14',  icon: '✖️', title: 'TableMaster' },
+        { id: 'wordsearch',  href: 'wordSearch-EFC/index.html',     cat: 'lang',    aud: 'kids teens adults', age: '8-14',  icon: '🔍', title: 'WordSearch' },
+        { id: 'crossword',   href: 'crossword-EFC/index.html',      cat: 'lang',    aud: 'teens adults',      age: '9-16',  icon: '✏️', title: 'Crucigrama' },
+        { id: 'typemaster',  href: 'typingMaster-EFC/index.html',   cat: 'lang',    aud: 'kids teens adults', age: '8-16',  icon: '⌨️', title: 'TypeMaster' },
+        { id: 'euskera',     href: 'euskera-EFC/index.html',        cat: 'lang',    aud: 'kids teens adults', age: '7-16',  icon: IKURRINA, title: 'Nor-Nori-Nork' },
+        { id: 'vocab',       href: 'vocabMaster-EFC/index.html',    cat: 'lang',    aud: 'kids teens adults', age: '6+',    icon: '🗣️', title: 'VocabMaster' },
+        { id: 'english',     href: 'englishVerbs-EFC/index.html',   cat: 'lang',    aud: 'teens adults',      age: '8-16',  icon: UNION_JACK, title: 'Irregular Verbs' },
+        { id: 'geoquiz',     href: 'geoQuiz-EFC/index.html',        cat: 'geo',     aud: 'kids teens adults', age: '8-16',  icon: '🗺️', title: 'GeoQuiz' },
+        { id: 'snake',       href: 'snake-EHS/index.html',          cat: 'arcade',  aud: 'kids teens adults', age: '6+',    icon: '🐍', title: 'Snake' },
+    ];
+
+    const T = {
+        'es-ES': {
+            hello: '¡Hola! ¿A qué jugamos?', helloNick: n => `¡Hola, ${n}!`, sub: 'Juegos educativos gratuitos para pequeños y mayores.',
+            guest: 'Jugando como invitado', guestSub: 'Tu progreso se guarda solo en este dispositivo.', enter: 'Entrar',
+            level: 'Nivel', xp: 'XP', aud: 'Para quién', cat: 'Tema', all: 'Todos',
+            kids: 'Peques (6-9)', teens: 'Jóvenes (10-16)', adults: 'Mayores y adultos',
+            math: 'Matemáticas', lang: 'Lengua e idiomas', science: 'Ciencia', geo: 'Geografía', arcade: 'Reflejos',
+            age: a => (a.endsWith('+') ? `${a.replace('+', '')}+ años` : `${a} años`),
+            none: 'No hay juegos con ese filtro. Prueba con otro.', privacy: 'Privacidad y mis datos', play: 'Jugar', cont: 'Seguir jugando a',
+            search: 'Buscar un juego...', fav: '⭐ Favoritos', favAdd: 'Añadir a favoritos', favDel: 'Quitar de favoritos',
+            daily: 'Reto de hoy', dailyGo: 'Aceptar el reto', dailyDone: '¡Reto cumplido! Vuelve mañana.', streak: n => n === 1 ? '1 día seguido' : n + ' días seguidos',
+            streak0: 'Juega hoy y empieza tu racha', favNone: 'Aún no tienes favoritos. Toca la estrella de un juego.', count: n => n + ' juegos',
+            lab: 'Novedad', labTitle: 'Tabla periódica', labDesc: 'Descubre los 118 elementos, sus secretos y moléculas. Con fichas y un minijuego (castellano y euskera).',
+            labTable: '🧪 La tabla', labQuiz: '🎮 Minijuego', labSecrets: '🤫 Secretos', labLearn: '🔍 Aprende',
+            d: {
+                mathmaster: 'Sumas, restas, multiplicaciones y divisiones. 10 niveles.',
+                tablemaster: 'Multiplica y divide paso a paso, con repaso de tus errores.',
+                wordsearch: 'Encuentra palabras ocultas y aprende definiciones y sinónimos.',
+                crossword: 'Crucigramas de geografía, ciencia e historia. 10 niveles.',
+                typemaster: 'Aprende mecanografía y mide tu velocidad.',
+                euskera: 'Los auxiliares del euskera con teoría visual y vocabulario.',
+                vocab: 'Aprende vocabulario de inglés con audio y repaso espaciado.',
+                english: '70+ verbos irregulares con audio, por grupos y niveles.',
+                geoquiz: 'Países, capitales, ríos y montañas del mundo, España y Euskadi.',
+                snake: 'La clásica serpiente con un toque educativo.'
+            }
+        },
+        'en-US': {
+            hello: 'Hi! What shall we play?', helloNick: n => `Hi, ${n}!`, sub: 'Free educational games for little ones and grown-ups.',
+            guest: 'Playing as a guest', guestSub: 'Your progress is only saved on this device.', enter: 'Sign in',
+            level: 'Level', xp: 'XP', aud: 'For whom', cat: 'Topic', all: 'All',
+            kids: 'Little ones (6-9)', teens: 'Teens (10-16)', adults: 'Seniors and adults',
+            math: 'Maths', lang: 'Language', science: 'Science', geo: 'Geography', arcade: 'Reflexes',
+            age: a => (a.endsWith('+') ? `ages ${a}` : `ages ${a}`),
+            none: 'No games match this filter. Try another one.', privacy: 'Privacy and my data', play: 'Play', cont: 'Keep playing',
+            search: 'Search a game...', fav: '⭐ Favourites', favAdd: 'Add to favourites', favDel: 'Remove from favourites',
+            daily: 'Today\'s challenge', dailyGo: 'Take the challenge', dailyDone: 'Challenge done! Come back tomorrow.', streak: n => n === 1 ? '1 day in a row' : n + ' days in a row',
+            streak0: 'Play today and start your streak', favNone: 'No favourites yet. Tap the star on a game.', count: n => n + ' games',
+            lab: 'New', labTitle: 'Periodic table', labDesc: 'Discover the 118 elements, their secrets and molecules. With cards and a mini-game (Spanish and Basque).',
+            labTable: '🧪 The table', labQuiz: '🎮 Mini-game', labSecrets: '🤫 Secrets', labLearn: '🔍 Learn',
+            d: {
+                mathmaster: 'Addition, subtraction, multiplication and division. 10 levels.',
+                tablemaster: 'Multiply and divide step by step, with a review of your mistakes.',
+                wordsearch: 'Find hidden words and learn definitions and synonyms.',
+                crossword: 'Crosswords on geography, science and history. 10 levels.',
+                typemaster: 'Learn touch typing and measure your speed.',
+                euskera: 'Basque auxiliary verbs with visual theory and vocabulary.',
+                vocab: 'Learn English vocabulary with audio and spaced repetition.',
+                english: '70+ irregular verbs with audio, by groups and levels.',
+                geoquiz: 'Countries, capitals, rivers and mountains of the world, Spain and Euskadi.',
+                snake: 'The classic snake game with an educational twist.'
+            }
+        },
+        'eu-ES': {
+            hello: 'Kaixo! Zertan jolastuko dugu?', helloNick: n => `Kaixo, ${n}!`, sub: 'Joko hezigarri doakoak txikientzat eta nagusientzat.',
+            guest: 'Gonbidatu gisa jokatzen', guestSub: 'Zure aurrerapena gailu honetan bakarrik gordetzen da.', enter: 'Sartu',
+            level: 'Maila', xp: 'XP', aud: 'Norentzat', cat: 'Gaia', all: 'Guztiak',
+            kids: 'Txikiak (6-9)', teens: 'Gazteak (10-16)', adults: 'Nagusiak eta helduak',
+            math: 'Matematika', lang: 'Hizkuntzak', science: 'Zientzia', geo: 'Geografia', arcade: 'Erreflexuak',
+            age: a => `${a} urte`,
+            none: 'Ez dago iragazki horrekin bat datorren jokorik. Probatu beste bat.', privacy: 'Pribatutasuna eta nire datuak', play: 'Jokatu', cont: 'Jarraitu jolasten:',
+            search: 'Bilatu joko bat...', fav: '⭐ Gogokoenak', favAdd: 'Gehitu gogokoetara', favDel: 'Kendu gogokoetatik',
+            daily: 'Gaurko erronka', dailyGo: 'Onartu erronka', dailyDone: 'Erronka beteta! Itzuli bihar.', streak: n => n + ' egun segidan',
+            streak0: 'Jokatu gaur eta hasi zure bolada', favNone: 'Oraindik ez duzu gogokorik. Ukitu jokoaren izarra.', count: n => n + ' joko',
+            lab: 'Berria', labTitle: 'Taula periodikoa', labDesc: 'Ezagutu 118 elementuak, haien sekretuak eta molekulak. Fitxekin eta joko batekin.',
+            labTable: '🧪 Taula', labQuiz: '🎮 Jokoa', labSecrets: '🤫 Sekretuak', labLearn: '🔍 Ikasi',
+            d: {
+                mathmaster: 'Batuketak, kenketak, biderketak eta zatiketak. 10 maila.',
+                tablemaster: 'Biderkatu eta zatitu pausoz pauso, akatsak errepasatuz.',
+                wordsearch: 'Aurkitu ezkutuko hitzak eta ikasi definizioak eta sinonimoak.',
+                crossword: 'Geografia, zientzia eta historiako hitz gurutzatuak. 10 maila.',
+                typemaster: 'Ikasi mekanografia eta neurtu zure abiadura.',
+                euskera: 'Euskal aditz laguntzaileak teoria bisualarekin eta hiztegiarekin.',
+                vocab: 'Ikasi ingeleseko hiztegia audioarekin eta tarteko errepasoarekin.',
+                english: '70+ aditz irregular audioarekin, taldeka eta mailaka.',
+                geoquiz: 'Munduko, Espainiako eta Euskadiko herriak, hiriburuak, ibaiak eta mendiak.',
+                snake: 'Suge joko klasikoa ukitu hezigarriarekin.'
+            }
+        }
+    };
+    const tr = () => T[PlatformI18n.currentLanguage] || T['es-ES'];
+
+    const store = {
+        get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } },
+        set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} }
+    };
+    const today = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+    const dayNum = k => Math.round(Date.parse(k + 'T00:00:00Z') / 864e5);
+    const jget = (k, d) => { try { return JSON.parse(store.get(k)) ?? d; } catch (e) { return d; } };
+    const favs = new Set(jget('games_hub_favs', []));
+    const getStreak = () => { const s = jget('games_hub_streak', { last: '', n: 0 }); const gap = s.last ? dayNum(today()) - dayNum(s.last) : 99; return gap <= 1 ? s : { last: s.last, n: 0 }; };
+    function markPlayed(id) {
+        const s = getStreak(), t0 = today();
+        if (s.last !== t0) store.set('games_hub_streak', JSON.stringify({ last: t0, n: s.n + 1 }));
+        if (id === dailyGame().id) store.set('games_hub_daily_done', t0);
+    }
+    const pool = () => GAMES.filter(g => !g.lab);
+    const dailyGame = () => pool()[dayNum(today()) % pool().length];
+    const state = { q: '', aud: store.get('games_hub_f_aud') || 'all', cat: store.get('games_hub_f_cat') || 'all', profile: null };
+    const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const $ = id => document.getElementById(id);
+
+    // ── Render ──────────────────────────────────────────────────────────────
+    function renderChips() {
+        const t = tr();
+        const chips = (group, keys) => keys.map(k =>
+            `<button type="button" class="chip" data-g="${group}" data-v="${k}" aria-pressed="${state[group] === k}">${esc(k === 'all' ? t.all : t[k])}</button>`).join('');
+        $('f-aud').setAttribute('aria-label', t.aud);
+        $('f-cat').setAttribute('aria-label', t.cat);
+        $('f-aud').innerHTML = chips('aud', ['all', 'kids', 'teens', 'adults']);
+        $('f-cat').innerHTML = chips('cat', ['all', 'fav', 'math', 'lang', 'science', 'geo', 'arcade']);
+    }
+
+    function renderGrid() {
+        const t = tr();
+        const lang = PlatformI18n.currentLanguage.startsWith('eu') ? 'eu' : 'es';
+        const q = state.q.trim().toLowerCase();
+        const list = GAMES.filter(g => (state.cat === 'all' || (state.cat === 'fav' ? favs.has(g.id) : g.cat === state.cat)) &&
+                                       (!q || (g.lab ? t.labTitle : g.title + ' ' + (t.d[g.id] || '')).toLowerCase().includes(q)) &&
+                                       (state.aud === 'all' || g.aud.split(' ').includes(state.aud)));
+        $('hub-grid').innerHTML = list.map(g => {
+            if (g.lab) {
+                const base = `tablaPeriodica-EFC/${lang}/`;
+                const cells = [['H', '#ffb3b3'], ['He', '#c5cae9'], ['Li', '#ffb3b3'], ['C', '#e1bee7'], ['N', '#bbdefb'],
+                               ['O', '#bbdefb'], ['Fe', '#fff59d'], ['Cu', '#fff59d'], ['Ag', '#fff59d'], ['Au', '#fff59d']];
+                return `<article class="tile lab c-${g.cat}" aria-labelledby="t-lab">
+                    <div class="lab-top">
+                        <div class="lab-cells" aria-hidden="true">${cells.map(([s, c]) => `<b style="background:${c}">${s}</b>`).join('')}</div>
+                        <div>
+                            <div class="lab-new">${esc(t.lab)} · 🧪</div>
+                            <h2 class="tile-title" id="t-lab">${esc(t.labTitle)}</h2>
+                            <p class="tile-desc">${esc(t.labDesc)}</p>
+                        </div>
+                    </div>
+                    <div class="lab-actions">
+                        <a class="hub-btn" href="${base}tabla.html">${esc(t.labTable)}</a>
+                        <a class="hub-btn" href="${base}quiz.html">${esc(t.labQuiz)}</a>
+                        <a class="hub-btn" href="${base}secretos.html">${esc(t.labSecrets)}</a>
+                        <a class="hub-btn" href="${base}aprende.html">${esc(t.labLearn)}</a>
+                    </div>
+                </article>`;
+            }
+            const isFav = favs.has(g.id);
+            return `<div class="tile-wrap"><button type="button" class="fav" data-fav="${g.id}" aria-pressed="${isFav}" aria-label="${esc(isFav ? t.favDel : t.favAdd)}: ${esc(g.title)}">${isFav ? '★' : '☆'}</button><a class="tile c-${g.cat}" data-id="${g.id}" href="${g.href}" aria-label="${esc(t.play)} ${esc(g.title)}">
+                <div class="tile-icon" aria-hidden="true">${g.icon}</div>
+                <h2 class="tile-title">${esc(g.title)}</h2>
+                <p class="tile-desc">${esc(t.d[g.id])}</p>
+                <div class="tile-meta"><span class="tag">${esc(t[g.cat])}</span><span class="tag">${esc(t.age(g.age))}</span></div>
+            </a></div>`;
+        }).join('');
+        $('hub-none').hidden = list.length > 0;
+        $('hub-none').textContent = state.cat === 'fav' && !q ? t.favNone : t.none;
+    }
+
+    function renderMe() {
+        const t = tr();
+        const p = state.profile;
+        $('hub-title').textContent = p && p.username ? t.helloNick(p.username) : t.hello;
+        $('hub-sub').textContent = t.sub;
+        $('hub-privacy').textContent = t.privacy;
+        if (p && p.username) {
+            const xp = p.xp || 0;
+            const level = PlatformFirestore.levelFromXP(xp);
+            const th = PlatformFirestore.XP_THRESHOLDS || [];
+            const cur = th[level] ?? 0, next = th[level + 1];
+            const pct = next ? Math.max(0, Math.min(100, Math.round(((xp - cur) / (next - cur)) * 100))) : 100;
+            $('hub-me').innerHTML = `<div class="hub-me-avatar" aria-hidden="true">${esc(p.avatar || '🙂')}</div>
+                <div class="hub-me-info"><div class="hub-me-name">${esc(p.username)}</div>
+                <div class="hub-me-meta">${esc(t.level)} ${level} · ${xp} ${esc(t.xp)} · ⭐ ${(p.totalPoints || 0).toLocaleString()}</div>
+                <div class="hub-xp" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></div></div>`;
+        } else {
+            $('hub-me').innerHTML = `<div class="hub-me-avatar" aria-hidden="true">👋</div>
+                <div class="hub-me-info"><div class="hub-me-name">${esc(t.guest)}</div><div class="hub-me-meta">${esc(t.guestSub)}</div></div>
+                <a class="hub-btn" href="entrar.html">${esc(t.enter)}</a>`;
+        }
+    }
+
+    function renderToday() {
+        const t = tr(), g = dailyGame(), st = getStreak();
+        const done = store.get('games_hub_daily_done') === today();
+        const playedToday = st.last === today();
+        $('hub-today').innerHTML = `<a class="today-card c-${g.cat}${done ? ' done' : ''}" href="${g.href}" data-id="${g.id}">
+            <span class="today-ico" aria-hidden="true">${g.icon}</span>
+            <span class="today-txt"><span class="today-kicker">🎯 ${esc(t.daily)}</span><strong>${esc(g.title)}</strong>
+            <span>${esc(done ? t.dailyDone : t.d[g.id])}</span></span>
+            <span class="today-go">${done ? '✓' : esc(t.dailyGo) + ' ›'}</span></a>
+            <div class="streak${st.n && playedToday ? ' on' : ''}" title="${esc(t.streak0)}"><span class="streak-fire" aria-hidden="true">🔥</span>
+            ${st.n ? `<span class="streak-n">${st.n}</span>` : ""}<span>${esc(st.n ? t.streak(st.n) : t.streak0)}</span></div>`;
+    }
+
+    function renderContinue() {
+        const g = GAMES.find(x => x.id === store.get('games_hub_last'));
+        const a = $('hub-continue');
+        if (!g || !g.href) { a.hidden = true; return; }
+        a.hidden = false; a.href = g.href;
+        a.className = 'hub-btn hub-continue c-' + g.cat;
+        a.textContent = '▶ ' + tr().cont + ' ' + g.title;
+    }
+    $('hub-grid').addEventListener('click', e => {
+        const tl = e.target.closest('.tile[data-id]');
+        if (tl) { store.set('games_hub_last', tl.dataset.id); markPlayed(tl.dataset.id); }
+        const fb = e.target.closest('.fav');
+        if (fb) {
+            const id = fb.dataset.fav;
+            favs.has(id) ? favs.delete(id) : favs.add(id);
+            store.set('games_hub_favs', JSON.stringify([...favs]));
+            renderGrid();
+            const again = document.querySelector('.fav[data-fav="' + id + '"]'); if (again) again.focus();
+        }
+    });
+    $('hub-today').addEventListener('click', e => { const a = e.target.closest('[data-id]'); if (a) { store.set('games_hub_last', a.dataset.id); markPlayed(a.dataset.id); } });
+    $('hub-q').addEventListener('input', e => { state.q = e.target.value; renderGrid(); });
+
+    function renderAll() { renderMe(); renderToday(); renderChips(); $('hub-q').placeholder = tr().search; $('hub-q').setAttribute('aria-label', tr().search); renderGrid(); renderContinue(); }
+
+    document.querySelector('.hub-filters').addEventListener('click', e => {
+        const b = e.target.closest('.chip');
+        if (!b) return;
+        state[b.dataset.g] = b.dataset.v;
+        store.set('games_hub_f_' + b.dataset.g, b.dataset.v);
+        renderChips();
+        renderGrid();
+    });
+    document.addEventListener('platformLanguageChanged', renderAll);
+    document.addEventListener('platformProfileReady', e => { state.profile = e.detail; renderMe(); });
+
+    renderAll();
+});
+</script>
+<script src="platform/register-sw.js"></script>
 </body>
 </html>

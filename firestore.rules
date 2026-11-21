@@ -1,0 +1,67 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+    function isOwner(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+    function shortString(v, max) {
+      return v is string && v.size() <= max;
+    }
+
+    // Users: only the authenticated user can read/write/delete their own data.
+    // Delete is allowed so the GDPR "right to erasure" can be done from the client.
+    match /users/{userId} {
+      allow read, delete: if isOwner(userId);
+      allow create, update: if isOwner(userId)
+        && shortString(request.resource.data.username, 40)
+        && request.resource.data.xp is number
+        && request.resource.data.xp >= 0
+        && request.resource.data.totalPoints is number
+        && request.resource.data.totalPoints >= 0;
+
+      // Everything below (stats per game, child players and their stats): owner only
+      match /{path=**} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // Leaderboard. The client writes to leaderboard/{game}/scores/{uid}
+    // (the previous rule matched leaderboard/{game}/{uid}, so writes were denied).
+    // Scores are client-reported: a friendly ranking, not anti-cheat.
+    // Doc id is the uid (adult) or uid_playerId (child under that account).
+    function ownsScore(id) {
+      return signedIn() && (id == request.auth.uid || id.matches(request.auth.uid + '_[a-z0-9]{6,20}'));
+    }
+    match /leaderboard/{game}/scores/{userId} {
+      allow read: if signedIn();
+      allow create, update: if ownsScore(userId)
+        && request.resource.data.uid == request.auth.uid
+        && shortString(request.resource.data.username, 40)
+        && request.resource.data.totalPoints is number
+        && request.resource.data.totalPoints >= 0;
+      allow delete: if ownsScore(userId);
+    }
+
+    // Unique nicknames: doc id = normalised nickname. Anyone signed in can check
+    // one by id (get) but nobody can list them. A claim can never be overwritten.
+    match /nicknames/{key} {
+      allow get: if signedIn();
+      allow list: if false;
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['uid', 'createdAt']);
+      allow update: if false;
+      allow delete: if signedIn() && resource.data.uid == request.auth.uid;
+    }
+
+    // Weekly challenges: read-only for authenticated users (admin writes)
+    match /challenges/{challengeId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+  }
+}
