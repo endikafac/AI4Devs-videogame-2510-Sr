@@ -111,6 +111,9 @@ const PlatformHeader = {
                     <button class="lang-pill" data-lang="es-ES" aria-label="Castellano" title="Castellano">ES</button>
                     <button class="lang-pill" data-lang="en-US" aria-label="English"    title="English">EN</button>
                     <button class="lang-pill" data-lang="eu-ES" aria-label="Euskara"    title="Euskara">EU</button>
+                    <button class="lang-pill" data-lang="gl-ES" aria-label="Galego"     title="Galego">GL</button>
+                    <button class="lang-pill" data-lang="ca-ES" aria-label="Català"     title="Català">CA</button>
+                    <button class="lang-pill" data-lang="fr-FR" aria-label="Français"   title="Français">FR</button>
                 </div>
             </div>
             <div class="platform-settings-row">

@@ -126,3 +126,33 @@ body { background: var(--bg-page); color: var(--text-primary); font-family: var(
 .fav:hover { transform: scale(1.2); }
 .tile-wrap:hover > .tile { transform: translateY(-3px); box-shadow: 0 10px 26px rgba(0, 0, 0, .3); }
 @media (prefers-reduced-motion: reduce) { .streak.on .streak-fire, .today-card, .fav { animation: none; transition: none; } }
+
+
+/* ── Hub v3: visual polish ── */
+body { background-image: radial-gradient(900px 420px at 85% -80px, rgba(236, 72, 153, .16), transparent 70%), radial-gradient(800px 380px at -10% 0, rgba(99, 102, 241, .20), transparent 70%); background-repeat: no-repeat; }
+.hub-title { font-size: clamp(1.7rem, 6vw, 2.5rem); background: linear-gradient(90deg, #a5b4fc, #f9a8d4 55%, #fcd34d); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hub-sub { font-size: 1.02rem; }
+.hub-grid { gap: 14px; }
+@media (min-width: 640px) { .hub-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 980px) { .hub-grid { grid-template-columns: repeat(4, 1fr); } }
+.tile { min-height: 172px; padding: 16px 14px 14px; border-radius: 22px; border: 1px solid color-mix(in srgb, var(--tc) 35%, var(--border-color));
+  background: linear-gradient(165deg, color-mix(in srgb, var(--tc) 20%, var(--bg-surface)) 0%, var(--bg-surface) 62%); box-shadow: 0 4px 14px rgba(0, 0, 0, .18); }
+.tile::before { height: 5px; background: linear-gradient(90deg, var(--tc), color-mix(in srgb, var(--tc) 40%, #fff)); }
+.tile-icon { width: 60px; height: 60px; border-radius: 18px; font-size: 2.1rem; background: linear-gradient(135deg, color-mix(in srgb, var(--tc) 45%, #fff), var(--tc));
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--tc) 45%, transparent); }
+.tile-icon svg { width: 40px; }
+.tile-title { font-size: 1.12rem; margin-top: 6px; }
+.tile-desc { font-size: .86rem; line-height: 1.35; }
+.tile::after { content: "›"; position: absolute; right: 12px; bottom: 12px; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%;
+  background: var(--tc); color: #fff; font-size: 1.3rem; font-weight: 800; line-height: 1; transition: transform .15s; }
+.tile:hover::after { transform: translateX(3px); }
+.tile-meta { padding-right: 36px; }
+.tile-wrap:hover > .tile { box-shadow: 0 14px 30px color-mix(in srgb, var(--tc) 35%, transparent); }
+.streak { background: linear-gradient(120deg, rgba(245, 158, 11, .18), rgba(239, 68, 68, .12)); border-color: rgba(245, 158, 11, .45); color: var(--text-primary); }
+.streak-fire { filter: none; opacity: 1; }
+.today-card { min-height: 96px; }
+.today-ico { width: 64px; height: 64px; font-size: 2.3rem; }
+#f-aud .chip { min-height: 34px; padding: 4px 12px; font-size: .8rem; background: transparent; color: var(--text-secondary); }
+#f-aud .chip[aria-pressed="true"] { background: var(--bg-surface); border-color: #6366f1; color: var(--text-primary); }
+#f-cat .chip { font-weight: 700; }
+.hub-footer { padding: 24px 16px 40px; text-align: center; }
