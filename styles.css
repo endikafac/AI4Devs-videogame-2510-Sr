@@ -92,3 +92,37 @@ body { background: var(--bg-page); color: var(--text-primary); font-family: var(
 
 .hub-continue { margin-bottom: 14px; width: 100%; background: var(--tc, var(--hub-brand-color)); }
 @media (min-width: 640px) { .hub-continue { width: auto; } }
+
+
+/* ── Hub v2: today card, streak, search, favourites ── */
+.hub-today { display: grid; gap: 12px; margin: 0 0 18px; }
+@media (min-width: 720px) { .hub-today { grid-template-columns: 1fr auto; align-items: stretch; } }
+.today-card { position: relative; display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 20px; color: #fff; text-decoration: none; overflow: hidden;
+  background: linear-gradient(120deg, #6366f1, #ec4899 60%, #f59e0b); box-shadow: 0 8px 24px rgba(99, 102, 241, .35); transition: transform .15s, box-shadow .15s; }
+.today-card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(236, 72, 153, .4); }
+.today-card:active { transform: scale(.99); }
+.today-card.done { background: linear-gradient(120deg, #059669, #10b981); box-shadow: 0 8px 24px rgba(16, 185, 129, .3); }
+.today-card:focus-visible, .fav:focus-visible, .hub-search input:focus-visible { outline: 3px solid var(--hub-accent, #f59e0b); outline-offset: 2px; }
+.today-ico { flex: none; width: 56px; height: 56px; display: grid; place-items: center; font-size: 2rem; background: rgba(255,255,255,.2); border-radius: 16px; }
+.today-ico svg { width: 36px; height: auto; border-radius: 4px; }
+.today-txt { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; font-size: .88rem; }
+.today-txt strong { font-family: var(--font-display); font-size: 1.25rem; }
+.today-kicker { font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; opacity: .9; }
+.today-go { flex: none; font-weight: 800; background: rgba(255,255,255,.22); padding: 8px 14px; border-radius: 999px; font-size: .85rem; white-space: nowrap; }
+@media (max-width: 480px) { .today-go { display: none; } }
+.streak { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-radius: 20px; background: var(--bg-surface); border: 1px solid var(--border-color); color: var(--text-secondary); font-size: .85rem; }
+.streak-n { font-family: var(--font-display); font-size: 1.6rem; color: var(--text-primary); line-height: 1; }
+.streak-fire { font-size: 1.6rem; filter: grayscale(1); opacity: .6; }
+.streak.on { border-color: #f59e0b; } .streak.on .streak-fire { filter: none; opacity: 1; animation: fire 1.6s ease-in-out infinite; }
+@keyframes fire { 50% { transform: scale(1.15) rotate(-6deg); } }
+.hub-search { display: flex; align-items: center; gap: 8px; padding: 0 14px; min-height: 48px; border-radius: 999px; background: var(--bg-surface); border: 1px solid var(--border-color); }
+.hub-search input { flex: 1; min-width: 0; border: 0; background: transparent; color: var(--text-primary); font: inherit; min-height: 44px; }
+.hub-search input:focus-visible { outline: none; }
+.hub-search:focus-within { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, .25); }
+.tile-wrap { position: relative; display: flex; }
+.tile-wrap > .tile { flex: 1; }
+.fav { position: absolute; top: 8px; right: 8px; z-index: 2; width: 44px; height: 44px; border: 0; border-radius: 50%; background: transparent; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; transition: transform .15s, color .15s; }
+.fav[aria-pressed="true"] { color: #f59e0b; }
+.fav:hover { transform: scale(1.2); }
+.tile-wrap:hover > .tile { transform: translateY(-3px); box-shadow: 0 10px 26px rgba(0, 0, 0, .3); }
+@media (prefers-reduced-motion: reduce) { .streak.on .streak-fire, .today-card, .fav { animation: none; transition: none; } }
