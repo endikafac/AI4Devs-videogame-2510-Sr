@@ -305,3 +305,57 @@ body {
 .gq-quit-dialog h3 { font-size: 1.2rem; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
 .gq-quit-dialog p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 20px; }
 .gq-quit-actions { display: flex; gap: 10px; justify-content: center; }
+
+/* ── Setup: modes, difficulty, touch targets, keyboard ── */
+.gq-setup-label { margin: 1.1rem 0 0.5rem; font-size: 1rem; text-align: left; color: var(--text-primary); }
+.gq-modes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
+.gq-mode-pick {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 0.15rem; text-align: left;
+    padding: 0.8rem 0.9rem; min-height: 72px; border-radius: 12px; cursor: pointer;
+    border: 2px solid var(--border-color); background: var(--bg-surface); color: var(--text-primary);
+    font-family: inherit; transition: border-color 0.15s, background 0.15s;
+}
+.gq-mode-pick .m-ico { font-size: 1.5rem; line-height: 1; }
+.gq-mode-pick .m-name { font-weight: 700; font-size: 0.95rem; }
+.gq-mode-pick .m-desc { font-size: 0.75rem; color: var(--text-secondary); }
+.gq-mode-pick.active { border-color: var(--hub-brand-color); background: color-mix(in srgb, var(--hub-brand-color) 12%, var(--bg-surface)); }
+.gq-diff-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; margin-bottom: 1rem; }
+.gq-diff-btn {
+    min-height: 52px; border-radius: 12px; border: 2px solid var(--border-color); background: var(--bg-surface);
+    color: var(--text-primary); font-weight: 700; cursor: pointer; font-family: inherit; font-size: 0.9rem;
+}
+.gq-diff-btn small { display: block; font-weight: 400; font-size: 0.72rem; color: var(--text-secondary); }
+.gq-diff-btn.active { border-color: var(--hub-brand-color); background: var(--hub-brand-color); color: #fff; }
+.gq-diff-btn.active small { color: #fff; }
+.gq-levels-grid.three { grid-template-columns: repeat(3, 1fr); }
+.gq-level-btn { min-height: 52px; font-family: inherit; }
+.gq-start-btn, .gq-action-btn { min-height: 52px; min-width: 150px; font-family: inherit; }
+.gq-kb-hint { font-size: 0.78rem; color: var(--text-secondary); }
+.gq-question-card .q-icon.big { font-size: 5rem; line-height: 1.1; }
+.gq-option { display: flex; align-items: center; gap: 0.7rem; min-height: 56px; font-family: inherit; }
+.gq-key {
+    flex: 0 0 auto; min-width: 1.6rem; height: 1.6rem; display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 6px; border: 1px solid var(--border-color); font-size: 0.78rem; font-weight: 700;
+    color: var(--text-secondary); font-family: inherit; background: var(--bg-page);
+}
+.gq-option:focus-visible, .gq-level-btn:focus-visible, .gq-diff-btn:focus-visible, .gq-mode-pick:focus-visible,
+.gq-start-btn:focus-visible, .gq-action-btn:focus-visible, .gq-tab:focus-visible, .gq-mode-card:focus-visible {
+    outline: 3px solid var(--hub-brand-color); outline-offset: 2px;
+}
+.gq-screen { overflow-x: clip; }
+@media (max-width: 520px) {
+    .gq-modes-grid { grid-template-columns: 1fr; }
+    .gq-mode-card { width: 100%; padding: 1.2rem; }
+    .gq-key { display: none; }
+}
+@media (hover: none) { .gq-key { display: none; } }
+
+/* Flag emoji fallback for systems without native flags (e.g. Windows).
+   Font: Twemoji Country Flags (country-flag-emoji-polyfill, MIT). Twemoji artwork (c) Twitter, CC-BY 4.0. */
+@font-face {
+    font-family: 'Twemoji Country Flags';
+    unicode-range: U+1F1E6-1F1FF, U+1F3F4, U+E0062-E007F;
+    src: url('TwemojiCountryFlags.woff2') format('woff2');
+    font-display: swap;
+}
+body, .q-icon, .card-icon, .gq-section-header { font-family: 'Twemoji Country Flags', var(--font-body, 'Segoe UI', sans-serif); }

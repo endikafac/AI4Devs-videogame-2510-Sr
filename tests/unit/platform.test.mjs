@@ -121,3 +121,21 @@ test('U-CALC: answer checking and stars', () => {
   assert.equal(C.isCorrect({ type: 'missing', answer: 4 }, '4'), true);
   assert.deepEqual([0, 1, 2, 3, 6].map(C.stars), [3, 2, 2, 1, 1]);
 });
+
+test('U-NEWGAMES: fractions, clock and memory logic is consistent', () => {
+  const F = require(path.join(root, 'fractions-EFC/game.js'));
+  assert.equal(F.gcd(12, 8), 4);
+  for (const u of F.UNITS) for (let i = 0; i < 100; i++) {
+    for (const q of F.makeLesson(u)) {
+      if (q.options) { assert.equal(new Set(q.options.map(o => JSON.stringify(o))).size, q.options.length, `${u.id} duplicate options`); }
+    }
+  }
+  const K = require(path.join(root, 'clock-EFC/game.js'));
+  assert.ok(K.UNITS.length >= 6);
+  for (const u of K.UNITS) for (let i = 0; i < 100; i++) assert.ok(K.makeLesson(u).length > 0);
+  const M = require(path.join(root, 'memory-EFC/game.js'));
+  for (const th of M.THEMES) for (const sz of M.SIZES) {
+    const deck = M.makeDeck(th.id, sz.pairs);
+    assert.equal(deck.length, sz.pairs * 2, th.id + '/' + sz.pairs + ' deck size');
+  }
+});

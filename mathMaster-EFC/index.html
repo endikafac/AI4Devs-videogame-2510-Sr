@@ -119,6 +119,30 @@
                         <span class="op-symbol" aria-hidden="true">±</span>
                         <span class="op-name" data-i18n="operations.mezcla">Mezcla</span>
                     </button>
+                    <button class="operation-btn operation-btn--topic" data-operation="problemas">
+                        <span class="op-symbol" aria-hidden="true">📖</span>
+                        <span class="op-name" data-i18n="operations.problemas">Problemas</span>
+                    </button>
+                    <button class="operation-btn operation-btn--topic" data-operation="fracciones">
+                        <span class="op-symbol" aria-hidden="true">½</span>
+                        <span class="op-name" data-i18n="operations.fracciones">Fracciones</span>
+                    </button>
+                    <button class="operation-btn operation-btn--topic" data-operation="porcentajes">
+                        <span class="op-symbol" aria-hidden="true">%</span>
+                        <span class="op-name" data-i18n="operations.porcentajes">Porcentajes</span>
+                    </button>
+                    <button class="operation-btn operation-btn--topic" data-operation="secuencias">
+                        <span class="op-symbol" aria-hidden="true">⋯</span>
+                        <span class="op-name" data-i18n="operations.secuencias">Series</span>
+                    </button>
+                    <button class="operation-btn operation-btn--topic" data-operation="huecos">
+                        <span class="op-symbol" aria-hidden="true">?</span>
+                        <span class="op-name" data-i18n="operations.huecos">Qué falta</span>
+                    </button>
+                    <button class="operation-btn operation-btn--topic" data-operation="potencias">
+                        <span class="op-symbol" aria-hidden="true">x²</span>
+                        <span class="op-name" data-i18n="operations.potencias">Potencias</span>
+                    </button>
                 </div>
             </section>
 
@@ -299,6 +323,7 @@
             <header class="results-header">
                 <h2 class="results-title" id="results-title">¡Felicitaciones!</h2>
                 <div class="results-emoji" id="results-emoji" aria-hidden="true">🏆</div>
+                <div class="results-stars" id="results-stars" role="img"></div>
             </header>
 
             <!-- Points earned (NEW) -->
@@ -332,6 +357,13 @@
                     <span class="result-label" data-i18n="avgPerQuestion">Promedio por Pregunta</span>
                     <span class="result-value" id="avg-time">11s</span>
                 </div>
+            </div>
+
+            <p class="results-tip" id="results-tip" role="status"></p>
+
+            <div class="results-review hidden" id="results-review">
+                <h3><span aria-hidden="true">🔁</span> <span data-i18n="reviewTitle">Para repasar</span></h3>
+                <ul class="review-list" id="results-review-list"></ul>
             </div>
 
             <div class="record-section hidden" id="record-section">
@@ -502,6 +534,9 @@
                             <button class="lang-btn" data-lang="es-ES" title="Castellano" type="button"><span class="lang-flag" aria-hidden="true">🇪🇸</span><span class="lang-name">ES</span></button>
                             <button class="lang-btn" data-lang="en-US" title="English"    type="button"><span class="lang-flag" aria-hidden="true">🇺🇸</span><span class="lang-name">EN</span></button>
                             <button class="lang-btn" data-lang="eu-ES" title="Euskara"    type="button"><span class="lang-flag" aria-hidden="true">🏴</span><span class="lang-name">EU</span></button>
+                            <button class="lang-btn" data-lang="gl-ES" title="Galego"     type="button"><span class="lang-flag" aria-hidden="true">🏴</span><span class="lang-name">GL</span></button>
+                            <button class="lang-btn" data-lang="ca-ES" title="Català"     type="button"><span class="lang-flag" aria-hidden="true">🏴</span><span class="lang-name">CA</span></button>
+                            <button class="lang-btn" data-lang="fr-FR" title="Français"   type="button"><span class="lang-flag" aria-hidden="true">🇫🇷</span><span class="lang-name">FR</span></button>
                         </div>
                     </div>
                 </section>

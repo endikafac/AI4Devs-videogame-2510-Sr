@@ -36,6 +36,48 @@
                 <p class="tm-subtitle" data-i18n="gameSubtitle">Aprende y practica la multiplicación y la división</p>
             </header>
 
+            <div class="tm-rank-bar" id="tm-rank-bar" aria-live="polite">
+                <span class="tm-rank-star" aria-hidden="true">⭐</span>
+                <span class="tm-rank-name" id="tm-rank-name"></span>
+                <span class="tm-rank-stars" id="tm-rank-stars"></span>
+                <span class="tm-rank-track" aria-hidden="true"><span class="tm-rank-fill" id="tm-rank-fill"></span></span>
+            </div>
+
+            <h2 class="tm-drills-title" data-i18n="drillsTitle">Retos rápidos</h2>
+            <div class="tm-drill-grid">
+                <button class="tm-drill-card tm-drill-table" data-drill="table" type="button">
+                    <span class="tm-drill-icon" aria-hidden="true">🎯</span>
+                    <span class="tm-drill-name" data-i18n="modeTableName">Entrena una tabla</span>
+                    <span class="tm-drill-desc" data-i18n="modeTableDesc">Practica solo la tabla que elijas</span>
+                </button>
+                <button class="tm-drill-card tm-drill-mixed" data-drill="mixed" type="button">
+                    <span class="tm-drill-icon" aria-hidden="true">🎲</span>
+                    <span class="tm-drill-name" data-i18n="modeMixedName">Tablas mezcladas</span>
+                    <span class="tm-drill-desc" data-i18n="modeMixedDesc">Todas las tablas</span>
+                </button>
+                <button class="tm-drill-card tm-drill-divide" data-drill="divide" type="button">
+                    <span class="tm-drill-icon" aria-hidden="true">➗</span>
+                    <span class="tm-drill-name" data-i18n="modeDivideName">División inversa</span>
+                    <span class="tm-drill-desc" data-i18n="modeDivideDesc">42 ÷ 6</span>
+                </button>
+                <button class="tm-drill-card tm-drill-missing" data-drill="missing" type="button">
+                    <span class="tm-drill-icon" aria-hidden="true">❓</span>
+                    <span class="tm-drill-name" data-i18n="modeMissingName">Factor que falta</span>
+                    <span class="tm-drill-desc" data-i18n="modeMissingDesc">6 × ? = 42</span>
+                </button>
+                <button class="tm-drill-card tm-drill-timed" data-drill="timed" type="button">
+                    <span class="tm-drill-icon" aria-hidden="true">⏱️</span>
+                    <span class="tm-drill-name" data-i18n="modeTimedName">Contrarreloj</span>
+                    <span class="tm-drill-desc" data-i18n="modeTimedDesc">60 segundos</span>
+                </button>
+                <button class="tm-drill-card tm-drill-problems" data-drill="problems" type="button">
+                    <span class="tm-drill-icon" aria-hidden="true">📚</span>
+                    <span class="tm-drill-name" data-i18n="modeProblemsName">Problemas</span>
+                    <span class="tm-drill-desc" data-i18n="modeProblemsDesc">Historias para multiplicar y dividir</span>
+                </button>
+            </div>
+
+            <h2 class="tm-drills-title" data-i18n="learnTitle">Aprender y practicar</h2>
             <div class="tm-mode-grid">
                 <button class="tm-mode-card tm-mode-learn" id="btn-learn-multiply" data-action="learn" data-op="multiply">
                     <div class="tm-mode-icon" aria-hidden="true">📖</div>
@@ -942,15 +984,96 @@
         </div>
     </section>
 
+    <!-- ===== PANTALLA ELEGIR TABLA (retos rápidos) ===== -->
+    <section id="screen-drill-select" class="tm-screen" aria-label="Retos" role="main">
+        <div class="tm-container">
+            <div class="tm-learn-header">
+                <button class="tm-back-btn" data-back="screen-home" type="button">← <span data-i18n="back">Volver</span></button>
+                <h2 class="tm-learn-title" id="drill-select-title"></h2>
+            </div>
+            <p class="tm-section-intro" id="drill-select-desc"></p>
+            <h3 class="tm-drill-sub" id="drill-choose-heading" data-i18n="drillChooseTable">Elige la tabla</h3>
+            <div class="tm-table-chips" id="drill-table-chips" role="group"></div>
+            <p class="tm-drill-best" id="drill-best"></p>
+            <button class="tm-btn-primary tm-drill-start" id="btn-drill-start" type="button" data-i18n="drillStart">¡Empezar!</button>
+        </div>
+    </section>
+
+    <!-- ===== PANTALLA RETO ===== -->
+    <section id="screen-drill" class="tm-screen" aria-label="Reto" role="main">
+        <div class="tm-container tm-drill-container">
+            <div class="tm-practice-header">
+                <button class="tm-back-btn" data-back="screen-drill-select" type="button" aria-label="Salir">✕</button>
+                <div class="tm-practice-hud">
+                    <div class="tm-hud-item"><span class="tm-hud-label" id="drill-hud-label" data-i18n="drillProgress">Pregunta</span><span class="tm-hud-value" id="drill-hud-progress">1/10</span></div>
+                    <div class="tm-hud-item"><span class="tm-hud-label" data-i18n="drillStreak">Racha</span><span class="tm-hud-value tm-streak" id="drill-hud-streak">0</span></div>
+                    <div class="tm-hud-item"><span class="tm-hud-label" data-i18n="drillScore">Puntos</span><span class="tm-hud-value" id="drill-hud-score">0</span></div>
+                </div>
+            </div>
+            <div class="tm-drill-bar" aria-hidden="true"><div class="tm-drill-bar-fill" id="drill-bar-fill"></div></div>
+
+            <div class="tm-drill-card-q" id="drill-qcard" aria-live="polite">
+                <div class="tm-drill-q" id="drill-question"></div>
+            </div>
+            <div class="tm-drill-answer" id="drill-answer" role="status">&nbsp;</div>
+            <div class="tm-drill-feedback" id="drill-feedback" aria-live="assertive"></div>
+
+            <div class="tm-numpad" id="drill-numpad" role="group">
+                <button type="button" class="tm-key" data-key="7">7</button>
+                <button type="button" class="tm-key" data-key="8">8</button>
+                <button type="button" class="tm-key" data-key="9">9</button>
+                <button type="button" class="tm-key" data-key="4">4</button>
+                <button type="button" class="tm-key" data-key="5">5</button>
+                <button type="button" class="tm-key" data-key="6">6</button>
+                <button type="button" class="tm-key" data-key="1">1</button>
+                <button type="button" class="tm-key" data-key="2">2</button>
+                <button type="button" class="tm-key" data-key="3">3</button>
+                <button type="button" class="tm-key tm-key-del" data-key="del" id="drill-key-del">⌫</button>
+                <button type="button" class="tm-key" data-key="0">0</button>
+                <button type="button" class="tm-key tm-key-ok" data-key="ok" id="drill-key-ok">✓</button>
+            </div>
+            <button type="button" class="tm-btn-primary tm-drill-next hidden" id="drill-next" data-i18n="drillContinue">Continuar</button>
+            <p class="tm-drill-kb-hint" data-i18n="drillKeyboardHint"></p>
+        </div>
+    </section>
+
+    <!-- ===== PANTALLA RESULTADO RETO ===== -->
+    <section id="screen-drill-result" class="tm-screen" aria-label="Resultado" role="main">
+        <div class="tm-container tm-result-container">
+            <div class="tm-drill-stars" id="drill-stars" aria-hidden="true"></div>
+            <h2 class="tm-result-title" id="drill-result-title" data-i18n="drillResultTitle">¡Ronda terminada!</h2>
+            <p class="tm-result-subtitle" id="drill-result-msg" role="status"></p>
+            <div class="tm-result-grid">
+                <div class="tm-result-card"><span class="tm-result-label" data-i18n="drillAccuracy">Aciertos</span><span class="tm-result-value" id="drill-res-correct">0/10</span></div>
+                <div class="tm-result-card"><span class="tm-result-label" data-i18n="drillScore">Puntos</span><span class="tm-result-value" id="drill-res-score">0</span></div>
+                <div class="tm-result-card"><span class="tm-result-label" data-i18n="drillBestStreak">Mejor racha</span><span class="tm-result-value" id="drill-res-streak">0</span></div>
+                <div class="tm-result-card"><span class="tm-result-label" data-i18n="drillTime">Tiempo</span><span class="tm-result-value" id="drill-res-time">0s</span></div>
+            </div>
+            <div class="tm-result-points" aria-live="polite">
+                <div class="points-earned" id="drill-res-points">+0 pts</div>
+                <div class="xp-earned" id="drill-res-xp">+0 XP</div>
+            </div>
+            <div class="tm-drill-review hidden" id="drill-review">
+                <h3 class="tm-drill-sub" data-i18n="drillReviewTitle">Para repasar</h3>
+                <ul class="tm-drill-review-list" id="drill-review-list"></ul>
+            </div>
+            <div class="tm-result-actions">
+                <button class="tm-btn-secondary hidden" id="btn-drill-review" type="button" data-i18n="drillReviewBtn">Repasar fallos</button>
+                <button class="tm-btn-primary" id="btn-drill-retry" type="button" data-i18n="drillRetry">Otra ronda</button>
+                <button class="tm-btn-secondary" id="btn-drill-home" type="button" data-i18n="goHome">Inicio</button>
+            </div>
+        </div>
+    </section>
+
 </main>
 
 <div id="tm-quit-modal" class="tm-quit-modal hidden" role="dialog" aria-modal="true" aria-labelledby="tm-quit-title" tabindex="-1">
     <div class="tm-quit-dialog">
-        <h3 id="tm-quit-title">¿Salir de la práctica?</h3>
-        <p>Se perderá el progreso actual.</p>
+        <h3 id="tm-quit-title" data-i18n="quitTitle">¿Salir de la práctica?</h3>
+        <p data-i18n="quitText">Se perderá el progreso actual.</p>
         <div class="tm-quit-actions">
-            <button class="tm-action-btn tm-secondary" id="tm-quit-cancel">Cancelar</button>
-            <button class="tm-action-btn tm-primary" id="tm-quit-ok">Salir</button>
+            <button class="tm-action-btn tm-secondary" id="tm-quit-cancel" data-i18n="quitCancel">Cancelar</button>
+            <button class="tm-action-btn tm-primary" id="tm-quit-ok" data-i18n="quitOk">Salir</button>
         </div>
     </div>
 </div>

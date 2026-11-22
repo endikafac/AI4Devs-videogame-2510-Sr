@@ -54,7 +54,15 @@ const WS_I18N = {
         ],
         quitConfirm: '¿Salir del juego?',
         quitMsg: 'Se perderá el progreso actual.',
-        cancel: 'Cancelar'
+        cancel: 'Cancelar',
+        catLabel: 'Tema',
+        catLevel: 'Según el nivel',
+        hint: '💡 Pista',
+        kbHelp: 'Teclado: flechas para moverte, Enter o Espacio para marcar inicio y fin, Esc para cancelar, H para una pista',
+        row: 'fila',
+        col: 'columna',
+        gridLabel: 'Cuadrícula de la sopa de letras',
+        loading: 'Generando...'
     },
     'en-US': {
         gameTitle: 'WordSearch',
@@ -104,7 +112,15 @@ const WS_I18N = {
         ],
         quitConfirm: 'Quit the game?',
         quitMsg: 'Current progress will be lost.',
-        cancel: 'Cancel'
+        cancel: 'Cancel',
+        catLabel: 'Topic',
+        catLevel: 'By level',
+        hint: '💡 Hint',
+        kbHelp: 'Keyboard: arrows to move, Enter or Space to mark start and end, Esc to cancel, H for a hint',
+        row: 'row',
+        col: 'column',
+        gridLabel: 'Word search grid',
+        loading: 'Generating...'
     },
     'eu-ES': {
         gameTitle: 'WordSearch',
@@ -154,8 +170,240 @@ const WS_I18N = {
         ],
         quitConfirm: 'Jokoa utzi?',
         quitMsg: 'Uneko aurrerapena galduko da.',
-        cancel: 'Utzi'
+        cancel: 'Utzi',
+        catLabel: 'Gaia',
+        catLevel: 'Mailaren arabera',
+        hint: '💡 Pista',
+        kbHelp: 'Teklatua: geziekin mugitu, Enter edo Zuriunea hasiera eta amaiera markatzeko, Esc bertan behera uzteko, H pista bat izateko',
+        row: 'errenkada',
+        col: 'zutabea',
+        gridLabel: 'Hitz-zopako sarea',
+        loading: 'Sortzen...'
+    },
+    'gl-ES': {
+        gameTitle: 'WordSearch',
+        gameSubtitle: 'Atopa palabras e aprende',
+        selectLevel: 'Elixe o nivel',
+        start: 'Comezar',
+        wordsFound: 'Palabras',
+        time: 'Tempo',
+        level: 'Nivel',
+        quit: 'Saír',
+        results: 'Resultados!',
+        wordsFoundLabel: 'palabras atopadas',
+        timeTaken: 'Tempo',
+        score: 'Puntos',
+        newRecord: '🏆 Novo récord!',
+        retry: 'Reintentar',
+        next: 'Seguinte nivel',
+        menu: 'Menú',
+        stars1: 'Ben feito!',
+        stars2: 'Moi ben!',
+        stars3: 'Perfecto!',
+        stats: '📊 Estatísticas',
+        achievements: '🏆 Logros',
+        synonyms: 'Sinónimos',
+        antonyms: 'Antónimos',
+        dismiss: 'Continuar',
+        levelDesc: 'Selecciona un nivel para comezar',
+        allWords: 'Todas as categorías',
+        categoriesLabel: 'Categorías',
+        toFind: 'Palabras que atopar',
+        completed: 'Sopa completada!',
+        levelNames: [
+            'Principiante',
+            'Fácil',
+            'Normal',
+            'Medio',
+            'Intermedio',
+            'Avanzado',
+            'Difícil',
+            'Experto',
+            'Mestre',
+            'Lenda'
+        ],
+        levelDescriptions: [
+            'Cuadrícula 8×8 · 5 palabras · Animais e cores · Só horizontal/vertical',
+            'Cuadrícula 9×9 · 6 palabras · Animais e natureza · Só horizontal/vertical',
+            'Cuadrícula 10×10 · 7 palabras · Natureza, cores e escola · 4 direccións',
+            'Cuadrícula 11×11 · 8 palabras · Escola e corpo humano · 4 direccións',
+            'Cuadrícula 12×12 · 9 palabras · Comida, corpo e escola · 8 direccións',
+            'Cuadrícula 13×13 · 10 palabras · Ciencia e natureza · 8 direccións',
+            'Cuadrícula 14×14 · 11 palabras · Vocabulario e ciencia · 8 direccións',
+            'Cuadrícula 15×15 · 12 palabras · Animais, vocabulario e ciencia · 8 direccións',
+            'Cuadrícula 16×16 · 13 palabras · Vocabulario, ciencia e corpo · 8 direccións',
+            'Cuadrícula 18×18 · 15 palabras · Todas as categorías · 8 direccións'
+        ],
+        quitConfirm: 'Saír do xogo?',
+        quitMsg: 'Perderase o progreso actual.',
+        cancel: 'Cancelar',
+        catLabel: 'Tema',
+        catLevel: 'Segundo o nivel',
+        hint: '💡 Pista',
+        kbHelp: 'Teclado: frechas para moverte, Enter ou Espazo para marcar inicio e fin, Esc para cancelar, H para unha pista',
+        row: 'fila',
+        col: 'columna',
+        gridLabel: 'Cuadrícula da sopa de letras',
+        loading: 'Xerando...'
+    },
+    'ca-ES': {
+        gameTitle: 'WordSearch',
+        gameSubtitle: 'Troba paraules i aprèn',
+        selectLevel: 'Tria el nivell',
+        start: 'Començar',
+        wordsFound: 'Paraules',
+        time: 'Temps',
+        level: 'Nivell',
+        quit: 'Sortir',
+        results: 'Resultats!',
+        wordsFoundLabel: 'paraules trobades',
+        timeTaken: 'Temps',
+        score: 'Punts',
+        newRecord: '🏆 Nou rècord!',
+        retry: 'Reintentar',
+        next: 'Següent nivell',
+        menu: 'Menú',
+        stars1: 'Ben fet!',
+        stars2: 'Molt bé!',
+        stars3: 'Perfecte!',
+        stats: '📊 Estadístiques',
+        achievements: '🏆 Assoliments',
+        synonyms: 'Sinònims',
+        antonyms: 'Antònims',
+        dismiss: 'Continuar',
+        levelDesc: 'Selecciona un nivell per començar',
+        allWords: 'Totes les categories',
+        categoriesLabel: 'Categories',
+        toFind: 'Paraules per trobar',
+        completed: 'Sopa de lletres completada!',
+        levelNames: [
+            'Principiant',
+            'Fàcil',
+            'Normal',
+            'Mitjà',
+            'Intermedi',
+            'Avançat',
+            'Difícil',
+            'Expert',
+            'Mestre',
+            'Llegenda'
+        ],
+        levelDescriptions: [
+            'Quadrícula 8×8 · 5 paraules · Animals i colors · Només horitzontal/vertical',
+            'Quadrícula 9×9 · 6 paraules · Animals i natura · Només horitzontal/vertical',
+            'Quadrícula 10×10 · 7 paraules · Natura, colors i escola · 4 direccions',
+            'Quadrícula 11×11 · 8 paraules · Escola i cos humà · 4 direccions',
+            'Quadrícula 12×12 · 9 paraules · Menjar, cos i escola · 8 direccions',
+            'Quadrícula 13×13 · 10 paraules · Ciència i natura · 8 direccions',
+            'Quadrícula 14×14 · 11 paraules · Vocabulari i ciència · 8 direccions',
+            'Quadrícula 15×15 · 12 paraules · Animals, vocabulari i ciència · 8 direccions',
+            'Quadrícula 16×16 · 13 paraules · Vocabulari, ciència i cos · 8 direccions',
+            'Quadrícula 18×18 · 15 paraules · Totes les categories · 8 direccions'
+        ],
+        quitConfirm: 'Sortir del joc?',
+        quitMsg: 'Es perdrà el progrés actual.',
+        cancel: 'Cancel·lar',
+        catLabel: 'Tema',
+        catLevel: 'Segons el nivell',
+        hint: '💡 Pista',
+        kbHelp: 'Teclat: fletxes per moure’t, Enter o Espai per marcar inici i final, Esc per cancel·lar, H per a una pista',
+        row: 'fila',
+        col: 'columna',
+        gridLabel: 'Quadrícula de la sopa de lletres',
+        loading: 'Generant...'
+    },
+    'fr-FR': {
+        gameTitle: 'WordSearch',
+        gameSubtitle: 'Trouve des mots et apprends',
+        selectLevel: 'Choisis le niveau',
+        start: 'Commencer',
+        wordsFound: 'Mots',
+        time: 'Temps',
+        level: 'Niveau',
+        quit: 'Quitter',
+        results: 'Résultats !',
+        wordsFoundLabel: 'mots trouvés',
+        timeTaken: 'Temps',
+        score: 'Points',
+        newRecord: '🏆 Nouveau record !',
+        retry: 'Réessayer',
+        next: 'Niveau suivant',
+        menu: 'Menu',
+        stars1: 'Bien joué !',
+        stars2: 'Très bien !',
+        stars3: 'Parfait !',
+        stats: '📊 Statistiques',
+        achievements: '🏆 Succès',
+        synonyms: 'Synonymes',
+        antonyms: 'Antonymes',
+        dismiss: 'Continuer',
+        levelDesc: 'Choisis un niveau pour commencer',
+        allWords: 'Toutes les catégories',
+        categoriesLabel: 'Catégories',
+        toFind: 'Mots à trouver',
+        completed: 'Mots mêlés terminés !',
+        levelNames: [
+            'Débutant',
+            'Facile',
+            'Normal',
+            'Moyen',
+            'Intermédiaire',
+            'Avancé',
+            'Difficile',
+            'Expert',
+            'Maître',
+            'Légende'
+        ],
+        levelDescriptions: [
+            'Grille 8×8 · 5 mots · Animaux et couleurs · Horizontal/vertical seulement',
+            'Grille 9×9 · 6 mots · Animaux et nature · Horizontal/vertical seulement',
+            'Grille 10×10 · 7 mots · Nature, couleurs et école · 4 directions',
+            'Grille 11×11 · 8 mots · École et corps humain · 4 directions',
+            'Grille 12×12 · 9 mots · Nourriture, corps et école · 8 directions',
+            'Grille 13×13 · 10 mots · Sciences et nature · 8 directions',
+            'Grille 14×14 · 11 mots · Vocabulaire et sciences · 8 directions',
+            'Grille 15×15 · 12 mots · Animaux, vocabulaire et sciences · 8 directions',
+            'Grille 16×16 · 13 mots · Vocabulaire, sciences et corps · 8 directions',
+            'Grille 18×18 · 15 mots · Toutes les catégories · 8 directions'
+        ],
+        quitConfirm: 'Quitter le jeu ?',
+        quitMsg: 'La progression actuelle sera perdue.',
+        cancel: 'Annuler',
+        catLabel: 'Thème',
+        catLevel: 'Selon le niveau',
+        hint: '💡 Indice',
+        kbHelp: 'Clavier : flèches pour se déplacer, Entrée ou Espace pour marquer le début et la fin, Échap pour annuler, H pour un indice',
+        row: 'ligne',
+        col: 'colonne',
+        gridLabel: 'Grille des mots mêlés',
+        loading: 'Génération...'
     }
+};
+
+/* ── Category names (6 languages) ─────────────────────────── */
+const WS_CATEGORY_NAMES = {
+    animales: { es: 'Animales', en: 'Animals', eu: 'Animaliak', gl: 'Animais', ca: 'Animals', fr: 'Animaux' },
+    astronomia: { es: 'Astronomía', en: 'Astronomy', eu: 'Astronomia', gl: 'Astronomía', ca: 'Astronomia', fr: 'Astronomie' },
+    biologia: { es: 'Biología', en: 'Biology', eu: 'Biologia', gl: 'Bioloxía', ca: 'Biologia', fr: 'Biologie' },
+    ciencia: { es: 'Ciencia', en: 'Science', eu: 'Zientzia', gl: 'Ciencia', ca: 'Ciència', fr: 'Sciences' },
+    colores: { es: 'Colores', en: 'Colours', eu: 'Koloreak', gl: 'Cores', ca: 'Colors', fr: 'Couleurs' },
+    comida: { es: 'Comida', en: 'Food', eu: 'Janaria', gl: 'Comida', ca: 'Menjar', fr: 'Nourriture' },
+    cuerpo: { es: 'Cuerpo humano', en: 'Human body', eu: 'Gizakiaren gorputza', gl: 'Corpo humano', ca: 'Cos humà', fr: 'Corps humain' },
+    cultura: { es: 'Cultura', en: 'Culture', eu: 'Kultura', gl: 'Cultura', ca: 'Cultura', fr: 'Culture' },
+    deportes: { es: 'Deportes', en: 'Sports', eu: 'Kirola', gl: 'Deportes', ca: 'Esports', fr: 'Sports' },
+    escuela: { es: 'Escuela', en: 'School', eu: 'Eskola', gl: 'Escola', ca: 'Escola', fr: 'École' },
+    geografia: { es: 'Geografía', en: 'Geography', eu: 'Geografia', gl: 'Xeografía', ca: 'Geografia', fr: 'Géographie' },
+    historia: { es: 'Historia', en: 'History', eu: 'Historia', gl: 'Historia', ca: 'Història', fr: 'Histoire' },
+    naturaleza: { es: 'Naturaleza', en: 'Nature', eu: 'Natura', gl: 'Natureza', ca: 'Natura', fr: 'Nature' },
+    tecnologia: { es: 'Tecnología', en: 'Technology', eu: 'Teknologia', gl: 'Tecnoloxía', ca: 'Tecnologia', fr: 'Technologie' },
+    verbos: { es: 'Verbos', en: 'Verbs', eu: 'Aditzak', gl: 'Verbos', ca: 'Verbs', fr: 'Verbes' },
+    vocabulario: { es: 'Vocabulario', en: 'Vocabulary', eu: 'Hiztegia', gl: 'Vocabulario', ca: 'Vocabulari', fr: 'Vocabulaire' },
+    oficios: { es: 'Oficios', en: 'Jobs', eu: 'Lanbideak', gl: 'Oficios', ca: 'Oficis', fr: 'Métiers' },
+    transporte: { es: 'Transporte', en: 'Transport', eu: 'Garraioa', gl: 'Transporte', ca: 'Transport', fr: 'Transports' },
+    musica: { es: 'Música', en: 'Music', eu: 'Musika', gl: 'Música', ca: 'Música', fr: 'Musique' },
+    hogar: { es: 'Hogar', en: 'Home', eu: 'Etxea', gl: 'Fogar', ca: 'Llar', fr: 'Maison' },
+    mar: { es: 'Mar', en: 'Sea', eu: 'Itsasoa', gl: 'Mar', ca: 'Mar', fr: 'Mer' },
+    matematicas: { es: 'Matemáticas', en: 'Maths', eu: 'Matematika', gl: 'Matemáticas', ca: 'Matemàtiques', fr: 'Mathématiques' },
 };
 
 /* ── Level Configuration ──────────────────────────────────── */
@@ -259,6 +507,8 @@ const WordSearchGame = {
             : (localStorage.getItem('games_hub_language') || 'es-ES');
 
         this._loadProgress();
+        try { this._cat = localStorage.getItem('ws_cat') || 'level'; } catch {}
+        this._buildCategorySelect();
         this._buildLevelGrid();
         this._bindHomeEvents();
         this._showScreen('home');
@@ -266,6 +516,7 @@ const WordSearchGame = {
         // React to language changes
         document.addEventListener('platformLanguageChanged', () => {
             this._lang = PlatformI18n.currentLanguage;
+            this._buildCategorySelect();
             this._updateHomeTexts();
             if (this._currentScreen === 'game') this._updateGameTexts();
         });
@@ -278,13 +529,36 @@ const WordSearchGame = {
     },
 
     _langCode() {
-        if (this._lang.startsWith('en')) return 'en';
-        if (this._lang.startsWith('eu')) return 'eu';
-        return 'es';
+        const c = (this._lang || 'es').slice(0, 2).toLowerCase();
+        return ['es', 'en', 'eu', 'gl', 'ca', 'fr'].includes(c) ? c : 'es';
     },
 
     /* ── Screen management ──────────────────────────────── */
     _currentScreen: 'home',
+    _cat: 'level',
+    _kb: null,
+
+    _catName(key) {
+        const n = WS_CATEGORY_NAMES[key];
+        return n ? (n[this._langCode()] || n.es) : key;
+    },
+
+    _buildCategorySelect() {
+        const sel = document.getElementById('ws-cat-select');
+        if (!sel) return;
+        const present = new Set(WS_WORDS.map(w => w.category));
+        const keys = Object.keys(WS_CATEGORY_NAMES).filter(k => present.has(k));
+        const items = [['level', this._t('catLevel')], ['all', this._t('allWords')]]
+            .concat(keys.map(k => [k, this._catName(k)]).sort((a, b) => a[1].localeCompare(b[1])));
+        sel.innerHTML = items.map(([v, label]) => '<option value="' + v + '">' + label + '</option>').join('');
+        sel.value = items.some(i => i[0] === this._cat) ? this._cat : 'level';
+        sel.onchange = () => {
+            this._cat = sel.value;
+            try { localStorage.setItem('ws_cat', this._cat); } catch {}
+        };
+        const lbl = document.getElementById('ws-cat-label');
+        if (lbl) lbl.textContent = this._t('catLabel');
+    },
 
     _showScreen(name) {
         this._currentScreen = name;
@@ -390,11 +664,14 @@ const WordSearchGame = {
         const achievBtn = document.getElementById('ws-achievements-btn');
         if (achievBtn) achievBtn.textContent = dict.achievements;
         this._updateLevelDesc(this._level);
+        const catLbl = document.getElementById('ws-cat-label');
+        if (catLbl) catLbl.textContent = this._t('catLabel');
     },
 
     _bindHomeEvents() {
         const startBtn = document.getElementById('ws-start-btn');
         startBtn?.addEventListener('click', () => this.startGame());
+        document.getElementById('ws-hint-btn')?.addEventListener('click', () => this._hint());
 
         const statsBtn = document.getElementById('ws-stats-btn');
         statsBtn?.addEventListener('click', () => {
@@ -424,16 +701,25 @@ const WordSearchGame = {
 
         // Pick words for this level
         let pool;
-        if (cfg.category === null) {
+        if (this._cat !== 'level' && this._cat !== 'all') {
+            pool = WS_WORDS.filter(w => w.category === this._cat);
+        } else if (this._cat === 'all' || cfg.category === null) {
             pool = [...WS_WORDS];
         } else {
             pool = WS_WORDS.filter(w => cfg.category.includes(w.category));
         }
 
         // Shuffle and take exactly cfg.words words (filter by length < size)
-        const shuffled = pool.sort(() => Math.random() - 0.5);
-        const valid = shuffled.filter(w => w.word.length <= cfg.size && w.word.length >= 3);
+        const fits = (w) => w.word.length <= cfg.size && w.word.length >= 3;
+        const shuffled = pool.slice().sort(() => Math.random() - 0.5);
+        let valid = shuffled.filter(fits);
+        // A themed pool smaller than the level needs is completed with other words
+        if (valid.length < cfg.words) {
+            const have = new Set(valid.map(w => w.word));
+            valid = valid.concat(WS_WORDS.filter(w => !have.has(w.word) && fits(w)).sort(() => Math.random() - 0.5));
+        }
         const selected = valid.slice(0, cfg.words);
+        this._kb = null;
 
         const { grid, placed } = wsBuildGrid(cfg.size, selected, cfg.dirs);
         this._grid   = grid;
@@ -474,8 +760,12 @@ const WordSearchGame = {
         gridEl.id = 'ws-grid';
         gridEl.style.gridTemplateColumns = `repeat(${size}, ${effectiveCellSize}px)`;
         gridEl.style.gridTemplateRows    = `repeat(${size}, ${effectiveCellSize}px)`;
-        gridEl.setAttribute('aria-label', 'Cuadrícula de la sopa de letras');
+        gridEl.setAttribute('aria-label', this._t('gridLabel'));
         gridEl.setAttribute('role', 'grid');
+        gridEl.tabIndex = 0;
+        gridEl.addEventListener('keydown', e => this._onGridKey(e));
+        gridEl.addEventListener('focus', () => this._kbShowCursor());
+        gridEl.addEventListener('blur', () => this._kbHideCursor());
 
         for (let r = 0; r < size; r++) {
             for (let c = 0; c < size; c++) {
@@ -488,7 +778,7 @@ const WordSearchGame = {
                 cell.dataset.r = r;
                 cell.dataset.c = c;
                 cell.setAttribute('role', 'gridcell');
-                cell.setAttribute('aria-label', `${this._grid[r][c]} fila ${r+1} columna ${c+1}`);
+                cell.setAttribute('aria-label', `${this._grid[r][c]} ${this._t('row')} ${r+1} ${this._t('col')} ${c+1}`);
 
                 // Pointer events (handles both mouse and touch)
                 cell.addEventListener('pointerdown', e => { e.preventDefault(); this._onCellDown(r, c); });
@@ -536,6 +826,19 @@ const WordSearchGame = {
         const timeLbl = document.getElementById('ws-time-lbl');
         if (timeLbl) timeLbl.textContent = this._t('time');
 
+        const hintBtn = document.getElementById('ws-hint-btn');
+        if (hintBtn) hintBtn.textContent = this._t('hint');
+        const quitBtn = document.getElementById('ws-quit-btn');
+        if (quitBtn) quitBtn.textContent = this._t('quit');
+        const kbHelp = document.getElementById('ws-kb-help');
+        if (kbHelp) kbHelp.textContent = this._t('kbHelp');
+        const ld = document.getElementById('ws-loading-text');
+        if (ld) ld.textContent = this._t('loading');
+        const grid = document.getElementById('ws-grid');
+        if (grid) grid.setAttribute('aria-label', this._t('gridLabel'));
+        const wl = document.getElementById('ws-word-list');
+        if (wl) wl.setAttribute('aria-label', this._t('toFind'));
+
         this._updateWordsHud();
     },
 
@@ -555,6 +858,73 @@ const WordSearchGame = {
         const m = Math.floor(seconds / 60);
         const s = seconds % 60;
         return `${m}:${s.toString().padStart(2, '0')}`;
+    },
+
+    /* ── Keyboard play (roving cursor on the grid) ───────── */
+    _kbShowCursor() {
+        if (!this._kb) this._kb = { r: 0, c: 0, anchor: null };
+        this._kbPaint();
+    },
+    _kbHideCursor() {
+        document.querySelectorAll('.ws-cell.kb-cursor, .ws-cell.kb-anchor').forEach(el => el.classList.remove('kb-cursor', 'kb-anchor'));
+    },
+    _kbPaint() {
+        const kb = this._kb; if (!kb) return;
+        document.querySelectorAll('.ws-cell.kb-cursor, .ws-cell.kb-anchor').forEach(el => el.classList.remove('kb-cursor', 'kb-anchor'));
+        const cell = document.querySelector('.ws-cell[data-r="' + kb.r + '"][data-c="' + kb.c + '"]');
+        if (cell) { cell.classList.add('kb-cursor'); cell.scrollIntoView({ block: 'nearest', inline: 'nearest' }); }
+        if (kb.anchor) {
+            const a = document.querySelector('.ws-cell[data-r="' + kb.anchor.r + '"][data-c="' + kb.anchor.c + '"]');
+            if (a) a.classList.add('kb-anchor');
+            const cells = wsLineCells(kb.anchor.r, kb.anchor.c, kb.r, kb.c);
+            this._highlightSelection(cells || [kb.anchor]);
+        }
+    },
+    _onGridKey(e) {
+        if (!this._kb) this._kb = { r: 0, c: 0, anchor: null };
+        const kb = this._kb; const n = this._grid.length;
+        const moves = { ArrowUp: [-1, 0], ArrowDown: [1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1] };
+        if (moves[e.key]) {
+            e.preventDefault();
+            kb.r = Math.min(n - 1, Math.max(0, kb.r + moves[e.key][0]));
+            kb.c = Math.min(n - 1, Math.max(0, kb.c + moves[e.key][1]));
+            this._kbPaint();
+        } else if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            if (!kb.anchor) {
+                kb.anchor = { r: kb.r, c: kb.c };
+                this._kbPaint();
+            } else {
+                const cells = wsLineCells(kb.anchor.r, kb.anchor.c, kb.r, kb.c);
+                kb.anchor = null;
+                if (cells && cells.length >= 2) {
+                    this._currentSelection = cells;
+                    this._checkAndMarkWord();
+                    this._currentSelection = [];
+                } else {
+                    this._highlightSelection([]);
+                }
+                this._kbPaint();
+            }
+        } else if (e.key === 'Escape') {
+            kb.anchor = null; this._highlightSelection([]); this._kbPaint();
+        } else if (e.key === 'h' || e.key === 'H') {
+            e.preventDefault(); this._hint();
+        } else if (e.key === 'Home') { e.preventDefault(); kb.c = 0; this._kbPaint(); }
+        else if (e.key === 'End') { e.preventDefault(); kb.c = n - 1; this._kbPaint(); }
+    },
+
+    /* ── Hint: flash the first letter of a random pending word ── */
+    _hint() {
+        const pending = this._placed.filter(p => !p.found);
+        if (!pending.length) return;
+        const p = pending[Math.floor(Math.random() * pending.length)];
+        const el = document.querySelector('.ws-cell[data-r="' + p.row + '"][data-c="' + p.col + '"]');
+        if (!el) return;
+        el.classList.add('hint');
+        setTimeout(() => el.classList.remove('hint'), 2200);
+        const announce = document.getElementById('ws-sr-announce');
+        if (announce) announce.textContent = p.entry.display + ': ' + this._t('row') + ' ' + (p.row + 1) + ', ' + this._t('col') + ' ' + (p.col + 1);
     },
 
     /* ── Selection handling (Pointer Events) ─────────────── */
@@ -715,7 +1085,7 @@ const WordSearchGame = {
             <div class="ws-popup" role="dialog" aria-modal="true" aria-label="${entry.display}">
                 <div class="ws-popup-emoji">${entry.emoji}</div>
                 <h2 class="ws-popup-word">${entry.display}</h2>
-                <p class="ws-popup-category">${entry.category}</p>
+                <p class="ws-popup-category">${this._catName(entry.category)}</p>
                 <p class="ws-popup-def">${data.def}</p>
                 ${synText}
                 ${antText}
@@ -729,6 +1099,7 @@ const WordSearchGame = {
 
         const dismiss = () => {
             overlay.remove();
+            document.getElementById('ws-grid')?.focus({ preventScroll: true });
             // Check if all words are found
             if (this._found >= this._placed.length) {
                 setTimeout(() => this._finishGame(), 300);
@@ -736,6 +1107,8 @@ const WordSearchGame = {
         };
 
         document.getElementById('ws-popup-dismiss')?.addEventListener('click', dismiss);
+        document.getElementById('ws-popup-dismiss')?.focus();
+        overlay.addEventListener('keydown', e => { if (e.key === 'Escape') dismiss(); });
         overlay.addEventListener('click', e => { if (e.target === overlay) dismiss(); });
 
         // Auto-dismiss after 6 seconds if user doesn't interact

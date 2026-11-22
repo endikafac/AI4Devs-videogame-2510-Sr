@@ -20,19 +20,27 @@ const CW_LEVELS = [
 
 /* ── Category list ───────────────────────────────────────── */
 const CW_CATEGORIES = [
-    { key: 'all',        es: 'Todas las categorías', en: 'All categories',    eu: 'Kategoria guztiak' },
-    { key: 'animales',   es: 'Animales',              en: 'Animals',           eu: 'Animaliak'         },
-    { key: 'geografia',  es: 'Geografía',             en: 'Geography',         eu: 'Geografia'         },
-    { key: 'biologia',   es: 'Biología',              en: 'Biology',           eu: 'Biologia'          },
-    { key: 'astronomia', es: 'Astronomía',            en: 'Astronomy',         eu: 'Astronomia'        },
-    { key: 'historia',   es: 'Historia',              en: 'History',           eu: 'Historia'          },
-    { key: 'cultura',    es: 'Cultura',               en: 'Culture',           eu: 'Kultura'           },
-    { key: 'deportes',   es: 'Deportes',              en: 'Sports',            eu: 'Kirola'            },
-    { key: 'ciencia',    es: 'Ciencia',               en: 'Science',           eu: 'Zientzia'          },
-    { key: 'tecnologia', es: 'Tecnología',            en: 'Technology',        eu: 'Teknologia'        },
-    { key: 'naturaleza', es: 'Naturaleza',            en: 'Nature',            eu: 'Natura'            },
-    { key: 'comida',     es: 'Comida',                en: 'Food',              eu: 'Janaria'           },
-    { key: 'verbos',     es: 'Verbos',                en: 'Verbs',             eu: 'Aditzak'           },
+    { key: 'all', es: 'Todas las categorías', en: 'All categories', eu: 'Kategoria guztiak', gl: 'Todas as categorías', ca: 'Totes les categories', fr: 'Toutes les catégories' },
+    { key: 'animales', es: 'Animales', en: 'Animals', eu: 'Animaliak', gl: 'Animais', ca: 'Animals', fr: 'Animaux' },
+    { key: 'geografia', es: 'Geografía', en: 'Geography', eu: 'Geografia', gl: 'Xeografía', ca: 'Geografia', fr: 'Géographie' },
+    { key: 'biologia', es: 'Biología', en: 'Biology', eu: 'Biologia', gl: 'Bioloxía', ca: 'Biologia', fr: 'Biologie' },
+    { key: 'astronomia', es: 'Astronomía', en: 'Astronomy', eu: 'Astronomia', gl: 'Astronomía', ca: 'Astronomia', fr: 'Astronomie' },
+    { key: 'historia', es: 'Historia', en: 'History', eu: 'Historia', gl: 'Historia', ca: 'Història', fr: 'Histoire' },
+    { key: 'cultura', es: 'Cultura', en: 'Culture', eu: 'Kultura', gl: 'Cultura', ca: 'Cultura', fr: 'Culture' },
+    { key: 'deportes', es: 'Deportes', en: 'Sports', eu: 'Kirola', gl: 'Deportes', ca: 'Esports', fr: 'Sports' },
+    { key: 'ciencia', es: 'Ciencia', en: 'Science', eu: 'Zientzia', gl: 'Ciencia', ca: 'Ciència', fr: 'Sciences' },
+    { key: 'tecnologia', es: 'Tecnología', en: 'Technology', eu: 'Teknologia', gl: 'Tecnoloxía', ca: 'Tecnologia', fr: 'Technologie' },
+    { key: 'naturaleza', es: 'Naturaleza', en: 'Nature', eu: 'Natura', gl: 'Natureza', ca: 'Natura', fr: 'Nature' },
+    { key: 'comida', es: 'Comida', en: 'Food', eu: 'Janaria', gl: 'Comida', ca: 'Menjar', fr: 'Nourriture' },
+    { key: 'verbos', es: 'Verbos', en: 'Verbs', eu: 'Aditzak', gl: 'Verbos', ca: 'Verbs', fr: 'Verbes' },
+    { key: 'cuerpo', es: 'Cuerpo humano', en: 'Human body', eu: 'Gizakiaren gorputza', gl: 'Corpo humano', ca: 'Cos humà', fr: 'Corps humain' },
+    { key: 'oficios', es: 'Oficios', en: 'Jobs', eu: 'Lanbideak', gl: 'Oficios', ca: 'Oficis', fr: 'Métiers' },
+    { key: 'transporte', es: 'Transporte', en: 'Transport', eu: 'Garraioa', gl: 'Transporte', ca: 'Transport', fr: 'Transports' },
+    { key: 'musica', es: 'Música', en: 'Music', eu: 'Musika', gl: 'Música', ca: 'Música', fr: 'Musique' },
+    { key: 'matematicas', es: 'Matemáticas', en: 'Maths', eu: 'Matematika', gl: 'Matemáticas', ca: 'Matemàtiques', fr: 'Mathématiques' },
+    { key: 'hogar', es: 'Hogar', en: 'Home', eu: 'Etxea', gl: 'Fogar', ca: 'Llar', fr: 'Maison' },
+    { key: 'escuela', es: 'Escuela', en: 'School', eu: 'Eskola', gl: 'Escola', ca: 'Escola', fr: 'École' },
+    { key: 'mar', es: 'Mar', en: 'Sea', eu: 'Itsasoa', gl: 'Mar', ca: 'Mar', fr: 'Mer' },
 ];
 
 /* ── i18n strings ────────────────────────────────────────── */
@@ -69,6 +77,12 @@ const CW_I18N = {
         quitConfirmTitle: '¿Salir del crucigrama?',
         quitConfirmMsg:   'Se perderá el progreso actual.',
         quitCancel:       'Cancelar',
+        hintLetter: 'Pista de letra',
+        hintLetterShort: '💡 Letra',
+        difficulty: 'Dificultad',
+        noSel: 'Selecciona una casilla primero',
+        kbHelp: 'Teclado: flechas para moverte, Enter pasa a la siguiente palabra, Espacio cambia de dirección',
+        completedTitle: '¡Crucigrama completado!',
     },
     'en-US': {
         selectLevel:   'Choose level',
@@ -102,6 +116,12 @@ const CW_I18N = {
         quitConfirmTitle: 'Quit crossword?',
         quitConfirmMsg:   'Current progress will be lost.',
         quitCancel:       'Cancel',
+        hintLetter: 'Letter hint',
+        hintLetterShort: '💡 Letter',
+        difficulty: 'Difficulty',
+        noSel: 'Select a cell first',
+        kbHelp: 'Keyboard: arrows to move, Enter goes to the next word, Space switches direction',
+        completedTitle: 'Crossword completed!',
     },
     'eu-ES': {
         selectLevel:   'Aukeratu maila',
@@ -135,6 +155,129 @@ const CW_I18N = {
         quitConfirmTitle: 'Gurutzegrametik irten?',
         quitConfirmMsg:   'Oraingo aurreratzea galduko da.',
         quitCancel:       'Utzi',
+        hintLetter: 'Letra pista',
+        hintLetterShort: '💡 Letra',
+        difficulty: 'Zailtasuna',
+        noSel: 'Aukeratu lehenengo laukitxo bat',
+        kbHelp: 'Teklatua: geziekin mugitu, Enter hurrengo hitzera, Zuriunea norabidea aldatzeko',
+        completedTitle: 'Gurutzegrama osatuta!',
+    },
+    'gl-ES': {
+        selectLevel: 'Elixe o nivel',
+        selectCategory: 'Categoría:',
+        start: 'Comezar',
+        checkWord: 'Verificar palabra',
+        checkAll: 'Verificar todo',
+        revealWord: 'Revelar palabra',
+        across: 'HORIZONTAL',
+        down: 'VERTICAL',
+        clueLabel: 'Pista:',
+        acrossClues: 'Horizontais',
+        downClues: 'Verticais',
+        quit: 'Saír',
+        results: 'Resultados!',
+        wordsFound: 'palabras correctas',
+        totalWords: 'de',
+        timeLbl: 'Tempo',
+        scoreLbl: 'Puntos',
+        levelLbl: 'Nivel',
+        wordsTxt: 'Palabras',
+        retry: 'Reintentar',
+        next: 'Seguinte nivel',
+        menu: 'Menú',
+        newRecord: '🏆 Novo récord!',
+        generating: 'Xerando crebacabezas...',
+        noWords: 'Non hai palabras suficientes para este nivel e categoría.',
+        stats: '📊 Estatísticas',
+        achievements: '🏆 Logros',
+        yourBest: 'O teu mellor tempo',
+        quitConfirmTitle: 'Saír do crebacabezas?',
+        quitConfirmMsg: 'Perderase o progreso actual.',
+        quitCancel: 'Cancelar',
+        hintLetter: 'Pista de letra',
+        hintLetterShort: '💡 Letra',
+        difficulty: 'Dificultade',
+        noSel: 'Selecciona primeiro unha casela',
+        kbHelp: 'Teclado: frechas para moverte, Enter pasa á seguinte palabra, Espazo cambia de dirección',
+        completedTitle: 'Crebacabezas completado!',
+    },
+    'ca-ES': {
+        selectLevel: 'Tria el nivell',
+        selectCategory: 'Categoria:',
+        start: 'Començar',
+        checkWord: 'Verificar paraula',
+        checkAll: 'Verificar tot',
+        revealWord: 'Revelar paraula',
+        across: 'HORITZONTAL',
+        down: 'VERTICAL',
+        clueLabel: 'Pista:',
+        acrossClues: 'Horitzontals',
+        downClues: 'Verticals',
+        quit: 'Sortir',
+        results: 'Resultats!',
+        wordsFound: 'paraules correctes',
+        totalWords: 'de',
+        timeLbl: 'Temps',
+        scoreLbl: 'Punts',
+        levelLbl: 'Nivell',
+        wordsTxt: 'Paraules',
+        retry: 'Reintentar',
+        next: 'Següent nivell',
+        menu: 'Menú',
+        newRecord: '🏆 Nou rècord!',
+        generating: 'Generant mots encreuats...',
+        noWords: 'No hi ha prou paraules per a aquest nivell i categoria.',
+        stats: '📊 Estadístiques',
+        achievements: '🏆 Assoliments',
+        yourBest: 'El teu millor temps',
+        quitConfirmTitle: 'Sortir dels mots encreuats?',
+        quitConfirmMsg: 'Es perdrà el progrés actual.',
+        quitCancel: 'Cancel·lar',
+        hintLetter: 'Pista de lletra',
+        hintLetterShort: '💡 Lletra',
+        difficulty: 'Dificultat',
+        noSel: 'Selecciona primer una casella',
+        kbHelp: 'Teclat: fletxes per moure’t, Enter passa a la paraula següent, Espai canvia de direcció',
+        completedTitle: 'Mots encreuats completats!',
+    },
+    'fr-FR': {
+        selectLevel: 'Choisis le niveau',
+        selectCategory: 'Catégorie :',
+        start: 'Commencer',
+        checkWord: 'Vérifier le mot',
+        checkAll: 'Tout vérifier',
+        revealWord: 'Révéler le mot',
+        across: 'HORIZONTAL',
+        down: 'VERTICAL',
+        clueLabel: 'Indice :',
+        acrossClues: 'Horizontaux',
+        downClues: 'Verticaux',
+        quit: 'Quitter',
+        results: 'Résultats !',
+        wordsFound: 'mots corrects',
+        totalWords: 'sur',
+        timeLbl: 'Temps',
+        scoreLbl: 'Points',
+        levelLbl: 'Niveau',
+        wordsTxt: 'Mots',
+        retry: 'Réessayer',
+        next: 'Niveau suivant',
+        menu: 'Menu',
+        newRecord: '🏆 Nouveau record !',
+        generating: 'Génération de la grille...',
+        noWords: 'Pas assez de mots pour ce niveau et cette catégorie.',
+        stats: '📊 Statistiques',
+        achievements: '🏆 Succès',
+        yourBest: 'Ton meilleur temps',
+        quitConfirmTitle: 'Quitter les mots croisés ?',
+        quitConfirmMsg: 'La progression actuelle sera perdue.',
+        quitCancel: 'Annuler',
+        hintLetter: 'Indice de lettre',
+        hintLetterShort: '💡 Lettre',
+        difficulty: 'Difficulté',
+        noSel: 'Sélectionne d’abord une case',
+        kbHelp: 'Clavier : flèches pour se déplacer, Entrée passe au mot suivant, Espace change de direction',
+        completedTitle: 'Mots croisés terminés !',
     },
 };
 
@@ -214,9 +357,8 @@ const CrosswordGame = {
     },
 
     _langCode() {
-        if (this._lang.startsWith('en')) return 'en';
-        if (this._lang.startsWith('eu')) return 'eu';
-        return 'es';
+        const c = (this._lang || 'es').slice(0, 2).toLowerCase();
+        return ['es', 'en', 'eu', 'gl', 'ca', 'fr'].includes(c) ? c : 'es';
     },
 
     /* ── Screen management ──────────────────────────────── */
@@ -295,9 +437,7 @@ const CrosswordGame = {
             if (cat.key === this._category) opt.selected = true;
             sel.appendChild(opt);
         });
-        sel.addEventListener('change', () => {
-            this._category = sel.value;
-        });
+        sel.onchange = () => { this._category = sel.value; };
     },
 
     _updateCategorySelect() {
@@ -396,6 +536,9 @@ const CrosswordGame = {
         const revealBtn = document.getElementById('cw-reveal-btn');
         revealBtn?.addEventListener('click', () => this._revealWord());
 
+        const hintBtn = document.getElementById('cw-hint-btn');
+        hintBtn?.addEventListener('click', () => this._revealLetter());
+
         const retryBtn = document.getElementById('cw-retry-btn');
         retryBtn?.addEventListener('click', () => this._startGame(this._level, this._category));
 
@@ -433,7 +576,13 @@ const CrosswordGame = {
         if (category !== 'all') {
             pool = pool.filter(c => c.category === category);
         }
-        pool = pool.filter(c => c.word.length >= cfg.minLen && c.word.length <= cfg.maxLen);
+        // Widen the length window when a themed category has too few words of the ideal size
+        const basePool = pool;
+        pool = basePool.filter(c => c.word.length >= cfg.minLen && c.word.length <= cfg.maxLen);
+        for (let extra = 1; pool.length < Math.min(cfg.target + 2, 8) && extra <= 5; extra++) {
+            const maxL = Math.min(cfg.maxLen + extra, cfg.size - 1);
+            pool = basePool.filter(c => c.word.length >= 3 && c.word.length <= maxL);
+        }
 
         if (pool.length < Math.min(cfg.target, 5)) {
             this._showError(this._t('noWords'));
@@ -1142,6 +1291,36 @@ const CrosswordGame = {
         this._updateWordsCount();
     },
 
+    /* ── Reveal a single letter (hint) ──────────────────── */
+    _revealLetter() {
+        if (!this._started || this._completed) return;
+        const r = this._selR, c = this._selC;
+        if (r < 0 || c < 0 || !this._grid || this._grid[r][c] === null) {
+            const fb = document.getElementById('cw-sr-announce');
+            if (fb) fb.textContent = this._t('noSel');
+            return;
+        }
+        this._usedReveal = true;
+        const ch = this._grid[r][c];
+        this._userGrid[r][c] = ch;
+        const cell = document.querySelector('.cw-cell[data-r="' + r + '"][data-c="' + c + '"]');
+        if (cell) {
+            let span = cell.querySelector('.cw-letter');
+            if (!span) {
+                span = document.createElement('span');
+                span.className = 'cw-letter';
+                const cellSize = parseInt(cell.style.width) || 32;
+                span.style.fontSize = Math.max(9, Math.floor(cellSize * 0.5)) + 'px';
+                cell.appendChild(span);
+            }
+            span.textContent = ch;
+            cell.classList.remove('wrong');
+            cell.classList.add('correct');
+        }
+        this._saveSessionProgress();
+        if (this._selWord) this._checkWordComplete(this._selWord);
+    },
+
     /* ── Reveal word ────────────────────────────────────── */
     _revealWord() {
         if (!this._selWord) return;
@@ -1194,6 +1373,11 @@ const CrosswordGame = {
 
         const revealBtn = document.getElementById('cw-reveal-btn');
         if (revealBtn) revealBtn.textContent = this._t('revealWord');
+
+        const hintBtn = document.getElementById('cw-hint-btn');
+        if (hintBtn) hintBtn.textContent = this._t('hintLetterShort');
+        const kbHelp = document.getElementById('cw-kb-help');
+        if (kbHelp) kbHelp.textContent = this._t('kbHelp');
 
         const quitBtn = document.getElementById('cw-quit-btn');
         if (quitBtn) quitBtn.textContent = this._t('quit');

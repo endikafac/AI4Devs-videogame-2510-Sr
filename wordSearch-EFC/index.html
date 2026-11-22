@@ -33,6 +33,11 @@
         <p class="ws-home-subtitle" id="ws-game-subtitle">Encuentra palabras y aprende</p>
     </div>
 
+    <div class="ws-category-row">
+        <label class="ws-category-label" id="ws-cat-label" for="ws-cat-select">Tema</label>
+        <select class="ws-category-select" id="ws-cat-select"></select>
+    </div>
+
     <p class="ws-section-title" id="ws-section-title">Elige el nivel</p>
 
     <div class="ws-level-grid" id="ws-level-grid" role="listbox" aria-label="Niveles disponibles">
@@ -86,7 +91,7 @@
     <!-- Loading indicator -->
     <div id="ws-loading" class="ws-loading hidden" aria-live="polite" role="status">
         <div class="ws-loading-spinner" aria-hidden="true"></div>
-        <span>Generando...</span>
+        <span id="ws-loading-text">Generando...</span>
     </div>
 
     <!-- Grid -->
@@ -94,8 +99,11 @@
         <!-- Grid rendered by JS -->
     </div>
 
+    <p class="ws-kb-help" id="ws-kb-help"></p>
+
     <!-- Quit -->
     <div class="ws-game-footer">
+        <button class="ws-btn ws-btn-secondary" id="ws-hint-btn">💡 Pista</button>
         <button class="ws-btn ws-btn-ghost" id="ws-quit-btn">Salir</button>
     </div>
 
@@ -170,6 +178,7 @@
 <script src="../platform/achievements.js"></script>
 <script src="../platform/platform-header.js"></script>
 <script src="words.js"></script>
+<script src="words-extra.js"></script>
 <script src="game.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {

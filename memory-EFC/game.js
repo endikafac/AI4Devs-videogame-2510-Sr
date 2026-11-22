@@ -1,0 +1,206 @@
+/**
+ * Memoria de Parejas - memory pairs with emojis, animals, numbers (digit + dots) and letters (UPPER + lower).
+ * 3 board sizes, move counter and 1-3 stars. Pure logic is exported for unit tests.
+ */
+const MemoryPairs = (() => {
+    'use strict';
+
+    const UI = {
+        es: { title: 'Memoria de Parejas', sub: 'Elige un tema y un tamaño. Encuentra todas las parejas con pocos movimientos.', theme: 'Tema', size: 'Tamaño', start: 'Jugar', best: 'Mejor',
+              themes: { emoji: 'Emojis', animals: 'Animales', numbers: 'Números', letters: 'Letras' }, sizes: { easy: 'Fácil', medium: 'Medio', hard: 'Difícil' },
+              moves: 'Movimientos', pairs: 'parejas', quit: 'Salir', card: 'Carta oculta', matched: 'pareja encontrada', done: '¡Todas las parejas!', again: 'Jugar otra vez', back: 'Volver al inicio',
+              score: (m, p) => `${p} parejas en ${m} movimientos.`, hintNumbers: 'Une cada número con sus puntos', hintLetters: 'Une cada mayúscula con su minúscula', xp: 'XP' },
+        en: { title: 'Memory Pairs', sub: 'Pick a theme and a size. Find all the pairs in as few moves as you can.', theme: 'Theme', size: 'Size', start: 'Play', best: 'Best',
+              themes: { emoji: 'Emojis', animals: 'Animals', numbers: 'Numbers', letters: 'Letters' }, sizes: { easy: 'Easy', medium: 'Medium', hard: 'Hard' },
+              moves: 'Moves', pairs: 'pairs', quit: 'Quit', card: 'Hidden card', matched: 'pair found', done: 'All pairs found!', again: 'Play again', back: 'Back to start',
+              score: (m, p) => `${p} pairs in ${m} moves.`, hintNumbers: 'Match each number with its dots', hintLetters: 'Match each capital with its lowercase', xp: 'XP' },
+        eu: { title: 'Bikote memoria', sub: 'Aukeratu gaia eta tamaina. Aurkitu bikote guztiak mugimendu gutxiekin.', theme: 'Gaia', size: 'Tamaina', start: 'Jolastu', best: 'Onena',
+              themes: { emoji: 'Emojiak', animals: 'Animaliak', numbers: 'Zenbakiak', letters: 'Letrak' }, sizes: { easy: 'Erraza', medium: 'Ertaina', hard: 'Zaila' },
+              moves: 'Mugimenduak', pairs: 'bikote', quit: 'Irten', card: 'Karta ezkutua', matched: 'bikotea aurkitu da', done: 'Bikote guztiak!', again: 'Berriro jolastu', back: 'Itzuli hasierara',
+              score: (m, p) => `${p} bikote ${m} mugimendutan.`, hintNumbers: 'Lotu zenbaki bakoitza bere puntuekin', hintLetters: 'Lotu letra larri bakoitza bere xehearekin', xp: 'XP' },
+        gl: { title: 'Memoria de parellas', sub: 'Elixe un tema e un tamaño. Atopa todas as parellas con poucos movementos.', theme: 'Tema', size: 'Tamaño', start: 'Xogar', best: 'Mellor',
+              themes: { emoji: 'Emojis', animals: 'Animais', numbers: 'Números', letters: 'Letras' }, sizes: { easy: 'Doado', medium: 'Medio', hard: 'Difícil' },
+              moves: 'Movementos', pairs: 'parellas', quit: 'Saír', card: 'Carta oculta', matched: 'parella atopada', done: 'Todas as parellas!', again: 'Xogar outra vez', back: 'Volver ao inicio',
+              score: (m, p) => `${p} parellas en ${m} movementos.`, hintNumbers: 'Une cada número cos seus puntos', hintLetters: 'Une cada maiúscula coa súa minúscula', xp: 'XP' },
+        ca: { title: 'Memòria de parelles', sub: 'Tria un tema i una mida. Troba totes les parelles amb pocs moviments.', theme: 'Tema', size: 'Mida', start: 'Juga', best: 'Millor',
+              themes: { emoji: 'Emojis', animals: 'Animals', numbers: 'Números', letters: 'Lletres' }, sizes: { easy: 'Fàcil', medium: 'Mitjà', hard: 'Difícil' },
+              moves: 'Moviments', pairs: 'parelles', quit: 'Surt', card: 'Carta amagada', matched: 'parella trobada', done: 'Totes les parelles!', again: 'Juga un altre cop', back: 'Torna a l\'inici',
+              score: (m, p) => `${p} parelles en ${m} moviments.`, hintNumbers: 'Uneix cada número amb els seus punts', hintLetters: 'Uneix cada majúscula amb la seva minúscula', xp: 'XP' },
+        fr: { title: 'Mémo des paires', sub: 'Choisis un thème et une taille. Trouve toutes les paires en peu de coups.', theme: 'Thème', size: 'Taille', start: 'Jouer', best: 'Meilleur',
+              themes: { emoji: 'Émojis', animals: 'Animaux', numbers: 'Nombres', letters: 'Lettres' }, sizes: { easy: 'Facile', medium: 'Moyen', hard: 'Difficile' },
+              moves: 'Coups', pairs: 'paires', quit: 'Quitter', card: 'Carte cachée', matched: 'paire trouvée', done: 'Toutes les paires !', again: 'Rejouer', back: 'Retour au début',
+              score: (m, p) => `${p} paires en ${m} coups.`, hintNumbers: 'Associe chaque nombre à ses points', hintLetters: 'Associe chaque majuscule à sa minuscule', xp: 'XP' }
+    };
+
+    const THEMES = [
+        { id: 'emoji',   icon: '😀', pool: ['😀', '🚀', '🌈', '⚽', '🎈', '🍕', '🎸', '🌻', '🍩', '🚲', '🎁', '⭐', '🏰', '🎨', '🍦', '🔔'] },
+        { id: 'animals', icon: '🐶', pool: ['🐶', '🐱', '🐭', '🐰', '🦊', '🐻', '🐼', '🐸', '🦁', '🐵', '🐧', '🐢', '🐙', '🦋', '🐝', '🐘'] },
+        { id: 'numbers', icon: '🔢', pool: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] },
+        { id: 'letters', icon: '🔤', pool: 'ABCDEFGHIJLMNOPRSTU'.split('') }
+    ];
+    const SIZES = [
+        { id: 'easy',   pairs: 4, cols: 4 },
+        { id: 'medium', pairs: 6, cols: 4 },
+        { id: 'hard',   pairs: 8, cols: 4 }
+    ];
+    const MISMATCH_MS = 850;
+
+    const shuffle = (a, r = Math.random) => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+    /** Faces of the two cards of one pair. Numbers: digit + dots. Letters: UPPER + lower. Others: same symbol twice. */
+    function faces(theme, sym) {
+        if (theme === 'numbers') return [{ text: String(sym), kind: 'digit' }, { text: '●'.repeat(sym), kind: 'dots' }];
+        if (theme === 'letters') return [{ text: sym, kind: 'upper' }, { text: sym.toLowerCase(), kind: 'lower' }];
+        return [{ text: sym, kind: 'emoji' }, { text: sym, kind: 'emoji' }];
+    }
+
+    /** Shuffled deck: [{ id, pair, text, kind }], 2 cards per pair. Pure. */
+    function makeDeck(theme, pairs, r = Math.random) {
+        const t = THEMES.find(x => x.id === theme); if (!t) throw new Error('unknown theme: ' + theme);
+        const n = Math.min(pairs, t.pool.length), chosen = shuffle(t.pool.slice(), r).slice(0, n), deck = [];
+        chosen.forEach((sym, i) => faces(theme, sym).forEach(f => deck.push({ pair: i, text: f.text, kind: f.kind })));
+        shuffle(deck, r);
+        return deck.map((c, i) => ({ id: i, pair: c.pair, text: c.text, kind: c.kind }));
+    }
+    const isMatch = (a, b) => !!a && !!b && a.id !== b.id && a.pair === b.pair;
+    /** 3 stars near the perfect game, 2 for a decent one, 1 to finish. */
+    const stars = (moves, pairs) => moves <= Math.ceil(pairs * 1.5) + 1 ? 3 : moves <= Math.ceil(pairs * 2.5) ? 2 : 1;
+    const sizeById = id => SIZES.find(s => s.id === id) || SIZES[0];
+
+    // ---- state / storage ----
+    const S = { user: null, prog: { best: {}, xp: 0, streak: 0, last: '', theme: 'emoji', size: 'easy' }, deck: [], flipped: [], matched: 0, moves: 0, run: 0, bestRun: 0, busy: false, theme: 'emoji', size: 'easy', t0: 0, timer: null };
+    const $ = id => document.getElementById(id);
+    const lang = () => { const l = ((window.PlatformI18n && PlatformI18n.currentLanguage) || 'es').slice(0, 2); return UI[l] ? l : 'es'; };
+    const T = () => UI[lang()];
+    function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+    function owner() {
+        const u = S.user; if (!u) return 'guest';
+        let pid = null; try { pid = PlatformFirestore._pid(u.uid); } catch (e) {}
+        return u.uid + (pid ? '_' + pid : '');
+    }
+    const key = () => 'memory_prog_' + owner();
+    const blank = () => ({ best: {}, xp: 0, streak: 0, last: '', theme: 'emoji', size: 'easy' });
+    function load() { try { S.prog = Object.assign(blank(), JSON.parse(localStorage.getItem(key()))); } catch (e) { S.prog = blank(); } S.theme = S.prog.theme; S.size = S.prog.size; }
+    function save() { try { localStorage.setItem(key(), JSON.stringify(S.prog)); } catch (e) {} }
+    const dayStr = (d = new Date()) => d.toISOString().slice(0, 10);
+
+    // ---- home ----
+    function show(id) { ['mm-home', 'mm-play', 'mm-end'].forEach(s => { $(s).hidden = s !== id; }); window.scrollTo(0, 0); }
+    function chips(parent, label, items, current, onPick) {
+        parent.appendChild(el('h2', 'mm-label', label));
+        const row = el('div', 'mm-chips'); row.setAttribute('role', 'radiogroup'); row.setAttribute('aria-label', label);
+        items.forEach(it => {
+            const b = el('button', 'mm-chip' + (it.id === current ? ' on' : ''), `${it.icon} ${it.name}`);
+            b.type = 'button'; b.setAttribute('role', 'radio'); b.setAttribute('aria-checked', it.id === current ? 'true' : 'false'); b.dataset.id = it.id;
+            b.onclick = () => onPick(it.id); row.appendChild(b);
+        });
+        parent.appendChild(row);
+    }
+    function renderHome() {
+        const t = T();
+        $('mm-h1').textContent = t.title; $('mm-sub').textContent = t.sub;
+        const st = $('mm-stats'); st.textContent = '';
+        st.appendChild(el('span', 'mm-pill', `🔥 ${S.prog.streak || 0}`)); st.appendChild(el('span', 'mm-pill', `⚡ ${S.prog.xp || 0} ${t.xp}`));
+        const box = $('mm-path'); box.textContent = '';
+        const li = el('li', 'mm-setup');
+        chips(li, t.theme, THEMES.map(x => ({ id: x.id, icon: x.icon, name: t.themes[x.id] })), S.theme, id => { S.theme = id; S.prog.theme = id; save(); renderHome(); });
+        chips(li, t.size, SIZES.map(x => ({ id: x.id, icon: '▦', name: `${t.sizes[x.id]} (${x.pairs} ${t.pairs})` })), S.size, id => { S.size = id; S.prog.size = id; save(); renderHome(); });
+        const hint = S.theme === 'numbers' ? t.hintNumbers : S.theme === 'letters' ? t.hintLetters : '';
+        if (hint) li.appendChild(el('p', 'mm-hint', hint));
+        const b = S.prog.best[S.theme + '_' + S.size];
+        li.appendChild(el('p', 'mm-best', b ? `${t.best}: ${'★'.repeat(b.stars)}${'☆'.repeat(3 - b.stars)} · ${b.moves} ${t.moves.toLowerCase()}` : ''));
+        const go = el('button', 'mm-btn mm-go', `▶ ${t.start}`); go.type = 'button'; go.id = 'mm-start'; go.onclick = start; li.appendChild(go);
+        box.appendChild(li);
+    }
+
+    // ---- game ----
+    function start() {
+        const sz = sizeById(S.size);
+        S.deck = makeDeck(S.theme, sz.pairs); S.flipped = []; S.matched = 0; S.moves = 0; S.run = 0; S.bestRun = 0; S.busy = false; S.t0 = Date.now();
+        show('mm-play'); renderBoard(sz); progress();
+        const first = document.querySelector('#mm-card .mm-tile'); if (first) first.focus();
+    }
+    function progress() {
+        const t = T(), total = S.deck.length / 2, p = Math.round(S.matched / total * 100);
+        $('mm-barfill').style.width = p + '%'; $('mm-barfill').parentNode.setAttribute('aria-valuenow', p);
+        $('mm-count').textContent = `${t.moves}: ${S.moves}`;
+    }
+    function renderBoard(sz) {
+        const card = $('mm-card'); card.textContent = ''; $('mm-feedback').hidden = true;
+        const grid = el('div', 'mm-grid'); grid.style.setProperty('--cols', sz.cols); grid.setAttribute('role', 'group');
+        S.deck.forEach((c, i) => {
+            const b = el('button', 'mm-tile'); b.type = 'button'; b.dataset.i = i; b.dataset.kind = c.kind;
+            b.appendChild(el('span', 'mm-back', '?')); b.appendChild(el('span', 'mm-front', c.text));
+            b.setAttribute('aria-label', T().card + ' ' + (i + 1));
+            b.onclick = () => flip(i); grid.appendChild(b);
+        });
+        card.appendChild(grid);
+    }
+    const tileEl = i => document.querySelector(`#mm-card .mm-tile[data-i="${i}"]`);
+    function setOpen(i, on) {
+        const b = tileEl(i); if (!b) return;
+        b.classList.toggle('open', on);
+        b.setAttribute('aria-label', on ? S.deck[i].text : T().card + ' ' + (i + 1));
+    }
+    function flip(i) {
+        if (S.busy || S.flipped.includes(i)) return;
+        const c = S.deck[i], b = tileEl(i); if (!c || !b || b.classList.contains('matched')) return;
+        setOpen(i, true); S.flipped.push(i);
+        if (S.flipped.length < 2) return;
+        S.moves++;
+        const [a, d] = S.flipped.map(k => S.deck[k]);
+        if (isMatch(a, d)) {
+            S.flipped.forEach(k => { const t = tileEl(k); t.classList.add('matched'); t.disabled = true; t.setAttribute('aria-label', S.deck[k].text + ', ' + T().matched); });
+            S.flipped = []; S.matched++; S.run++; S.bestRun = Math.max(S.bestRun, S.run); progress();
+            if (S.matched === S.deck.length / 2) setTimeout(finish, 450);
+        } else {
+            S.run = 0; S.busy = true; progress();
+            const pair = S.flipped.slice(); S.flipped = [];
+            pair.forEach(k => tileEl(k).classList.add('miss'));
+            S.timer = setTimeout(() => { pair.forEach(k => { setOpen(k, false); const t = tileEl(k); if (t) t.classList.remove('miss'); }); S.busy = false; }, MISMATCH_MS);
+        }
+    }
+
+    async function finish() {
+        const t = T(), pairs = S.deck.length / 2, st = stars(S.moves, pairs);
+        $('mm-trophy').textContent = st === 3 ? '🏆' : '⭐';
+        $('mm-endtitle').textContent = t.done; $('mm-endtext').textContent = t.score(S.moves, pairs);
+        $('mm-endstars').textContent = '★'.repeat(st) + '☆'.repeat(3 - st);
+        $('mm-next').textContent = t.again; $('mm-next').onclick = start;
+        $('mm-back').textContent = t.back; $('mm-back').onclick = () => { renderHome(); show('mm-home'); };
+        show('mm-end');
+        const k = S.theme + '_' + S.size, prev = S.prog.best[k];
+        if (!prev || st > prev.stars || (st === prev.stars && S.moves < prev.moves)) S.prog.best[k] = { stars: st, moves: S.moves };
+        S.prog.xp = (S.prog.xp || 0) + 10 + st * 5;
+        const today = dayStr(), y = dayStr(new Date(Date.now() - 864e5));
+        if (S.prog.last !== today) { S.prog.streak = S.prog.last === y ? (S.prog.streak || 0) + 1 : 1; S.prog.last = today; }
+        save();
+        if (S.user && typeof PlatformFirestore !== 'undefined') {
+            try {
+                await PlatformFirestore.updateGameStats(S.user.uid, 'memory', {
+                    correctAnswers: pairs, totalQuestions: S.moves, totalAttempts: S.moves, bestStreak: S.bestRun,
+                    elapsedSeconds: Math.round((Date.now() - S.t0) / 1000), level: SIZES.findIndex(s => s.id === S.size) + 1, operation: S.theme });
+            } catch (e) { console.warn('[MemoryPairs] stats not saved', e); }
+        }
+    }
+
+    function leave() { clearTimeout(S.timer); S.busy = false; renderHome(); show('mm-home'); }
+
+    function init() {
+        $('mm-quit').onclick = leave;
+        document.addEventListener('keydown', e => {
+            if ($('mm-play').hidden) return;
+            const tiles = [...document.querySelectorAll('#mm-card .mm-tile')], cur = tiles.indexOf(document.activeElement);
+            if (cur < 0 || !tiles.length) return;
+            const cols = sizeById(S.size).cols, d = { ArrowRight: 1, ArrowLeft: -1, ArrowDown: cols, ArrowUp: -cols }[e.key];
+            if (d) { e.preventDefault(); const n = cur + d; if (n >= 0 && n < tiles.length) tiles[n].focus(); }
+        });
+        load(); renderHome(); show('mm-home');
+        if (window.PlatformAuth && PlatformAuth.onAuthStateChanged) PlatformAuth.onAuthStateChanged(u => { S.user = u || null; load(); renderHome(); });
+        window.addEventListener('platformLanguageChanged', () => { if (!$('mm-home').hidden) renderHome(); });
+    }
+
+    const api = { init, state: S, THEMES, SIZES, makeDeck, isMatch, stars, faces };
+    if (typeof module !== 'undefined' && module.exports) module.exports = api;
+    return api;
+})();

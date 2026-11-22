@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <link rel="manifest" href="../manifest.json">
+    <meta name="theme-color" content="#f59e0b">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Aprende la Hora">
+    <link rel="apple-touch-icon" href="../icons/icon-192.png">
+    <meta name="description" content="Aprende la Hora: lee el reloj analógico, coloca las agujas y practica horas, medias, cuartos y cinco minutos.">
+    <title>Aprende la Hora – Games Hub</title>
+    <link rel="stylesheet" href="../platform/platform.css">
+    <link rel="stylesheet" href="styles.css">
+    <link href="../fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<main id="main-content" class="ck-main">
+    <section id="ck-home" class="ck-screen">
+        <div class="ck-head">
+            <h1 id="ck-h1">Aprende la Hora</h1>
+            <div class="ck-stats" id="ck-stats"></div>
+        </div>
+        <p class="ck-sub" id="ck-sub"></p>
+        <ol class="ck-path" id="ck-path"></ol>
+    </section>
+
+    <section id="ck-play" class="ck-screen" hidden>
+        <div class="ck-top">
+            <button class="ck-quit" id="ck-quit" type="button" aria-label="Salir">✕</button>
+            <div class="ck-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i id="ck-barfill"></i></div>
+            <span class="ck-count" id="ck-count" aria-live="polite"></span>
+        </div>
+        <div class="ck-card" id="ck-card"></div>
+        <div class="ck-feedback" id="ck-feedback" hidden aria-live="assertive"></div>
+    </section>
+
+    <section id="ck-end" class="ck-screen" hidden>
+        <div class="ck-endbox">
+            <div class="ck-trophy" id="ck-trophy" aria-hidden="true"></div>
+            <h2 id="ck-endtitle"></h2>
+            <p id="ck-endtext"></p>
+            <div class="ck-endstars" id="ck-endstars" aria-hidden="true"></div>
+            <div class="ck-endbtns">
+                <button class="ck-btn" id="ck-next" type="button"></button>
+                <button class="ck-btn ghost" id="ck-back" type="button"></button>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore-compat.js"></script>
+<script src="../platform/firebase-config.js"></script>
+<script src="../platform/i18n-platform.js"></script>
+<script src="../platform/auth.js"></script>
+<script src="../platform/firestore.js"></script>
+<script src="../platform/identity.js"></script>
+<script src="../platform/platform-header.js"></script>
+<script src="game.js"></script>
+<script>
+    PlatformHeader.init({ gameName: 'Aprende la Hora', gameIcon: '🕒', rootPath: '../' });
+    ClockLab.init();
+</script>
+<script src="../platform/register-sw.js"></script>
+</body>
+</html>

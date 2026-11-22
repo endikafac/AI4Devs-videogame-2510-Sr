@@ -35,6 +35,9 @@
 
     <p class="ty-lang-info" id="ty-lang-info">Español</p>
 
+    <div class="ty-age-row" id="ty-age-row" role="radiogroup" aria-label="Edad"></div>
+    <p class="ty-age-hint" id="ty-age-hint" aria-live="polite"></p>
+
     <p class="ty-section-title" id="ty-section-title">Elige el nivel</p>
 
     <div class="ty-level-grid" id="ty-level-grid" role="list" aria-label="Niveles disponibles">
@@ -114,6 +117,8 @@
 
     <!-- Input hint -->
     <p class="ty-input-hint" id="ty-input-hint">Comienza a escribir...</p>
+
+    <p class="ty-kb-tip" id="ty-kb-tip"></p>
 
     <!-- Quit -->
     <div class="ty-game-footer">
@@ -208,6 +213,8 @@
 <script src="../platform/achievements.js"></script>
 <script src="../platform/platform-header.js"></script>
 <script src="texts.js"></script>
+<script src="texts-extra.js"></script>
+<script src="i18n-extra.js"></script>
 <script src="game.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {

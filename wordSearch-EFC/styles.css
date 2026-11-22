@@ -658,3 +658,23 @@
     animation: ws-spin 0.8s linear infinite;
 }
 @keyframes ws-spin { to { transform: rotate(360deg); } }
+
+/* ── Polish: category picker, keyboard cursor, hint, touch targets ── */
+.ws-category-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0 0 12px; flex-wrap: wrap; }
+.ws-category-label { font-weight: 700; color: var(--text-secondary); }
+.ws-category-select {
+    min-height: 48px; min-width: 200px; max-width: 100%; padding: 0 12px; font-size: 1rem; font-family: var(--font-body);
+    border-radius: var(--radius-md); border: 2px solid var(--border-color); background: var(--bg-surface); color: var(--text-primary);
+}
+.ws-btn { min-height: 48px; }
+.ws-level-btn { min-height: 48px; }
+.ws-game-footer { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.ws-kb-help { font-size: 0.75rem; color: var(--text-secondary); text-align: center; margin: 6px 0; }
+@media (hover: none) { .ws-kb-help { display: none; } }
+.ws-grid:focus-visible { outline: 3px solid var(--hub-brand-color); outline-offset: 3px; border-radius: 6px; }
+.ws-cell.kb-cursor { outline: 3px solid var(--hub-brand-color); outline-offset: -2px; z-index: 1; }
+.ws-cell.kb-anchor { box-shadow: inset 0 0 0 3px #f59e0b; }
+.ws-cell.hint { animation: ws-hint-pulse 0.7s ease-in-out 3; background: #fde68a; color: #111; }
+@keyframes ws-hint-pulse { 50% { transform: scale(1.25); } }
+.ws-btn:focus-visible, .ws-level-btn:focus-visible, .ws-category-select:focus-visible { outline: 3px solid var(--hub-brand-color); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .ws-cell.hint { animation: none; } }

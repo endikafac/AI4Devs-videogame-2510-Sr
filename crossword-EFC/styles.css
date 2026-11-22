@@ -763,3 +763,16 @@
 .cw-quit-dialog p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 20px; }
 .cw-quit-actions { display: flex; gap: 10px; justify-content: center; }
 .cw-quit-actions .cw-btn { min-width: 100px; }
+
+/* ── Polish: touch targets, keyboard help, focus ──────────── */
+.cw-btn { min-height: 48px; }
+.cw-tab { min-height: 44px; }
+.cw-level-btn { min-height: 48px; }
+.cw-kb-help { font-size: 0.75rem; color: var(--text-secondary); text-align: center; margin: 4px 0 8px; }
+@media (hover: none) { .cw-kb-help { display: none; } }
+.cw-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.cw-btn:focus-visible, .cw-level-btn:focus-visible, .cw-tab:focus-visible, .cw-category-select:focus-visible {
+    outline: 3px solid var(--hub-brand-color);
+    outline-offset: 2px;
+}
+.cw-category-select { min-height: 48px; font-size: 1rem; }

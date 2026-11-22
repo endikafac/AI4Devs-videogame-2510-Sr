@@ -59,6 +59,7 @@ const TableMasterGame = {
         this._bindResultEvents();
         this._bindTableScreenEvents();
         this._bindDivisibilityChecker();
+        this._bindDrillEvents();
         this.applyI18n();
 
         // Auth listener
@@ -87,6 +88,7 @@ const TableMasterGame = {
             const key = el.dataset.i18n;
             el.textContent = t(key);
         });
+        this._refreshDrillTexts();
     },
 
     // ── Pantalla Inicio ───────────────────────────────────────────────────────
@@ -152,9 +154,10 @@ const TableMasterGame = {
         document.querySelectorAll('[data-back]').forEach(btn => {
             btn.addEventListener('click', () => {
                 const currentScreen = this.state.currentScreen;
-                const isPractice = currentScreen === 'screen-practice' &&
+                const isPractice = (currentScreen === 'screen-practice' &&
                     this.state.practice.exercises.length > 0 &&
-                    this.state.practice.exIndex < this.state.practice.exercises.length;
+                    this.state.practice.exIndex < this.state.practice.exercises.length) ||
+                    (currentScreen === 'screen-drill' && this._drill && !this._drill.ended);
                 if (isPractice) {
                     this._showQuitConfirm(btn.dataset.back);
                 } else {
@@ -1639,9 +1642,480 @@ const TableMasterGame = {
         input.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
     },
 
+    // ── Retos rápidos (modos de tablas) ───────────────────────────────────────
+    // Modes: table, mixed, divide, missing, timed, problems.
+    // Progress (stars per mode/table, timed records, weak facts) lives in
+    // localStorage on this device. Round results go to PlatformFirestore.
+
+    _PROGRESS_KEY: 'games_hub_tablemaster_progress',
+    _RANKS: [0, 5, 15, 35, 60],
+    _DRILL_META: {
+        table:    { op: 'multiplicacion', level: 1, total: 10, chips: true  },
+        mixed:    { op: 'multiplicacion', level: 2, total: 10, chips: false },
+        divide:   { op: 'division',       level: 2, total: 10, chips: true  },
+        missing:  { op: 'multiplicacion', level: 2, total: 10, chips: true  },
+        timed:    { op: 'mezcla',         level: 3, total: 0,  chips: true  },
+        problems: { op: 'problemas',      level: 3, total: 10, chips: true  },
+    },
+    _TIMED_SECONDS: 60,
+    _drillSel: { mode: 'table', table: 'all' },
+    _drill: null,
+
+    _loadProgress() {
+        const empty = { stars: {}, best: {}, facts: {} };
+        try {
+            const p = JSON.parse(localStorage.getItem(this._PROGRESS_KEY) || 'null');
+            if (!p || typeof p !== 'object') return empty;
+            return { stars: p.stars || {}, best: p.best || {}, facts: p.facts || {} };
+        } catch (e) { return empty; }
+    },
+
+    _saveProgress(p) {
+        try { localStorage.setItem(this._PROGRESS_KEY, JSON.stringify(p)); } catch (e) { /* storage unavailable */ }
+    },
+
+    _totalStars(p) {
+        return Object.values(p.stars).reduce((s, n) => s + (Number(n) || 0), 0);
+    },
+
+    _renderRankBar() {
+        const t = (k, o) => TableMasterI18n.t(k, o);
+        const total = this._totalStars(this._loadProgress());
+        let rank = 0;
+        this._RANKS.forEach((min, i) => { if (total >= min) rank = i; });
+        const next = this._RANKS[rank + 1];
+        const prev = this._RANKS[rank];
+        const pct = next ? Math.round(((total - prev) / (next - prev)) * 100) : 100;
+        const name = document.getElementById('tm-rank-name');
+        const stars = document.getElementById('tm-rank-stars');
+        const fill = document.getElementById('tm-rank-fill');
+        if (name) name.textContent = t('rank' + rank);
+        if (stars) stars.textContent = t('starsTotal', { n: total });
+        if (fill) fill.style.width = pct + '%';
+    },
+
+    _bindDrillEvents() {
+        document.querySelectorAll('[data-drill]').forEach(btn => {
+            btn.addEventListener('click', () => this._openDrillSelect(btn.dataset.drill));
+        });
+
+        document.getElementById('btn-drill-start')?.addEventListener('click', () => this._startDrill(false));
+        document.getElementById('btn-drill-retry')?.addEventListener('click', () => this._startDrill(false));
+        document.getElementById('btn-drill-review')?.addEventListener('click', () => this._startDrill(true));
+        document.getElementById('btn-drill-home')?.addEventListener('click', () => this._showScreen('screen-home'));
+        document.getElementById('drill-next')?.addEventListener('click', () => this._drillNext());
+
+        document.getElementById('drill-table-chips')?.addEventListener('click', e => {
+            const chip = e.target.closest('.tm-chip');
+            if (!chip) return;
+            this._drillSel.table = chip.dataset.table;
+            this._renderDrillSelect();
+        });
+
+        document.getElementById('drill-numpad')?.addEventListener('click', e => {
+            const key = e.target.closest('.tm-key');
+            if (key) this._drillKey(key.dataset.key);
+        });
+
+        // Physical keyboard (desktop)
+        document.addEventListener('keydown', e => {
+            if (this.state.currentScreen !== 'screen-drill' || !this._drill) return;
+            if (document.getElementById('tm-quit-modal') && !document.getElementById('tm-quit-modal').classList.contains('hidden')) return;
+            if (e.ctrlKey || e.metaKey || e.altKey) return;
+            let key = null;
+            if (/^[0-9]$/.test(e.key)) key = e.key;
+            else if (e.key === 'Backspace' || e.key === 'Delete') key = 'del';
+            else if (e.key === 'Enter' || e.key === ' ') key = 'ok';
+            if (key === null) return;
+            e.preventDefault();
+            this._drillKey(key);
+        });
+    },
+
+    _openDrillSelect(mode) {
+        this._drillSel.mode = mode;
+        if (!this._DRILL_META[mode].chips) this._drillSel.table = 'all';
+        this._renderDrillSelect();
+        this._showScreen('screen-drill-select');
+    },
+
+    _renderDrillSelect() {
+        const t = (k, o) => TableMasterI18n.t(k, o);
+        const { mode, table } = this._drillSel;
+        const meta = this._DRILL_META[mode];
+        const cap = mode.charAt(0).toUpperCase() + mode.slice(1);
+        document.getElementById('drill-select-title').textContent = t('mode' + cap + 'Name');
+        document.getElementById('drill-select-desc').textContent =
+            t('mode' + cap + 'Desc') + '. ' + (mode === 'timed' ? t('drillRoundTimed') : t('drillRound10'));
+
+        const progress = this._loadProgress();
+        const chips = document.getElementById('drill-table-chips');
+        const heading = document.getElementById('drill-choose-heading');
+        chips.classList.toggle('hidden', !meta.chips);
+        heading.classList.toggle('hidden', !meta.chips);
+        if (meta.chips) {
+            const items = ['all', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+            chips.innerHTML = items.map(n => {
+                const key = `${mode}:${n}`;
+                const s = Math.min(3, Number(progress.stars[key]) || 0);
+                const label = n === 'all' ? t('drillAllTables') : String(n);
+                const aria = n === 'all' ? t('drillAllTables') : t('drillTableLabel', { n });
+                return `<button type="button" class="tm-chip${String(n) === String(table) ? ' selected' : ''}" data-table="${n}" aria-pressed="${String(n) === String(table)}" aria-label="${aria}">
+                    <span class="tm-chip-n">${label}</span>
+                    <span class="tm-chip-stars" aria-hidden="true">${'★'.repeat(s)}${'☆'.repeat(3 - s)}</span>
+                </button>`;
+            }).join('');
+        }
+
+        const bestEl = document.getElementById('drill-best');
+        if (mode === 'timed') {
+            const best = Number(progress.best[`timed:${table}`]) || 0;
+            bestEl.textContent = best > 0 ? '🏅 ' + t('drillBestTimed', { n: best }) : '';
+        } else {
+            bestEl.textContent = '';
+        }
+    },
+
+    // Weighted pick of a (a,b) fact: facts you got wrong come up more often.
+    _pickFact(table, avoidKey) {
+        const progress = this._loadProgress();
+        const pool = [];
+        const aList = table === 'all' ? [2, 3, 4, 5, 6, 7, 8, 9, 10] : [parseInt(table, 10)];
+        aList.forEach(a => {
+            for (let b = (table === 'all' ? 2 : 1); b <= 10; b++) {
+                const key = `${Math.min(a, b)}x${Math.max(a, b)}`;
+                if (key === avoidKey && (aList.length > 1 || b !== a)) continue;
+                const w = 1 + Math.min(Number(progress.facts[key]) || 0, 5) * 2;
+                for (let i = 0; i < w; i++) pool.push({ a, b, key });
+            }
+        });
+        const f = pool[Math.floor(Math.random() * pool.length)] || { a: 2, b: 2, key: '2x2' };
+        // Randomise factor order (commutative)
+        return Math.random() < 0.5 ? f : { a: f.b, b: f.a, key: f.key };
+    },
+
+    _makeDrillQuestion(mode, table, avoidKey) {
+        const { a, b, key } = this._pickFact(table, avoidKey);
+        const p = a * b;
+        let type = mode;
+        if (mode === 'mixed') type = 'table';
+        if (mode === 'timed') type = ['table', 'divide', 'missing'][Math.floor(Math.random() * 3)];
+
+        if (type === 'table') return { text: `${a} × ${b} = ?`, answer: p, key };
+        if (type === 'divide') return { text: `${p} ÷ ${a} = ?`, answer: b, key };
+        if (type === 'missing') {
+            return Math.random() < 0.5
+                ? { text: `${a} × ? = ${p}`, answer: b, key }
+                : { text: `? × ${b} = ${p}`, answer: a, key };
+        }
+        // problems: a and b >= 2 so stories make sense
+        const pa = Math.max(2, a === 1 ? 2 : a);
+        const pb = Math.max(2, b === 1 ? 2 : b);
+        const pp = pa * pb;
+        const id = 1 + Math.floor(Math.random() * 6);
+        const isMult = id === 1 || id === 2 || id === 5;
+        return {
+            text: TableMasterI18n.t('wp' + id, { a: pa, b: pb, p: pp }),
+            answer: isMult ? pp : pa,
+            key,
+            story: true,
+        };
+    },
+
+    _startDrill(reviewOnly) {
+        const mode = this._drillSel.mode;
+        const meta = this._DRILL_META[mode];
+        const table = this._drillSel.table;
+        const prev = this._drill;
+        const review = reviewOnly && prev && prev.wrong.length > 0;
+        const queue = review ? prev.wrong.slice(0, 10).map(w => ({ ...w })) : null;
+
+        this._drill = {
+            mode, table, review,
+            queue,
+            total: review ? queue.length : meta.total,
+            timed: mode === 'timed' && !review,
+            idx: 0, correct: 0, asked: 0,
+            streak: 0, bestStreak: 0, score: 0,
+            wrong: [],
+            answer: '', locked: false, current: null, lastKey: null,
+            startTs: Date.now(), timeLeft: this._TIMED_SECONDS,
+            timerId: null, nextTimer: null, ended: false,
+        };
+        const d = this._drill;
+        if (d.timed) {
+            d.timerId = setInterval(() => {
+                const qm = document.getElementById('tm-quit-modal');
+                if (qm && !qm.classList.contains('hidden')) return; // paused while the quit dialog is open
+                d.timeLeft--;
+                this._renderDrillHud();
+                if (d.timeLeft <= 0) this._endDrill();
+            }, 1000);
+        }
+        this._showScreen('screen-drill');
+        this._drillAskNext();
+    },
+
+    _drillAskNext() {
+        const d = this._drill;
+        if (!d || d.ended) return;
+        d.answer = '';
+        d.locked = false;
+        d.current = d.review ? d.queue[d.idx] : this._makeDrillQuestion(d.mode, d.table, d.lastKey);
+        d.lastKey = d.current.key;
+
+        const q = document.getElementById('drill-question');
+        const card = document.getElementById('drill-qcard');
+        q.classList.toggle('tm-drill-q--story', !!d.current.story);
+        q.innerHTML = '';
+        if (d.current.story) {
+            q.textContent = d.current.text;
+        } else {
+            d.current.text.split('?').forEach((part, i, arr) => {
+                q.appendChild(document.createTextNode(part));
+                if (i < arr.length - 1) {
+                    const mark = document.createElement('span');
+                    mark.className = 'tm-q-mark';
+                    mark.textContent = '?';
+                    q.appendChild(mark);
+                }
+            });
+        }
+        card.classList.remove('ok', 'bad');
+        document.getElementById('drill-feedback').textContent = '';
+        document.getElementById('drill-feedback').className = 'tm-drill-feedback';
+        document.getElementById('drill-numpad').classList.remove('hidden');
+        document.getElementById('drill-next').classList.add('hidden');
+        this._renderDrillAnswer();
+        this._renderDrillHud();
+    },
+
+    _renderDrillAnswer() {
+        const el = document.getElementById('drill-answer');
+        if (!el) return;
+        el.textContent = this._drill && this._drill.answer ? this._drill.answer : ' ';
+    },
+
+    _renderDrillHud() {
+        const d = this._drill;
+        if (!d) return;
+        const t = k => TableMasterI18n.t(k);
+        const label = document.getElementById('drill-hud-label');
+        const prog = document.getElementById('drill-hud-progress');
+        const bar = document.getElementById('drill-bar-fill');
+        if (d.timed) {
+            label.textContent = t('drillTime');
+            prog.textContent = `${Math.max(0, d.timeLeft)}${t('seconds')}`;
+            prog.classList.toggle('tm-low-time', d.timeLeft <= 10);
+            bar.style.width = `${Math.max(0, (d.timeLeft / this._TIMED_SECONDS) * 100)}%`;
+        } else {
+            label.textContent = t('drillProgress');
+            prog.textContent = `${Math.min(d.idx + 1, d.total)}/${d.total}`;
+            prog.classList.remove('tm-low-time');
+            bar.style.width = `${(d.idx / d.total) * 100}%`;
+        }
+        document.getElementById('drill-hud-streak').textContent = `🔥 ${d.streak}`;
+        document.getElementById('drill-hud-score').textContent = d.score;
+    },
+
+    _drillKey(key) {
+        const d = this._drill;
+        if (!d || d.ended) return;
+        if (d.locked) {
+            // After a wrong answer (non-timed) Enter / OK moves on
+            if (key === 'ok' && !document.getElementById('drill-next').classList.contains('hidden')) this._drillNext();
+            return;
+        }
+        if (key === 'del') {
+            d.answer = d.answer.slice(0, -1);
+        } else if (key === 'ok') {
+            if (d.answer !== '') this._drillSubmit();
+            return;
+        } else if (d.answer.length < 3) {
+            d.answer = (d.answer + key).replace(/^0+(?=\d)/, '');
+        }
+        this._renderDrillAnswer();
+    },
+
+    _drillSubmit() {
+        const d = this._drill;
+        const t = (k, o) => TableMasterI18n.t(k, o);
+        const card = document.getElementById('drill-qcard');
+        const fb = document.getElementById('drill-feedback');
+        const progress = this._loadProgress();
+        const cur = d.current;
+        const isRight = parseInt(d.answer, 10) === cur.answer;
+        d.locked = true;
+        d.asked++;
+
+        if (isRight) {
+            d.correct++;
+            d.streak++;
+            d.bestStreak = Math.max(d.bestStreak, d.streak);
+            d.score += 10 + Math.min(d.streak - 1, 5) * 2;
+            progress.facts[cur.key] = Math.max(0, (Number(progress.facts[cur.key]) || 0) - 1);
+            if (!progress.facts[cur.key]) delete progress.facts[cur.key];
+            card.classList.add('ok');
+            fb.className = 'tm-drill-feedback ok';
+            fb.textContent = '✓ ' + (d.streak > 0 && d.streak % 5 === 0
+                ? t('drillStreakMsg', { n: d.streak })
+                : t('praise' + (1 + Math.floor(Math.random() * 4))));
+            this._saveProgress(progress);
+            this._renderDrillHud();
+            d.nextTimer = setTimeout(() => this._drillNext(), 700);
+        } else {
+            d.streak = 0;
+            d.wrong.push({ text: cur.text, answer: cur.answer, key: cur.key, story: !!cur.story });
+            progress.facts[cur.key] = (Number(progress.facts[cur.key]) || 0) + 1;
+            this._saveProgress(progress);
+            card.classList.add('bad');
+            fb.className = 'tm-drill-feedback bad';
+            fb.textContent = '✗ ' + t('drillAnswerWas', { n: cur.answer }) + '. ' + t('oops' + (1 + Math.floor(Math.random() * 3)));
+            this._renderDrillHud();
+            if (d.timed) {
+                d.nextTimer = setTimeout(() => this._drillNext(), 1200);
+            } else {
+                document.getElementById('drill-numpad').classList.add('hidden');
+                const nextBtn = document.getElementById('drill-next');
+                nextBtn.classList.remove('hidden');
+                nextBtn.focus();
+            }
+        }
+    },
+
+    _drillNext() {
+        const d = this._drill;
+        if (!d || d.ended) return;
+        if (d.nextTimer) { clearTimeout(d.nextTimer); d.nextTimer = null; }
+        d.idx++;
+        if (!d.timed && d.idx >= d.total) {
+            this._endDrill();
+            return;
+        }
+        this._drillAskNext();
+    },
+
+    _stopDrillTimers() {
+        const d = this._drill;
+        if (!d) return;
+        if (d.timerId) { clearInterval(d.timerId); d.timerId = null; }
+        if (d.nextTimer) { clearTimeout(d.nextTimer); d.nextTimer = null; }
+    },
+
+    async _endDrill() {
+        const d = this._drill;
+        if (!d || d.ended) return;
+        d.ended = true;
+        this._stopDrillTimers();
+        const t = (k, o) => TableMasterI18n.t(k, o);
+        const meta = this._DRILL_META[d.mode];
+        const elapsed = d.timed
+            ? this._TIMED_SECONDS
+            : Math.max(1, Math.round((Date.now() - d.startTs) / 1000));
+        const asked = d.asked;
+        const accuracy = asked > 0 ? Math.round((d.correct / asked) * 100) : 0;
+
+        // Stars
+        let stars;
+        if (d.timed) stars = d.correct >= 15 ? 3 : d.correct >= 10 ? 2 : d.correct >= 5 ? 1 : 0;
+        else stars = accuracy >= 100 ? 3 : accuracy >= 80 ? 2 : accuracy >= 60 ? 1 : 0;
+
+        // Progress: stars + timed record (not for review rounds)
+        const progress = this._loadProgress();
+        let newStar = false;
+        let newRecord = false;
+        if (!d.review) {
+            const key = `${d.mode}:${d.table}`;
+            if (stars > (Number(progress.stars[key]) || 0)) {
+                progress.stars[key] = stars;
+                newStar = true;
+            }
+            if (d.timed && d.correct > (Number(progress.best[key]) || 0)) {
+                progress.best[key] = d.correct;
+                newRecord = d.correct > 0;
+            }
+            this._saveProgress(progress);
+        }
+
+        // Stats (same call shape as the step-by-step practice)
+        const gameResult = {
+            correctAnswers: d.correct,
+            totalQuestions: asked,
+            totalAttempts:  asked,
+            bestStreak:     d.bestStreak,
+            elapsedSeconds: elapsed,
+            level:          meta.level,
+            operation:      meta.op,
+        };
+        let pts = { points: 0, xp: 0 };
+        if (typeof PlatformFirestore !== 'undefined' && asked > 0) {
+            pts = PlatformFirestore.calculatePoints(gameResult);
+        }
+        const uid = this.state.currentUser && this.state.currentUser.uid;
+
+        // Result screen
+        const starsEl = document.getElementById('drill-stars');
+        starsEl.innerHTML = [1, 2, 3].map(i =>
+            `<span class="tm-big-star${i <= stars ? ' on' : ''}" style="animation-delay:${i * 0.18}s">★</span>`).join('');
+        document.getElementById('drill-result-title').textContent = d.timed ? t('drillTimeUp') : t('drillResultTitle');
+        const msg = [];
+        if (d.timed) msg.push(t('drillTimedSolved', { n: d.correct }));
+        else if (d.wrong.length === 0 && asked > 0) msg.push(t('drillPerfect'));
+        else msg.push(accuracy >= 60 ? t('resultGood') : t('resultKeepTrying'));
+        if (newRecord) msg.push(t('drillNewRecord'));
+        else if (newStar) msg.push(t('drillNewStar'));
+        document.getElementById('drill-result-msg').textContent = msg.join(' ');
+        document.getElementById('drill-res-correct').textContent = `${d.correct}/${asked}`;
+        document.getElementById('drill-res-score').textContent = d.score;
+        document.getElementById('drill-res-streak').textContent = d.bestStreak;
+        document.getElementById('drill-res-time').textContent = `${elapsed}${t('seconds')}`;
+        document.getElementById('drill-res-points').textContent = `+${pts.points} pts`;
+        document.getElementById('drill-res-xp').textContent = `+${pts.xp} XP`;
+
+        const list = document.getElementById('drill-review-list');
+        list.innerHTML = '';
+        d.wrong.forEach(w => {
+            const li = document.createElement('li');
+            li.className = 'tm-drill-review-item';
+            const q = document.createElement('span');
+            q.className = 'tm-review-q';
+            q.textContent = w.story ? '📚 ' + w.text : w.text.replace('?', String(w.answer));
+            li.appendChild(q);
+            if (w.story) {
+                const a = document.createElement('strong');
+                a.textContent = '= ' + w.answer;
+                li.appendChild(a);
+            }
+            list.appendChild(li);
+        });
+        document.getElementById('drill-review').classList.toggle('hidden', d.wrong.length === 0);
+        document.getElementById('btn-drill-review').classList.toggle('hidden', d.wrong.length === 0);
+
+        if (accuracy >= 70 && asked > 0) this._launchConfetti();
+        this._showScreen('screen-drill-result');
+
+        if (uid && typeof PlatformFirestore !== 'undefined' && asked > 0) {
+            try {
+                await PlatformFirestore.updateGameStats(uid, 'tablemaster', gameResult);
+            } catch (err) {
+                console.warn('[TableMaster] Could not save stats:', err);
+            }
+        }
+    },
+
+    _refreshDrillTexts() {
+        this._renderRankBar();
+        if (this.state.currentScreen === 'screen-drill-select') this._renderDrillSelect();
+        if (this._drill && this.state.currentScreen === 'screen-drill') this._renderDrillHud();
+    },
+
     // ── Navegación de pantallas ───────────────────────────────────────────────
 
     _showScreen(id) {
+        if (this.state.currentScreen === 'screen-drill' && id !== 'screen-drill' && this._drill && !this._drill.ended) {
+            this._stopDrillTimers();
+            this._drill.ended = true;
+        }
         document.querySelectorAll('.tm-screen').forEach(s => {
             s.classList.remove('active');
             s.setAttribute('aria-hidden', 'true');
@@ -1653,8 +2127,13 @@ const TableMasterGame = {
             // Focus management
             const first = target.querySelector(
                 'button:not(:disabled), input:not(:disabled), [tabindex="0"]');
-            if (first) first.focus();
+            if (id === 'screen-drill') {
+                if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+            } else if (first) {
+                first.focus();
+            }
         }
         this.state.currentScreen = id;
+        if (id === 'screen-home') this._renderRankBar();
     },
 };

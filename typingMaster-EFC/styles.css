@@ -693,3 +693,21 @@
 .ty-quit-dialog p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 20px; }
 .ty-quit-actions { display: flex; gap: 10px; justify-content: center; }
 .ty-quit-actions .ty-btn { min-width: 100px; }
+
+/* ── Polish: age profile, 12 levels, touch targets, keyboard tip ── */
+.ty-level-grid { grid-template-columns: repeat(6, 1fr); }
+@media (max-width: 600px) { .ty-level-grid { grid-template-columns: repeat(6, 1fr); gap: 6px; } }
+.ty-level-btn { min-height: 48px; }
+.ty-btn { min-height: 48px; }
+.ty-age-row { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 0 0 6px; }
+.ty-age-label { font-weight: 700; color: var(--text-secondary); font-size: 0.9rem; }
+.ty-age-btn {
+    min-height: 44px; padding: 0 14px; border-radius: 999px; border: 2px solid var(--border-color);
+    background: var(--bg-surface); color: var(--text-primary); font-weight: 600; font-size: 0.9rem;
+    font-family: var(--font-body); cursor: pointer; transition: all 0.15s ease;
+}
+.ty-age-btn.selected { background: var(--hub-brand-color); border-color: var(--hub-brand-color); color: #fff; }
+.ty-age-hint { text-align: center; font-size: 0.8rem; color: var(--text-muted); margin: 0 0 14px; min-height: 1.2em; }
+.ty-kb-tip { text-align: center; font-size: 0.75rem; color: var(--text-muted); margin: 6px 0; }
+@media (hover: none) { .ty-kb-tip { display: none; } }
+.ty-age-btn:focus-visible, .ty-level-btn:focus-visible, .ty-btn:focus-visible { outline: 3px solid var(--hub-brand-color); outline-offset: 2px; }

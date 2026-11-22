@@ -144,7 +144,13 @@ const OPERATION_ICONS = {
     multiplicacion: '×',
     division: '÷',
     tablas: 'T',
-    mezcla: '±'
+    mezcla: '±',
+    problemas: '📖',
+    fracciones: '½',
+    porcentajes: '%',
+    secuencias: '⋯',
+    huecos: '?',
+    potencias: 'x²'
 };
 
 // Función helper para obtener nombres de operaciones traducidos
@@ -159,9 +165,432 @@ function getOperationName(operation) {
         multiplicacion: 'Multiplicación',
         division: 'División',
         tablas: 'Tablas de Multiplicar',
-        mezcla: 'Mezcla'
+        mezcla: 'Mezcla',
+        problemas: 'Problemas',
+        fracciones: 'Fracciones',
+        porcentajes: 'Porcentajes',
+        secuencias: 'Series',
+        huecos: 'Qué falta',
+        potencias: 'Potencias'
     };
     return names[operation] || operation;
+}
+
+// ==================== NUEVOS TEMAS ====================
+// Problemas, fracciones, porcentajes, series, número que falta y potencias.
+// The difficulty tier (1-4) comes from the selected level: 1-3, 4-6, 7-8, 9-10.
+// Questions use language-neutral notation (3/4 × 20, 25% × 80) except the
+// word problems, which are translated templates (problem1..problem9).
+
+const NEW_TOPICS = ['problemas', 'fracciones', 'porcentajes', 'secuencias', 'huecos', 'potencias'];
+
+function isTopic(operation) {
+    return NEW_TOPICS.includes(operation);
+}
+
+function getTier(level) {
+    return level <= 3 ? 1 : level <= 6 ? 2 : level <= 8 ? 3 : 4;
+}
+
+function pickFrom(list) {
+    return list[randomInt(0, list.length - 1)];
+}
+
+const SUPERSCRIPTS = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'];
+
+function toSuperscript(n) {
+    return String(n).split('').map(d => SUPERSCRIPTS[parseInt(d, 10)]).join('');
+}
+
+function gcd(a, b) {
+    return b === 0 ? a : gcd(b, a % b);
+}
+
+function generateTopicQuestion(operation, level) {
+    const tier = getTier(level);
+    switch (operation) {
+        case 'problemas':   return generateWordProblem(tier);
+        case 'fracciones':  return generateFractionQuestion(tier);
+        case 'porcentajes': return generatePercentQuestion(tier);
+        case 'secuencias':  return generateSequenceQuestion(tier);
+        case 'huecos':      return generateMissingQuestion(tier);
+        default:            return generatePowerQuestion(tier);
+    }
+}
+
+// ---- Número que falta ----
+function generateMissingQuestion(tier) {
+    let kind, a, b, c, x;
+    if (tier === 1) {
+        kind = randomInt(1, 3);
+        if (kind === 1) { a = randomInt(1, 9); x = randomInt(1, 10); return { question: `${a} + ? = ${a + x}`, answer: x }; }
+        if (kind === 2) { x = randomInt(1, 10); b = randomInt(1, 9); return { question: `? + ${b} = ${x + b}`, answer: x }; }
+        a = randomInt(10, 20); x = randomInt(1, 9);
+        return { question: `${a} − ? = ${a - x}`, answer: x };
+    }
+    if (tier === 2) {
+        kind = randomInt(1, 5);
+        if (kind === 1) { a = randomInt(10, 60); x = randomInt(5, 40); return { question: `${a} + ? = ${a + x}`, answer: x }; }
+        if (kind === 2) { a = randomInt(30, 100); x = randomInt(5, a - 5); return { question: `${a} − ? = ${a - x}`, answer: x }; }
+        if (kind === 3) { x = randomInt(5, 60); b = randomInt(5, 40); return { question: `? − ${b} = ${x}`, answer: x + b }; }
+        if (kind === 4) { a = randomInt(2, 10); x = randomInt(2, 10); return { question: `${a} × ? = ${a * x}`, answer: x }; }
+        a = randomInt(2, 9); x = randomInt(2, 10); return { question: `? ÷ ${a} = ${x}`, answer: a * x };
+    }
+    if (tier === 3) {
+        kind = randomInt(1, 4);
+        if (kind === 1) { a = randomInt(2, 9); x = randomInt(2, 12); b = randomInt(1, 20); return { question: `? × ${a} + ${b} = ${x * a + b}`, answer: x }; }
+        if (kind === 2) { a = randomInt(2, 9); x = randomInt(3, 12); b = randomInt(1, a * x - 1); return { question: `${a} × ? − ${b} = ${a * x - b}`, answer: x }; }
+        if (kind === 3) { a = randomInt(2, 9); b = randomInt(2, 12); c = randomInt(1, 20); return { question: `? ÷ ${a} + ${c} = ${b + c}`, answer: a * b }; }
+        a = randomInt(10, 99); b = randomInt(10, 99); return { question: `${a} + ? + ${b} = ${a + b + 50}`, answer: 50 };
+    }
+    kind = randomInt(1, 4);
+    if (kind === 1) { a = randomInt(11, 25); x = randomInt(5, 20); return { question: `? × ${a} = ${a * x}`, answer: x }; }
+    if (kind === 2) { a = randomInt(100, 900); return { question: `${a} + ? = 1000`, answer: 1000 - a }; }
+    if (kind === 3) { a = randomInt(2, 9); b = randomInt(1, 9); x = randomInt(2, 15); return { question: `(? + ${b}) × ${a} = ${(x + b) * a}`, answer: x }; }
+    a = randomInt(2, 9); x = randomInt(5, 25); b = randomInt(2, 9);
+    return { question: `${a} × ? + ${b} × ${a} = ${a * (x + b)}`, answer: x };
+}
+
+// ---- Series numéricas ----
+function generateSequenceQuestion(tier) {
+    let terms, hole;
+    if (tier === 1) {
+        const step = pickFrom([1, 2, 3, 5, 10]);
+        const down = Math.random() < 0.3;
+        const start = down ? randomInt(5, 8) * step + 10 : randomInt(0, 10);
+        terms = Array.from({ length: 5 }, (_, i) => down ? start - i * step : start + i * step);
+        hole = 4;
+    } else if (tier === 2) {
+        const step = pickFrom([4, 6, 7, 8, 9, 11, 12, 15, 25]);
+        const down = Math.random() < 0.3;
+        const start = down ? step * 6 + randomInt(0, 20) : randomInt(1, 40);
+        terms = Array.from({ length: 5 }, (_, i) => down ? start - i * step : start + i * step);
+        hole = Math.random() < 0.5 ? 4 : randomInt(1, 3);
+    } else if (tier === 3) {
+        const kind = randomInt(1, 3);
+        if (kind === 1) {
+            const m = pickFrom([2, 3, 4, 5]);
+            const start = randomInt(1, 5);
+            terms = Array.from({ length: 5 }, (_, i) => start * Math.pow(m, i));
+        } else if (kind === 2) {
+            const start = randomInt(1, 10);
+            terms = [start];
+            for (let i = 1; i < 6; i++) terms.push(terms[i - 1] + i);
+        } else {
+            const off = randomInt(1, 4);
+            terms = Array.from({ length: 5 }, (_, i) => (i + off) * (i + off));
+        }
+        hole = terms.length - 1;
+    } else {
+        const kind = randomInt(1, 3);
+        if (kind === 1) {
+            const a = randomInt(1, 5), b = randomInt(1, 5);
+            terms = [a, b];
+            for (let i = 2; i < 6; i++) terms.push(terms[i - 1] + terms[i - 2]);
+        } else if (kind === 2) {
+            const q = pickFrom([2, 3]);
+            const last = randomInt(1, 6);
+            terms = [last];
+            for (let i = 1; i < 5; i++) terms.unshift(terms[0] * q);
+        } else {
+            const up = randomInt(3, 9), down = randomInt(1, 2);
+            const start = randomInt(1, 20);
+            terms = [start];
+            for (let i = 1; i < 6; i++) terms.push(terms[i - 1] + (i % 2 === 1 ? up : -down));
+        }
+        hole = terms.length - 1;
+    }
+    const answer = terms[hole];
+    const shown = terms.map((n, i) => i === hole ? '?' : String(n));
+    return { question: shown.join(', '), answer };
+}
+
+// ---- Fracciones ----
+function generateFractionQuestion(tier) {
+    let kind;
+    if (tier === 1) {
+        const d = pickFrom([2, 3, 4, 5, 10]);
+        const whole = d * randomInt(1, 6);
+        return { question: `1/${d} × ${whole} = ?`, answer: whole / d };
+    }
+    if (tier === 2) {
+        kind = randomInt(1, 2);
+        if (kind === 1) {
+            const d = pickFrom([3, 4, 5, 6, 8, 10]);
+            const n = randomInt(2, d - 1);
+            const whole = d * randomInt(2, 8);
+            return { question: `${n}/${d} × ${whole} = ?`, answer: n * whole / d };
+        }
+        const d = pickFrom([2, 3, 4, 5]);
+        const n = randomInt(1, d - 1);
+        const m = randomInt(2, 5);
+        return { question: `${n}/${d} = ?/${d * m}`, answer: n * m };
+    }
+    if (tier === 3) {
+        kind = randomInt(1, 4);
+        if (kind === 1) {
+            const d = pickFrom([5, 6, 7, 8, 9, 10, 12]);
+            const a = randomInt(1, d - 3), b = randomInt(1, d - a - 1);
+            return { question: `${a}/${d} + ${b}/${d} = ?/${d}`, answer: a + b };
+        }
+        if (kind === 2) {
+            const g = randomInt(2, 5);
+            const d = pickFrom([2, 3, 4, 5]);
+            const n = randomInt(1, d - 1);
+            if (gcd(n, d) !== 1) return generateFractionQuestion(tier);
+            return { question: `${n * g}/${d * g} = ${n}/?`, answer: d };
+        }
+        if (kind === 3) {
+            const pairs = [[1, 2, 0.5], [1, 4, 0.25], [3, 4, 0.75], [1, 5, 0.2], [2, 5, 0.4], [3, 5, 0.6], [1, 10, 0.1], [7, 10, 0.7]];
+            const [n, d, v] = pickFrom(pairs);
+            return { question: `${v} = ?/${d}`, answer: n };
+        }
+        const d = pickFrom([4, 5, 6, 8, 10]);
+        const n = randomInt(1, d - 1);
+        const whole = d * randomInt(3, 9);
+        return { question: `${n}/${d} × ${whole} = ?`, answer: n * whole / d };
+    }
+    kind = randomInt(1, 4);
+    if (kind === 1) {
+        const d = pickFrom([6, 8, 9, 12]);
+        const n = randomInt(3, d - 1);
+        const whole = d * randomInt(5, 15);
+        return { question: `${n}/${d} × ${whole} = ?`, answer: n * whole / d };
+    }
+    if (kind === 2) {
+        const e = randomInt(2, 4), w = randomInt(1, 3);
+        const n = randomInt(1, e - 1);
+        return { question: `${w} ${n}/${e} = ?/${e}`, answer: w * e + n };
+    }
+    if (kind === 3) {
+        const d = pickFrom([3, 4, 5, 6, 7]);
+        const a = randomInt(1, d - 1), b = randomInt(1, d - 1);
+        return { question: `${a}/${d} + ${b}/${d} = ${(a + b)}/?`, answer: d };
+    }
+    const g = randomInt(2, 6);
+    const pairs = [[1, 2], [2, 3], [3, 4], [2, 5], [3, 5], [3, 8], [5, 6]];
+    const [n, d] = pickFrom(pairs);
+    return { question: `${n * g}/${d * g} = ?/${d}`, answer: n };
+}
+
+// ---- Porcentajes ----
+function generatePercentQuestion(tier) {
+    if (tier === 1) {
+        const pct = pickFrom([50, 10, 25, 100]);
+        const whole = pct === 25 ? 4 * randomInt(2, 10) : 10 * randomInt(1, 12);
+        return { question: `${pct}% × ${whole} = ?`, answer: whole * pct / 100 };
+    }
+    if (tier === 2) {
+        const pct = pickFrom([20, 5, 75, 30, 40, 60]);
+        const whole = 20 * randomInt(1, 10);
+        return { question: `${pct}% × ${whole} = ?`, answer: whole * pct / 100 };
+    }
+    if (tier === 3) {
+        const kind = randomInt(1, 4);
+        if (kind === 1) {
+            const pct = pickFrom([10, 20, 25, 50]);
+            const whole = 20 * randomInt(1, 10);
+            return { question: `?% × ${whole} = ${whole * pct / 100}`, answer: pct };
+        }
+        if (kind === 2) {
+            const pct = pickFrom([10, 20, 25, 50]);
+            const whole = 20 * randomInt(2, 12);
+            return { question: `${pct}% × ? = ${whole * pct / 100}`, answer: whole };
+        }
+        if (kind === 3) {
+            const pct = pickFrom([10, 20, 25, 50]);
+            const price = 20 * randomInt(2, 10);
+            return { question: `${price} − ${pct}% = ?`, answer: price - price * pct / 100 };
+        }
+        const pct = pickFrom([10, 20, 50]);
+        const price = 20 * randomInt(2, 10);
+        return { question: `${price} + ${pct}% = ?`, answer: price + price * pct / 100 };
+    }
+    const kind = randomInt(1, 4);
+    const pct = pickFrom([15, 35, 45, 12, 8, 90, 15]);
+    const whole = 20 * randomInt(2, 15);
+    if (kind === 1) return { question: `${pct}% × ${whole} = ?`, answer: roundToDecimals(whole * pct / 100, 2) };
+    if (kind === 2) return { question: `${whole} − ${pct}% = ?`, answer: roundToDecimals(whole - whole * pct / 100, 2) };
+    if (kind === 3) return { question: `${whole} + ${pct}% = ?`, answer: roundToDecimals(whole + whole * pct / 100, 2) };
+    const base = pickFrom([20, 40, 60, 80, 100, 120, 200]);
+    const part = pickFrom([5, 10, 25, 50, 75]);
+    return { question: `?% × ${base} = ${roundToDecimals(base * part / 100, 2)}`, answer: part };
+}
+
+// ---- Potencias y raíces ----
+function generatePowerQuestion(tier) {
+    if (tier === 1) {
+        if (Math.random() < 0.6) { const n = randomInt(1, 10); return { question: `${n}² = ?`, answer: n * n }; }
+        const n = randomInt(1, 10); return { question: `√${n * n} = ?`, answer: n };
+    }
+    if (tier === 2) {
+        const kind = randomInt(1, 4);
+        if (kind === 1) { const n = randomInt(11, 15); return { question: `${n}² = ?`, answer: n * n }; }
+        if (kind === 2) { const n = randomInt(11, 15); return { question: `√${n * n} = ?`, answer: n }; }
+        if (kind === 3) { const e = randomInt(2, 8); return { question: `2${toSuperscript(e)} = ?`, answer: Math.pow(2, e) }; }
+        const e = randomInt(2, 4); return { question: `10${toSuperscript(e)} = ?`, answer: Math.pow(10, e) };
+    }
+    if (tier === 3) {
+        const kind = randomInt(1, 4);
+        if (kind === 1) { const n = randomInt(2, 6); return { question: `${n}³ = ?`, answer: n * n * n }; }
+        if (kind === 2) { const a = randomInt(2, 9), b = randomInt(2, 9); return { question: `${a}² + ${b}² = ?`, answer: a * a + b * b }; }
+        if (kind === 3) { const n = randomInt(2, 4); const e = randomInt(3, 4); return { question: `${n}${toSuperscript(e)} = ?`, answer: Math.pow(n, e) }; }
+        const e = randomInt(8, 10); return { question: `2${toSuperscript(e)} = ?`, answer: Math.pow(2, e) };
+    }
+    const kind = randomInt(1, 4);
+    if (kind === 1) { const a = randomInt(2, 7), b = randomInt(1, 4); return { question: `(${a} + ${b})² = ?`, answer: (a + b) * (a + b) }; }
+    if (kind === 2) { const triples = [[3, 4, 5], [6, 8, 10], [5, 12, 13], [8, 15, 17]]; const [a, b, c] = pickFrom(triples); return { question: `√(${a * a} + ${b * b}) = ?`, answer: c }; }
+    if (kind === 3) { const n = randomInt(16, 25); return { question: `${n}² = ?`, answer: n * n }; }
+    const r = randomInt(2, 12), p = randomInt(2, 5);
+    return { question: `√${r * r} + ${p}² = ?`, answer: r + p * p };
+}
+
+// ---- Problemas con texto ----
+function generateWordProblem(tier) {
+    const templatesByTier = {
+        1: [1, 2, 3],
+        2: [1, 2, 3, 4, 9],
+        3: [3, 4, 5, 6, 7, 9],
+        4: [5, 6, 7, 8, 9, 3]
+    };
+    const id = pickFrom(templatesByTier[tier]);
+    const big = tier >= 3;
+    let params, answer;
+
+    switch (id) {
+        case 1: {
+            const a = tier === 1 ? randomInt(3, 12) : randomInt(20, 90);
+            const b = tier === 1 ? randomInt(2, 8) : randomInt(10, 60);
+            params = { a, b }; answer = a + b; break;
+        }
+        case 2: {
+            const a = tier === 1 ? randomInt(8, 20) : randomInt(40, 150);
+            const b = randomInt(2, tier === 1 ? a - 2 : 35);
+            params = { a, b }; answer = a - b; break;
+        }
+        case 3: {
+            const a = tier === 1 ? randomInt(2, 6) : tier === 2 ? randomInt(4, 12) : randomInt(12, 40);
+            const b = tier === 1 ? randomInt(2, 5) : tier === 2 ? randomInt(3, 9) : randomInt(6, 25);
+            params = { a, b }; answer = a * b; break;
+        }
+        case 4: {
+            const b = tier === 2 ? randomInt(2, 9) : randomInt(3, 12);
+            const q = tier === 2 ? randomInt(3, 12) : randomInt(6, 40);
+            params = { a: b * q, b }; answer = q; break;
+        }
+        case 5: {
+            const a = randomInt(2, big ? 12 : 6);
+            const b = tier === 4 ? randomInt(3, 15) : randomInt(2, 9);
+            const spent = a * b;
+            const c = (Math.floor(spent / 10) + 1 + randomInt(0, 1)) * 10;
+            params = { a, b, c }; answer = c - spent; break;
+        }
+        case 6: {
+            const a = randomInt(10, big ? 90 : 40);
+            const b = randomInt(3, big ? 40 : 15);
+            params = { a, b }; answer = a + (a + b); break;
+        }
+        case 7: {
+            const h = randomInt(1, 4);
+            const m = tier === 4 ? randomInt(5, 55) : pickFrom([10, 15, 20, 30, 45]);
+            params = { h, m }; answer = h * 60 + m; break;
+        }
+        case 8: {
+            const a = 20 * randomInt(2, 12);
+            const p = pickFrom([10, 20, 25, 50]);
+            params = { a, p }; answer = a - a * p / 100; break;
+        }
+        default: {
+            const b = randomInt(3, tier >= 3 ? 12 : 8);
+            const full = randomInt(4, tier >= 3 ? 30 : 12);
+            const r = randomInt(1, b - 1);
+            params = { a: b * full + r, b }; answer = full; break;
+        }
+    }
+    return { question: MathMasterI18n.t('problem' + id, params), answer, isStory: true };
+}
+
+
+// ==================== AYUDAS: DESCRIPCIÓN, REPASO, ESTRELLAS ====================
+
+function getLevelDescriptionText(level, operation) {
+    if (!level) return MathMasterI18n.t('selectLevelDesc');
+    if (isTopic(operation)) return MathMasterI18n.t('topicTier.' + getTier(level));
+    if (operation === 'mezcla') {
+        const levelCfg = LEVEL_CONFIG[level];
+        return levelCfg?.mezclaDescription || levelCfg?.description || '';
+    }
+    return MathMasterI18n.getLevelInfo(level).description;
+}
+
+/** Remember a question the player got wrong (shown on the results screen). */
+function addMissed(revealed) {
+    const question = gameState.currentQuestion;
+    if (!question || gameState.missed.some(m => m.question === question)) return;
+    if (gameState.missed.length >= 8) return;
+    gameState.missed.push({ question, answer: gameState.currentAnswer, revealed: !!revealed, story: !!gameState.currentIsStory });
+}
+
+function formatAnswerText(answer) {
+    return String(roundToDecimals(answer, 3));
+}
+
+/** After 3 wrong tries: show the answer, then move on (no point for it). */
+function revealAnswer() {
+    gameState.revealing = true;
+    addMissed(true);
+    const t = (key, params) => MathMasterI18n.t(key, params);
+    showFeedback(t('answerWas', { answer: formatAnswerText(gameState.currentAnswer) }), 'incorrect');
+    DOM.hintText.textContent = '';
+    setTimeout(() => {
+        gameState.revealing = false;
+        if (gameState.isPlaying && !gameState.isPaused) {
+            generateQuestion();
+            DOM.answerInput.focus();
+        }
+    }, 2200);
+}
+
+function renderResultsExtras(accuracy) {
+    const t = (key, params) => MathMasterI18n.t(key, params);
+
+    const stars = accuracy >= 95 ? 3 : accuracy >= 80 ? 2 : accuracy >= 60 ? 1 : 0;
+    const starsEl = document.getElementById('results-stars');
+    if (starsEl) {
+        starsEl.innerHTML = [1, 2, 3].map(i =>
+            `<span class="result-star${i <= stars ? ' on' : ''}" style="animation-delay:${i * 0.2}s" aria-hidden="true">★</span>`).join('');
+        starsEl.setAttribute('aria-label', t('starsLabel', { n: stars }));
+    }
+
+    const tipEl = document.getElementById('results-tip');
+    if (tipEl) {
+        const canLevelUp = gameState.operation !== 'tablas' && gameState.level < 10;
+        if (accuracy >= 90 && canLevelUp) tipEl.textContent = t('tipNextLevel', { level: gameState.level + 1 });
+        else if (accuracy >= 70) tipEl.textContent = t('tipSameLevel');
+        else tipEl.textContent = t('tipEasierLevel');
+    }
+
+    const box = document.getElementById('results-review');
+    const list = document.getElementById('results-review-list');
+    if (box && list) {
+        list.innerHTML = '';
+        gameState.missed.slice(0, 6).forEach(m => {
+            const li = document.createElement('li');
+            li.className = 'review-item';
+            const q = document.createElement('span');
+            q.className = 'review-q';
+            q.textContent = m.story ? m.question : m.question.replace('?', formatAnswerText(m.answer));
+            li.appendChild(q);
+            if (m.story) {
+                const a = document.createElement('strong');
+                a.className = 'review-a';
+                a.textContent = '= ' + formatAnswerText(m.answer);
+                li.appendChild(a);
+            }
+            list.appendChild(li);
+        });
+        box.classList.toggle('hidden', gameState.missed.length === 0);
+    }
 }
 
 // ==================== ESTADO DE LA APLICACIÓN ====================
@@ -189,6 +618,10 @@ let gameState = {
     bestStreak: 0,
     totalAttempts: 0,
     hintsUsed: 0,
+    questionAttempts: 0,
+    missed: [],
+    revealing: false,
+    currentIsStory: false,
     currentQuestion: null,
     currentAnswer: null,
 
@@ -431,10 +864,7 @@ function onLanguageChanged(e) {
 function updateDynamicTexts() {
     // Actualizar descripción de nivel si hay uno seleccionado
     if (gameState.level && DOM.levelDescription) {
-        const levelInfo = MathMasterI18n.getLevelInfo(gameState.level);
-        if (levelInfo && levelInfo.description) {
-            DOM.levelDescription.textContent = levelInfo.description;
-        }
+        DOM.levelDescription.textContent = getLevelDescriptionText(gameState.level, gameState.operation);
     }
 
     // Actualizar indicador de operación si estamos en juego
@@ -828,13 +1258,7 @@ function selectOperation(operation) {
 
         // Refresh description if a level is already selected
         if (gameState.level) {
-            if (operation === 'mezcla') {
-                const levelCfg = LEVEL_CONFIG[gameState.level];
-                DOM.levelDescription.textContent = levelCfg?.mezclaDescription || levelCfg?.description || '';
-            } else {
-                const levelInfo = MathMasterI18n.getLevelInfo(gameState.level);
-                DOM.levelDescription.textContent = levelInfo.description;
-            }
+            DOM.levelDescription.textContent = getLevelDescriptionText(gameState.level, operation);
         }
     }
 
@@ -849,13 +1273,7 @@ function selectLevel(level) {
     });
 
     // Obtener descripción traducida (mezcla usa su propia descripción)
-    if (gameState.operation === 'mezcla') {
-        const levelCfg = LEVEL_CONFIG[level];
-        DOM.levelDescription.textContent = levelCfg?.mezclaDescription || levelCfg?.description || '';
-    } else {
-        const levelInfo = MathMasterI18n.getLevelInfo(level);
-        DOM.levelDescription.textContent = levelInfo.description;
-    }
+    DOM.levelDescription.textContent = getLevelDescriptionText(level, gameState.operation);
 
     validateStartButton();
 }
@@ -888,6 +1306,7 @@ function validateStartButton() {
     }
 
     DOM.startBtn.disabled = !isValid;
+    DOM.startBtn.setAttribute('aria-disabled', String(!isValid));
 }
 
 // ==================== CONTROL DEL JUEGO ====================
@@ -900,6 +1319,9 @@ function startGame() {
     gameState.bestStreak = 0;
     gameState.totalAttempts = 0;
     gameState.hintsUsed = 0;
+    gameState.questionAttempts = 0;
+    gameState.missed = [];
+    gameState.revealing = false;
     gameState.elapsedSeconds = 0;
     gameState.pausedTime = 0;
     gameState.startTime = Date.now();
@@ -1054,6 +1476,7 @@ function resetSelections() {
 
     DOM.levelDescription.textContent = MathMasterI18n.t('selectLevelDesc');
     DOM.startBtn.disabled = true;
+    DOM.startBtn.setAttribute('aria-disabled', 'true');
 }
 
 // ==================== TEMPORIZADOR ====================
@@ -1079,8 +1502,14 @@ function formatTime(seconds) {
 
 function generateQuestion() {
     let question, answer;
+    let isStory = false;
 
-    if (gameState.operation === 'tablas') {
+    if (isTopic(gameState.operation)) {
+        const result = generateTopicQuestion(gameState.operation, gameState.level);
+        question = result.question;
+        answer = result.answer;
+        isStory = !!result.isStory;
+    } else if (gameState.operation === 'tablas') {
         const result = generateTableQuestion();
         question = result.question;
         answer = result.answer;
@@ -1137,8 +1566,11 @@ function generateQuestion() {
 
     gameState.currentQuestion = question;
     gameState.currentAnswer = answer;
+    gameState.currentIsStory = isStory;
+    gameState.questionAttempts = 0;
 
     DOM.questionText.textContent = question;
+    DOM.questionText.classList.toggle('story', isStory);
     DOM.answerInput.value = '';
     DOM.answerInput.classList.remove('correct', 'incorrect');
     DOM.feedbackText.textContent = '';
@@ -1147,7 +1579,8 @@ function generateQuestion() {
 
     // Leer pregunta si TTS está activo
     if (MathMasterAudio.ttsEnabled) {
-        MathMasterAudio.speakQuestion(question);
+        if (isStory) MathMasterAudio.speak(question);
+        else MathMasterAudio.speakQuestion(question);
     }
 }
 
@@ -1454,7 +1887,7 @@ function generateMezclaQuestion(level, levelNum) {
 // ==================== VERIFICACIÓN DE RESPUESTAS ====================
 
 function checkAnswer() {
-    if (!gameState.isPlaying || gameState.isPaused) return;
+    if (!gameState.isPlaying || gameState.isPaused || gameState.revealing) return;
     const t = (key) => MathMasterI18n.t(key);
 
     const userInput = DOM.answerInput.value.trim().replace(',', '.');
@@ -1470,6 +1903,7 @@ function checkAnswer() {
     }
 
     gameState.totalAttempts++;
+    gameState.questionAttempts++;
 
     const tolerance = gameState.level >= 4 ? 0.01 : 0.001;
     const isCorrect = Math.abs(userAnswer - gameState.currentAnswer) < tolerance;
@@ -1482,6 +1916,7 @@ function checkAnswer() {
 }
 
 function handleCorrectAnswer() {
+    if (gameState.questionAttempts > 1) addMissed(false);
     gameState.correctAnswers++;
     gameState.currentStreak++;
     gameState.bestStreak = Math.max(gameState.bestStreak, gameState.currentStreak);
@@ -1495,6 +1930,12 @@ function handleCorrectAnswer() {
     updateProgress();
 
     DOM.answerInput.classList.add('correct');
+    const qBox = DOM.questionText.closest('.question-box');
+    if (qBox) {
+        qBox.classList.remove('pop');
+        void qBox.offsetWidth;
+        qBox.classList.add('pop');
+    }
 
     if (gameState.currentStreak >= 5) {
         showFeedback(t('excellentStreak', { streak: gameState.currentStreak }), 'correct');
@@ -1520,6 +1961,11 @@ function handleIncorrectAnswer() {
 
     updateStreak();
     DOM.answerInput.classList.add('incorrect');
+
+    if (gameState.questionAttempts >= 3) {
+        revealAnswer();
+        return;
+    }
 
     showFeedback(t('incorrectTryAgain'), 'incorrect');
     showHint();
@@ -1687,6 +2133,7 @@ function displayResults(isNewRecord, newAchievements = [], pointsResult = { poin
         emoji = '💪';
     }
 
+    renderResultsExtras(accuracy);
     DOM.resultsTitle.textContent = title;
     DOM.resultsEmoji.textContent = emoji;
     DOM.finalScore.textContent = `${gameState.correctAnswers} / ${gameState.totalQuestions}`;

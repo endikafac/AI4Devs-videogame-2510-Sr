@@ -2504,3 +2504,99 @@ input:focus-visible {
 
 /* the common platform bar replaces the in-game top bar and hub link */
 #top-bar-game, .back-to-hub-btn { display: none !important; }
+
+/* ==================== NUEVOS TEMAS, ESTRELLAS, REPASO ==================== */
+
+/* 12 botones de operación/tema: 6 columnas en escritorio, 3 en móvil */
+.operation-buttons { grid-template-columns: repeat(6, 1fr); }
+.operation-btn { min-height: 76px; justify-content: center; }
+.operation-btn--topic { border-style: dashed; }
+.operation-btn--topic.selected { border-style: solid; }
+.operation-btn--topic .op-symbol { color: var(--accent-color); }
+.operation-btn--topic.selected .op-symbol { color: var(--text-primary); }
+
+@media (max-width: 480px) {
+    .operation-buttons { grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+    .operation-btn { min-height: 84px; }
+    .op-name { font-size: 0.8rem; }
+}
+
+/* Selector de idioma con 6 botones */
+.language-selector { flex-wrap: wrap; }
+
+/* Preguntas con texto (problemas): más pequeñas y a la izquierda en móvil */
+.question-text.story {
+    font-family: var(--font-body, inherit);
+    font-size: clamp(1.05rem, 4.6vw, 1.5rem);
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+/* Animación de acierto */
+.question-box.pop { animation: mmPop 0.45s ease; }
+@keyframes mmPop {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.04); box-shadow: 0 0 24px rgba(16, 185, 129, 0.55); border-color: var(--secondary-color); }
+    100% { transform: scale(1); }
+}
+
+/* Estrellas de resultado */
+.results-stars { display: flex; justify-content: center; gap: 0.5rem; margin-top: 0.25rem; }
+.result-star {
+    font-size: 2.6rem;
+    line-height: 1;
+    color: var(--text-muted);
+    transform: scale(0.7);
+    opacity: 0.35;
+}
+.result-star.on {
+    color: var(--accent-color);
+    text-shadow: 0 0 16px rgba(245, 158, 11, 0.55);
+    animation: mmStarIn 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+@keyframes mmStarIn {
+    from { transform: scale(0) rotate(-40deg); opacity: 0; }
+    to { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+.results-tip {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin: 0.5rem 0 1rem;
+}
+
+/* Repaso de fallos */
+.results-review {
+    background: var(--bg-card);
+    border: 1px solid var(--bg-light);
+    border-radius: var(--border-radius-md);
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+.results-review h3 { font-size: 1rem; margin-bottom: 0.5rem; color: var(--text-primary); }
+.review-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+.review-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.55rem 0.75rem;
+    border-left: 4px solid var(--danger-color);
+    border-radius: var(--border-radius-sm);
+    background: var(--bg-medium);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    text-align: left;
+}
+.review-q { font-weight: 600; overflow-wrap: anywhere; }
+.review-a { color: var(--secondary-light); white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) {
+    .question-box.pop, .result-star.on { animation: none; }
+    .result-star.on { transform: scale(1); opacity: 1; }
+}
+
+/* Evitar desbordamiento horizontal en móvil estrecho (área de respuesta) */
+.answer-area { min-width: 0; }
+.answer-input { min-width: 0; width: 100%; }
+.submit-button { flex-shrink: 0; }

@@ -44,9 +44,9 @@
 <!-- ── ATLAS ─────────────────────────────────────────────────────── -->
 <div id="gq-atlas" class="gq-screen">
     <div class="atlas-header">
-        <button class="back-btn" onclick="GeoQuiz.goHome()">← Volver</button>
-        <h2>Atlas</h2>
-        <input id="gq-search" type="search" placeholder="Buscar..." oninput="GeoQuiz.onSearch(this.value)">
+        <button class="back-btn" id="gq-atlas-back" onclick="GeoQuiz.goHome()">← Volver</button>
+        <h2 id="gq-atlas-title">Atlas</h2>
+        <input id="gq-search" type="search" placeholder="Buscar..." aria-label="Buscar" oninput="GeoQuiz.onSearch(this.value)">
     </div>
 
     <div id="atlas-top-tabs" class="gq-tabs"></div>
@@ -57,8 +57,14 @@
 <!-- ── QUIZ SETUP ─────────────────────────────────────────────────── -->
 <div id="gq-quiz-setup" class="gq-screen">
     <h2 id="gqs-title">Quiz</h2>
+    <h3 class="gq-setup-label" id="gqs-mode-title">Modo de juego</h3>
+    <div id="gqs-modes" class="gq-modes-grid" role="radiogroup"></div>
+    <h3 class="gq-setup-label" id="gqs-level-title">Selecciona nivel</h3>
     <p id="gqs-desc" style="color:var(--text-secondary);min-height:2em"></p>
-    <div id="gqs-levels-grid" class="gq-levels-grid"></div>
+    <div id="gqs-levels-grid" class="gq-levels-grid" role="radiogroup"></div>
+    <h3 class="gq-setup-label" id="gqs-diff-title">Dificultad</h3>
+    <div id="gqs-diff" class="gq-diff-grid" role="radiogroup"></div>
+    <p class="gq-kb-hint" id="gqs-kbhint"></p>
     <div>
         <button id="gqs-start" class="gq-start-btn" onclick="GeoQuiz.startQuiz()">Empezar</button>
         <button id="gqs-back" class="gq-action-btn secondary" onclick="GeoQuiz.goHome()">← Volver</button>
@@ -102,17 +108,17 @@
     <div class="gq-result-stats">
         <div class="gq-result-stat">
             <div class="val" id="gq-result-correct">0/10</div>
-            <div class="lbl">Correctas</div>
+            <div class="lbl" id="gq-res-correct-lbl">Correctas</div>
         </div>
         <div class="gq-result-stat">
             <div class="val" id="gq-result-time">0s</div>
-            <div class="lbl">Tiempo</div>
+            <div class="lbl" id="gq-res-time-lbl">Tiempo</div>
         </div>
     </div>
 
     <div>
-        <button class="gq-action-btn" onclick="GeoQuiz.playAgain()">Repetir</button>
-        <button class="gq-action-btn secondary" onclick="GeoQuiz.goHome()">Inicio</button>
+        <button class="gq-action-btn" id="gq-res-again" onclick="GeoQuiz.playAgain()">Repetir</button>
+        <button class="gq-action-btn secondary" id="gq-res-home" onclick="GeoQuiz.goHome()">Inicio</button>
     </div>
 </div>
 
@@ -142,6 +148,7 @@
 <script src="../platform/achievements.js"></script>
 <script src="../platform/platform-header.js"></script>
 <script src="data.js"></script>
+<script src="data-extra.js"></script>
 <script src="game.js"></script>
 <script>
     PlatformHeader.init({ gameName: 'GeoQuiz', gameIcon: '🗺️', rootPath: '../' });

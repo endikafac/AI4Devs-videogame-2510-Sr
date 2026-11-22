@@ -29,21 +29,21 @@
 
         <div class="ev-home-header">
             <h1>🇬🇧 Irregular <span>Verbs</span></h1>
-            <p>Aprende los verbos irregulares del inglés</p>
+            <p data-i18n="subtitle">Aprende los verbos irregulares del inglés</p>
         </div>
 
         <!-- Tab bar -->
-        <div class="ev-tabs" role="tablist" aria-label="Secciones">
+        <div class="ev-tabs" role="tablist" aria-label="Secciones" data-i18n-aria="tabsAria">
             <button class="ev-tab-btn active" id="ev-tabBtn-tabla"
-                role="tab" aria-selected="true" aria-controls="ev-tab-tabla">
+                role="tab" aria-selected="true" aria-controls="ev-tab-tabla" data-i18n="tabTable">
                 📋 Tabla
             </button>
             <button class="ev-tab-btn" id="ev-tabBtn-grupos"
-                role="tab" aria-selected="false" aria-controls="ev-tab-grupos">
+                role="tab" aria-selected="false" aria-controls="ev-tab-grupos" data-i18n="tabGroups">
                 🔗 Por grupos
             </button>
             <button class="ev-tab-btn" id="ev-tabBtn-niveles"
-                role="tab" aria-selected="false" aria-controls="ev-tab-niveles">
+                role="tab" aria-selected="false" aria-controls="ev-tab-niveles" data-i18n="tabLevels">
                 🎯 Niveles
             </button>
         </div>
@@ -58,15 +58,15 @@
                     class="ev-search-input"
                     id="ev-verb-search"
                     type="search"
-                    placeholder="Buscar verbo..."
-                    aria-label="Buscar en la tabla de verbos"
+                    placeholder="Buscar verbo..." data-i18n-ph="searchPh"
+                    aria-label="Buscar en la tabla de verbos" data-i18n-aria="searchAria"
                     autocomplete="off">
             </div>
 
             <!-- Verb reference table (collapsible) -->
             <div class="ev-panel" id="ev-table-panel">
                 <button class="ev-panel-toggle" id="ev-table-toggle" aria-expanded="false" aria-controls="ev-table-body">
-                    📋 Tabla de referencia (<span id="ev-verb-count">70</span> verbos) <span class="ev-toggle-icon">▼</span>
+                    <span><span data-i18n="refTable">Tabla de referencia</span> (<span id="ev-verb-count">70</span> <span data-i18n="verbs">verbos</span>)</span> <span class="ev-toggle-icon">▼</span>
                 </button>
                 <div class="ev-panel-body" id="ev-table-body" hidden>
                     <div id="ev-verb-table-container"></div>
@@ -82,8 +82,16 @@
 
         <!-- TAB 3: Niveles -->
         <div class="ev-tab-content" id="ev-tab-niveles" role="tabpanel" aria-labelledby="ev-tabBtn-niveles">
-            <p class="ev-section-label">Choose your level</p>
+            <p class="ev-section-label" data-i18n="chooseLevel">Choose your level</p>
             <div class="ev-level-grid" id="ev-level-grid" role="list"></div>
+
+            <p class="ev-section-label ev-section-spaced" data-i18n="practiceTitle">Modos de práctica</p>
+            <div class="ev-filter-row">
+                <label for="ev-mode-group" data-i18n="filterLabel">Grupo</label>
+                <select id="ev-mode-group" class="ev-select"></select>
+            </div>
+            <div class="ev-mode-grid" id="ev-mode-grid"></div>
+            <p class="ev-kb-tip" data-i18n="kbTip"></p>
         </div>
 
     </div>
@@ -97,15 +105,15 @@
         <div class="ev-hud">
             <div class="ev-stat">
                 <div class="ev-stat-val" id="ev-score-val">0</div>
-                <div class="ev-stat-lbl">Score</div>
+                <div class="ev-stat-lbl" data-i18n="score">Score</div>
             </div>
             <div class="ev-stat">
                 <div class="ev-stat-val" id="ev-progress-val">1/10</div>
-                <div class="ev-stat-lbl">Progress</div>
+                <div class="ev-stat-lbl" data-i18n="progress">Progress</div>
             </div>
             <div class="ev-stat">
                 <div class="ev-stat-val" id="ev-streak-val">0</div>
-                <div class="ev-stat-lbl">Streak</div>
+                <div class="ev-stat-lbl" data-i18n="streak">Streak</div>
             </div>
         </div>
 
@@ -125,8 +133,8 @@
 
         <!-- Action row -->
         <div class="ev-action-row">
-            <button class="ev-btn ev-btn-primary hidden" id="ev-next-btn">Next →</button>
-            <button class="ev-btn ev-btn-ghost" id="ev-quit-btn">Quit</button>
+            <button class="ev-btn ev-btn-primary hidden" id="ev-next-btn" data-i18n="next">Next →</button>
+            <button class="ev-btn ev-btn-ghost" id="ev-quit-btn" data-i18n="quit">Quit</button>
         </div>
 
     </div>
@@ -137,28 +145,28 @@
     <div class="ev-page">
 
         <div class="ev-result-card">
-            <h2 id="ev-result-title">Results!</h2>
+            <h2 id="ev-result-title" data-i18n="resultsTitle">Results!</h2>
             <div class="ev-result-stars" id="ev-result-stars">⭐⭐⭐</div>
             <div class="ev-result-big" id="ev-result-score">0</div>
-            <div class="ev-result-big-lbl">points</div>
+            <div class="ev-result-big-lbl" data-i18n="points">points</div>
             <div class="ev-result-grid">
                 <div class="ev-result-item">
                     <div class="ev-result-item-val" id="ev-result-correct">0/0</div>
-                    <div class="ev-result-item-lbl">Correct</div>
+                    <div class="ev-result-item-lbl" data-i18n="correct">Correct</div>
                 </div>
                 <div class="ev-result-item">
                     <div class="ev-result-item-val" id="ev-result-time">0:00</div>
-                    <div class="ev-result-item-lbl">Time</div>
+                    <div class="ev-result-item-lbl" data-i18n="time">Time</div>
                 </div>
                 <div class="ev-result-item">
                     <div class="ev-result-item-val" id="ev-result-level">1</div>
-                    <div class="ev-result-item-lbl">Level</div>
+                    <div class="ev-result-item-lbl" data-i18n="level">Level</div>
                 </div>
             </div>
             <div class="ev-result-btns">
-                <button class="ev-btn ev-btn-secondary" id="ev-retry-btn">Try again</button>
-                <button class="ev-btn ev-btn-primary" id="ev-next-level-btn">Next level</button>
-                <button class="ev-btn ev-btn-ghost" id="ev-menu-btn">Menu</button>
+                <button class="ev-btn ev-btn-secondary" id="ev-retry-btn" data-i18n="retry">Try again</button>
+                <button class="ev-btn ev-btn-primary" id="ev-next-level-btn" data-i18n="nextLevel">Next level</button>
+                <button class="ev-btn ev-btn-ghost" id="ev-menu-btn" data-i18n="menu">Menu</button>
             </div>
         </div>
 
@@ -170,11 +178,11 @@
 <!-- ══ Quit confirmation modal ═══════════════════════════════ -->
 <div id="ev-quit-modal" class="ev-modal hidden" role="dialog" aria-modal="true" tabindex="-1">
     <div class="ev-modal-dialog">
-        <h3>Quit the exercise?</h3>
-        <p>Your current progress will be lost.</p>
+        <h3 data-i18n="quitTitle">Quit the exercise?</h3>
+        <p data-i18n="quitMsg">Your current progress will be lost.</p>
         <div class="ev-modal-actions">
-            <button class="ev-btn ev-btn-secondary" id="ev-quit-cancel">Cancel</button>
-            <button class="ev-btn ev-btn-primary" id="ev-quit-ok">Quit</button>
+            <button class="ev-btn ev-btn-secondary" id="ev-quit-cancel" data-i18n="cancel">Cancel</button>
+            <button class="ev-btn ev-btn-primary" id="ev-quit-ok" data-i18n="quit">Quit</button>
         </div>
     </div>
 </div>
@@ -191,16 +199,13 @@
 <script src="../platform/achievements.js"></script>
 <script src="../platform/platform-header.js"></script>
 <script src="data.js"></script>
+<script src="data-extra.js"></script>
+<script src="i18n.js"></script>
 <script src="game.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     PlatformHeader.init({ gameName: 'Irregular Verbs', gameIcon: '🇬🇧', rootPath: '../' });
     EnglishVerbsGame.init();
-    // Update verb count badge
-    const countEl = document.getElementById('ev-verb-count');
-    if (countEl && typeof IRREGULAR_VERBS !== 'undefined') {
-        countEl.textContent = IRREGULAR_VERBS.length;
-    }
 });
 </script>
     <script src="../platform/register-sw.js"></script>

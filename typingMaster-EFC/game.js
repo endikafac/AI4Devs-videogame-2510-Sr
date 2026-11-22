@@ -189,6 +189,23 @@ const IGNORED_KEYS = new Set([
 ]);
 
 /* ── Main game object ─────────────────────────────────────── */
+const MAX_LEVEL = 12;
+const TY_LANGS = ['es-ES', 'en-US', 'eu-ES', 'gl-ES', 'ca-ES', 'fr-FR'];
+const TY_LANG_LABELS = { 'es-ES': 'Español', 'en-US': 'English', 'eu-ES': 'Euskara', 'gl-ES': 'Galego', 'ca-ES': 'Català', 'fr-FR': 'Français' };
+
+/* Merge the extra dictionaries (gl/ca/fr and the new levels) into I18N */
+(function mergeExtraI18n() {
+    if (typeof TYPING_I18N_EXTRA === 'undefined') return;
+    Object.entries(TYPING_I18N_EXTRA).forEach(([code, ex]) => {
+        const base = I18N[code] || (I18N[code] = {});
+        Object.entries(ex).forEach(([k, v]) => {
+            if (k === 'levelNamesExtra') base.levelNames = (base.levelNames || []).concat(v);
+            else if (k === 'levelDescriptionsExtra') base.levelDescriptions = (base.levelDescriptions || []).concat(v);
+            else base[k] = v;
+        });
+    });
+})();
+
 const TypeMasterGame = {
 
     state: {
@@ -208,6 +225,7 @@ const TypeMasterGame = {
         gameStarted: false,
         gameOver: false,
         selectedLevel: null,
+        age: 'child',       // kid (6-8) | child (9-12) | teen (13+)
         bestWpm: {}         // { 'level_1': 45, ... }
     },
 
@@ -222,7 +240,11 @@ const TypeMasterGame = {
     },
 
     _loadSaved() {
-        for (let i = 1; i <= 10; i++) {
+        try {
+            const age = localStorage.getItem('typemaster_age');
+            if (['kid', 'child', 'teen'].includes(age)) this.state.age = age;
+        } catch (e) { /* ignore */ }
+        for (let i = 1; i <= MAX_LEVEL; i++) {
             const val = parseInt(localStorage.getItem(`typemaster_best_level_${i}`), 10);
             if (!isNaN(val) && val > 0) {
                 this.state.bestWpm[`level_${i}`] = val;
@@ -236,12 +258,11 @@ const TypeMasterGame = {
             typeof PlatformI18n !== 'undefined' ? PlatformI18n.currentLanguage : null,
             navigator.language
         ];
-        const supported = ['es-ES', 'en-US', 'eu-ES'];
         for (const c of candidates) {
             if (!c) continue;
-            if (supported.includes(c)) { this.state.lang = c; return; }
-            if (c.startsWith('eu')) { this.state.lang = 'eu-ES'; return; }
-            if (c.startsWith('en')) { this.state.lang = 'en-US'; return; }
+            if (TY_LANGS.includes(c)) { this.state.lang = c; return; }
+            const hit = TY_LANGS.find(l => c.toLowerCase().startsWith(l.slice(0, 2)));
+            if (hit) { this.state.lang = hit; return; }
         }
         this.state.lang = 'es-ES';
     },
@@ -266,8 +287,14 @@ const TypeMasterGame = {
         this._setText('ty-quit-btn', this._t('quit'));
         this._setText('ty-input-hint', this._t('startTyping'));
 
-        const langLabels = { 'es-ES': 'Español', 'en-US': 'English', 'eu-ES': 'Euskara' };
-        this._setText('ty-lang-info', langLabels[this.state.lang] || this.state.lang);
+        this._setText('ty-lang-info', TY_LANG_LABELS[this.state.lang] || this.state.lang);
+        this._setText('ty-quit-title', this._t('quitTitle'));
+        this._setText('ty-quit-msg', this._t('quitMsg'));
+        this._setText('ty-quit-cancel', this._t('cancel'));
+        this._setText('ty-quit-ok', this._t('quit'));
+        this._setText('ty-kb-tip', this._t('kbTip'));
+        if (!this.state.selectedLevel) this._setText('ty-level-desc', this._t('levelPrompt'));
+        this._buildAgeRow();
 
         this._buildLevelGrid();
     },
@@ -275,6 +302,25 @@ const TypeMasterGame = {
     _setText(id, text) {
         const el = document.getElementById(id);
         if (el) el.textContent = text;
+    },
+
+    /* ── Age profile ────────────────────────────────────── */
+
+    _buildAgeRow() {
+        const row = document.getElementById('ty-age-row');
+        if (!row) return;
+        const opts = [['kid', 'ageKid', 'ageHintKid'], ['child', 'ageChild', 'ageHintChild'], ['teen', 'ageTeen', 'ageHintTeen']];
+        row.innerHTML = '<span class="ty-age-label" id="ty-age-label">' + this._t('ageLabel') + '</span>' +
+            opts.map(([key, label]) =>
+                '<button type="button" class="ty-age-btn' + (this.state.age === key ? ' selected' : '') + '" role="radio" aria-checked="' +
+                (this.state.age === key) + '" data-age="' + key + '">' + this._t(label) + '</button>').join('');
+        row.querySelectorAll('.ty-age-btn').forEach(btn => btn.addEventListener('click', () => {
+            this.state.age = btn.dataset.age;
+            try { localStorage.setItem('typemaster_age', this.state.age); } catch (e) { /* ignore */ }
+            this._buildAgeRow();
+        }));
+        const hint = opts.find(o => o[0] === this.state.age);
+        this._setText('ty-age-hint', hint ? this._t(hint[2]) : '');
     },
 
     /* ── Level grid ─────────────────────────────────────── */
@@ -285,7 +331,7 @@ const TypeMasterGame = {
         grid.innerHTML = '';
         const names = this._t('levelNames');
 
-        for (let i = 1; i <= 10; i++) {
+        for (let i = 1; i <= MAX_LEVEL; i++) {
             const btn = document.createElement('button');
             btn.className = 'ty-level-btn';
             btn.textContent = String(i);
@@ -298,7 +344,7 @@ const TypeMasterGame = {
             if (isLocked) {
                 btn.classList.add('locked');
                 btn.setAttribute('aria-disabled', 'true');
-                btn.setAttribute('title', 'Completa el nivel anterior primero');
+                btn.setAttribute('title', this._t('locked'));
             }
 
             btn.addEventListener('click', () => {
@@ -342,7 +388,7 @@ const TypeMasterGame = {
         if (bestEl) {
             const best = this.state.bestWpm[`level_${level}`];
             if (best) {
-                bestEl.innerHTML = `Mejor: <span>${best} ${this._t('wpm')}</span>`;
+                bestEl.innerHTML = `${this._t('best')}: <span>${best} ${this._t('wpm')}</span>`;
                 bestEl.style.display = 'block';
             } else {
                 bestEl.style.display = 'none';
@@ -369,7 +415,7 @@ const TypeMasterGame = {
         on('ty-quit-btn',   () => this._quitGame());
         on('ty-retry-btn',  () => this._startLevel(this.state.level));
         on('ty-next-btn',   () => {
-            const next = Math.min(this.state.level + 1, 10);
+            const next = Math.min(this.state.level + 1, MAX_LEVEL);
             this._startLevel(next);
         });
         on('ty-menu-btn',   () => this._showHome());
@@ -384,7 +430,14 @@ const TypeMasterGame = {
 
     _attachKeydown() {
         this._detachKeydown();
-        this._boundKeydown = (e) => this._handleKeypress(e);
+        this._boundKeydown = (e) => {
+            if (e.key === 'Escape') {
+                const qm = document.getElementById('ty-quit-modal');
+                if (!qm || qm.classList.contains('hidden')) this._quitGame();
+                return;
+            }
+            this._handleKeypress(e);
+        };
         document.addEventListener('keydown', this._boundKeydown);
 
         // Mobile keyboard support via hidden input
@@ -500,10 +553,33 @@ const TypeMasterGame = {
 
     _pickText(level) {
         const data = TYPING_TEXTS[level];
-        if (!data) return 'Error: nivel no encontrado.';
-        const pool = level === 1
-            ? data.all
-            : (data[this.state.lang] || data['es-ES'] || []);
+        const extra = (typeof TYPING_EXTRA !== 'undefined' && TYPING_EXTRA[level]) || {};
+        const kid = (typeof TYPING_KID !== 'undefined' && TYPING_KID[level]) || {};
+        const lang = this.state.lang;
+        if (!data && !extra.all && !extra[lang]) return 'Error: nivel no encontrado.';
+
+        let pool;
+        if (level === 1) {
+            pool = (data && data.all) || [];
+        } else if (extra.all) {
+            pool = extra.all.slice();
+        } else {
+            const base = data ? (data[lang] || (extra[lang] ? [] : data['es-ES'])) : [];
+            pool = (base || []).concat(extra[lang] || []);
+        }
+
+        // Age profile: 6-8 favours short texts, 13+ favours long ones
+        if (level > 1 && level < 11) {
+            const age = this.state.age;
+            if (age === 'kid') {
+                const short = pool.filter(t => t.length <= 46);
+                pool = (kid[lang] || []).concat(short);
+            } else if (age === 'teen') {
+                const long = pool.filter(t => t.length >= 55);
+                if (long.length) pool = long;
+            }
+        }
+        if (!pool || !pool.length) pool = (data && (data[lang] || data['es-ES'])) || (extra[lang] || []);
         if (!pool || !pool.length) return 'Error: sin textos.';
         return pool[Math.floor(Math.random() * pool.length)];
     },
@@ -688,7 +764,7 @@ const TypeMasterGame = {
     },
 
     _calcStars(wpm, accuracy, level) {
-        const targetWpm = level * 5 + 10;
+        const targetWpm = Math.min(level * 5 + 10, 60);
         if (accuracy >= 95 && wpm >= targetWpm) return 3;
         if (accuracy >= 85) return 2;
         return 1;
@@ -816,7 +892,7 @@ const TypeMasterGame = {
         if (achEl) {
             if (unlocked.length > 0) {
                 const LABELS = {
-                    ty_first:   `⌨️ Primera sesión`,
+                    ty_first:   `⌨️ ${this._t('achFirst')}`,
                     ty_wpm20:   `🚀 20 ${this._t('wpm')}`,
                     ty_wpm40:   `⚡ 40 ${this._t('wpm')}`,
                     ty_wpm60:   `🔥 60 ${this._t('wpm')}`,
@@ -838,7 +914,7 @@ const TypeMasterGame = {
         const nextBtn = document.getElementById('ty-next-btn');
         if (nextBtn) {
             nextBtn.textContent   = this._t('next');
-            nextBtn.style.display = this.state.level < 10 ? '' : 'none';
+            nextBtn.style.display = this.state.level < MAX_LEVEL ? '' : 'none';
         }
 
         this._showScreen('ty-result');

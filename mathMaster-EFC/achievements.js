@@ -131,6 +131,16 @@ const MathMasterAchievements = {
                 return false;
             }
         },
+        topic_explorer: {
+            id: 'topic_explorer',
+            name: 'Explorador de Temas',
+            description: 'Juega una partida de cada tema: problemas, fracciones, porcentajes, series, qué falta y potencias',
+            icon: '🧭',
+            condition: (stats) => {
+                const ops = ['problemas', 'fracciones', 'porcentajes', 'secuencias', 'huecos', 'potencias'];
+                return ops.every(op => stats.byOperation[op] && stats.byOperation[op].games > 0);
+            }
+        },
         comeback_kid: {
             id: 'comeback_kid',
             name: 'Nunca Te Rindas',

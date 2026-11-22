@@ -24,7 +24,7 @@ before(async () => {
 });
 after(async () => { await browser?.close(); server?.close(); });
 
-const PAGES = ['index.html', 'mathMaster-EFC/index.html', 'calcPath-EFC/index.html', 'tableMaster-EFC/index.html', 'wordSearch-EFC/index.html', 'crossword-EFC/index.html', 'typingMaster-EFC/index.html',
+const PAGES = ['index.html', 'mathMaster-EFC/index.html', 'calcPath-EFC/index.html', 'memory-EFC/index.html', 'clock-EFC/index.html', 'fractions-EFC/index.html', 'tableMaster-EFC/index.html', 'wordSearch-EFC/index.html', 'crossword-EFC/index.html', 'typingMaster-EFC/index.html',
   'euskera-EFC/index.html', 'englishVerbs-EFC/index.html', 'vocabMaster-EFC/index.html', 'geoQuiz-EFC/index.html', 'snake-EHS/index.html', 'arkanoid-CSM/index.html',
   'tablaPeriodica-EFC/index.html', 'tablaPeriodica-EFC/es/tabla.html', 'tablaPeriodica-EFC/eu/tabla.html', 'platform/privacy.html'];
 const IGNORE = /favicon|Missing or insufficient permissions|unauthorized-domain|net::ERR|Failed to load resource|firestore\.googleapis|identitytoolkit|offline|WebChannel|manifest/i;

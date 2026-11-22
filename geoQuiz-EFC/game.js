@@ -10,9 +10,8 @@ const GeoQuiz = (() => {
     function platformLang() {
         const pl = (typeof PlatformI18n !== 'undefined' && PlatformI18n.currentLanguage)
             ? PlatformI18n.currentLanguage : 'es-ES';
-        if (pl.startsWith('en')) return 'en';
-        if (pl.startsWith('eu')) return 'eu';
-        return 'es';
+        const code = pl.slice(0, 2).toLowerCase();
+        return ['es', 'en', 'eu', 'gl', 'ca', 'fr'].includes(code) ? code : 'es';
     }
 
     const state = {
@@ -21,6 +20,8 @@ const GeoQuiz = (() => {
         atlasTab: 'world',        // world | spain | euskadi
         atlasSubTab: 'countries', // countries | rivers | mountains | comunidades | provincias | territories | munis
         quizLevel: 1,
+        quizMode: 'classic',      // classic | flags | capitals | continents
+        quizDiff: 'normal',       // easy | normal | hard (seconds per question)
         quizQuestions: [],
         quizIndex: 0,
         quizScore: 0,
@@ -54,16 +55,17 @@ const GeoQuiz = (() => {
             results: '¡Resultados!',
             pts: 'pts', correct_lbl: 'Correctas', time_lbl: 'Tiempo',
             capital_q: '¿Cuál es la capital de',
-            country_q: '¿En qué país está la capital',
+            country_q: '¿De qué país es capital',
             continent_q: '¿En qué continente está',
             km_q: '¿Cuántos km tiene el río',
             height_q: '¿Cuál es la altura del',
             river_country_q: '¿En qué región está el río',
+            territory_q: '¿En qué territorio está',
+            flag_q: '¿De qué país es esta bandera?',
             capital_of: 'Capital de',
             back: '← Volver',
-            lang_es: 'Español', lang_en: 'English', lang_eu: 'Euskera',
             lvl_desc: [
-                '', // index 0 unused
+                '',
                 'Países famosos y capitales conocidas',
                 'Más países y capitales de Europa',
                 'Capitales de América y Asia',
@@ -76,6 +78,19 @@ const GeoQuiz = (() => {
                 'Todo: repaso completo',
             ],
             stars0: 'Sigue practicando', stars1: 'Bien hecho', stars2: 'Excelente', stars3: '¡Perfecto!',
+            modeTitle: 'Modo de juego', diffTitle: 'Dificultad (tiempo por pregunta)',
+            mode_classic: 'Clásico', mode_flags: 'Banderas', mode_capitals: 'Capital a país', mode_continents: 'Continentes',
+            mode_classic_d: 'Capitales, ríos, montañas, España y Euskadi en 10 niveles',
+            mode_flags_d: 'Adivina el país por su bandera',
+            mode_capitals_d: 'Te damos la capital, tú eliges el país',
+            mode_continents_d: '¿En qué continente está cada país?',
+            lvl_easy: 'Fácil', lvl_mid: 'Medio', lvl_hard: 'Difícil',
+            lvl_easy_d: 'Países muy conocidos', lvl_mid_d: 'Más países de todo el mundo', lvl_hard_d: 'Todos los países, también los menos conocidos',
+            diff_easy: 'Tranquilo', diff_normal: 'Normal', diff_hard: 'Rápido',
+            seconds: 's', noResults: 'Sin resultados', notEnough: 'No hay suficientes preguntas para esta combinación todavía.',
+            quitTitle: '¿Salir del quiz?', quitMsg: 'Se perderá el progreso actual.', quitCancel: 'Cancelar', quitOk: 'Salir',
+            kbHint: 'Teclado: pulsa 1, 2, 3 o 4 para responder',
+            c_eu: 'Europa', c_as: 'Asia', c_af: 'África', c_na: 'América del Norte', c_sa: 'América del Sur', c_am: 'América', c_oc: 'Oceanía', c_euas: 'Europa y Asia',
         },
         en: {
             appName: 'GeoQuiz',
@@ -96,21 +111,22 @@ const GeoQuiz = (() => {
             results: 'Results!',
             pts: 'pts', correct_lbl: 'Correct', time_lbl: 'Time',
             capital_q: 'What is the capital of',
-            country_q: 'In which country is the capital',
+            country_q: 'Which country has the capital',
             continent_q: 'In which continent is',
             km_q: 'How many km is the',
             height_q: 'What is the height of',
             river_country_q: 'In which region is the river',
+            territory_q: 'In which territory is',
+            flag_q: 'Which country does this flag belong to?',
             capital_of: 'Capital of',
             back: '← Back',
-            lang_es: 'Español', lang_en: 'English', lang_eu: 'Euskera',
             lvl_desc: [
                 '',
                 'Famous countries and capitals',
                 'More countries and European capitals',
                 'Americas and Asia capitals',
                 'Famous rivers and mountains',
-                'Comunidades autónomas of Spain',
+                'Autonomous communities of Spain',
                 'Spanish provinces and capitals',
                 'Spanish rivers and mountains',
                 'Euskadi territories and municipalities',
@@ -118,6 +134,19 @@ const GeoQuiz = (() => {
                 'Full review: everything',
             ],
             stars0: 'Keep practicing', stars1: 'Well done', stars2: 'Excellent', stars3: 'Perfect!',
+            modeTitle: 'Game mode', diffTitle: 'Difficulty (time per question)',
+            mode_classic: 'Classic', mode_flags: 'Flags', mode_capitals: 'Capital to country', mode_continents: 'Continents',
+            mode_classic_d: 'Capitals, rivers, mountains, Spain and Euskadi in 10 levels',
+            mode_flags_d: 'Guess the country from its flag',
+            mode_capitals_d: 'We give you the capital, you pick the country',
+            mode_continents_d: 'Which continent is each country in?',
+            lvl_easy: 'Easy', lvl_mid: 'Medium', lvl_hard: 'Hard',
+            lvl_easy_d: 'Very well-known countries', lvl_mid_d: 'More countries from all over the world', lvl_hard_d: 'Every country, including the lesser known',
+            diff_easy: 'Relaxed', diff_normal: 'Normal', diff_hard: 'Fast',
+            seconds: 's', noResults: 'No results', notEnough: 'Not enough questions for this combination yet.',
+            quitTitle: 'Quit the quiz?', quitMsg: 'Current progress will be lost.', quitCancel: 'Cancel', quitOk: 'Quit',
+            kbHint: 'Keyboard: press 1, 2, 3 or 4 to answer',
+            c_eu: 'Europe', c_as: 'Asia', c_af: 'Africa', c_na: 'North America', c_sa: 'South America', c_am: 'America', c_oc: 'Oceania', c_euas: 'Europe and Asia',
         },
         eu: {
             appName: 'GeoQuiz',
@@ -127,7 +156,7 @@ const GeoQuiz = (() => {
             quizMode: 'Galdeketa',
             quizDesc: 'Galderak erantzun eta puntuak irabazi',
             world: 'Mundua', spain: 'Espainia', euskadi: 'Euskadi',
-            countries: 'Herriak', rivers: 'Ibaiak', mountains: 'Mendiak',
+            countries: 'Herrialdeak', rivers: 'Ibaiak', mountains: 'Mendiak',
             comunidades: 'Erkidegoak', provincias: 'Probintziak',
             territories: 'Lurraldeak', munis: 'Udalerriak',
             search: 'Bilatu...',
@@ -138,14 +167,15 @@ const GeoQuiz = (() => {
             results: 'Emaitzak!',
             pts: 'puntu', correct_lbl: 'Zuzenak', time_lbl: 'Denbora',
             capital_q: 'Zein da hiriburua',
-            country_q: 'Zein herrialdetan dago hiriburua',
+            country_q: 'Zein herrialderen hiriburua da',
             continent_q: 'Zein kontinentetan dago',
             km_q: 'Zenbat km ditu',
             height_q: 'Zein da altueraren',
             river_country_q: 'Zein eskualdetan dago ibaia',
+            territory_q: 'Zein lurraldetan dago',
+            flag_q: 'Zein herrialderena da bandera hau?',
             capital_of: 'Hiriburu',
             back: '← Atzera',
-            lang_es: 'Español', lang_en: 'English', lang_eu: 'Euskera',
             lvl_desc: [
                 '',
                 'Herrialde ezagunak eta hiriburuak',
@@ -160,10 +190,209 @@ const GeoQuiz = (() => {
                 'Dena: errepaso osoa',
             ],
             stars0: 'Jarraitu lantzen', stars1: 'Ongi egina', stars2: 'Bikaina', stars3: 'Ezin hobeto!',
+            modeTitle: 'Joko modua', diffTitle: 'Zailtasuna (denbora galdera bakoitzeko)',
+            mode_classic: 'Klasikoa', mode_flags: 'Banderak', mode_capitals: 'Hiriburutik herrialdera', mode_continents: 'Kontinenteak',
+            mode_classic_d: 'Hiriburuak, ibaiak, mendiak, Espainia eta Euskadi 10 mailatan',
+            mode_flags_d: 'Asmatu herrialdea bere banderatik',
+            mode_capitals_d: 'Hiriburua ematen dizugu, zuk herrialdea aukeratu',
+            mode_continents_d: 'Zein kontinentetan dago herrialde bakoitza?',
+            lvl_easy: 'Erraza', lvl_mid: 'Ertaina', lvl_hard: 'Zaila',
+            lvl_easy_d: 'Oso herrialde ezagunak', lvl_mid_d: 'Munduko herrialde gehiago', lvl_hard_d: 'Herrialde guztiak, ezezagunenak ere bai',
+            diff_easy: 'Lasai', diff_normal: 'Normala', diff_hard: 'Azkarra',
+            seconds: 's', noResults: 'Emaitzarik ez', notEnough: 'Oraindik ez dago galdera nahikorik konbinazio honetarako.',
+            quitTitle: 'Galdeketatik irten?', quitMsg: 'Uneko aurrerapen guztia galduko da.', quitCancel: 'Utzi', quitOk: 'Irten',
+            kbHint: 'Teklatua: sakatu 1, 2, 3 edo 4 erantzuteko',
+            c_eu: 'Europa', c_as: 'Asia', c_af: 'Afrika', c_na: 'Ipar Amerika', c_sa: 'Hego Amerika', c_am: 'Amerika', c_oc: 'Ozeania', c_euas: 'Europa eta Asia',
+        },
+        gl: {
+            appName: 'GeoQuiz',
+            subtitle: 'Coñece o mundo, España e Euskadi',
+            atlasMode: 'Atlas',
+            atlasDesc: 'Explora toda a información',
+            quizMode: 'Quiz',
+            quizDesc: 'Responde preguntas e gaña puntos',
+            world: 'Mundial', spain: 'España', euskadi: 'Euskadi',
+            countries: 'Países', rivers: 'Ríos', mountains: 'Montañas',
+            comunidades: 'CC.AA.', provincias: 'Provincias',
+            territories: 'Territorios', munis: 'Concellos',
+            search: 'Buscar...',
+            level: 'Nivel', selectLevel: 'Selecciona nivel',
+            start: 'Comezar', playAgain: 'Repetir', home: 'Inicio',
+            question: 'Pregunta',
+            correct: 'Correcto!', wrong: 'Incorrecto',
+            results: 'Resultados!',
+            pts: 'pts', correct_lbl: 'Correctas', time_lbl: 'Tempo',
+            capital_q: 'Cal é a capital de',
+            country_q: 'De que país é capital',
+            continent_q: 'En que continente está',
+            km_q: 'Cantos km ten o río',
+            height_q: 'Cal é a altura do',
+            river_country_q: 'En que rexión está o río',
+            territory_q: 'En que territorio está',
+            flag_q: 'De que país é esta bandeira?',
+            capital_of: 'Capital de',
+            back: '← Volver',
+            lvl_desc: [
+                '',
+                'Países famosos e capitais coñecidas',
+                'Máis países e capitais de Europa',
+                'Capitais de América e Asia',
+                'Ríos e montañas máis famosos do mundo',
+                'Comunidades autónomas de España',
+                'Provincias de España e as súas capitais',
+                'Ríos e montañas de España',
+                'Territorios e concellos de Euskadi',
+                'Ríos e montañas de Euskadi',
+                'Todo: repaso completo',
+            ],
+            stars0: 'Segue practicando', stars1: 'Ben feito', stars2: 'Excelente', stars3: 'Perfecto!',
+            modeTitle: 'Modo de xogo', diffTitle: 'Dificultade (tempo por pregunta)',
+            mode_classic: 'Clásico', mode_flags: 'Bandeiras', mode_capitals: 'Capital a país', mode_continents: 'Continentes',
+            mode_classic_d: 'Capitais, ríos, montañas, España e Euskadi en 10 niveis',
+            mode_flags_d: 'Adiviña o país pola súa bandeira',
+            mode_capitals_d: 'Damosche a capital, ti escolles o país',
+            mode_continents_d: 'En que continente está cada país?',
+            lvl_easy: 'Fácil', lvl_mid: 'Medio', lvl_hard: 'Difícil',
+            lvl_easy_d: 'Países moi coñecidos', lvl_mid_d: 'Máis países de todo o mundo', lvl_hard_d: 'Todos os países, tamén os menos coñecidos',
+            diff_easy: 'Tranquilo', diff_normal: 'Normal', diff_hard: 'Rápido',
+            seconds: 's', noResults: 'Sen resultados', notEnough: 'Aínda non hai preguntas suficientes para esta combinación.',
+            quitTitle: 'Saír do quiz?', quitMsg: 'Perderase o progreso actual.', quitCancel: 'Cancelar', quitOk: 'Saír',
+            kbHint: 'Teclado: preme 1, 2, 3 ou 4 para responder',
+            c_eu: 'Europa', c_as: 'Asia', c_af: 'África', c_na: 'América do Norte', c_sa: 'América do Sur', c_am: 'América', c_oc: 'Oceanía', c_euas: 'Europa e Asia',
+        },
+        ca: {
+            appName: 'GeoQuiz',
+            subtitle: 'Coneix el món, Espanya i Euskadi',
+            atlasMode: 'Atles',
+            atlasDesc: 'Explora tota la informació',
+            quizMode: 'Quiz',
+            quizDesc: 'Respon preguntes i guanya punts',
+            world: 'Món', spain: 'Espanya', euskadi: 'Euskadi',
+            countries: 'Països', rivers: 'Rius', mountains: 'Muntanyes',
+            comunidades: 'CC.AA.', provincias: 'Províncies',
+            territories: 'Territoris', munis: 'Municipis',
+            search: 'Cerca...',
+            level: 'Nivell', selectLevel: 'Selecciona nivell',
+            start: 'Començar', playAgain: 'Repetir', home: 'Inici',
+            question: 'Pregunta',
+            correct: 'Correcte!', wrong: 'Incorrecte',
+            results: 'Resultats!',
+            pts: 'pts', correct_lbl: 'Correctes', time_lbl: 'Temps',
+            capital_q: 'Quina és la capital de',
+            country_q: 'De quin país és capital',
+            continent_q: 'En quin continent és',
+            km_q: 'Quants km té el riu',
+            height_q: "Quina és l'altura del",
+            river_country_q: 'En quina regió és el riu',
+            territory_q: 'En quin territori és',
+            flag_q: 'De quin país és aquesta bandera?',
+            capital_of: 'Capital de',
+            back: '← Tornar',
+            lvl_desc: [
+                '',
+                'Països famosos i capitals conegudes',
+                "Més països i capitals d'Europa",
+                "Capitals d'Amèrica i Àsia",
+                'Rius i muntanyes més famosos del món',
+                "Comunitats autònomes d'Espanya",
+                "Províncies d'Espanya i les seves capitals",
+                "Rius i muntanyes d'Espanya",
+                "Territoris i municipis d'Euskadi",
+                "Rius i muntanyes d'Euskadi",
+                'Tot: repàs complet',
+            ],
+            stars0: 'Continua practicant', stars1: 'Ben fet', stars2: 'Excel·lent', stars3: 'Perfecte!',
+            modeTitle: 'Mode de joc', diffTitle: 'Dificultat (temps per pregunta)',
+            mode_classic: 'Clàssic', mode_flags: 'Banderes', mode_capitals: 'Capital a país', mode_continents: 'Continents',
+            mode_classic_d: 'Capitals, rius, muntanyes, Espanya i Euskadi en 10 nivells',
+            mode_flags_d: 'Endevina el país per la seva bandera',
+            mode_capitals_d: 'Et donem la capital, tu tries el país',
+            mode_continents_d: 'En quin continent és cada país?',
+            lvl_easy: 'Fàcil', lvl_mid: 'Mitjà', lvl_hard: 'Difícil',
+            lvl_easy_d: 'Països molt coneguts', lvl_mid_d: 'Més països de tot el món', lvl_hard_d: 'Tots els països, també els menys coneguts',
+            diff_easy: 'Tranquil', diff_normal: 'Normal', diff_hard: 'Ràpid',
+            seconds: 's', noResults: 'Sense resultats', notEnough: 'Encara no hi ha prou preguntes per a aquesta combinació.',
+            quitTitle: 'Sortir del quiz?', quitMsg: 'Es perdrà el progrés actual.', quitCancel: 'Cancel·lar', quitOk: 'Sortir',
+            kbHint: 'Teclat: prem 1, 2, 3 o 4 per respondre',
+            c_eu: 'Europa', c_as: 'Àsia', c_af: 'Àfrica', c_na: 'Amèrica del Nord', c_sa: 'Amèrica del Sud', c_am: 'Amèrica', c_oc: 'Oceania', c_euas: 'Europa i Àsia',
+        },
+        fr: {
+            appName: 'GeoQuiz',
+            subtitle: "Découvre le monde, l'Espagne et l'Euskadi",
+            atlasMode: 'Atlas',
+            atlasDesc: 'Explore toutes les informations',
+            quizMode: 'Quiz',
+            quizDesc: 'Réponds aux questions et gagne des points',
+            world: 'Monde', spain: 'Espagne', euskadi: 'Euskadi',
+            countries: 'Pays', rivers: 'Fleuves', mountains: 'Montagnes',
+            comunidades: 'Communautés', provincias: 'Provinces',
+            territories: 'Territoires', munis: 'Communes',
+            search: 'Rechercher...',
+            level: 'Niveau', selectLevel: 'Choisis le niveau',
+            start: 'Commencer', playAgain: 'Rejouer', home: 'Accueil',
+            question: 'Question',
+            correct: 'Correct !', wrong: 'Incorrect',
+            results: 'Résultats !',
+            pts: 'pts', correct_lbl: 'Correctes', time_lbl: 'Temps',
+            capital_q: 'Quelle est la capitale de',
+            country_q: 'De quel pays est capitale',
+            continent_q: 'Sur quel continent se trouve',
+            km_q: 'Combien de km mesure le fleuve',
+            height_q: 'Quelle est la hauteur du',
+            river_country_q: 'Dans quelle région se trouve le fleuve',
+            territory_q: 'Dans quel territoire se trouve',
+            flag_q: 'De quel pays est ce drapeau ?',
+            capital_of: 'Capitale de',
+            back: '← Retour',
+            lvl_desc: [
+                '',
+                'Pays célèbres et capitales connues',
+                "Plus de pays et capitales d'Europe",
+                "Capitales d'Amérique et d'Asie",
+                'Fleuves et montagnes les plus célèbres du monde',
+                "Communautés autonomes d'Espagne",
+                "Provinces d'Espagne et leurs capitales",
+                "Fleuves et montagnes d'Espagne",
+                "Territoires et communes d'Euskadi",
+                "Fleuves et montagnes d'Euskadi",
+                'Tout : révision complète',
+            ],
+            stars0: "Continue à t'entraîner", stars1: 'Bien joué', stars2: 'Excellent', stars3: 'Parfait !',
+            modeTitle: 'Mode de jeu', diffTitle: 'Difficulté (temps par question)',
+            mode_classic: 'Classique', mode_flags: 'Drapeaux', mode_capitals: 'Capitale vers pays', mode_continents: 'Continents',
+            mode_classic_d: 'Capitales, fleuves, montagnes, Espagne et Euskadi en 10 niveaux',
+            mode_flags_d: 'Devine le pays grâce à son drapeau',
+            mode_capitals_d: 'On te donne la capitale, tu choisis le pays',
+            mode_continents_d: 'Sur quel continent se trouve chaque pays ?',
+            lvl_easy: 'Facile', lvl_mid: 'Moyen', lvl_hard: 'Difficile',
+            lvl_easy_d: 'Pays très connus', lvl_mid_d: 'Plus de pays du monde entier', lvl_hard_d: 'Tous les pays, même les moins connus',
+            diff_easy: 'Tranquille', diff_normal: 'Normal', diff_hard: 'Rapide',
+            seconds: 's', noResults: 'Aucun résultat', notEnough: 'Pas encore assez de questions pour cette combinaison.',
+            quitTitle: 'Quitter le quiz ?', quitMsg: 'La progression actuelle sera perdue.', quitCancel: 'Annuler', quitOk: 'Quitter',
+            kbHint: 'Clavier : appuie sur 1, 2, 3 ou 4 pour répondre',
+            c_eu: 'Europe', c_as: 'Asie', c_af: 'Afrique', c_na: 'Amérique du Nord', c_sa: 'Amérique du Sud', c_am: 'Amérique', c_oc: 'Océanie', c_euas: 'Europe et Asie',
         },
     };
 
-    const t = (key) => (I18N[state.lang] || I18N.es)[key] || key;
+    const t = (key) => (I18N[state.lang] || I18N.es)[key] ?? I18N.es[key] ?? key;
+
+    const DIFFS = { easy: 25, normal: 15, hard: 8 };
+    const MODES = ['classic', 'flags', 'capitals', 'continents'];
+    const CONT_KEYS = {
+        'Europa': 'c_eu', 'Asia': 'c_as', 'África': 'c_af', 'América del Norte': 'c_na',
+        'América del Sur': 'c_sa', 'América': 'c_am', 'Oceanía': 'c_oc', 'Europa/Asia': 'c_euas',
+    };
+    const contName = (c) => CONT_KEYS[c] ? t(CONT_KEYS[c]) : c;
+
+    // Localized country name: Spanish comes from the data, other languages from Intl.DisplayNames
+    const _dn = {};
+    function countryName(c) {
+        if (state.lang === 'es' || !c.iso) return c.name;
+        try {
+            if (!_dn[state.lang]) _dn[state.lang] = new Intl.DisplayNames([state.lang], { type: 'region' });
+            return _dn[state.lang].of(c.iso) || c.name;
+        } catch (e) { return c.name; }
+    }
 
     // ── DOM helpers ────────────────────────────────────────────────────────
     const $ = (id) => document.getElementById(id);
@@ -219,7 +448,7 @@ const GeoQuiz = (() => {
 
     // Continent emoji map
     const CONTINENT_ICONS = {
-        'Europa': '🇪🇺', 'Europe': '🇪🇺',
+        'Europa': '🇪🇺', 'Europe': '🇪🇺', 'Europa/Asia': '🌐', 'América del Norte': '🌎', 'América del Sur': '🌎',
         'Asia': '🌏', 'América': '🌎', 'America': '🌎',
         'África': '🌍', 'Africa': '🌍',
         'Oceanía': '🌊', 'Oceania': '🌊',
@@ -237,10 +466,10 @@ const GeoQuiz = (() => {
                 const groups = {};
                 d.countries.forEach(c => {
                     if (!groups[c.continent]) groups[c.continent] = [];
-                    groups[c.continent].push({ icon: c.flag, name: c.name, info: `${t('capital_of')}: ${c.capital}` });
+                    groups[c.continent].push({ icon: c.flag, name: countryName(c), info: `${t('capital_of')}: ${c.capital}` });
                 });
                 return Object.entries(groups).map(([continent, items]) => ({
-                    header: `${CONTINENT_ICONS[continent] || '🌍'} ${continent}`,
+                    header: `${CONTINENT_ICONS[continent] || '🌍'} ${contName(continent)}`,
                     items,
                 }));
             }
@@ -320,7 +549,7 @@ const GeoQuiz = (() => {
         }
 
         if (totalItems === 0) {
-            html = '<p style="color:var(--text-secondary);text-align:center;grid-column:1/-1">Sin resultados</p>';
+            html = `<p style="color:var(--text-secondary);text-align:center;grid-column:1/-1">${t('noResults')}</p>`;
         }
         container.innerHTML = html;
     }
@@ -345,7 +574,7 @@ const GeoQuiz = (() => {
                 qs.push({
                     icon: c.flag || '🌍',
                     context: t('world'),
-                    text: `${t('capital_q')} ${c.name}?`,
+                    text: `${t('capital_q')} ${c.iso ? countryName(c) : c.name}?`,
                     answer: c.capital,
                     options: shuffle([c.capital, ...wrong]),
                 });
@@ -443,7 +672,7 @@ const GeoQuiz = (() => {
                 qs.push({
                     icon: '🏘️',
                     context: t('euskadi'),
-                    text: `¿En qué territorio está ${m.name}?`,
+                    text: `${t('territory_q')} ${m.name}?`,
                     answer: m.territory,
                     options: shuffle([m.territory, ...wrong]),
                 });
@@ -464,13 +693,51 @@ const GeoQuiz = (() => {
         return shuffle(qs).filter(q => q.options.length === 4).slice(0, 10);
     }
 
+    // ── Extra quiz modes (flags, capital to country, continents) ─────────────
+    const CONT_CANON = {
+        'Europa': 'c_eu', 'Asia': 'c_as', 'África': 'c_af', 'América del Norte': 'c_na',
+        'América del Sur': 'c_sa', 'América': 'c_na', 'Oceanía': 'c_oc',
+    };
+
+    function buildModeQuestions(mode, level) {
+        const pool = GQ_DATA.countries.filter(c => c.level <= level);
+        const qs = [];
+        if (pool.length < 8) return qs;
+        const wrongNames = (c) => shuffle(pool.filter(x => x.name !== c.name)).slice(0, 3).map(countryName);
+        if (mode === 'flags') {
+            pick(pool, 20).forEach(c => qs.push({
+                icon: c.flag, context: t('world'), text: t('flag_q'), big: true,
+                answer: countryName(c), options: shuffle([countryName(c), ...wrongNames(c)]),
+            }));
+        } else if (mode === 'capitals') {
+            pick(pool, 20).forEach(c => qs.push({
+                icon: '🏙️', context: t('world'), text: `${t('country_q')} ${c.capital}?`,
+                answer: countryName(c), options: shuffle([countryName(c), ...wrongNames(c)]),
+            }));
+        } else if (mode === 'continents') {
+            const keys = ['c_eu', 'c_as', 'c_af', 'c_na', 'c_sa', 'c_oc'];
+            pick(pool.filter(c => CONT_CANON[c.continent]), 20).forEach(c => {
+                const ans = CONT_CANON[c.continent];
+                const wrong = shuffle(keys.filter(k => k !== ans)).slice(0, 3);
+                qs.push({
+                    icon: c.flag, context: t('world'), text: `${t('continent_q')} ${countryName(c)}?`,
+                    answer: t(ans), options: shuffle([ans, ...wrong]).map(k => t(k)),
+                });
+            });
+        }
+        return qs.filter(q => q.options.length === 4 && new Set(q.options).size === 4).slice(0, 10);
+    }
+
     // ── Quiz flow ──────────────────────────────────────────────────────────
     function startQuiz() {
-        const qs = buildQuestions(state.quizLevel);
+        const qs = state.quizMode === 'classic'
+            ? buildQuestions(state.quizLevel)
+            : buildModeQuestions(state.quizMode, state.quizLevel);
         if (qs.length < 3) {
-            alert('No hay suficientes preguntas para este nivel todavía.');
+            alert(t('notEnough'));
             return;
         }
+        state.timerSecs = DIFFS[state.quizDiff] || 15;
         state.quizQuestions = qs;
         state.quizIndex = 0;
         state.quizScore = 0;
@@ -493,12 +760,13 @@ const GeoQuiz = (() => {
 
         // Question card
         $('gq-q-icon').textContent = q.icon || '🌍';
+        $('gq-q-icon').classList.toggle('big', !!q.big);
         $('gq-q-context').textContent = q.context || '';
         $('gq-q-text').textContent = q.text;
 
         // Options
         $('gq-options').innerHTML = q.options.map((opt, i) =>
-            `<button class="gq-option" onclick="GeoQuiz.selectOption(${i})" data-idx="${i}">${opt}</button>`
+            `<button class="gq-option" onclick="GeoQuiz.selectOption(${i})" data-idx="${i}"><kbd class="gq-key" aria-hidden="true">${i + 1}</kbd><span>${opt}</span></button>`
         ).join('');
 
         $('gq-feedback').textContent = '';
@@ -539,12 +807,12 @@ const GeoQuiz = (() => {
         state.answered = true;
         const q = state.quizQuestions[state.quizIndex];
         // Mark correct answer
-        document.querySelectorAll('.gq-option').forEach(btn => {
-            if (btn.textContent === q.answer) btn.classList.add('correct');
+        document.querySelectorAll('.gq-option').forEach((btn, i) => {
+            if (q.options[i] === q.answer) btn.classList.add('correct');
             btn.disabled = true;
         });
         const fb = $('gq-feedback');
-        fb.textContent = `⏰ ${t('wrong')} — ${q.answer}`;
+        fb.textContent = `⏰ ${t('wrong')}: ${q.answer}`;
         fb.className = 'gq-feedback bad';
         setTimeout(nextQuestion, 1800);
     }
@@ -566,13 +834,14 @@ const GeoQuiz = (() => {
 
         const fb = $('gq-feedback');
         if (correct) {
-            const bonus = Math.ceil(state.timerLeft / state.timerSecs * 100) + state.quizLevel * 10;
+            const diffMul = state.quizDiff === 'hard' ? 1.5 : state.quizDiff === 'easy' ? 0.8 : 1;
+            const bonus = Math.round((Math.ceil(state.timerLeft / state.timerSecs * 100) + state.quizLevel * 10) * diffMul);
             state.quizScore += bonus;
             state.quizCorrect++;
             fb.textContent = `${t('correct')} +${bonus} ${t('pts')}`;
             fb.className = 'gq-feedback good';
         } else {
-            fb.textContent = `${t('wrong')} — ${q.answer}`;
+            fb.textContent = `${t('wrong')}: ${q.answer}`;
             fb.className = 'gq-feedback bad';
         }
         $('gq-q-score').textContent = `${state.quizScore} ${t('pts')}`;
@@ -647,17 +916,61 @@ const GeoQuiz = (() => {
         $('gq-atlas-desc').textContent = t('atlasDesc');
         $('gq-quiz-label').textContent = t('quizMode');
         $('gq-quiz-desc').textContent = t('quizDesc');
+        applyStaticTexts();
+    }
+
+    // Static labels in other screens (language-aware)
+    function applyStaticTexts() {
+        const set = (id, txt) => { const el = $(id); if (el) el.textContent = txt; };
+        set('gq-atlas-back', t('back'));
+        set('gq-atlas-title', t('atlasMode'));
+        set('gq-res-correct-lbl', t('correct_lbl'));
+        set('gq-res-time-lbl', t('time_lbl'));
+        set('gq-res-again', t('playAgain'));
+        set('gq-res-home', t('home'));
+        const pts = document.querySelector('.gq-score-circle .pts-label');
+        if (pts) pts.textContent = t('pts');
+        const srch = $('gq-search');
+        if (srch) { srch.placeholder = t('search'); srch.setAttribute('aria-label', t('search')); }
+        const tw = $('gq-timer-wrap');
+        if (tw) tw.setAttribute('aria-label', t('time_lbl'));
     }
 
     // ── Quiz setup ─────────────────────────────────────────────────────────
+    const MODE_ICONS = { classic: '🧭', flags: '🚩', capitals: '🏙️', continents: '🌍' };
+
     function renderQuizSetup() {
         setScreen('quiz-setup');
         $('gqs-title').textContent = t('quizMode');
-        $('gqs-levels-grid').innerHTML = Array.from({ length: 10 }, (_, i) => {
-            const n = i + 1;
-            return `<button class="gq-level-btn${state.quizLevel === n ? ' active' : ''}" onclick="GeoQuiz.selectLevel(${n})">${t('level')} ${n}</button>`;
-        }).join('');
-        $('gqs-desc').textContent = t('lvl_desc')[state.quizLevel] || '';
+        $('gqs-mode-title').textContent = t('modeTitle');
+        $('gqs-level-title').textContent = t('selectLevel');
+        $('gqs-diff-title').textContent = t('diffTitle');
+        $('gqs-kbhint').textContent = t('kbHint');
+
+        $('gqs-modes').innerHTML = MODES.map(m =>
+            `<button class="gq-mode-pick${state.quizMode === m ? ' active' : ''}" role="radio" aria-checked="${state.quizMode === m}" onclick="GeoQuiz.selectMode('${m}')">
+                <span class="m-ico">${MODE_ICONS[m]}</span><span class="m-name">${t('mode_' + m)}</span><span class="m-desc">${t('mode_' + m + '_d')}</span>
+            </button>`).join('');
+
+        const grid = $('gqs-levels-grid');
+        if (state.quizMode === 'classic') {
+            grid.classList.remove('three');
+            grid.innerHTML = Array.from({ length: 10 }, (_, i) => {
+                const n = i + 1;
+                return `<button class="gq-level-btn${state.quizLevel === n ? ' active' : ''}" role="radio" aria-checked="${state.quizLevel === n}" onclick="GeoQuiz.selectLevel(${n})">${t('level')} ${n}</button>`;
+            }).join('');
+            $('gqs-desc').textContent = t('lvl_desc')[state.quizLevel] || '';
+        } else {
+            if (state.quizLevel > 3) state.quizLevel = 3;
+            grid.classList.add('three');
+            const names = ['lvl_easy', 'lvl_mid', 'lvl_hard'];
+            grid.innerHTML = names.map((k, i) =>
+                `<button class="gq-level-btn${state.quizLevel === i + 1 ? ' active' : ''}" role="radio" aria-checked="${state.quizLevel === i + 1}" onclick="GeoQuiz.selectLevel(${i + 1})">${t(k)}</button>`).join('');
+            $('gqs-desc').textContent = t(names[state.quizLevel - 1] + '_d');
+        }
+
+        $('gqs-diff').innerHTML = ['easy', 'normal', 'hard'].map(d =>
+            `<button class="gq-diff-btn${state.quizDiff === d ? ' active' : ''}" role="radio" aria-checked="${state.quizDiff === d}" onclick="GeoQuiz.selectDiff('${d}')">${t('diff_' + d)}<small>${DIFFS[d]} ${t('seconds')}</small></button>`).join('');
         $('gqs-start').textContent = t('start');
         $('gqs-back').textContent = t('back');
     }
@@ -667,14 +980,10 @@ const GeoQuiz = (() => {
         const modal = $('gq-quit-modal');
         if (!modal) { onConfirm(); return; }
         // Update text for current language
-        const titles = { es: '¿Salir del quiz?', en: 'Quit the quiz?', eu: 'Quizetik irten?' };
-        const msgs = { es: 'Se perderá el progreso actual.', en: 'Current progress will be lost.', eu: 'Uneko aurrerapen guztia galduko da.' };
-        const cancelTxt = { es: 'Cancelar', en: 'Cancel', eu: 'Utzi' };
-        const okTxt = { es: 'Salir', en: 'Quit', eu: 'Irten' };
-        $('gq-quit-title').textContent = titles[state.lang] || titles.es;
-        $('gq-quit-msg').textContent = msgs[state.lang] || msgs.es;
-        $('gq-quit-cancel').textContent = cancelTxt[state.lang] || cancelTxt.es;
-        $('gq-quit-ok').textContent = okTxt[state.lang] || okTxt.es;
+        $('gq-quit-title').textContent = t('quitTitle');
+        $('gq-quit-msg').textContent = t('quitMsg');
+        $('gq-quit-cancel').textContent = t('quitCancel');
+        $('gq-quit-ok').textContent = t('quitOk');
         modal.classList.remove('hidden');
         modal.focus();
         state._quitConfirm = onConfirm;
@@ -697,6 +1006,25 @@ const GeoQuiz = (() => {
         });
     }
 
+    // ── Keyboard ───────────────────────────────────────────────────────────
+    function onKey(e) {
+        if (e.ctrlKey || e.metaKey || e.altKey) return;
+        const modal = $('gq-quit-modal');
+        const modalOpen = modal && !modal.classList.contains('hidden');
+        if (e.key === 'Escape') {
+            if (modalOpen) _hideQuitConfirm();
+            else if (state.screen === 'quiz') GeoQuiz.goHome();
+            return;
+        }
+        if (modalOpen || state.screen !== 'quiz') return;
+        const tag = (e.target && e.target.tagName) || '';
+        if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+        if (/^[1-4]$/.test(e.key)) {
+            e.preventDefault();
+            selectOption(Number(e.key) - 1);
+        }
+    }
+
     // ── Public API ─────────────────────────────────────────────────────────
     return {
         init() {
@@ -704,6 +1032,8 @@ const GeoQuiz = (() => {
             document.documentElement.lang = (state.lang || 'es').split('-')[0];
             renderHome();
             _initQuitModal();
+            applyStaticTexts();
+            document.addEventListener('keydown', onKey);
             // Sync language with platform header
             document.addEventListener('platformLanguageChanged', () => {
                 state.lang = platformLang();
@@ -712,6 +1042,7 @@ const GeoQuiz = (() => {
                 if (state.screen === 'home') renderHome();
                 else if (state.screen === 'atlas') { renderAtlasTopTabs(); renderAtlasSubTabs(); renderAtlasCards(); }
                 else if (state.screen === 'quiz-setup') renderQuizSetup();
+                else if (state.screen === 'quiz') applyStaticTexts();
             });
         },
         setLang,
@@ -743,6 +1074,15 @@ const GeoQuiz = (() => {
         },
         selectLevel(n) {
             state.quizLevel = n;
+            renderQuizSetup();
+        },
+        selectMode(m) {
+            state.quizMode = m;
+            if (m !== 'classic' && state.quizLevel > 3) state.quizLevel = 3;
+            renderQuizSetup();
+        },
+        selectDiff(d) {
+            state.quizDiff = d;
             renderQuizSetup();
         },
         startQuiz,

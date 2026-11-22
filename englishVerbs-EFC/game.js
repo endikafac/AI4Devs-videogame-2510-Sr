@@ -31,7 +31,42 @@ const EnglishVerbsGame = (() => {
         groupPracticeGroup: null,
         groupPracticeExercises: [],
         groupPracticeIndex: 0,
+        genMode: null,
+        genGroup: 'all',
     };
+
+    // ── i18n ───────────────────────────────────────────────────
+    let lang = 'es';
+    function detectLang() {
+        let pl = 'es';
+        try {
+            pl = (typeof PlatformI18n !== 'undefined' && PlatformI18n.currentLanguage) ||
+                 localStorage.getItem('games_hub_language') || navigator.language || 'es';
+        } catch (e) { /* ignore */ }
+        const c = String(pl).slice(0, 2).toLowerCase();
+        lang = (typeof EV_I18N !== 'undefined' && EV_I18N[c]) ? c : 'es';
+        document.documentElement.lang = lang;
+    }
+    function t(key, vars) {
+        let str = (EV_I18N[lang] && EV_I18N[lang][key]) ?? EV_I18N.es[key] ?? key;
+        if (vars) Object.entries(vars).forEach(([k, v]) => { str = str.split('{' + k + '}').join(v); });
+        return str;
+    }
+    // Meaning of a verb in the UI language ('' for English: no translation needed)
+    function meaningOf(v) {
+        if (lang === 'es') return v.meaning_es;
+        if (lang === 'en') return '';
+        const m = (typeof VERB_MEANINGS !== 'undefined') ? VERB_MEANINGS[v.infinitive] : null;
+        const idx = { eu: 0, gl: 1, ca: 2, fr: 3 }[lang];
+        return (m && m[idx]) || v.meaning_es;
+    }
+    const GROUP_COLORS = { 'A-A-A': '#22c55e', 'A-B-A': '#3b82f6', 'A-B-B': '#f59e0b', 'A-B-C': '#ef4444' };
+    function applyStatic() {
+        document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+        document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+        document.querySelectorAll('[data-i18n-aria]').forEach(el => { el.setAttribute('aria-label', t(el.dataset.i18nAria)); });
+        const cnt = $('ev-verb-count'); if (cnt) cnt.textContent = IRREGULAR_VERBS.length;
+    }
 
     const $ = id => document.getElementById(id);
     const show = el => { if (el) el.classList.remove('hidden'); };
@@ -94,7 +129,7 @@ const EnglishVerbsGame = (() => {
         if (!listEl) return;
         const isHidden = listEl.hidden;
         listEl.hidden = !isHidden;
-        if (btnEl) btnEl.textContent = isHidden ? 'Ocultar verbos' : 'Ver verbos';
+        if (btnEl) btnEl.textContent = isHidden ? t('hideVerbs') : t('viewVerbs');
     }
 
     // ── Home ───────────────────────────────────────────────────────────
@@ -102,53 +137,56 @@ const EnglishVerbsGame = (() => {
         renderVerbTable();
         renderGroupCards();
         renderLevelGrid();
+        renderModes();
         showScreen('home');
         showTab('tabla');
+    }
+
+    function ttsBtn(v) {
+        const label = t('listen') + ': ' + v.infinitive;
+        return `<button class="ev-tts-row-btn" onclick="EnglishVerbsGame.speakVerb('${v.audio_text.replace(/'/g, "\\'")}')" title="${label}" aria-label="${label}">🔊</button>`;
     }
 
     function renderVerbTable() {
         const el = $('ev-verb-table-container');
         if (!el) return;
-        const groupColors = {
-            'A-A-A': '#22c55e',
-            'A-B-A': '#3b82f6',
-            'A-B-B': '#f59e0b',
-            'A-B-C': '#ef4444'
-        };
+        const showMeaning = lang !== 'en';
         const rows = IRREGULAR_VERBS.map(v => `
             <tr>
                 <td><strong>${v.infinitive}</strong></td>
                 <td>${v.past_simple}</td>
                 <td>${v.past_participle}</td>
-                <td>${v.meaning_es}</td>
-                <td><span class="ev-group-badge" style="background:${groupColors[v.group]}20;color:${groupColors[v.group]};border:1px solid ${groupColors[v.group]}">${v.group}</span></td>
-                <td><button class="ev-tts-row-btn" onclick="EnglishVerbsGame.speakVerb('${v.audio_text.replace(/'/g, "\\'")}')" title="Listen" aria-label="Listen to ${v.infinitive}">🔊</button></td>
+                ${showMeaning ? `<td>${meaningOf(v)}</td>` : ''}
+                <td><span class="ev-group-badge" style="background:${GROUP_COLORS[v.group]}20;color:${GROUP_COLORS[v.group]};border:1px solid ${GROUP_COLORS[v.group]}">${v.group}</span></td>
+                <td>${ttsBtn(v)}</td>
             </tr>`).join('');
 
         el.innerHTML = `
             <div class="ev-group-legend">
-                ${Object.entries(groupColors).map(([g, c]) => `<span class="ev-group-badge" style="background:${c}20;color:${c};border:1px solid ${c}">${g}: ${ENGLISH_MODULE.groups[g]?.label || g}</span>`).join('')}
+                ${Object.entries(GROUP_COLORS).map(([g, c]) => `<span class="ev-group-badge" style="background:${c}20;color:${c};border:1px solid ${c}">${g}: ${t('g_' + g + '_label')}</span>`).join('')}
             </div>
             <div class="ev-table-scroll">
                 <table class="ev-verb-table">
                     <thead>
                         <tr>
-                            <th>Infinitive</th>
-                            <th>Past Simple</th>
-                            <th>Past Participle</th>
-                            <th>Meaning</th>
-                            <th>Group</th>
-                            <th aria-label="Listen"></th>
+                            <th>${t('thInf')}</th>
+                            <th>${t('thPast')}</th>
+                            <th>${t('thPart')}</th>
+                            ${showMeaning ? `<th>${t('thMeaning')}</th>` : ''}
+                            <th>${t('thGroup')}</th>
+                            <th aria-label="${t('listen')}"></th>
                         </tr>
                     </thead>
                     <tbody>${rows}</tbody>
                 </table>
             </div>`;
+        searchVerbs(($('ev-verb-search') || {}).value || '');
     }
 
     function renderGroupCards() {
         const el = $('ev-group-cards-container');
         if (!el) return;
+        const showMeaning = lang !== 'en';
 
         const cards = Object.entries(GROUP_INFO).map(([group, info]) => {
             const verbsInGroup = IRREGULAR_VERBS.filter(v => v.group === group);
@@ -160,8 +198,8 @@ const EnglishVerbsGame = (() => {
                     <td><strong>${v.infinitive}</strong></td>
                     <td>${v.past_simple}</td>
                     <td>${v.past_participle}</td>
-                    <td>${v.meaning_es}</td>
-                    <td><button class="ev-tts-row-btn" onclick="EnglishVerbsGame.speakVerb('${v.audio_text.replace(/'/g, "\\'")}')" title="Listen" aria-label="Listen to ${v.infinitive}">🔊</button></td>
+                    ${showMeaning ? `<td>${meaningOf(v)}</td>` : ''}
+                    <td>${ttsBtn(v)}</td>
                 </tr>`
             ).join('');
 
@@ -169,28 +207,28 @@ const EnglishVerbsGame = (() => {
             <div class="ev-group-card" style="--group-color:${info.color}">
                 <div class="ev-group-card-header">
                     <span class="ev-group-badge" style="background:${info.color}20;color:${info.color};border:1px solid ${info.color}">${group}</span>
-                    <span class="ev-group-count">${count} verbos</span>
+                    <span class="ev-group-count">${count} ${t('verbs')}</span>
                 </div>
-                <div class="ev-group-card-label">${info.label}</div>
-                <div class="ev-group-card-desc">${info.desc}</div>
+                <div class="ev-group-card-label">${t('g_' + group + '_label')}</div>
+                <div class="ev-group-card-desc">${t('g_' + group + '_desc')}</div>
                 <div class="ev-group-card-example"><code>${info.example}</code></div>
                 <div class="ev-group-card-actions">
                     <button class="ev-btn ev-btn-secondary ev-btn-sm"
                         id="ev-group-verbs-btn-${groupId}"
-                        onclick="EnglishVerbsGame.toggleGroupVerbs('${group}')">Ver verbos</button>
+                        onclick="EnglishVerbsGame.toggleGroupVerbs('${group}')">${t('viewVerbs')}</button>
                     <button class="ev-btn ev-btn-primary ev-btn-sm"
-                        onclick="EnglishVerbsGame.startGroupPractice('${group}')">Practicar</button>
+                        onclick="EnglishVerbsGame.startGroupPractice('${group}')">${t('practice')}</button>
                 </div>
                 <div class="ev-group-verb-list" id="ev-group-verbs-${groupId}" hidden>
                     <div class="ev-table-scroll">
                         <table class="ev-verb-table">
                             <thead>
                                 <tr>
-                                    <th>Infinitive</th>
-                                    <th>Past Simple</th>
-                                    <th>Past Participle</th>
-                                    <th>Meaning</th>
-                                    <th aria-label="Listen"></th>
+                                    <th>${t('thInf')}</th>
+                                    <th>${t('thPast')}</th>
+                                    <th>${t('thPart')}</th>
+                                    ${showMeaning ? `<th>${t('thMeaning')}</th>` : ''}
+                                    <th aria-label="${t('listen')}"></th>
                                 </tr>
                             </thead>
                             <tbody>${verbListRows}</tbody>
@@ -218,9 +256,9 @@ const EnglishVerbsGame = (() => {
         if (!el) return;
         const progress = getLevelProgress();
         const typeLabels = {
-            matching:    'Matching',
-            'fill-blank': 'Fill in the blanks',
-            'audio-quiz': 'Audio Story Quiz'
+            matching:    t('lv_matching'),
+            'fill-blank': t('lv_fill'),
+            'audio-quiz': t('lv_audio')
         };
         const typeIcons = {
             matching:    '🔗',
@@ -239,7 +277,7 @@ const EnglishVerbsGame = (() => {
                     ${isUnlocked
                         ? `onclick="EnglishVerbsGame.startLevel(${lvl.id})"`
                         : 'disabled aria-disabled="true"'}
-                    aria-label="Level ${lvl.id}: ${typeLabels[lvl.type]}${!isUnlocked ? '. Locked' : ''}">
+                    aria-label="${t('levelWord')} ${lvl.id}: ${typeLabels[lvl.type]}${!isUnlocked ? '. ' + t('locked') : ''}">
                     <div class="ev-level-icon">${typeIcons[lvl.type]}</div>
                     <div class="ev-level-num">${lvl.id}</div>
                     <div class="ev-level-type">${typeLabels[lvl.type]}</div>
@@ -270,12 +308,9 @@ const EnglishVerbsGame = (() => {
         state.storyIndex = 0;
         state.questionIndex = 0;
 
-        const typeBadges = {
-            matching:    'Level 1 — Matching',
-            'fill-blank': 'Level 2 — Fill in the blanks',
-            'audio-quiz': 'Level 3 — Audio Story Quiz'
-        };
-        $('ev-level-badge').textContent = typeBadges[lvl.type] || `Level ${levelId}`;
+        state.genMode = null;
+        const typeBadges = { matching: t('badge1'), 'fill-blank': t('badge2'), 'audio-quiz': t('badge3') };
+        $('ev-level-badge').textContent = typeBadges[lvl.type] || `${t('levelWord')} ${levelId}`;
 
         updateHUD();
         renderQuestion();
@@ -287,6 +322,7 @@ const EnglishVerbsGame = (() => {
         const exercises = ENGLISH_GROUP_EXERCISES[group];
         if (!exercises || exercises.length === 0) return;
 
+        state.genMode = null;
         state.groupPracticeMode = true;
         state.groupPracticeGroup = group;
         state.groupPracticeExercises = exercises;
@@ -301,7 +337,7 @@ const EnglishVerbsGame = (() => {
         state.level = 0; // special marker for group practice
 
         const info = GROUP_INFO[group];
-        $('ev-level-badge').textContent = `Group Practice — ${group}: ${info ? info.label : group}`;
+        $('ev-level-badge').textContent = `${t('groupBadge')}: ${group} ${t('g_' + group + '_label')}`;
 
         updateHUD();
         renderGroupPracticeQuestion();
@@ -325,16 +361,32 @@ const EnglishVerbsGame = (() => {
         $('ev-score-val').textContent = state.score;
         $('ev-streak-val').textContent = state.streak;
 
-        const optionsHtml = ex.options.map(opt =>
-            `<button class="ev-option-btn" onclick="EnglishVerbsGame.handleGroupPracticeQ('${encodeURIComponent(opt)}')">${opt}</button>`
+        if (ex.type === 'type') { renderTypeQuestion(ex, current, total); return; }
+
+        const optionsHtml = ex.options.map((opt, i) =>
+            `<button class="ev-option-btn" onclick="EnglishVerbsGame.handleGroupPracticeQ('${encodeURIComponent(opt)}')"><kbd class="ev-key" aria-hidden="true">${i + 1}</kbd><span>${opt}</span></button>`
         ).join('');
+        const audioBtn = ex.audio
+            ? `<button class="ev-tts-btn ev-tts-big" id="ev-tts-q-btn" onclick="EnglishVerbsGame.speakVerb('${ex.audio}')">${t('listenBtn')}</button>`
+            : '';
 
         $('ev-question-area').innerHTML = `
             <div class="ev-question-card">
-                <p class="ev-question-counter">Question ${current + 1} / ${total}</p>
+                <p class="ev-question-counter">${t('question')} ${current + 1} / ${total}</p>
                 <p class="ev-question-text">${ex.sentence}</p>
+                ${audioBtn}
             </div>
             <div class="ev-options">${optionsHtml}</div>`;
+        if (ex.audio) speak(ex.audio);
+    }
+
+    function markOptions(answer, chosen, isCorrect) {
+        document.querySelectorAll('.ev-option-btn').forEach(btn => {
+            const txt = (btn.querySelector('span') || btn).textContent;
+            btn.disabled = true;
+            if (txt === answer) btn.classList.add('correct');
+            if (txt === chosen && !isCorrect) btn.classList.add('wrong');
+        });
     }
 
     function handleGroupPracticeQ(encodedOpt) {
@@ -355,11 +407,7 @@ const EnglishVerbsGame = (() => {
             state.streak = 0;
         }
 
-        document.querySelectorAll('.ev-option-btn').forEach(btn => {
-            btn.disabled = true;
-            if (btn.textContent === ex.answer) btn.classList.add('correct');
-            if (btn.textContent === opt && !isCorrect) btn.classList.add('wrong');
-        });
+        markOptions(ex.answer, opt, isCorrect);
 
         showFeedback(isCorrect, ex.explanation);
         show($('ev-next-btn'));
@@ -430,8 +478,8 @@ const EnglishVerbsGame = (() => {
 
         $('ev-question-area').innerHTML = `
             <div class="ev-match-round">
-                Round ${state.roundIndex + 1} / ${lvl.rounds.length}
-                <span class="ev-match-hint">Connect infinitive → past simple</span>
+                ${t('round')} ${state.roundIndex + 1} / ${lvl.rounds.length}
+                <span class="ev-match-hint">${t('connectHint')}</span>
             </div>
             <div class="ev-matching-area">
                 <div class="ev-match-col ev-match-col-left">${leftHtml}</div>
@@ -514,17 +562,17 @@ const EnglishVerbsGame = (() => {
 
         $('ev-question-area').innerHTML = `
             <div class="ev-question-card">
-                <p class="ev-question-label">Fill in the correct form — <em>${ex.tense}</em></p>
+                <p class="ev-question-label">${t('fillLabel')}: <em>${ex.tense}</em></p>
                 <div class="ev-fill-sentence">
                     <span>${ex.before} </span>
                     <input class="ev-fill-input" id="ev-fill-input" type="text"
                         autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-                        placeholder="___" aria-label="Write the verb form">
+                        placeholder="___" aria-label="${t('writeForm')}">
                     <span> ${ex.after}</span>
                 </div>
                 <p class="ev-translation">${ex.translation}</p>
             </div>
-            <button class="ev-btn ev-btn-primary" id="ev-submit-btn" onclick="EnglishVerbsGame.handleFillBlank()">Check</button>`;
+            <button class="ev-btn ev-btn-primary" id="ev-submit-btn" onclick="EnglishVerbsGame.handleFillBlank()">${t('check')}</button>`;
 
         const inp = $('ev-fill-input');
         if (inp) {
@@ -582,8 +630,8 @@ const EnglishVerbsGame = (() => {
         }
 
         const isFirstQ = state.questionIndex === 0;
-        const optionsHtml = q.options.map(opt =>
-            `<button class="ev-option-btn" onclick="EnglishVerbsGame.handleAudioQ('${encodeURIComponent(opt)}')">${opt}</button>`
+        const optionsHtml = q.options.map((opt, i) =>
+            `<button class="ev-option-btn" onclick="EnglishVerbsGame.handleAudioQ('${encodeURIComponent(opt)}')"><kbd class="ev-key" aria-hidden="true">${i + 1}</kbd><span>${opt}</span></button>`
         ).join('');
 
         $('ev-question-area').innerHTML = `
@@ -592,13 +640,13 @@ const EnglishVerbsGame = (() => {
                 <div class="ev-story-header">
                     <h3>${story.title}</h3>
                     <button class="ev-tts-btn" id="ev-tts-story-btn" onclick="EnglishVerbsGame.listenStory()">
-                        🎧 Listen
+                        ${t('listenBtn')}
                     </button>
                 </div>
                 <p id="ev-story-text">${story.audio_text}</p>
             </div>` : ''}
             <div class="ev-question-card">
-                <p class="ev-question-counter">Question ${state.questionIndex + 1} / ${story.questions.length}</p>
+                <p class="ev-question-counter">${t('question')} ${state.questionIndex + 1} / ${story.questions.length}</p>
                 <p class="ev-question-text">${q.question}</p>
             </div>
             <div class="ev-options">${optionsHtml}</div>`;
@@ -610,12 +658,12 @@ const EnglishVerbsGame = (() => {
         if (!story) return;
 
         const btn = $('ev-tts-story-btn');
-        if (btn) { btn.classList.add('speaking'); btn.textContent = '⏹ Stop'; }
+        if (btn) { btn.classList.add('speaking'); btn.textContent = t('stopBtn'); }
 
         const utt = speak(story.audio_text);
         if (utt) {
             utt.onend = () => {
-                if (btn) { btn.classList.remove('speaking'); btn.textContent = '🎧 Listen'; }
+                if (btn) { btn.classList.remove('speaking'); btn.textContent = t('listenBtn'); }
             };
         }
     }
@@ -641,15 +689,138 @@ const EnglishVerbsGame = (() => {
             state.score = Math.max(0, state.score + (lvl.scoring.incorrectPoints ?? -5));
         }
 
-        document.querySelectorAll('.ev-option-btn').forEach(btn => {
-            btn.disabled = true;
-            if (btn.textContent === q.answer) btn.classList.add('correct');
-            if (btn.textContent === opt && !isCorrect) btn.classList.add('wrong');
-        });
+        markOptions(q.answer, opt, isCorrect);
 
         showFeedback(isCorrect, q.explanation);
         show($('ev-next-btn'));
         updateHUD();
+    }
+
+    // ── Practice modes generated from the verb table ──────────────────
+    const MODE_KINDS = ['past', 'part', 'meaning', 'type', 'listen'];
+    const MODE_ICONS = { past: '⏪', part: '✅', meaning: '🔤', type: '⌨️', listen: '🎧' };
+    const shuffle = arr => arr.slice().sort(() => Math.random() - 0.5);
+
+    function regularForm(inf) { return inf.endsWith('e') ? inf + 'd' : inf + 'ed'; }
+
+    function buildModeQuestions(kind, group) {
+        const all = IRREGULAR_VERBS;
+        const pool = shuffle(all.filter(v => group === 'all' || v.group === group)).slice(0, 10);
+        return pool.map(v => {
+            const explanation = t('ex_form', { v: v.infinitive, p: v.past_simple, pp: v.past_participle }) + ' ' + t('ex_group', { g: v.group });
+            if (kind === 'past' || kind === 'part') {
+                const field = kind === 'past' ? 'past_simple' : 'past_participle';
+                const answer = v[field];
+                const wrong = new Set();
+                const trap = regularForm(v.infinitive);
+                if (trap !== answer) wrong.add(trap);
+                shuffle(all).forEach(o => { if (wrong.size < 3 && o[field] !== answer) wrong.add(o[field]); });
+                return {
+                    sentence: t(kind === 'past' ? 'q_past' : 'q_part', { v: v.infinitive }),
+                    options: shuffle([answer, ...Array.from(wrong).slice(0, 3)]), answer, explanation,
+                };
+            }
+            if (kind === 'meaning' || kind === 'listen') {
+                const wrong = shuffle(all.filter(o => o.infinitive !== v.infinitive)).slice(0, 3).map(o => o.infinitive);
+                const ex = { options: shuffle([v.infinitive, ...wrong]), answer: v.infinitive, explanation };
+                if (kind === 'meaning') {
+                    ex.sentence = t('q_meaning', { m: meaningOf(v) || v.meaning_es });
+                } else {
+                    ex.sentence = t('q_listen');
+                    ex.audio = Math.random() < 0.5 ? v.past_simple : v.past_participle;
+                }
+                return ex;
+            }
+            // type
+            return {
+                type: 'type', sentence: t('q_type', { v: v.infinitive, m: meaningOf(v) || v.meaning_es }),
+                answers: [v.past_simple, v.past_participle], explanation,
+            };
+        });
+    }
+
+    function startMode(kind) {
+        const sel = $('ev-mode-group');
+        const group = sel ? sel.value : 'all';
+        const exercises = buildModeQuestions(kind, group);
+        if (!exercises.length) return;
+        state.genMode = kind;
+        state.genGroup = group;
+        state.groupPracticeMode = true;
+        state.groupPracticeGroup = group === 'all' ? t('filterAll') : group;
+        state.groupPracticeExercises = exercises;
+        state.groupPracticeIndex = 0;
+        state.score = 0; state.correct = 0; state.totalAnswered = 0;
+        state.streak = 0; state.bestStreak = 0;
+        state.startTime = Date.now();
+        state.answered = false;
+        state.level = 0;
+        $('ev-level-badge').textContent = `${MODE_ICONS[kind]} ${t('mode_' + kind)}: ${state.groupPracticeGroup}`;
+        updateHUD();
+        renderGroupPracticeQuestion();
+        showScreen('game');
+    }
+
+    function renderModes() {
+        const grid = $('ev-mode-grid');
+        if (!grid) return;
+        const sel = $('ev-mode-group');
+        if (sel) {
+            const prev = sel.value || 'all';
+            sel.innerHTML = [['all', t('filterAll')]].concat(Object.keys(GROUP_INFO).map(g => [g, g + ': ' + t('g_' + g + '_label')]))
+                .map(([v, l]) => `<option value="${v}">${l}</option>`).join('');
+            sel.value = prev;
+        }
+        grid.innerHTML = MODE_KINDS.map(k => `<button class="ev-mode-card" onclick="EnglishVerbsGame.startMode('${k}')">
+            <span class="ev-mode-ico">${MODE_ICONS[k]}</span><span class="ev-mode-name">${t('mode_' + k)}</span><span class="ev-mode-desc">${t('mode_' + k + '_d')}</span></button>`).join('');
+    }
+
+    function renderTypeQuestion(ex, current, total) {
+        $('ev-question-area').innerHTML = `
+            <div class="ev-question-card">
+                <p class="ev-question-counter">${t('question')} ${current + 1} / ${total}</p>
+                <p class="ev-question-text">${ex.sentence}</p>
+                <div class="ev-type-grid">
+                    <label for="ev-type-1">${t('typePast')}</label>
+                    <input class="ev-fill-input" id="ev-type-1" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="___">
+                    <label for="ev-type-2">${t('typePart')}</label>
+                    <input class="ev-fill-input" id="ev-type-2" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="___">
+                </div>
+            </div>
+            <button class="ev-btn ev-btn-primary" id="ev-submit-btn" onclick="EnglishVerbsGame.handleGenType()">${t('check')}</button>`;
+        const i1 = $('ev-type-1'), i2 = $('ev-type-2');
+        if (i1) i1.focus();
+        i1?.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); i2?.focus(); } });
+        i2?.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); handleGenType(); } });
+    }
+
+    function handleGenType() {
+        if (state.answered) return;
+        const ex = state.groupPracticeExercises[state.groupPracticeIndex];
+        const i1 = $('ev-type-1'), i2 = $('ev-type-2');
+        if (!ex || !i1 || !i2) return;
+        state.answered = true;
+        state.totalAnswered++;
+        const ok1 = i1.value.trim().toLowerCase() === ex.answers[0];
+        const ok2 = i2.value.trim().toLowerCase() === ex.answers[1];
+        const both = ok1 && ok2;
+        if (both) {
+            state.correct++; state.streak++;
+            if (state.streak > state.bestStreak) state.bestStreak = state.streak;
+        } else {
+            state.streak = 0;
+        }
+        state.score += (ok1 ? 5 : 0) + (ok2 ? 5 : 0);
+        [[i1, ok1, ex.answers[0]], [i2, ok2, ex.answers[1]]].forEach(([inp, ok, ans]) => {
+            inp.classList.add(ok ? 'correct' : 'wrong');
+            inp.disabled = true;
+            if (!ok) inp.value = ans;
+        });
+        const sb = $('ev-submit-btn'); if (sb) sb.disabled = true;
+        showFeedback(both, ex.explanation);
+        show($('ev-next-btn'));
+        $('ev-score-val').textContent = state.score;
+        $('ev-streak-val').textContent = state.streak;
     }
 
     // ── Feedback ───────────────────────────────────────────────────────
@@ -658,8 +829,8 @@ const EnglishVerbsGame = (() => {
         if (!el) return;
         el.className = 'ev-feedback ' + (isCorrect ? 'correct' : 'wrong');
         el.textContent = isCorrect
-            ? `\u2713 Correct! ${explanation}`
-            : `\u2717 Wrong. ${explanation}`;
+            ? `\u2713 ${t('correctFb')}. ${explanation}`
+            : `\u2717 ${t('wrongFb')}. ${explanation}`;
         el.style.display = 'block';
     }
 
@@ -710,9 +881,11 @@ const EnglishVerbsGame = (() => {
         $('ev-result-score').textContent = state.score;
         $('ev-result-correct').textContent = `${state.correct}/${total}`;
         $('ev-result-time').textContent = `${Math.floor(elapsed / 60)}:${String(elapsed % 60).padStart(2, '0')}`;
-        $('ev-result-level').textContent = state.groupPracticeMode
-            ? (state.groupPracticeGroup || 'Group')
-            : state.level;
+        $('ev-result-level').textContent = state.genMode
+            ? t('mode_' + state.genMode)
+            : state.groupPracticeMode
+                ? (state.groupPracticeGroup || 'Group')
+                : state.level;
         $('ev-result-stars').innerHTML = [1, 2, 3].map(n =>
             `<span style="opacity:${stars >= n ? 1 : 0.25}">⭐</span>`
         ).join('');
@@ -758,7 +931,18 @@ const EnglishVerbsGame = (() => {
 
     // ── Init ───────────────────────────────────────────────────────────
     function init() {
+        detectLang();
+        applyStatic();
         renderHome();
+
+        document.addEventListener('platformLanguageChanged', () => {
+            detectLang();
+            applyStatic();
+            renderVerbTable();
+            renderGroupCards();
+            renderLevelGrid();
+            renderModes();
+        });
 
         $('ev-table-toggle')?.addEventListener('click', () => {
             const body   = $('ev-table-body');
@@ -782,7 +966,9 @@ const EnglishVerbsGame = (() => {
         $('ev-quit-cancel')?.addEventListener('click', hideQuitModal);
         $('ev-quit-ok')?.addEventListener('click', () => { hideQuitModal(); renderHome(); });
         $('ev-retry-btn')?.addEventListener('click', () => {
-            if (state.groupPracticeMode) {
+            if (state.genMode) {
+                startMode(state.genMode);
+            } else if (state.groupPracticeMode) {
                 startGroupPractice(state.groupPracticeGroup);
             } else {
                 startLevel(state.level);
@@ -794,11 +980,25 @@ const EnglishVerbsGame = (() => {
         });
         $('ev-menu-btn')?.addEventListener('click', renderHome);
 
-        // Close modal on Escape
+        // Keyboard: Escape (quit), 1-4 (answers), Enter (next)
         document.addEventListener('keydown', e => {
+            if (e.ctrlKey || e.metaKey || e.altKey) return;
+            const modal = $('ev-quit-modal');
+            const modalOpen = modal && !modal.classList.contains('hidden');
+            const inGame = $('ev-screen-game')?.classList.contains('active');
             if (e.key === 'Escape') {
-                const modal = $('ev-quit-modal');
-                if (modal && !modal.classList.contains('hidden')) hideQuitModal();
+                if (modalOpen) hideQuitModal();
+                else if (inGame) showQuitModal();
+                return;
+            }
+            if (!inGame || modalOpen) return;
+            const typing = e.target && e.target.tagName === 'INPUT';
+            if (/^[1-4]$/.test(e.key) && !typing) {
+                const btn = document.querySelectorAll('.ev-option-btn')[Number(e.key) - 1];
+                if (btn && !btn.disabled) { e.preventDefault(); btn.click(); }
+            } else if (e.key === 'Enter') {
+                const next = $('ev-next-btn');
+                if (next && !next.classList.contains('hidden') && e.target.tagName !== 'BUTTON') { e.preventDefault(); next.click(); }
             }
         });
     }
@@ -812,6 +1012,8 @@ const EnglishVerbsGame = (() => {
         handleFillBlank,
         handleAudioQ,
         handleGroupPracticeQ,
+        handleGenType,
+        startMode,
         listenStory,
         speakVerb,
         searchVerbs,

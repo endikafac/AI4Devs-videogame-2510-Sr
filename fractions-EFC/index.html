@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <link rel="manifest" href="../manifest.json">
+    <meta name="theme-color" content="#ec4899">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Fracciones con Pizza">
+    <link rel="apple-touch-icon" href="../icons/icon-192.png">
+    <meta name="description" content="Fracciones con Pizza: reconoce, compara, convierte y suma fracciones con pizzas y barras.">
+    <title>Fracciones con Pizza – Games Hub</title>
+    <link rel="stylesheet" href="../platform/platform.css">
+    <link rel="stylesheet" href="styles.css">
+    <link href="../fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<main id="main-content" class="fr-main">
+    <section id="fr-home" class="fr-screen">
+        <div class="fr-head">
+            <h1 id="fr-h1">Fracciones con Pizza</h1>
+            <div class="fr-stats" id="fr-stats"></div>
+        </div>
+        <p class="fr-sub" id="fr-sub"></p>
+        <ol class="fr-path" id="fr-path"></ol>
+    </section>
+
+    <section id="fr-play" class="fr-screen" hidden>
+        <div class="fr-top">
+            <button class="fr-quit" id="fr-quit" type="button" aria-label="Salir">✕</button>
+            <div class="fr-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i id="fr-barfill"></i></div>
+            <span class="fr-count" id="fr-count" aria-live="polite"></span>
+        </div>
+        <div class="fr-card" id="fr-card"></div>
+        <div class="fr-feedback" id="fr-feedback" hidden aria-live="assertive"></div>
+    </section>
+
+    <section id="fr-end" class="fr-screen" hidden>
+        <div class="fr-endbox">
+            <div class="fr-trophy" id="fr-trophy" aria-hidden="true"></div>
+            <h2 id="fr-endtitle"></h2>
+            <p id="fr-endtext"></p>
+            <div class="fr-endstars" id="fr-endstars" aria-hidden="true"></div>
+            <div class="fr-endbtns">
+                <button class="fr-btn" id="fr-next" type="button"></button>
+                <button class="fr-btn ghost" id="fr-back" type="button"></button>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore-compat.js"></script>
+<script src="../platform/firebase-config.js"></script>
+<script src="../platform/i18n-platform.js"></script>
+<script src="../platform/auth.js"></script>
+<script src="../platform/firestore.js"></script>
+<script src="../platform/identity.js"></script>
+<script src="../platform/platform-header.js"></script>
+<script src="game.js"></script>
+<script>
+    PlatformHeader.init({ gameName: 'Fracciones con Pizza', gameIcon: '🍕', rootPath: '../' });
+    FractionsLab.init();
+</script>
+<script src="../platform/register-sw.js"></script>
+</body>
+</html>
