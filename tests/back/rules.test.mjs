@@ -105,3 +105,15 @@ test('B-DEFAULT: unknown collections are denied', async () => {
   await assertFails(setDoc(doc(as('u1'), 'secrets/x'), { a: 1 }));
   await assertFails(getDoc(doc(as('u1'), 'secrets/x')));
 });
+
+// Regression: a brand new adult saving nickname + consent (no xp yet) must work, in one transaction with the nickname claim.
+test('B-CLAIM: first-time identity save (nickname + profile without xp) succeeds and a duplicate is refused', async () => {
+  const db = as('u1');
+  await assertSucceeds(db.runTransaction(async tx => {
+    tx.set(doc(db, 'nicknames/endika'), { uid: 'u1', createdAt: new Date().toISOString() });
+    tx.set(doc(db, 'users/u1'), { username: 'Endika', nicknameKey: 'endika', avatar: '🦊', photoURL: null,
+      consent: { version: 1, at: new Date().toISOString(), guardian: true } }, { merge: true });
+  }));
+  await assertFails(setDoc(doc(as('u2'), 'users/u2'), { username: 'X', xp: 'lots' }));
+  await assertFails(setDoc(doc(as('u2'), 'users/u2'), { username: 'X', totalPoints: -3 }));
+});

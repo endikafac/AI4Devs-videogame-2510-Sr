@@ -4,7 +4,7 @@
  * Version: bump CACHE_VERSION to force cache refresh after deploys
  */
 
-const CACHE_VERSION = 'v1.14.0';
+const CACHE_VERSION = 'v1.15.0';
 const STATIC_CACHE  = `games-hub-static-${CACHE_VERSION}`;
 const PAGE_CACHE    = `games-hub-pages-${CACHE_VERSION}`;
 
@@ -17,6 +17,8 @@ const PRECACHE_ASSETS = [
     '/platform/i18n-platform.js',
     '/platform/platform-header.js',
     '/platform/identity.js',
+    '/platform/pwa.js',
+    '/offline.html',
 ];
 
 // HTML pages to cache on first visit (not pre-cached to keep install fast)
@@ -85,6 +87,7 @@ async function networkFirstHTML(request) {
         const cached = await caches.match(request);
         if (cached) return cached;
         // Offline fallback: return hub page if available
+        if (request.mode === 'navigate') { const off = await caches.match('/offline.html'); if (off) return off; }
         const fallback = await caches.match('/index.html');
         return fallback || new Response('<h1>Offline</h1><p>Conéctate a Internet para jugar.</p>', {
             headers: { 'Content-Type': 'text/html; charset=utf-8' }

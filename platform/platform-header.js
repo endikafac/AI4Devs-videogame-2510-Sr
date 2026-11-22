@@ -27,6 +27,7 @@ const PlatformHeader = {
         this._opts = { gameName: '', gameIcon: '', rootPath: '../', ...opts };
         this._inject();
         if (!window.PlatformAnalytics) { const a = document.createElement('script'); a.src = this._opts.rootPath + 'platform/analytics.js'; document.body.appendChild(a); }
+        if (!window.PlatformPWA) { const w = document.createElement('script'); w.src = this._opts.rootPath + 'platform/pwa.js'; document.body.appendChild(w); }
         this._buildGamesMenu();
         this._bindEvents();
         this._syncLanguage();

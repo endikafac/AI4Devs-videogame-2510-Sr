@@ -76,3 +76,48 @@ test('U-SW: every page that uses the shell is covered and cache version is semve
   const sw = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
   assert.match(sw, /CACHE_VERSION\s*=\s*'v\d+\.\d+\.\d+'/);
 });
+
+test('U-PWA: manifest is installable (id, scope, icons exist, a maskable icon, shortcuts resolve)', () => {
+  const m = JSON.parse(fs.readFileSync(path.join(root, 'manifest.json'), 'utf8'));
+  assert.equal(m.display, 'standalone');
+  assert.ok(m.id && m.scope && m.start_url && m.short_name);
+  const files = [...m.icons, ...(m.shortcuts || []).flatMap(s => s.icons || [])];
+  for (const i of files) assert.ok(fs.existsSync(path.join(root, i.src)), 'missing ' + i.src);
+  assert.ok(m.icons.some(i => i.purpose === 'maskable' && i.sizes === '512x512'));
+  assert.ok(m.icons.some(i => i.purpose === 'any' && i.sizes === '512x512'));
+  for (const s of m.shortcuts || []) assert.ok(fs.existsSync(path.join(root, s.url.split('?')[0])), 'shortcut ' + s.url);
+  assert.ok(fs.existsSync(path.join(root, 'offline.html')));
+  const sw = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
+  assert.match(sw, /offline\.html/);
+});
+
+test('U-CALC: lessons are progressive and every generated question is valid', () => {
+  const C = require(path.join(root, 'calcPath-EFC/game.js'));
+  assert.ok(C.UNITS.length >= 14);
+  for (const u of C.UNITS) {
+    for (let i = 0; i < 200; i++) {
+      const lesson = C.makeLesson(u);
+      assert.equal(lesson.length, 10);
+      for (const q of lesson) {
+        assert.ok(Number.isInteger(q.res) && q.res >= 0, `${u.id} negative or fractional`);
+        if (u.kind !== 'mul') assert.ok(q.res <= (u.max === 1000 ? 999 : u.max === 100 ? 99 : u.max), `${u.id} result above ceiling`);
+        if (q.options) assert.equal(new Set(q.options).size, 4);
+        if (q.options) assert.ok(q.options.includes(q.res));
+        if (q.type === 'build') assert.equal(q.exprs.filter(x => x.ok).length, 1);
+        if (u.id === 'a100c' && q.op === '+') assert.ok((q.a % 10) + (q.b % 10) >= 10, 'carry lesson must carry');
+        if (u.id === 'a100' && q.op === '+') assert.ok((q.a % 10) + (q.b % 10) < 10, 'no-carry lesson must not carry');
+        if (u.id === 's100c' && q.op === '-') assert.ok(q.a % 10 < q.b % 10, 'borrow lesson must borrow');
+      }
+    }
+  }
+});
+
+test('U-CALC: answer checking and stars', () => {
+  const C = require(path.join(root, 'calcPath-EFC/game.js'));
+  assert.equal(C.isCorrect({ type: 'type', res: 7 }, 7), true);
+  assert.equal(C.isCorrect({ type: 'type', res: 7 }, 8), false);
+  assert.equal(C.isCorrect({ type: 'compare', answer: '<' }, '>'), false);
+  assert.equal(C.isCorrect({ type: 'tf', answer: false }, false), true);
+  assert.equal(C.isCorrect({ type: 'missing', answer: 4 }, '4'), true);
+  assert.deepEqual([0, 1, 2, 3, 6].map(C.stars), [3, 2, 2, 1, 1]);
+});

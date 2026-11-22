@@ -2501,3 +2501,6 @@ input:focus-visible {
 }
 @keyframes users-spin { to { transform: rotate(360deg); } }
 
+
+/* the common platform bar replaces the in-game top bar and hub link */
+#top-bar-game, .back-to-hub-btn { display: none !important; }

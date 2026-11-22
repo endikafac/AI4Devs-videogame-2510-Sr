@@ -18,10 +18,8 @@ service cloud.firestore {
       allow read, delete: if isOwner(userId);
       allow create, update: if isOwner(userId)
         && shortString(request.resource.data.username, 40)
-        && request.resource.data.xp is number
-        && request.resource.data.xp >= 0
-        && request.resource.data.totalPoints is number
-        && request.resource.data.totalPoints >= 0;
+        && (!('xp' in request.resource.data) || (request.resource.data.xp is number && request.resource.data.xp >= 0))
+        && (!('totalPoints' in request.resource.data) || (request.resource.data.totalPoints is number && request.resource.data.totalPoints >= 0));
 
       // Everything below (stats per game, child players and their stats): owner only
       match /{sub}/{document=**} {

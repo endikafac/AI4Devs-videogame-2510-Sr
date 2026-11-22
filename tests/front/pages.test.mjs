@@ -24,7 +24,7 @@ before(async () => {
 });
 after(async () => { await browser?.close(); server?.close(); });
 
-const PAGES = ['index.html', 'mathMaster-EFC/index.html', 'tableMaster-EFC/index.html', 'wordSearch-EFC/index.html', 'crossword-EFC/index.html', 'typingMaster-EFC/index.html',
+const PAGES = ['index.html', 'mathMaster-EFC/index.html', 'calcPath-EFC/index.html', 'tableMaster-EFC/index.html', 'wordSearch-EFC/index.html', 'crossword-EFC/index.html', 'typingMaster-EFC/index.html',
   'euskera-EFC/index.html', 'englishVerbs-EFC/index.html', 'vocabMaster-EFC/index.html', 'geoQuiz-EFC/index.html', 'snake-EHS/index.html', 'arkanoid-CSM/index.html',
   'tablaPeriodica-EFC/index.html', 'tablaPeriodica-EFC/es/tabla.html', 'tablaPeriodica-EFC/eu/tabla.html', 'platform/privacy.html'];
 const IGNORE = /favicon|Missing or insufficient permissions|unauthorized-domain|net::ERR|Failed to load resource|firestore\.googleapis|identitytoolkit|offline|WebChannel|manifest/i;
@@ -48,6 +48,8 @@ for (const url of PAGES) {
       try {
         assert.equal(await page.locator('#platform-header').count(), 1, 'common top bar missing');
         assert.equal(await page.locator('#platform-lang-group .lang-pill').count(), 6, 'six language pills expected');
+        const top = await page.evaluate(() => { const b = document.getElementById('platform-settings-btn').getBoundingClientRect(); const e = document.elementFromPoint(b.x + b.width / 2, b.y + b.height / 2); return !!(e && e.closest('#platform-header')); });
+        assert.ok(top, 'the common bar settings button is covered by another element');
         const sw = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
         assert.ok(sw <= 1, `horizontal overflow of ${sw}px at ${width}px`);
         assert.deepEqual(errors, [], 'console errors: ' + errors.join(' | '));
@@ -165,6 +167,72 @@ test('F-ADMIN: the visits page asks non-admins to sign in and never crashes', as
   try {
     const txt = await page.locator('#ad-body').innerText();
     assert.match(txt, /Inicia sesión|permiso|Cargando/);
+    assert.deepEqual(errors, [], errors.join(' | '));
+  } finally { await ctx.close(); }
+});
+
+test('F-PWA: every page declares the manifest and the install row appears when the browser offers it', async () => {
+  for (const url of ['index.html', 'tablaPeriodica-EFC/es/tabla.html', 'arkanoid-CSM/index.html', 'mathMaster-EFC/index.html']) {
+    const { ctx, page, errors } = await open(url);
+    try {
+      assert.equal(await page.locator('link[rel="manifest"]').count(), 1, url + ' has no manifest');
+      assert.equal(await page.locator('meta[name="theme-color"]').count(), 1, url + ' theme-color');
+      await page.waitForFunction(() => window.PlatformPWA, null, { timeout: 8000 });
+      await page.evaluate(() => { const e = new Event('beforeinstallprompt'); e.prompt = () => {}; e.userChoice = Promise.resolve({}); window.dispatchEvent(e); });
+      await page.click('#platform-settings-btn');
+      await page.waitForSelector('#platform-install-btn', { state: 'visible', timeout: 4000 });
+      const h = await page.evaluate(() => document.getElementById('platform-install-btn').getBoundingClientRect().height);
+      assert.ok(h >= 40, 'install button too small');
+      assert.deepEqual(errors, [], errors.join(' | '));
+    } finally { await ctx.close(); }
+  }
+});
+
+test('F-OFFLINE: the offline page renders and offers a way back', async () => {
+  const { ctx, page } = await open('offline.html');
+  try {
+    assert.match(await page.locator('h1').innerText(), /Sin conexión/);
+    assert.ok(await page.locator('a[href="/index.html"]').count() === 1);
+  } finally { await ctx.close(); }
+});
+
+test('F-CALC: a full lesson can be played on a phone, progress and next lesson unlock; failing 3 times ends it', async () => {
+  const { ctx, page, errors } = await open('calcPath-EFC/index.html');
+  try {
+    assert.equal(await page.locator('.cp-dot').count(), 14);
+    assert.equal(await page.locator('.cp-dot:not(.locked)').count(), 1, 'only the first lesson is open');
+    await page.click('.cp-dot:not(.locked)');
+    const solve = () => page.evaluate(() => {
+      const q = CalcPath.state.q, click = t => [...document.querySelectorAll('.cp-opt,.cp-key')].find(b => b.textContent.trim() === String(t)).click();
+      const typeNum = n => { String(n).split('').forEach(d => click(d)); click('✓'); };
+      switch (q.type) {
+        case 'type': return typeNum(q.res);
+        case 'missing': return typeNum(q.answer);
+        case 'choice': case 'visual': return click(q.res);
+        case 'compare': return click(q.answer);
+        case 'tf': return click(q.answer ? 'Verdadero' : 'Falso');
+        case 'build': return document.querySelectorAll('.cp-opt')[q.exprs.findIndex(x => x.ok)].click();
+      }
+    });
+    for (let i = 0; i < 10; i++) { await solve(); await page.click('#cp-continue'); }
+    assert.ok(await page.locator('#cp-end').isVisible(), 'end screen');
+    assert.match(await page.locator('#cp-endtitle').innerText(), /completada/);
+    assert.equal(await page.locator('#cp-endstars').innerText(), '★★★');
+    await page.click('#cp-back');
+    assert.equal(await page.locator('.cp-dot:not(.locked)').count(), 2, 'second lesson unlocked');
+    assert.equal(await page.locator('.cp-dot.done').count(), 1);
+    // lose all hearts
+    await page.click('.cp-node:nth-child(2) .cp-dot');
+    for (let i = 0; i < 3; i++) {
+      await page.evaluate(() => {
+        const q = CalcPath.state.q; const wrong = v => { const c = [...document.querySelectorAll('.cp-opt,.cp-key')]; return c; };
+        if (q.type === 'type' || q.type === 'missing') { const n = (q.type === 'type' ? q.res : q.answer) + 1; String(n).split('').forEach(d => [...document.querySelectorAll('.cp-key')].find(b => b.textContent === d).click()); [...document.querySelectorAll('.cp-key')].find(b => b.textContent === '✓').click(); }
+        else { const opts = [...document.querySelectorAll('.cp-opt')]; const right = q.type === 'choice' || q.type === 'visual' ? String(q.res) : q.type === 'compare' ? q.answer : q.type === 'tf' ? (q.answer ? 'Verdadero' : 'Falso') : q.exprs.find(x => x.ok) && `${q.exprs.find(x => x.ok).a} ${({ '+': '+', '-': '−', '*': '×' })[q.exprs.find(x => x.ok).op]} ${q.exprs.find(x => x.ok).b}`; (opts.find(b => b.textContent.trim() !== right) || opts[0]).click(); }
+      });
+      await page.click('#cp-continue');
+    }
+    assert.ok(await page.locator('#cp-end').isVisible());
+    assert.match(await page.locator('#cp-endtitle').innerText(), /vidas/);
     assert.deepEqual(errors, [], errors.join(' | '));
   } finally { await ctx.close(); }
 });

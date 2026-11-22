@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <link rel="manifest" href="../manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Camino del Cálculo">
+    <link rel="apple-touch-icon" href="../icons/icon-192.png">
+    <meta name="description" content="Camino del Cálculo: aprende a sumar, restar y multiplicar poco a poco, con lecciones cortas, vidas y ejercicios variados.">
+    <title>Camino del Cálculo – Games Hub</title>
+    <link rel="stylesheet" href="../platform/platform.css">
+    <link rel="stylesheet" href="styles.css">
+    <link href="../fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<main id="main-content" class="cp-main">
+    <section id="cp-home" class="cp-screen">
+        <div class="cp-head">
+            <h1 id="cp-h1">Camino del Cálculo</h1>
+            <div class="cp-stats" id="cp-stats"></div>
+        </div>
+        <p class="cp-sub" id="cp-sub"></p>
+        <ol class="cp-path" id="cp-path"></ol>
+    </section>
+
+    <section id="cp-play" class="cp-screen" hidden>
+        <div class="cp-top">
+            <button class="cp-quit" id="cp-quit" type="button" aria-label="Salir">✕</button>
+            <div class="cp-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i id="cp-barfill"></i></div>
+            <span class="cp-hearts" id="cp-hearts" aria-live="polite"></span>
+        </div>
+        <div class="cp-card" id="cp-card"></div>
+        <div class="cp-feedback" id="cp-feedback" hidden aria-live="assertive"></div>
+    </section>
+
+    <section id="cp-end" class="cp-screen" hidden>
+        <div class="cp-endbox">
+            <div class="cp-trophy" id="cp-trophy" aria-hidden="true"></div>
+            <h2 id="cp-endtitle"></h2>
+            <p id="cp-endtext"></p>
+            <div class="cp-endstars" id="cp-endstars" aria-hidden="true"></div>
+            <div class="cp-endbtns">
+                <button class="cp-btn" id="cp-next" type="button"></button>
+                <button class="cp-btn ghost" id="cp-back" type="button"></button>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore-compat.js"></script>
+<script src="../platform/firebase-config.js"></script>
+<script src="../platform/i18n-platform.js"></script>
+<script src="../platform/auth.js"></script>
+<script src="../platform/firestore.js"></script>
+<script src="../platform/identity.js"></script>
+<script src="../platform/platform-header.js"></script>
+<script src="game.js"></script>
+<script>
+    PlatformHeader.init({ gameName: 'Camino del Cálculo', gameIcon: '🧮', rootPath: '../' });
+    CalcPath.init();
+</script>
+<script src="../platform/register-sw.js"></script>
+</body>
+</html>

@@ -620,3 +620,5 @@ html[data-large-text]{font-size:125%}
 .pid-player small { display: block; color: var(--text-secondary); font-size: .8rem; }
 .pid-pav { font-size: 1.7rem; }
 .pid-del { min-width: 48px; padding: 0; }
+
+.platform-install-btn{min-height:40px;padding:0 18px;border:0;border-radius:12px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;font-weight:700;font-size:.95rem;cursor:pointer}
