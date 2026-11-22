@@ -139,3 +139,45 @@ test('U-NEWGAMES: fractions, clock and memory logic is consistent', () => {
     assert.equal(deck.length, sz.pairs * 2, th.id + '/' + sz.pairs + ' deck size');
   }
 });
+
+test('U-SRS: Leitner boxes advance, reset on failure and pick due cards first', () => {
+  const S = require(path.join(root, 'platform/srs.js'));
+  const t0 = 1_000_000_000_000, D = 86400000;
+  let c = S.review(undefined, true, t0);
+  assert.equal(c.box, 1); assert.equal(c.due, t0 + D);
+  c = S.review(c, true, t0 + D); assert.equal(c.box, 2); assert.equal(c.due, t0 + D + 3 * D);
+  for (let i = 0; i < 10; i++) c = S.review(c, true, t0);
+  assert.equal(c.box, 5);
+  c = S.review(c, false, t0); assert.equal(c.box, 0); assert.equal(c.due, t0);
+  const cards = { a: { box: 3, due: t0 + D }, b: { box: 0, due: t0 - 5 }, c: { box: 1, due: t0 - 1 } };
+  assert.deepEqual(S.pick(['a', 'b', 'c', 'd', 'e'], cards, 4, 1, t0), ['b', 'c', 'd']);
+  const sm = S.summary(['a', 'b', 'c', 'd'], cards, t0);
+  assert.deepEqual([sm.fresh, sm.due, sm.learning], [1, 2, 3]);
+});
+
+test('U-REPASO: decks are consistent and sessions prefer due cards', () => {
+  const R = require(path.join(root, 'repaso-EFC/game.js'));
+  const win = { RepasoDecks: [] };
+  for (const f of ['math', 'english', 'science', 'world', 'lang']) {
+    new Function('window', fs.readFileSync(path.join(root, 'repaso-EFC/decks', f + '.js'), 'utf8'))(win);
+  }
+  const decks = win.RepasoDecks;
+  assert.ok(decks.length >= 15);
+  let total = 0;
+  for (const d of decks) {
+    const ids = new Set();
+    for (const c of d.cards) {
+      assert.ok(!ids.has(c.id), `${d.id} duplicate id ${c.id}`); ids.add(c.id); total++;
+      const a = R.resolveText(c.a, 'es'), q = R.resolveText(c.q, 'es');
+      assert.ok(a && q, `${d.id}/${c.id} empty`);
+      if (c.opts) assert.ok(!c.opts.map(o => R.resolveText(o, 'es')).includes(a), `${d.id}/${c.id} opts contain answer`);
+    }
+    const card = d.cards[0], o = R.makeOptions(d, card, Math.random, 'es');
+    assert.equal(new Set(o).size, o.length);
+    assert.ok(o.includes(R.resolveText(card.a, 'es')));
+  }
+  assert.ok(total >= 900, 'expected about 1000 cards, got ' + total);
+  assert.equal(R.checkTyped('  Árbol ', 'arbol', 'es'), true);
+  const s = R.makeSession([{ id: 'x', cards: [{ id: 'a' }, { id: 'b' }, { id: 'c' }] }], { x: { b: { box: 1, due: 1 } } }, { limit: 2, newPerDeck: 1, rnd: () => 0.5 }, 5);
+  assert.equal(s[0].cardId, 'b');
+});

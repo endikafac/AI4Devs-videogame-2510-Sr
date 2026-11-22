@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <link rel="manifest" href="../manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Repaso Diario">
+    <link rel="apple-touch-icon" href="../icons/icon-192.png">
+    <meta name="description" content="Repaso Diario: practica cada día unas pocas tarjetas con repetición espaciada para aprender de verdad y no olvidar.">
+    <title>Repaso Diario – Games Hub</title>
+    <link rel="stylesheet" href="../platform/platform.css">
+    <link rel="stylesheet" href="styles.css">
+    <link href="../fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<main id="main-content" class="rp-main">
+    <section id="rp-home" class="rp-screen">
+        <div class="rp-head">
+            <h1 id="rp-h1">Repaso Diario</h1>
+            <div class="rp-stats" id="rp-stats"></div>
+        </div>
+        <div class="rp-plan" id="rp-plan"></div>
+        <div class="rp-decks" id="rp-decks"></div>
+    </section>
+
+    <section id="rp-play" class="rp-screen" hidden>
+        <div class="rp-top">
+            <button class="rp-quit" id="rp-quit" type="button" aria-label="Salir">✕</button>
+            <div class="rp-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i id="rp-barfill"></i></div>
+            <span class="rp-count" id="rp-count" aria-live="polite"></span>
+        </div>
+        <div class="rp-card" id="rp-card"></div>
+        <div class="rp-feedback" id="rp-feedback" hidden aria-live="assertive"></div>
+    </section>
+
+    <section id="rp-study" class="rp-screen" hidden>
+        <div class="rp-top">
+            <button class="rp-quit" id="rp-studyquit" type="button" aria-label="Salir">✕</button>
+            <div class="rp-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i id="rp-studyfill"></i></div>
+            <span class="rp-count" id="rp-studycount"></span>
+        </div>
+        <div class="rp-card" id="rp-studycard"></div>
+        <div class="rp-nav">
+            <button class="rp-btn ghost" id="rp-prev" type="button"></button>
+            <button class="rp-btn" id="rp-nextcard" type="button"></button>
+        </div>
+    </section>
+
+    <section id="rp-end" class="rp-screen" hidden>
+        <div class="rp-endbox">
+            <div class="rp-trophy" id="rp-trophy" aria-hidden="true"></div>
+            <h2 id="rp-endtitle"></h2>
+            <div class="rp-endstats" id="rp-endstats"></div>
+            <div class="rp-mistakes" id="rp-mistakes"></div>
+            <div class="rp-endbtns">
+                <button class="rp-btn" id="rp-more" type="button"></button>
+                <button class="rp-btn ghost" id="rp-back" type="button"></button>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore-compat.js"></script>
+<script src="../platform/firebase-config.js"></script>
+<script src="../platform/i18n-platform.js"></script>
+<script src="../platform/auth.js"></script>
+<script src="../platform/firestore.js"></script>
+<script src="../platform/identity.js"></script>
+<script src="../platform/platform-header.js"></script>
+<script src="../platform/srs.js"></script>
+<script src="decks/math.js"></script>
+<script src="decks/english.js"></script>
+<script src="decks/science.js"></script>
+<script src="decks/world.js"></script>
+<script src="decks/lang.js"></script>
+<script src="game.js"></script>
+<script>
+    PlatformHeader.init({ gameName: 'Repaso Diario', gameIcon: '🧠', rootPath: '../' });
+    Repaso.init();
+</script>
+<script src="../platform/register-sw.js"></script>
+</body>
+</html>
