@@ -369,6 +369,7 @@ const CrosswordGame = {
             if (el) el.classList.toggle('active', s === name);
         });
         const active = document.getElementById('cw-screen-' + name);
+        window.scrollTo(0, 0);
         if (active) {
             // Move focus to the new screen for screen reader announcement
             if (!active.hasAttribute('tabindex')) active.setAttribute('tabindex', '-1');
@@ -716,8 +717,9 @@ const CrosswordGame = {
         const wrap = document.createElement('div');
         wrap.className = 'cw-grid-wrap';
 
-        const gridWidth = Math.min(480, window.innerWidth - 32);
-        const cellSize  = Math.floor(gridWidth / this._N);
+        // Fit the grid (cells plus the 2px gaps) in the container; cap the cell so grid and buttons fit a laptop screen
+        const avail     = Math.min(560, (container.clientWidth || window.innerWidth) - 8, window.innerWidth - 32);
+        const cellSize  = Math.max(18, Math.min(44, Math.floor((avail - (this._N - 1) * 2) / this._N)));
 
         const gridEl = document.createElement('div');
         gridEl.className = 'cw-grid';
@@ -997,7 +999,12 @@ const CrosswordGame = {
                             el.dataset.dir === p.dir;
             el.classList.toggle('active', matches);
             if (matches) {
-                el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                // scroll only the clue list, never the whole page (that pushes the HUD under the sticky header)
+                const box = el.parentElement;
+                if (box && box.scrollHeight > box.clientHeight) {
+                    const er = el.getBoundingClientRect(), br = box.getBoundingClientRect();
+                    if (er.top < br.top || er.bottom > br.bottom) box.scrollTop += (er.top - br.top) - (box.clientHeight - er.height) / 2;
+                }
             }
         });
     },

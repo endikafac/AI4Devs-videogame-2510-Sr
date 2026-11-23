@@ -2682,3 +2682,14 @@ input:focus-visible {
 
 .mm-zone { color: #fff !important; background: #4f46e5 !important; border-color: transparent !important; }
 .mm-zone.a { background: #b45309 !important; }
+
+/* visual-qa */
+:root .jx-sound { min-width: 48px; min-height: 48px; }
+:root .dy-zone { font-size: .875rem; }
+.op-name, :root .op-name { font-size: .875rem !important; }
+.level-description, .footer p, .stat-label { font-size: .875rem; }
+.mm-zone, .mm-kn { font-size: .875rem; }
+.control-btn { min-height: 48px; }
+.stat-label { letter-spacing: 0; }
+#stats-btn, #achievements-btn { min-height: 48px; }
+.game-footer p, footer p, .footer-text, p[data-i18n="developedBy"] { font-size: .875rem; }

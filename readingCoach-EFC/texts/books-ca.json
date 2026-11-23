@@ -1,0 +1,31 @@
+{
+  "lang": "ca",
+  "books": [
+    {
+      "id": "ca-qui", "title": "Don Quixot i els molins", "author": "Miguel de Cervantes (explicat)", "emoji": "🛡️", "color": "#b45309", "bands": ["b56", "b78"],
+      "source": "Miguel de Cervantes, Don Quijote de la Mancha (1605), domini públic; capítols curts escrits per a aquest joc",
+      "license": "public-domain (original work); original-project retelling",
+      "retelling": "Explicat amb paraules pròpies, sense copiar cap traducció moderna. Cal que ho revisi una persona catalanoparlant.",
+      "chapters": [
+        {"id": "ca-qui-1", "title": "El cavaller de la Manxa",
+         "text": "En un poble de la Manxa vivia un home que llegia molts llibres de cavallers. Tant en llegia que va decidir fer-se cavaller errant. Es va posar una armadura vella i un casc de cartró. Va dir al seu cavall prim: «Et dius Rossinant.» I ell es va fer dir Don Quixot. Va sortir de casa a trenc d'alba, content i ple d'il·lusió. Però un cavaller necessita un ajudant, i Don Quixot ja sabia qui.",
+         "hook": "Però un cavaller necessita un ajudant, i Don Quixot ja sabia qui.",
+         "questions": [
+           {"q": "Quin nom va posar al cavall?", "o": ["Rossinant", "Babieca", "Trueno"], "a": 0, "ev": "Et dius Rossinant"},
+           {"q": "Quins llibres llegia l'home?", "o": ["De cavallers", "De cuina", "D'animals"], "a": 0, "ev": "llegia molts llibres de cavallers"}]},
+        {"id": "ca-qui-2", "title": "Sancho Panza",
+         "text": "L'ajudant va ser Sancho Panza, un pagès baix i panxut. Don Quixot li va prometre una illa per governar. Sancho va muntar el seu ruc i van sortir tots dos pels camps. De sobte, Don Quixot va veure uns molins de vent a la llunyania. «Són gegants!», va cridar. Sancho va mirar bé i no va veure cap gegant. «Són molins, senyor», va dir. Però Don Quixot no el va escoltar.",
+         "hook": "Però Don Quixot no el va escoltar.",
+         "questions": [
+           {"q": "Qui era Sancho Panza?", "o": ["Un pagès", "Un rei", "Un pirata"], "a": 0, "ev": "un pagès baix i panxut"},
+           {"q": "Què li va prometre Don Quixot?", "o": ["Una illa per governar", "Un castell", "Un cavall nou"], "a": 0, "ev": "una illa per governar"}]},
+        {"id": "ca-qui-3", "title": "La batalla",
+         "text": "Don Quixot va avançar amb la llança cap al molí més gran. La llança es va clavar a una aspa i el vent va fer girar el molí amb força. Cavall i cavaller van sortir volant i van caure a terra. Sancho va córrer a ajudar-lo. «Ja li ho havia dit: eren molins!» Don Quixot va dir que un mag dolent havia convertit els gegants en molins. Sancho va sospirar i van seguir el camí cap a noves aventures.",
+         "hook": "",
+         "questions": [
+           {"q": "Què eren de debò els gegants?", "o": ["Molins", "Arbres", "Torres"], "a": 0, "ev": "eren molins"},
+           {"q": "Qui va ajudar Don Quixot a aixecar-se?", "o": ["Sancho", "El mag", "El ruc"], "a": 0, "ev": "Sancho va córrer a ajudar-lo"}]}
+      ]
+    }
+  ]
+}

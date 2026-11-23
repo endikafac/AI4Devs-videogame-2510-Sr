@@ -2514,3 +2514,12 @@
 
 .tmd-zone { color: #fff !important; background: #4f46e5 !important; border-color: transparent !important; }
 .tmd-zone.a { background: #b45309 !important; }
+
+/* visual-qa */
+:root .jx-sound { min-width: 48px; min-height: 48px; }
+:root .dy-zone { font-size: .875rem; }
+.tm-back-btn { min-width: 48px; min-height: 48px; font-size: .875rem; }
+.tm-chip-stars, .tm-drill-desc, .tm-mode-desc, .tm-guest-notice, .tm-hud-label, .tmd-zone, .tm-rank-stars { font-size: .875rem; }
+@media (max-height: 900px) { .tm-key { min-height: 52px; } .tm-numpad { gap: 8px; } }
+.tm-mode-desc, .tm-drill-kb-hint { font-size: .875rem; }
+:root .tm-mode-card .tm-mode-desc, :root .tm-mode-desc { font-size: .875rem; }

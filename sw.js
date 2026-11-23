@@ -1,10 +1,11 @@
 /**
  * Games Hub — Service Worker
- * Strategy: cache-first for static assets, network-first for HTML pages
+ * Strategy: stale-while-revalidate for pages, code and data (instant opens, refreshed in the background),
+ * cache-first for fonts and images. A new CACHE_VERSION drops every old copy
  * Version: bump CACHE_VERSION to force cache refresh after deploys
  */
 
-const CACHE_VERSION = 'v1.23.0';
+const CACHE_VERSION = 'v1.24.0';
 const STATIC_CACHE  = `games-hub-static-${CACHE_VERSION}`;
 const PAGE_CACHE    = `games-hub-pages-${CACHE_VERSION}`;
 
@@ -16,6 +17,8 @@ const PRECACHE_ASSETS = [
     '/fonts/fonts.css',
     '/platform/i18n-platform.js',
     '/platform/platform-header.js',
+    '/platform/nav.js',
+    '/platform/juice.js',
     '/platform/identity.js',
     '/platform/pwa.js',
     '/offline.html',
@@ -58,57 +61,39 @@ self.addEventListener('fetch', event => {
     if (url.origin !== PAGE_ORIGINS) return;
     // Skip non-GET
     if (request.method !== 'GET') return;
+    // Never cache the worker itself or live endpoints
+    if (url.pathname === '/sw.js' || url.pathname.startsWith('/__/')) return;
 
     const isHTML = request.destination === 'document' ||
                    url.pathname.endsWith('.html') ||
                    url.pathname === '/' ||
                    url.pathname.endsWith('/');
 
-    if (isHTML) {
-        // Network-first for HTML pages so content stays fresh
-        event.respondWith(networkFirstHTML(request));
-    } else {
-        // Code and data (JS, CSS, JSON): network-first with revalidation, so a deploy is never masked by an old copy
-        if (/.(js|css|json)$/.test(url.pathname)) event.respondWith(networkFirstCode(request));
-        // Cache-first for fonts and images
-        else event.respondWith(cacheFirstStatic(request));
-    }
+    if (isHTML) event.respondWith(staleWhileRevalidate(event, PAGE_CACHE, true));
+    else if (/.(js|css|json)$/.test(url.pathname)) event.respondWith(staleWhileRevalidate(event, STATIC_CACHE, false));
+    else event.respondWith(cacheFirstStatic(request));
 });
 
-// ── Strategies ─────────────────────────────────────────────────────────────
+// ── Strategies ─────────────────────────────────────────────────
 
-async function networkFirstHTML(request) {
-    try {
-        const response = await fetch(request);
-        if (response.ok) {
-            const cache = await caches.open(PAGE_CACHE);
-            cache.put(request, response.clone());
-        }
-        return response;
-    } catch {
-        const cached = await caches.match(request);
-        if (cached) return cached;
-        // Offline fallback: return hub page if available
-        if (request.mode === 'navigate') { const off = await caches.match('/offline.html'); if (off) return off; }
+// Answer from cache at once, refresh the copy in the background (conditional request, so cheap).
+// First visit after a deploy: the new worker starts with empty caches, so it goes to the network.
+async function staleWhileRevalidate(event, cacheName, isPage) {
+    const request = event.request;
+    const cache = await caches.open(cacheName);
+    const cached = await cache.match(request);
+    const refresh = fetch(isPage ? request.url : request, { cache: 'no-cache', credentials: 'same-origin' })
+        .then(res => { if (res && res.ok) cache.put(request, res.clone()); return res; })
+        .catch(() => null);
+    if (cached) { event.waitUntil(refresh); return cached; }
+    const res = await refresh;
+    if (res) return res;
+    if (isPage) {
+        const off = await caches.match('/offline.html'); if (off && request.mode === 'navigate') return off;
         const fallback = await caches.match('/index.html');
-        return fallback || new Response('<h1>Offline</h1><p>Conéctate a Internet para jugar.</p>', {
-            headers: { 'Content-Type': 'text/html; charset=utf-8' }
-        });
+        return fallback || new Response('<h1>Offline</h1><p>Conéctate a Internet para jugar.</p>', { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }
-}
-
-async function networkFirstCode(request) {
-    try {
-        const response = await fetch(request, { cache: 'no-cache' });
-        if (response.ok) {
-            const cache = await caches.open(STATIC_CACHE);
-            cache.put(request, response.clone());
-        }
-        return response;
-    } catch {
-        const cached = await caches.match(request);
-        return cached || new Response('', { status: 503 });
-    }
+    return new Response('', { status: 503 });
 }
 
 async function cacheFirstStatic(request) {

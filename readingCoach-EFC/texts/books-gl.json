@@ -1,0 +1,31 @@
+{
+  "lang": "gl",
+  "books": [
+    {
+      "id": "gl-uli", "title": "Ulises e o cíclope", "author": "Homero (contado)", "emoji": "👁️", "color": "#6d28d9", "bands": ["b56", "b78"],
+      "source": "Homero, Odisea (século VIII a. C.), mito grego de dominio público; capítulos curtos escritos para este xogo",
+      "license": "public-domain (original work); original-project retelling",
+      "retelling": "Contado con palabras propias, sen copiar ningunha tradución moderna. Debe revisalo unha persoa galegofalante.",
+      "chapters": [
+        {"id": "gl-uli-1", "title": "A cova do xigante",
+         "text": "Ulises e os seus mariñeiros viaxaban polo mar de volta á casa. Un día chegaron a unha illa descoñecida. Atoparon unha cova enorme chea de queixos e de ovellas. Os mariñeiros tiñan fame e comeron os queixos. De súpeto, a terra tremeu. Entrou na cova un xigante cun só ollo no medio da fronte: era Polifemo, o cíclope. Pechou a entrada cunha rocha tan grande que ninguén a podía mover. «Estades presos!», berrou o cíclope.",
+         "hook": "«Estades presos!», berrou o cíclope.",
+         "questions": [
+           {"q": "Cantos ollos tiña Polifemo?", "o": ["Un", "Dous", "Tres"], "a": 0, "ev": "cun só ollo no medio da fronte"},
+           {"q": "Que había dentro da cova?", "o": ["Queixos e ovellas", "Ouro e xoias", "Peixes e redes"], "a": 0, "ev": "chea de queixos e de ovellas"}]},
+        {"id": "gl-uli-2", "title": "Ninguén",
+         "text": "Ulises era moi listo. Deulle viño ao cíclope e díxolle: «Eu chámome Ninguén.» O xigante bebeu, bebeu e adormeceu. Ulises colleu un pao longo, afiouno e, coa axuda dos seus amigos, espetouno no ollo do cíclope. Polifemo berrou de dor. Os outros cíclopes chegaron e preguntaron: «Quen che fai dano?» «Ninguén!», respondeu Polifemo. Os cíclopes marcharon, pensando que non pasaba nada. A trampa funcionara. Pero seguían presos, cunha rocha na porta.",
+         "hook": "Pero seguían presos, cunha rocha na porta.",
+         "questions": [
+           {"q": "Que nome lle dixo Ulises ao cíclope?", "o": ["Ninguén", "Polifemo", "Ulises"], "a": 0, "ev": "Eu chámome Ninguén"},
+           {"q": "Que lle fixo Ulises ao cíclope cando durmía?", "o": ["Espetoulle un pao no ollo", "Atouno cunha corda", "Cantoulle unha canción"], "a": 0, "ev": "espetouno no ollo do cíclope"}]},
+        {"id": "gl-uli-3", "title": "Debaixo das ovellas",
+         "text": "Á mañá seguinte, o cíclope abriu a cova para que as ovellas saísen a pacer. Ulises atou cada mariñeiro debaixo dunha ovella. O cíclope tocaba o lombo de cada animal, pero non notou os homes agochados. Así saíron todos! Correron ata o barco e remaron con forza. Ulises, tolo de alegría, berrou o seu verdadeiro nome desde o mar. Foi un erro, pero esa é outra historia. Mentres tanto, os mariñeiros seguiron a viaxe cara á casa.",
+         "hook": "",
+         "questions": [
+           {"q": "Onde se agocharon os mariñeiros?", "o": ["Debaixo das ovellas", "Dentro dos queixos", "Detrás da rocha"], "a": 0, "ev": "debaixo dunha ovella"},
+           {"q": "Que fixeron despois de saír?", "o": ["Correron ata o barco", "Volveron á cova", "Durmiron na praia"], "a": 0, "ev": "Correron ata o barco"}]}
+      ]
+    }
+  ]
+}

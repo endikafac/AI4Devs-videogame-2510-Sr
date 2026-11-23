@@ -153,3 +153,34 @@ body { background: radial-gradient(900px 480px at 50% -8%, rgba(14,165,233,.2), 
   .rd-stept { font-size: inherit; }
 }
 @media (prefers-reduced-motion: reduce) { .rd-qcard.slide, .rd-opt, .rd-feedback, .rd-endstars span.on { animation: none !important; } .rd-w, .rd-btn, .rd-item { transition: none; } }
+
+/* ---- Aventuras: shelf of books, chapter path, next-chapter teaser */
+.rd-shelf { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.rd-book { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: stretch; gap: 4px; text-align: left; padding: 10px; border-radius: 16px; cursor: pointer; color: inherit; font-family: inherit;
+  background: var(--bg-surface); border: 2px solid rgba(148,163,184,.25); transition: transform .1s, border-color .1s; }
+.rd-book:hover, .rd-book:focus-visible { border-color: #0ea5e9; }
+.rd-book:active { transform: scale(.98); }
+.rd-book.finished { border-color: #f59e0b; }
+.rd-cover { display: grid; place-items: center; aspect-ratio: 3 / 4; width: 100%; border-radius: 10px 14px 14px 10px; box-shadow: inset 7px 0 0 rgba(255,255,255,.18), 0 4px 10px rgba(0,0,0,.25); }
+.rd-cover.big { width: 96px; flex: none; }
+.rd-cover-emoji { font-size: 3rem; line-height: 1; }
+.rd-cover.big .rd-cover-emoji { font-size: 2.6rem; }
+.rd-booktitle { overflow-wrap: anywhere; font-size: 1rem; }
+.rd-bookauthor { color: var(--text-secondary); font-size: .8rem; overflow-wrap: anywhere; }
+.rd-bookprog { font-weight: 800; font-size: .85rem; color: #f59e0b; }
+.rd-bookhead { display: flex; gap: 14px; align-items: flex-start; margin: 12px 0; }
+.rd-bookinfo { flex: 1; min-width: 0; }
+.rd-bookinfo h2 { margin: 0 0 4px; overflow-wrap: anywhere; }
+.rd-path { list-style: none; margin: 8px 0 0 18px; padding: 0 0 0 22px; border-left: 4px dashed rgba(148,163,184,.45); display: flex; flex-direction: column; gap: 12px; }
+.rd-pathitem { position: relative; }
+.rd-chap { width: 100%; min-height: 72px; display: flex; align-items: center; gap: 12px; text-align: left; padding: 10px 14px; border-radius: 16px; cursor: pointer; color: inherit; font-family: inherit;
+  background: var(--bg-surface); border: 2px solid rgba(148,163,184,.25); }
+.rd-chap:disabled { opacity: .55; cursor: not-allowed; }
+.rd-pathitem.current .rd-chap { border-color: #0ea5e9; background: rgba(14,165,233,.14); }
+.rd-pathitem.done .rd-chap { border-color: #f59e0b; }
+.rd-chap:focus-visible { outline: 3px solid #fde047; outline-offset: 2px; }
+.rd-node { flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-weight: 900; background: rgba(14,165,233,.2); color: #38bdf8; }
+.rd-pathitem.done .rd-node { background: rgba(245,158,11,.25); }
+.rd-teaser { margin: 12px 0; padding: 12px 14px; border-radius: 16px; background: rgba(14,165,233,.14); border: 2px dashed #0ea5e9; text-align: left; overflow-wrap: anywhere; }
+.rd-teaser p { margin: 6px 0 0; font-style: italic; }
+@media (min-width: 720px) { .rd-shelf { grid-template-columns: repeat(4, minmax(0, 1fr)); } }

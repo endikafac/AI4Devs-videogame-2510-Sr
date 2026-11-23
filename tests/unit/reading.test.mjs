@@ -187,3 +187,67 @@ test('U-READ: Spanish has at least 8 texts per age band, with the lengths of the
   }
   for (const l of ['en', 'eu', 'gl', 'ca', 'fr']) assert.ok(by[l].length >= 3, l + ' has some texts');
 });
+
+// ------------------------------------------------------------------ Aventuras: books in chapters
+function loadBooks() {
+  const by = {};
+  for (const l of LANGS) by[l] = (R.BOOK_FILES[l] || []).flatMap(f => JSON.parse(fs.readFileSync(path.join(dir, f + '.json'), 'utf8')).books);
+  return by;
+}
+const BOOK_LEN = { b56: [40, 100], b78: [40, 100], b910: [150, 300], b1112: [150, 300], b13: [300, 500], adult: [300, 500] };
+
+test('U-READ books: every book has source, licence, retelling, cover and 3-5 chapters of the right length, each with a hook and grounded questions', () => {
+  const by = loadBooks(), ids = new Set();
+  for (const l of LANGS) for (const b of by[l]) {
+    assert.ok(!ids.has(b.id) && b.id.startsWith(l + '-'), 'book id ' + b.id); ids.add(b.id);
+    for (const f of ['title', 'author', 'source', 'license', 'retelling', 'emoji']) assert.ok(typeof b[f] === 'string' && b[f].trim().length > 0, b.id + ' ' + f);
+    assert.ok(/public-domain/.test(b.license) && /retelling/.test(b.license), b.id + ' licence ' + b.license);
+    assert.match(b.color, /^#[0-9a-f]{6}$/i, b.id + ' colour');
+    assert.ok(Array.isArray(b.bands) && b.bands.length && b.bands.every(x => R.BAND_IDS.includes(x)), b.id + ' bands');
+    assert.ok(b.chapters.length >= 3 && b.chapters.length <= 5, b.id + ' chapters ' + b.chapters.length);
+    b.chapters.forEach((c, i) => {
+      assert.ok(!ids.has(c.id) && c.id.startsWith(b.id + '-'), 'chapter id ' + c.id); ids.add(c.id);
+      assert.ok(c.title && c.text, c.id + ' title and text');
+      const n = R.countWords(c.text);
+      for (const band of b.bands) assert.ok(n >= BOOK_LEN[band][0] && n <= BOOK_LEN[band][1], c.id + ' has ' + n + ' words for ' + band);
+      if (i < b.chapters.length - 1) assert.ok(c.hook && c.text.trim().endsWith(c.hook), c.id + ' ends with its hook');
+      assert.ok(c.questions.length >= 2 && c.questions.length <= 3, c.id + ' question count');
+      for (const q of c.questions) {
+        assert.ok(q.q && q.o.length >= 3 && new Set(q.o).size === q.o.length, c.id + ' options');
+        assert.ok(Number.isInteger(q.a) && q.a >= 0 && q.a < q.o.length, c.id + ' answer index');
+        assert.ok(q.ev && c.text.includes(q.ev), c.id + ' evidence is a quote: ' + q.ev);
+      }
+      for (const f of [c.title, c.text, b.title, b.retelling]) assert.ok(!/—/.test(f), c.id + ' no long dash');
+    });
+  }
+});
+
+test('U-READ books: Spanish has at least 2 books per age band and every other language has at least 1', () => {
+  const by = loadBooks();
+  for (const b of R.BANDS) assert.ok(by.es.filter(x => x.bands.includes(b.id)).length >= 2, 'es books for ' + b.id);
+  for (const l of ['en', 'eu', 'gl', 'ca', 'fr']) assert.ok(by[l].length >= 1, l + ' has a book');
+});
+
+test('U-READ books: selection by band and language falls back to Spanish', () => {
+  const by = loadBooks();
+  const es = R.selectBooks(by, 'b56', 'es'); assert.equal(es.fallback, false); assert.ok(es.books.length >= 2);
+  const eu = R.selectBooks(by, 'b78', 'eu'); assert.deepEqual([eu.lang, eu.fallback], ['eu', false]);
+  const none = R.selectBooks(by, 'b13', 'eu'); assert.deepEqual([none.lang, none.fallback], ['es', true]); assert.ok(none.books.length >= 2);
+  assert.deepEqual(R.selectBooks({}, 'b13', 'es').books, []);
+});
+
+test('U-READ books: chapters unlock in order, progress counts stars and a text becomes a playable chapter', () => {
+  const bk = { id: 'x', title: 'Libro', author: 'A', license: 'public-domain', chapters: [{ id: 'x-1', title: 'Uno', text: 'a b', hook: 'b', questions: [] }, { id: 'x-2', title: 'Dos', text: 'c d', questions: [] }, { id: 'x-3', title: 'Tres', text: 'e f', questions: [] }] };
+  assert.deepEqual([0, 1, 2, 3, -1].map(i => R.chapterUnlocked(bk, {}, i)), [true, false, false, false, false]);
+  const t1 = { 'x-1': { quiz: true, stars: 3 } };
+  assert.deepEqual([0, 1, 2].map(i => R.chapterUnlocked(bk, t1, i)), [true, true, false]);
+  assert.equal(R.chapterUnlocked(bk, { 'x-1': { solo: true, listen: true } }, 1), false, 'medals other than the questions do not open the next chapter');
+  assert.equal(R.chapterUnlocked(bk, { 'x-2': { quiz: true } }, 2), false, 'a later chapter does not open the gap');
+  assert.deepEqual(R.bookProgress(bk, {}), { done: 0, total: 3, next: 0, stars: 0, finished: false });
+  assert.deepEqual(R.bookProgress(bk, t1), { done: 1, total: 3, next: 1, stars: 3, finished: false });
+  const all = { 'x-1': { quiz: true, stars: 2 }, 'x-2': { quiz: true }, 'x-3': { quiz: true, stars: 3 } };
+  assert.deepEqual(R.bookProgress(bk, all), { done: 3, total: 3, next: -1, stars: 6, finished: true });
+  const c = R.chapterAsText(bk, 0, 'es');
+  assert.deepEqual([c.id, c.text, c.hook, c.chIdx, c.lang, c.book === bk], ['x-1', 'a b', 'b', 0, 'es', true]);
+  assert.ok(c.title.includes('Libro') && c.title.includes('Uno'));
+});

@@ -287,3 +287,156 @@ test('F-READ a Basque text opens in its own language with its source and licence
   assert.deepEqual(errors, []);
   await ctx.close();
 });
+
+// ------------------------------------------------------------------ Aventuras: books in chapters
+async function openShelf(opts) { const r = await open(opts); await r.page.waitForSelector('.rd-book'); return r; }
+async function openBookAt(page, n = 0) { await page.click(`.rd-book >> nth=${n}`); await page.waitForSelector('.rd-chap'); }
+/** Answers every question of the open quiz; mode 'right' or 'wrong'. Ends on the final card. */
+async function answerAll(page, mode) {
+  await page.click('.rd-step[data-phase="quiz"]'); await page.waitForSelector('.rd-opt');
+  const n = await page.evaluate(() => ReadingCoach._S.quiz.qs.length);
+  for (let i = 0; i < n; i++) {
+    await page.waitForFunction(k => ReadingCoach._S.quiz.i === k && !ReadingCoach._S.quiz.locked, i);
+    const pick = await page.evaluate(m => { const q = ReadingCoach._S.quiz.qs[ReadingCoach._S.quiz.i]; return m === 'right' ? q.ok : q.opts.findIndex((_, k) => k !== q.ok); }, mode);
+    await page.keyboard.press(String(pick + 1));
+    await page.waitForSelector('#rd-feedback:not([hidden])');
+    await page.keyboard.press('Enter');
+  }
+  await page.waitForSelector('#rd-endstars');
+}
+const chapStates = page => page.evaluate(() => [...document.querySelectorAll('.rd-chap')].map(b => b.disabled));
+
+for (const v of VIEWS) {
+  test(`F-READ ${v.name}: the Libros shelf shows covers (emoji and colour), progress and no errors or horizontal scroll`, async () => {
+    const { ctx, page, errors } = await openShelf({ ...v, band: 'b56' });
+    assert.ok(await page.isVisible('#rd-z-books'), 'the zone is labelled');
+    assert.match(await page.textContent('#rd-z-books'), /Aventuras/);
+    assert.ok(await page.locator('.rd-book').count() >= 2, 'at least two books per band');
+    const cover = await page.evaluate(() => { const c = document.querySelector('.rd-book .rd-cover'); return { emoji: c.textContent.trim(), bg: getComputedStyle(c).backgroundImage }; });
+    assert.ok(cover.emoji.length > 0 && /gradient/.test(cover.bg), 'cover has an emoji and a colour');
+    assert.match(await page.textContent('.rd-book >> nth=0'), /0 de 3 capítulos/);
+    assert.ok((await page.locator('.rd-book').first().boundingBox()).height >= 48);
+    assert.ok(await noHScroll(page));
+    // the shelf follows the level
+    await page.click('.rd-btn.chip[data-band="b13"]'); await page.waitForSelector('.rd-book');
+    assert.ok(await page.locator('.rd-book').count() >= 2);
+    assert.match(await page.textContent('#rd-shelf'), /isla del tesoro/i);
+    assert.ok(await noHScroll(page));
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
+
+  test(`F-READ ${v.name}: chapter list is a path and chapters unlock in order`, async () => {
+    const { ctx, page, errors } = await openShelf({ ...v, band: 'b56' });
+    await openBookAt(page);
+    assert.equal(await page.locator('.rd-chap').count(), 3);
+    assert.ok(await page.isVisible('#rd-path') && await page.isVisible('#rd-bookhead'));
+    assert.deepEqual(await chapStates(page), [false, true, true], 'only the first chapter is open');
+    assert.match(await page.textContent('.rd-pathitem.locked'), /Termina antes el capítulo 1/);
+    assert.equal(await page.locator('.rd-pathitem.current').count(), 1);
+    // clicking a locked chapter does nothing
+    await page.evaluate(() => document.querySelectorAll('.rd-chap')[2].click());
+    assert.equal(await page.isVisible('#rd-text'), false);
+    assert.ok(await noHScroll(page));
+    // reading but failing the questions does not unlock the next chapter
+    await page.click('.rd-chap >> nth=0'); await page.waitForSelector('#rd-textbox .rd-w');
+    assert.match(await page.textContent('#rd-credit'), /Recontado con palabras propias/);
+    assert.match(await page.textContent('#rd-credit'), /public-domain/);
+    await answerAll(page, 'wrong');
+    assert.equal(await page.locator('#rd-nextchapter').count(), 0);
+    assert.ok(await page.isVisible('#rd-retryquiz'), 'a retry is offered');
+    await page.click('#rd-backbook'); await page.waitForSelector('.rd-chap');
+    assert.deepEqual(await chapStates(page), [false, true, true]);
+    assert.ok(await noHScroll(page));
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
+
+  test(`F-READ ${v.name}: finishing a chapter gives a star and a teaser, unlocks the next one and the book can be completed`, async () => {
+    const { ctx, page, errors } = await openShelf({ ...v, band: 'b56' });
+    await openBookAt(page);
+    for (let i = 0; i < 3; i++) {
+      if (i === 0) await page.click(`.rd-chap[data-idx="0"]`);
+      await page.waitForSelector("#rd-textbox .rd-w");
+      const id = await page.evaluate(() => ReadingCoach._S.cur.id);
+      await answerAll(page, 'right');
+      assert.equal(await page.locator('#rd-endstars span.on').count(), 3, 'three stars for a perfect chapter');
+      const e = (await prog(page)).texts[id];
+      assert.equal(e.quiz, true); assert.equal(e.stars, 3);
+      if (i < 2) {
+        assert.ok(await page.isVisible('#rd-teaser'), 'teaser of the next chapter');
+        assert.match(await page.textContent('#rd-teaser'), /Próximo capítulo/);
+        assert.ok((await page.textContent('#rd-teaser')).includes('«'), 'the hook is quoted');
+        assert.ok(await noHScroll(page));
+        await page.click('#rd-nextchapter');
+        await page.waitForFunction(k => ReadingCoach._S.cur.id !== k, id);
+      } else {
+        assert.equal(await page.locator('#rd-teaser').count(), 0);
+        assert.ok(await page.isVisible('#rd-bookdone'), 'the book is finished');
+        assert.ok(await noHScroll(page));
+        await page.click('#rd-backbook'); await page.waitForSelector('.rd-chap');
+      }
+    }
+    assert.deepEqual(await chapStates(page), [false, false, false]);
+    assert.equal(await page.locator('.rd-pathitem.done').count(), 3);
+    assert.match(await page.textContent('#rd-bookhead'), /Libro terminado/);
+    await page.click('#rd-bookback'); await page.waitForSelector('.rd-book.finished');
+    assert.match(await page.textContent('.rd-book.finished'), /Libro terminado/);
+    assert.ok(await noHScroll(page));
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
+
+  test(`F-READ ${v.name}: speed and comprehension are tracked per chapter in manual mode, with no microphone`, async () => {
+    const { ctx, page, errors } = await openShelf({ ...v, band: 'b78', sr: true });
+    await openBookAt(page);
+    await page.click('.rd-chap >> nth=0'); await page.waitForSelector('#rd-textbox .rd-w');
+    await page.click('.rd-step[data-phase="solo"]'); await fakeClock(page);
+    const words = await page.evaluate(() => ReadingCoach._S.tokens.length), id = await page.evaluate(() => ReadingCoach._S.cur.id);
+    await page.click('#rd-startstop'); await page.evaluate(w => { window.__t = Math.round(w / 80 * 60000); }, words); await page.click('#rd-startstop');
+    assert.match(await page.textContent('.rd-ppm'), /^80 ppm$/);
+    await page.click('#rd-good');
+    const pr = await prog(page);
+    assert.equal(pr.texts[id].bestPpm, 80); assert.equal(pr.texts[id].solo, true);
+    assert.equal(pr.hist[0].id, id);
+    assert.equal(await page.evaluate(() => window.__srCount), 0, 'the microphone was never touched');
+    await answerAll(page, 'right');
+    assert.equal((await prog(page)).texts[id].quiz, true);
+    await page.click('#rd-backbook'); await page.waitForSelector('.rd-chap');
+    assert.match(await page.textContent('.rd-chap >> nth=0'), /Mejor 80 ppm/);
+    assert.ok(await noHScroll(page));
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
+}
+
+test('F-READ Aventuras: Escape and the back button return from the chapter list, and the labels follow the interface language', async () => {
+  const { ctx, page, errors } = await openShelf({ band: 'b78' });
+  await openBookAt(page); await page.keyboard.press('Escape'); await page.waitForSelector('.rd-book');
+  await openBookAt(page);
+  await page.evaluate(() => PlatformI18n.setLanguage('fr-FR'));
+  await page.waitForFunction(() => /Chapitre 1/.test(document.getElementById('rd-path').textContent));
+  assert.match(await page.textContent('#rd-bookback'), /Retour aux livres/);
+  await page.click('#rd-bookback'); await page.waitForSelector('.rd-book');
+  assert.match(await page.textContent('#rd-z-books'), /Aventures/);
+  assert.match(await page.textContent('.rd-book >> nth=0'), /chapitres sur 3/);
+  assert.ok(await noHScroll(page));
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+for (const l of ['en', 'eu', 'gl', 'ca', 'fr']) {
+  test(`F-READ Aventuras: a book in ${l} opens its first chapter in its own language and the later ones stay locked`, async () => {
+    const { ctx, page, errors } = await openShelf({ band: 'b78' });
+    await page.selectOption('#rd-rlang', l); await page.waitForSelector('.rd-book');
+    assert.equal(await page.locator('#rd-books-fallback:not([hidden])').count(), 0, 'no fallback to Spanish');
+    await openBookAt(page);
+    assert.deepEqual(await chapStates(page), [false, true, true]);
+    await page.click('.rd-chap >> nth=0'); await page.waitForSelector('#rd-textbox .rd-w');
+    assert.equal(await page.getAttribute('#rd-textbox', 'lang'), l);
+    assert.match(await page.textContent('#rd-credit'), /public-domain/);
+    assert.ok(await noHScroll(page));
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
+}

@@ -198,3 +198,10 @@ body { background: var(--bg-page); color: var(--text-primary); font-family: var(
   .vm-opt, .vm-pm, .vm-bar i { transition: none; }
 }
 .vm-main { overflow-x: clip; }
+
+/* visual-qa */
+:root .jx-sound { min-width: 48px; min-height: 48px; }
+:root .dy-zone { font-size: .875rem; }
+#vm-count, .vm-count-s, .vm-kind { font-size: .875rem; }
+.vm-modelabel, .vm-pack-meta, #vm-note, .vm-zlabel { font-size: .875rem; }
+.vm-chip { min-height: 48px; }

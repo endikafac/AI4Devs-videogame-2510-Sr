@@ -41,7 +41,25 @@
         legRead: 'Leída', legSkip: 'Saltada', legDoubt: 'Dudosa', heardStat: 'Palabras leídas: {a} de {b}', listening: 'Escuchando...',
         qOf: 'Pregunta {n} de {m}', choose: 'Elige', streakLabel: 'Racha', points: 'Puntos', correct: '¡Correcto!', wrongT: 'Casi', answerWas: 'La respuesta es:', textSays: 'Lo dice el texto:',
         continue: 'Continuar', showText: 'Ver el texto', hideText: 'Ocultar el texto', quizDone: '¡Texto completado!', quizScore: '{a} de {b} respuestas bien',
-        quizTip: 'Si lees muy deprisa y fallas preguntas, prueba a ir más despacio.', medalWon: 'Medalla ganada', author: 'Autor', license: 'Licencia', sound: 'Sonido'
+        quizTip: 'Si lees muy deprisa y fallas preguntas, prueba a ir más despacio.', medalWon: 'Medalla ganada', author: 'Autor', license: 'Licencia', sound: 'Sonido',
+        zBooks: "Aventuras: libros por capítulos",
+        noBooks: "No hay libros de este nivel en este idioma. Te mostramos los de castellano.",
+        chapterN: "Capítulo {n}",
+        chaptersDone: "{a} de {b} capítulos",
+        bookFinished: "¡Libro terminado!",
+        chapterLocked: "Bloqueado. Termina antes el capítulo {n}.",
+        chapterGo: "Te toca",
+        chapterDone: "Completado",
+        backShelf: "Volver a los libros",
+        backBook: "Volver al libro",
+        nextTeaser: "Próximo capítulo",
+        nextChapter: "Leer el siguiente capítulo",
+        chapterStars: "Estrellas: {n} de 3",
+        bookDoneMsg: "¡Has terminado el libro! Elige otro de la estantería.",
+        retryQuiz: "Probar otra vez",
+        quizRetryHint: "Para abrir el siguiente capítulo, acierta más preguntas. Con la ayuda puedes ver el texto.",
+        retold: "Recontado con palabras propias",
+        bookPath: "Camino del libro"
     };
 
     const en = {
@@ -76,7 +94,25 @@
         legRead: 'Read', legSkip: 'Skipped', legDoubt: 'Unsure', heardStat: 'Words read: {a} of {b}', listening: 'Listening...',
         qOf: 'Question {n} of {m}', choose: 'Choose', streakLabel: 'Streak', points: 'Points', correct: 'Correct!', wrongT: 'Almost', answerWas: 'The answer is:', textSays: 'The text says:',
         continue: 'Continue', showText: 'Show the text', hideText: 'Hide the text', quizDone: 'Text complete!', quizScore: '{a} of {b} answers right',
-        quizTip: 'If you read very fast and miss questions, try going slower.', medalWon: 'Medal won', author: 'Author', license: 'Licence', sound: 'Sound'
+        quizTip: 'If you read very fast and miss questions, try going slower.', medalWon: 'Medal won', author: 'Author', license: 'Licence', sound: 'Sound',
+        zBooks: "Adventures: books in chapters",
+        noBooks: "There are no books of this level in this language. We show the Spanish ones.",
+        chapterN: "Chapter {n}",
+        chaptersDone: "{a} of {b} chapters",
+        bookFinished: "Book finished!",
+        chapterLocked: "Locked. Finish chapter {n} first.",
+        chapterGo: "Your turn",
+        chapterDone: "Done",
+        backShelf: "Back to the books",
+        backBook: "Back to the book",
+        nextTeaser: "Coming next",
+        nextChapter: "Read the next chapter",
+        chapterStars: "Stars: {n} of 3",
+        bookDoneMsg: "You finished the book! Pick another one from the shelf.",
+        retryQuiz: "Try again",
+        quizRetryHint: "To open the next chapter, get more answers right. With the help button you can see the text.",
+        retold: "Retold in our own words",
+        bookPath: "Book path"
     };
 
     const eu = {
@@ -111,7 +147,25 @@
         legRead: 'Irakurria', legSkip: 'Saltatua', legDoubt: 'Zalantzazkoa', heardStat: 'Irakurritako hitzak: {a} / {b}', listening: 'Entzuten...',
         qOf: '{n}. galdera, {m}tik', choose: 'Aukeratu', streakLabel: 'Bolada', points: 'Puntuak', correct: 'Zuzena!', wrongT: 'Ia', answerWas: 'Erantzuna hau da:', textSays: 'Testuak dio:',
         continue: 'Jarraitu', showText: 'Ikusi testua', hideText: 'Ezkutatu testua', quizDone: 'Testua osatuta!', quizScore: '{a} / {b} erantzun zuzen',
-        quizTip: 'Oso azkar irakurtzen baduzu eta galderak huts egiten badituzu, saiatu patxadaz.', medalWon: 'Domina irabazita', author: 'Egilea', license: 'Lizentzia', sound: 'Soinua'
+        quizTip: 'Oso azkar irakurtzen baduzu eta galderak huts egiten badituzu, saiatu patxadaz.', medalWon: 'Domina irabazita', author: 'Egilea', license: 'Lizentzia', sound: 'Soinua',
+        zBooks: "Abenturak: kapituluetako liburuak",
+        noBooks: "Maila honetako libururik ez dago hizkuntza honetan. Gaztelaniazkoak erakusten dizkizugu.",
+        chapterN: "{n}. kapitulua",
+        chaptersDone: "{a} / {b} kapitulu",
+        bookFinished: "Liburua amaituta!",
+        chapterLocked: "Blokeatuta. Amaitu lehenengo {n}. kapitulua.",
+        chapterGo: "Zure txanda",
+        chapterDone: "Eginda",
+        backShelf: "Itzuli liburuetara",
+        backBook: "Itzuli liburura",
+        nextTeaser: "Hurrengoan",
+        nextChapter: "Irakurri hurrengo kapitulua",
+        chapterStars: "Izarrak: {n} / 3",
+        bookDoneMsg: "Liburua amaitu duzu! Aukeratu beste bat apaletik.",
+        retryQuiz: "Saiatu berriro",
+        quizRetryHint: "Hurrengo kapitulua irekitzeko, asmatu galdera gehiago. Laguntzarekin testua ikus dezakezu.",
+        retold: "Geure hitzetan berrekina",
+        bookPath: "Liburuaren bidea"
     };
 
     const gl = {
@@ -146,7 +200,25 @@
         legRead: 'Lida', legSkip: 'Saltada', legDoubt: 'Dubidosa', heardStat: 'Palabras lidas: {a} de {b}', listening: 'Escoitando...',
         qOf: 'Pregunta {n} de {m}', choose: 'Elixe', streakLabel: 'Racha', points: 'Puntos', correct: 'Correcto!', wrongT: 'Case', answerWas: 'A resposta é:', textSays: 'Dío o texto:',
         continue: 'Continuar', showText: 'Ver o texto', hideText: 'Agochar o texto', quizDone: 'Texto completado!', quizScore: '{a} de {b} respostas ben',
-        quizTip: 'Se les moi axiña e fallas preguntas, proba a ir máis amodo.', medalWon: 'Medalla gañada', author: 'Autor', license: 'Licenza', sound: 'Son'
+        quizTip: 'Se les moi axiña e fallas preguntas, proba a ir máis amodo.', medalWon: 'Medalla gañada', author: 'Autor', license: 'Licenza', sound: 'Son',
+        zBooks: "Aventuras: libros por capítulos",
+        noBooks: "Non hai libros deste nivel neste idioma. Mostrámosche os de castelán.",
+        chapterN: "Capítulo {n}",
+        chaptersDone: "{a} de {b} capítulos",
+        bookFinished: "Libro rematado!",
+        chapterLocked: "Bloqueado. Remata antes o capítulo {n}.",
+        chapterGo: "A túa quenda",
+        chapterDone: "Feito",
+        backShelf: "Volver aos libros",
+        backBook: "Volver ao libro",
+        nextTeaser: "Á seguinte",
+        nextChapter: "Ler o seguinte capítulo",
+        chapterStars: "Estrelas: {n} de 3",
+        bookDoneMsg: "Remataches o libro! Escolle outro da estantería.",
+        retryQuiz: "Probar de novo",
+        quizRetryHint: "Para abrir o seguinte capítulo, acerta máis preguntas. Coa axuda podes ver o texto.",
+        retold: "Contado con palabras propias",
+        bookPath: "Camiño do libro"
     };
 
     const ca = {
@@ -181,7 +253,25 @@
         legRead: 'Llegida', legSkip: 'Saltada', legDoubt: 'Dubtosa', heardStat: 'Paraules llegides: {a} de {b}', listening: 'Escoltant...',
         qOf: 'Pregunta {n} de {m}', choose: 'Tria', streakLabel: 'Ratxa', points: 'Punts', correct: 'Correcte!', wrongT: 'Gairebé', answerWas: 'La resposta és:', textSays: 'Ho diu el text:',
         continue: 'Continua', showText: 'Mostra el text', hideText: 'Amaga el text', quizDone: 'Text completat!', quizScore: '{a} de {b} respostes bé',
-        quizTip: 'Si llegeixes molt de pressa i falles preguntes, prova d\'anar més a poc a poc.', medalWon: 'Medalla guanyada', author: 'Autor', license: 'Llicència', sound: 'So'
+        quizTip: 'Si llegeixes molt de pressa i falles preguntes, prova d\'anar més a poc a poc.', medalWon: 'Medalla guanyada', author: 'Autor', license: 'Llicència', sound: 'So',
+        zBooks: "Aventures: llibres per capítols",
+        noBooks: "No hi ha llibres d'aquest nivell en aquest idioma. Et mostrem els de castellà.",
+        chapterN: "Capítol {n}",
+        chaptersDone: "{a} de {b} capítols",
+        bookFinished: "Llibre acabat!",
+        chapterLocked: "Bloquejat. Acaba abans el capítol {n}.",
+        chapterGo: "Et toca",
+        chapterDone: "Fet",
+        backShelf: "Torna als llibres",
+        backBook: "Torna al llibre",
+        nextTeaser: "Properament",
+        nextChapter: "Llegeix el capítol següent",
+        chapterStars: "Estrelles: {n} de 3",
+        bookDoneMsg: "Has acabat el llibre! Tria'n un altre de l'estanteria.",
+        retryQuiz: "Torna-ho a provar",
+        quizRetryHint: "Per obrir el capítol següent, encerta més preguntes. Amb l'ajuda pots veure el text.",
+        retold: "Explicat amb paraules pròpies",
+        bookPath: "Camí del llibre"
     };
 
     const fr = {
@@ -216,7 +306,25 @@
         legRead: 'Lu', legSkip: 'Sauté', legDoubt: 'Douteux', heardStat: 'Mots lus : {a} sur {b}', listening: 'J\'écoute...',
         qOf: 'Question {n} sur {m}', choose: 'Choisis', streakLabel: 'Série', points: 'Points', correct: 'Correct !', wrongT: 'Presque', answerWas: 'La réponse est :', textSays: 'Le texte dit :',
         continue: 'Continuer', showText: 'Voir le texte', hideText: 'Cacher le texte', quizDone: 'Texte terminé !', quizScore: '{a} sur {b} bonnes réponses',
-        quizTip: 'Si tu lis très vite et que tu rates des questions, essaie d\'aller plus doucement.', medalWon: 'Médaille gagnée', author: 'Auteur', license: 'Licence', sound: 'Son'
+        quizTip: 'Si tu lis très vite et que tu rates des questions, essaie d\'aller plus doucement.', medalWon: 'Médaille gagnée', author: 'Auteur', license: 'Licence', sound: 'Son',
+        zBooks: "Aventures : livres en chapitres",
+        noBooks: "Il n'y a pas de livres de ce niveau dans cette langue. Nous te montrons ceux en espagnol.",
+        chapterN: "Chapitre {n}",
+        chaptersDone: "{a} chapitres sur {b}",
+        bookFinished: "Livre terminé !",
+        chapterLocked: "Verrouillé. Termine d'abord le chapitre {n}.",
+        chapterGo: "À toi",
+        chapterDone: "Terminé",
+        backShelf: "Retour aux livres",
+        backBook: "Retour au livre",
+        nextTeaser: "À suivre",
+        nextChapter: "Lire le chapitre suivant",
+        chapterStars: "Étoiles : {n} sur 3",
+        bookDoneMsg: "Tu as fini le livre ! Choisis-en un autre sur l'étagère.",
+        retryQuiz: "Réessayer",
+        quizRetryHint: "Pour ouvrir le chapitre suivant, réponds juste à plus de questions. Avec l'aide tu peux voir le texte.",
+        retold: "Raconté avec nos propres mots",
+        bookPath: "Chemin du livre"
     };
 
     return { es, en, eu, gl, ca, fr, LANGS: ['es', 'en', 'eu', 'gl', 'ca', 'fr'] };

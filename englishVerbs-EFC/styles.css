@@ -1168,3 +1168,10 @@ body {
 
 .evd-zone { color: #fff !important; background: #4f46e5 !important; border-color: transparent !important; }
 .evd-zone.a { background: #b45309 !important; }
+
+/* visual-qa */
+:root .jx-sound { min-width: 48px; min-height: 48px; }
+:root .dy-zone { font-size: .875rem; }
+.ev-tab-btn { font-size: .875rem; min-height: 48px; }
+.ev-stat-lbl, .ev-level-badge, .ev-question-counter, .ev-mode-desc, .ev-mode-name, .ev-level-type, .ev-section-label, .ev-key, .ev-toggle-icon, .evd-zone { font-size: .875rem; }
+#ev-verb-search, #ev-table-toggle { min-height: 48px; }

@@ -1,0 +1,31 @@
+{
+  "lang": "fr",
+  "books": [
+    {
+      "id": "fr-80j", "title": "Le tour du monde en 80 jours", "author": "Jules Verne (raconté)", "emoji": "🎈", "color": "#be185d", "bands": ["b56", "b78"],
+      "source": "Jules Verne, Le Tour du monde en quatre-vingts jours (1872), domaine public ; chapitres courts écrits pour ce jeu",
+      "license": "public-domain (original work); original-project retelling",
+      "retelling": "Raconté avec nos propres mots, sans copier aucune édition moderne.",
+      "chapters": [
+        {"id": "fr-80j-1", "title": "Un pari",
+         "text": "À Londres, vivait un gentleman très calme, nommé Phileas Fogg. Chaque jour, il faisait les mêmes choses, aux mêmes heures. Un soir, au club, ses amis dirent qu'on ne pouvait pas faire le tour du monde en moins de quatre-vingts jours. «Si, c'est possible», répondit Fogg. «Je parie vingt mille livres que j'y arrive!» Il appela son nouveau domestique, Passepartout, et lui dit: «Nous partons dans dix minutes. Prépare une petite valise.» Passepartout ouvrit grand les yeux. Le voyage extraordinaire commençait.",
+         "hook": "Le voyage extraordinaire commençait.",
+         "questions": [
+           {"q": "Combien de livres Fogg parie-t-il?", "o": ["Vingt mille", "Mille", "Cent"], "a": 0, "ev": "Je parie vingt mille livres que j'y arrive"},
+           {"q": "Comment s'appelle le domestique de Fogg?", "o": ["Passepartout", "Fix", "Aouda"], "a": 0, "ev": "son nouveau domestique, Passepartout"}]},
+        {"id": "fr-80j-2", "title": "En route",
+         "text": "Fogg et Passepartout prirent le train, puis le bateau, et traversèrent la mer Rouge jusqu'à l'Inde. Là, un détective anglais, nommé Fix, les suivait partout. Il croyait que Fogg était un voleur de banque. Dans la jungle indienne, le train s'arrêta: la voie n'existait plus. Fogg acheta alors un éléphant! Sur son dos, les voyageurs traversèrent la forêt. Ils sauvèrent même une jeune dame, Aouda, que des hommes voulaient punir injustement. Mais le temps passait, et le bateau pour la Chine partait bientôt.",
+         "hook": "Mais le temps passait, et le bateau pour la Chine partait bientôt.",
+         "questions": [
+           {"q": "Qui suivait Fogg partout?", "o": ["Un détective", "Un cuisinier", "Un roi"], "a": 0, "ev": "un détective anglais, nommé Fix"},
+           {"q": "Qu'est-ce que Fogg acheta dans la jungle?", "o": ["Un éléphant", "Un cheval", "Un bateau"], "a": 0, "ev": "Fogg acheta alors un éléphant"}]},
+        {"id": "fr-80j-3", "title": "Un jour de plus",
+         "text": "Après la Chine, le Japon et l'Amérique, les voyageurs traversèrent l'océan Atlantique dans une tempête. Enfin, Londres! Mais Fix arrêta Fogg, et il perdit quelques heures en prison. Fogg arriva chez lui en pensant qu'il avait perdu son pari d'un jour. Le lendemain, Passepartout découvrit une chose incroyable: en voyageant vers l'est, ils avaient gagné un jour! Fogg courut au club. Il arriva à huit heures quarante-cinq, juste à temps. Il avait gagné son pari, et aussi le coeur d'Aouda.",
+         "hook": "",
+         "questions": [
+           {"q": "Pourquoi ont-ils gagné un jour?", "o": ["Ils voyageaient vers l'est", "Leur montre était rapide", "Le bateau volait"], "a": 0, "ev": "en voyageant vers l'est"},
+           {"q": "Quand Fogg arriva-t-il au club?", "o": ["Juste à temps", "Trop tard", "Le lendemain"], "a": 0, "ev": "juste à temps"}]}
+      ]
+    }
+  ]
+}

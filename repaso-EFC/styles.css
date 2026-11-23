@@ -108,3 +108,12 @@ body { background: radial-gradient(900px 480px at 50% -8%, rgba(99,102,241,.22),
   .rp-opt { min-height: 72px; font-size: 1.15rem; }
 }
 .rp-card .dy-zone { align-self: center; }
+
+/* visual-qa */
+:root .jx-sound { min-width: 48px; min-height: 48px; }
+:root .dy-zone { font-size: .875rem; }
+#rp-quit { width: 48px; height: 48px; }
+.rp-tag, .rp-kind { font-size: .875rem; }
+.desc, .go, button.go, .rp-mastery, .rp-mastery b, .rp-mastery span { font-size: .875rem; }
+button.go, .rp-actions button { min-height: 48px; }
+:root .rp-deck .desc, :root .rp-meta, :root .rp-meta span, :root .rp-meta b { font-size: .875rem; }

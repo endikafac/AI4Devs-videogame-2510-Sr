@@ -2056,6 +2056,8 @@ function showScreen(screenName) {
             activeScreen = DOM.profileScreen;
             break;
     }
+    // Always start a screen at the top: the sticky header must not hide the HUD
+    window.scrollTo(0, 0);
     // Move focus to the new screen for screen reader announcement
     if (activeScreen) {
         if (!activeScreen.hasAttribute('tabindex')) activeScreen.setAttribute('tabindex', '-1');

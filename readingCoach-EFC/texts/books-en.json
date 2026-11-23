@@ -1,0 +1,31 @@
+{
+  "lang": "en",
+  "books": [
+    {
+      "id": "en-tom", "title": "Tom Sawyer and the Fence", "author": "Mark Twain (retold)", "emoji": "🎨", "color": "#c2410c", "bands": ["b56", "b78"],
+      "source": "Mark Twain, The Adventures of Tom Sawyer (1876), public domain; short chapters written for this game",
+      "license": "public-domain (original work); original-project retelling",
+      "retelling": "Retold in our own simple words; no modern edition was copied.",
+      "chapters": [
+        {"id": "en-tom-1", "title": "A Very Long Fence",
+         "text": "Tom Sawyer was a clever boy who lived in a small town by a big river. One sunny Saturday, his Aunt Polly told him to paint the fence. It was very long and very tall. Tom did not want to paint it. He wanted to go swimming with his friends. He sat down and looked sad. Then he heard whistling. His friend Ben was coming down the road, eating a big red apple. Tom had a clever idea.",
+         "hook": "Tom had a clever idea.",
+         "questions": [
+           {"q": "Who told Tom to paint the fence?", "o": ["His Aunt Polly", "His teacher", "His friend Ben"], "a": 0, "ev": "his Aunt Polly told him to paint the fence"},
+           {"q": "What was Ben eating?", "o": ["A red apple", "A cake", "An orange"], "a": 0, "ev": "eating a big red apple"}]},
+        {"id": "en-tom-2", "title": "The Clever Plan",
+         "text": "Tom started to paint slowly, smiling as if it was the best game in the world. «Hello, Tom,» said Ben. «Are you working?» «Work?» said Tom. «This is not work. Not every boy gets to paint a fence like this!» Ben looked at the brush. «Please, let me try,» he said. «Only if you give me your apple,» said Tom. Ben gave him the apple and began to paint. Soon, other boys came, and every one of them wanted a turn. But a big surprise was waiting at the end of the day.",
+         "hook": "But a big surprise was waiting at the end of the day.",
+         "questions": [
+           {"q": "What did Tom ask Ben to give him?", "o": ["His apple", "His hat", "His shoes"], "a": 0, "ev": "Only if you give me your apple"},
+           {"q": "How did Tom act while he painted?", "o": ["As if it was a fun game", "As if he was angry", "As if he was asleep"], "a": 0, "ev": "as if it was the best game in the world"}]},
+        {"id": "en-tom-3", "title": "A Treasure of Gifts",
+         "text": "By the afternoon, the whole fence was white and shiny, with three coats of paint. And Tom had a pile of treasures from the other boys: a kite, twelve marbles, and a piece of blue glass. Tom sat in the shade, eating apples, while the others worked hard. Then Aunt Polly came out and looked at the fence. She could not believe her eyes. «Well done, Tom!» she said, and gave him a cake. Tom had learned something funny: people want what is hard to get.",
+         "hook": "",
+         "questions": [
+           {"q": "What did the boys give Tom?", "o": ["A kite and marbles", "Money and books", "Food and water"], "a": 0, "ev": "a kite, twelve marbles"},
+           {"q": "What did Tom learn?", "o": ["People want what is hard to get", "Painting is boring", "Fences are tall"], "a": 0, "ev": "people want what is hard to get"}]}
+      ]
+    }
+  ]
+}

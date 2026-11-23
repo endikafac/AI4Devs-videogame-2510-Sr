@@ -1146,3 +1146,11 @@
   .eu-options { grid-template-columns: 1fr 1fr; }
   .eu-option-btn.dy-k { min-height: 72px; font-size: 1.2rem; }
 }
+
+/* visual-qa */
+:root .jx-sound { min-width: 48px; min-height: 48px; }
+:root .dy-zone { font-size: .875rem; }
+.eu-stat-lbl, .eu-level-badge, .eu-question-label, .eu-translation, .eu-analysis-tag, .eu-whylbl, .eu-question-counter { font-size: .875rem; }
+#eu-quit-btn { min-height: 48px; }
+.eu-mode-card p, .eu-toggle-icon, .eu-section-label, .eu-level-type { font-size: .875rem; }
+#eu-theory-toggle { min-height: 48px; }

@@ -223,3 +223,11 @@ body { background: radial-gradient(900px 480px at 50% -8%, rgba(99,102,241,.22),
 
 .cp-zone { color: #fff !important; background: #4f46e5 !important; border-color: transparent !important; }
 .cp-zone.a { background: #b45309 !important; }
+
+/* visual-qa */
+:root .jx-sound { min-width: 48px; min-height: 48px; }
+:root .dy-zone { font-size: .875rem; }
+.cp-quit { width: 48px; height: 48px; }
+.cp-zone, .cp-zone span, .cp-kn { font-size: .875rem; }
+.cp-dot span, .cp-dot small, #cp-m-practice-s, #cp-m-place-s { font-size: .875rem; }
+:root .cp-info span, :root .cp-info small { font-size: .875rem; }

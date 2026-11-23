@@ -838,3 +838,20 @@
 
 .tyd-zone { color: #fff !important; background: #4f46e5 !important; border-color: transparent !important; }
 .tyd-zone.a { background: #b45309 !important; }
+
+/* visual-qa */
+:root .jx-sound { min-width: 48px; min-height: 48px; }
+:root .dy-zone { font-size: .875rem; }
+.ty-age-btn { min-height: 48px; }
+.ty-quick-link-btn { min-height: 48px; font-size: .875rem; }
+.ty-age-hint, .ty-lang-info, .ty-kb-hint, .ty-kb-tip, #ty-input-hint, #ty-home-kb-hint, .ty-level-badge, .ty-stat-lbl, .tyd-zone, .ty-lesson-hint { font-size: .875rem; }
+@media (max-width: 520px) {
+  .ty-keyboard { overflow-x: visible; }
+  .ty-kb-row { gap: 3px; }
+  .ty-kb-row .ty-key { width: auto; flex: 1 1 0; min-width: 0; height: 40px; font-size: .875rem; }
+  .ty-kb-row .ty-key.wide { flex: 1.5 1 0; }
+  .ty-kb-row .ty-key.space { flex: 0 0 55%; width: auto; font-size: .75rem; }
+}
+.ty-key.space { font-size: .75rem; }
+.ty-mode-card small, .ty-quick small, small { font-size: .875rem; }
+:root .tyd-minibtn small { font-size: .875rem; }

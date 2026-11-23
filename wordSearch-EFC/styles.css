@@ -690,3 +690,9 @@
 @keyframes wsFound { 40% { transform: scale(1.18); } }
 @media (prefers-reduced-motion: reduce) { .ws-word-chip.found { animation: none; } }
 @media (min-width: 900px) { .ws-page { max-width: 860px; } }
+
+/* visual-qa */
+:root .jx-sound { min-width: 48px; min-height: 48px; }
+:root .dy-zone { font-size: .875rem; }
+.ws-level-badge, .ws-stat-lbl, .ws-chip, .ws-word-chip, #ws-kb-help, .ws-kb-help, .ws-word-list > * { font-size: .875rem; }
+#ws-stats-btn, #ws-achievements-btn { min-height: 48px; font-size: .875rem; }

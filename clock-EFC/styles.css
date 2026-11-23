@@ -144,3 +144,10 @@ body { background: radial-gradient(900px 480px at 50% -8%, rgba(245,158,11,.22),
   .ck-prompt { font-size: 1.25rem; }
   .ck-clockbtn .ck-face { max-width: 150px; }
 }
+
+/* visual-qa */
+:root .jx-sound { min-width: 48px; min-height: 48px; }
+:root .dy-zone { font-size: .875rem; }
+.ck-quit, #ck-quit { min-width: 48px; min-height: 48px; }
+.ck-dot span, .ck-dot small { font-size: .875rem; }
+:root .ck-info span { font-size: .875rem; }

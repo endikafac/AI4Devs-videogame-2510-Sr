@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" id="html-root">
 <head>
+    <script src="../platform/nav.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <link rel="manifest" href="../manifest.json">
@@ -42,12 +43,22 @@
         <div class="rd-zonelabel" id="rd-z-zone"></div>
         <div class="rd-card" id="rd-zone"></div>
 
+        <div class="rd-zonelabel" id="rd-z-books"></div>
+        <p class="rd-note" id="rd-books-fallback" hidden></p>
+        <ul class="rd-shelf" id="rd-shelf"></ul>
+
         <div class="rd-zonelabel" id="rd-z-list"></div>
         <p class="rd-note" id="rd-fallback" hidden></p>
         <ol class="rd-list" id="rd-list"></ol>
 
         <div class="rd-zonelabel" id="rd-z-prog"></div>
         <div class="rd-card" id="rd-prog"></div>
+    </section>
+
+    <section id="rd-book" class="rd-screen" hidden>
+        <button class="rd-btn ghost small" id="rd-bookback" type="button"></button>
+        <div class="rd-card rd-bookhead" id="rd-bookhead"></div>
+        <ol class="rd-path" id="rd-path"></ol>
     </section>
 
     <section id="rd-text" class="rd-screen" hidden>

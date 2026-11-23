@@ -786,3 +786,11 @@
 .cw-cell.correct { animation: cwOk .45s ease-out; }
 @keyframes cwOk { 40% { transform: scale(1.12); } }
 @media (prefers-reduced-motion: reduce) { .cw-cell.correct { animation: none; } }
+
+/* visual-qa */
+:root .jx-sound { min-width: 48px; min-height: 48px; }
+:root .dy-zone { font-size: .875rem; }
+.cw-stat-lbl, #cw-time-lbl, .cw-kb-help, #cw-kb-help, .cw-btn { font-size: .875rem; min-height: 48px; }
+#cw-stats-btn, #cw-achievements-btn { min-height: 48px; font-size: .875rem; }
+#cw-tab-across, #cw-tab-down { min-height: 48px; }
+.cw-clue-num-badge, .cw-clue-word-display, .cw-clue-item span, .cw-clue-list span { font-size: .875rem; }

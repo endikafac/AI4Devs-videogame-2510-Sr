@@ -655,7 +655,7 @@ const TypeMasterGame = {
         const el = document.getElementById(id);
         if (el) {
             el.classList.add('active');
-            el.scrollIntoView({ behavior: 'instant', block: 'start' });
+            window.scrollTo(0, 0); // top of the page, not under the sticky header
             // Move focus to the new screen for screen reader announcement
             if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1');
             el.focus({ preventScroll: true });

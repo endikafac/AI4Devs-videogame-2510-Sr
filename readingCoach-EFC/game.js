@@ -26,6 +26,7 @@ const ReadingCoach = (() => {
     const PHASES = ['listen', 'karaoke', 'solo', 'quiz'];
     const TTS_LANG = { es: 'es-ES', en: 'en-GB', eu: 'eu-ES', gl: 'gl-ES', ca: 'ca-ES', fr: 'fr-FR' };
     const FILES = { es: ['es', 'es-2'], en: ['en'], eu: ['eu'], gl: ['gl'], ca: ['ca'], fr: ['fr'] };
+    const BOOK_FILES = { es: ['books-es'], en: ['books-en'], eu: ['books-eu'], gl: ['books-gl'], ca: ['books-ca'], fr: ['books-fr'] };
     const FONT_SIZES = [1.15, 1.4, 1.7, 2.0, 2.4];
     const MAX_PPM = 400, MIN_SECS = 5;
 
@@ -165,6 +166,34 @@ const ReadingCoach = (() => {
         return { texts: pick('es'), lang: 'es', fallback: lang !== 'es' };
     }
 
+    // ---------------------------------------------------------------- books in chapters ("Aventuras")
+    /** Books of a band in a language, with fallback to the Spanish shelf (same rule as the single texts). */
+    function selectBooks(byLang, band, lang) {
+        const pick = l => (byLang[l] || []).filter(b => Array.isArray(b.bands) && b.bands.indexOf(band) >= 0 && Array.isArray(b.chapters) && b.chapters.length);
+        const own = pick(lang);
+        if (own.length) return { books: own, lang, fallback: false };
+        return { books: pick('es'), lang: 'es', fallback: lang !== 'es' };
+    }
+    /** A chapter is finished when its comprehension questions were passed (the 'quiz' medal). */
+    const chapterDone = (texts, ch) => !!(texts && ch && texts[ch.id] && texts[ch.id].quiz);
+    /** Chapters unlock in order: chapter i opens when all the chapters before it are finished. */
+    function chapterUnlocked(book, texts, i) {
+        if (!book || !Array.isArray(book.chapters) || i < 0 || i >= book.chapters.length) return false;
+        for (let k = 0; k < i; k++) if (!chapterDone(texts, book.chapters[k])) return false;
+        return true;
+    }
+    function bookProgress(book, texts) {
+        const total = book.chapters.length; let done = 0, next = -1, stars = 0;
+        book.chapters.forEach((c, i) => { if (chapterDone(texts, c)) { done++; stars += Math.max(1, Math.min(3, (texts[c.id] && texts[c.id].stars) || 1)); } else if (next < 0) next = i; });
+        return { done, total, next, stars, finished: done === total };
+    }
+    /** Turns a chapter into a text the reader screens can play (ids, questions and so on stay those of the chapter). */
+    function chapterAsText(book, i, lang) {
+        const c = book.chapters[i];
+        return { id: c.id, title: book.title + ' · ' + c.title, chapterTitle: c.title, text: c.text, questions: c.questions, hook: c.hook || '', author: book.author, source: book.source,
+            license: book.license, retelling: book.retelling, lang, book, chIdx: i };
+    }
+
     // ---------------------------------------------------------------- progress
     const dayStr = (d = new Date()) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
     const dayNum = s => { const [y, m, d] = String(s).split('-').map(Number); return Math.round(Date.UTC(y, m - 1, d) / 86400000); };
@@ -200,7 +229,8 @@ const ReadingCoach = (() => {
     const S = {
         user: null, prog: blank(), uiLang: 'es', texts: {}, loaded: {}, cur: null, list: [], phase: 'listen',
         kara: null, kppm: 0, timeScale: 1, now: () => (typeof performance !== 'undefined' ? performance.now() : Date.now()),
-        solo: null, quiz: null, rec: null, heard: [], spans: [], voiceOk: true, pauseEx: null
+        solo: null, quiz: null, rec: null, heard: [], spans: [], voiceOk: true, pauseEx: null,
+        books: {}, booksLoaded: {}, shelf: [], book: null
     };
     const $ = id => document.getElementById(id);
     const uiLang = () => { const l = ((typeof PlatformI18n !== 'undefined' && PlatformI18n.currentLanguage) || 'es').slice(0, 2); return I18N[l] ? l : 'es'; };
@@ -224,7 +254,7 @@ const ReadingCoach = (() => {
     const level = () => S.prog.sel || S.prog.band || 'b78';
     const readLang = () => S.prog.rlang || uiLang();
 
-    function show(id) { ['rd-age', 'rd-home', 'rd-text'].forEach(s => { $(s).hidden = s !== id; }); window.scrollTo(0, 0); }
+    function show(id) { ['rd-age', 'rd-home', 'rd-book', 'rd-text'].forEach(s => { $(s).hidden = s !== id; }); window.scrollTo(0, 0); }
     function flash(msg) { const m = $('rd-msg'); m.textContent = msg || ''; }
 
     // ---- loading texts
@@ -235,6 +265,15 @@ const ReadingCoach = (() => {
             try { const r = await fetch('texts/' + f + '.json'); if (r.ok) { const j = await r.json(); all.push(...(j.texts || [])); } } catch (e) { console.warn('[Reading] texts not loaded', f); }
         }
         S.texts[lang] = all; S.loaded[lang] = true;
+    }
+
+    async function loadBooks(lang) {
+        if (S.booksLoaded[lang]) return;
+        const all = [];
+        for (const f of (BOOK_FILES[lang] || [])) {
+            try { const r = await fetch('texts/' + f + '.json'); if (r.ok) { const j = await r.json(); all.push(...(j.books || [])); } } catch (e) { console.warn('[Reading] books not loaded', f); }
+        }
+        S.books[lang] = all; S.booksLoaded[lang] = true;
     }
 
     // ---- voice
@@ -316,7 +355,7 @@ const ReadingCoach = (() => {
         $('rd-h1').textContent = t.title; $('rd-sub').textContent = t.sub;
         $('rd-age-title').textContent = t.ageTitle; $('rd-age-label').textContent = t.ageAsk; $('rd-age-note').textContent = t.ageNote; $('rd-age-save').textContent = t.ageSave;
         $('rd-z-set').textContent = t.zSettings; $('rd-z-zone').textContent = t.zone; $('rd-z-list').textContent = t.zTexts; $('rd-z-prog').textContent = t.zProgress;
-        $('rd-z-text').textContent = t.zText; $('rd-z-ctrl').textContent = t.zControls;
+        $('rd-z-books').textContent = t.zBooks; $('rd-z-text').textContent = t.zText; $('rd-z-ctrl').textContent = t.zControls;
         $('rd-quit').setAttribute('aria-label', t.quit); $('rd-help-l').textContent = t.help;
         $('rd-consent-title').textContent = t.consentTitle; $('rd-consent-text').textContent = t.consentText; $('rd-consent-l').textContent = t.consentCheck;
         $('rd-consent-ok').textContent = t.consentOk; $('rd-consent-no').textContent = t.consentNo;
@@ -387,6 +426,7 @@ const ReadingCoach = (() => {
         await loadTexts(readLang()); if (readLang() !== 'es') await loadTexts('es');
         const sel2 = selectTexts(S.texts, level(), readLang());
         S.list = sel2.texts.map(x => Object.assign({ lang: sel2.lang }, x));
+        await renderShelf(t);
         const fb = $('rd-fallback'); fb.hidden = !sel2.fallback; fb.textContent = sel2.fallback ? t.noBand : '';
         const ol = $('rd-list'); clear(ol);
         S.list.forEach((x, i) => {
@@ -412,21 +452,78 @@ const ReadingCoach = (() => {
         show('rd-home');
     }
 
+    // ---- shelf of books ("Aventuras")
+    function coverNode(bk, big) {
+        const c = el('span', 'rd-cover' + (big ? ' big' : ''));
+        c.style.background = 'linear-gradient(145deg, ' + bk.color + ', #0f172a)';
+        c.setAttribute('aria-hidden', 'true'); c.appendChild(el('span', 'rd-cover-emoji', bk.emoji));
+        return c;
+    }
+    async function renderShelf(t) {
+        await loadBooks(readLang()); if (readLang() !== 'es') await loadBooks('es');
+        const sb = selectBooks(S.books, level(), readLang());
+        S.shelf = sb.books.map(b => Object.assign({}, b, { lang: sb.lang }));
+        const nf = $('rd-books-fallback'); nf.hidden = !sb.fallback; nf.textContent = sb.fallback ? t.noBooks : '';
+        const sh = $('rd-shelf'); clear(sh); sh.hidden = !S.shelf.length; $('rd-z-books').hidden = !S.shelf.length;
+        S.shelf.forEach(bk => {
+            const pg = bookProgress(bk, S.prog.texts);
+            const li = el('li'); const b = el('button', 'rd-book' + (pg.finished ? ' finished' : '')); b.type = 'button'; b.dataset.id = bk.id;
+            b.appendChild(coverNode(bk, false));
+            b.appendChild(el('b', 'rd-booktitle', bk.title));
+            b.appendChild(el('span', 'rd-bookauthor', bk.author));
+            b.appendChild(el('span', 'rd-bookprog', pg.finished ? '📚 ' + t.bookFinished : fmt(t.chaptersDone, { a: pg.done, b: pg.total })));
+            b.onclick = () => openBook(bk.id); li.appendChild(b); sh.appendChild(li);
+        });
+    }
+    function openBook(id) {
+        const bk = (S.book && S.book.id === id ? S.book : null) || S.shelf.find(b => b.id === id); if (!bk) return;
+        S.book = bk; renderBook(); show('rd-book');
+    }
+    function renderBook() {
+        const t = T(), bk = S.book, p = S.prog; if (!bk) return;
+        const hd = $('rd-bookhead'); clear(hd);
+        hd.appendChild(coverNode(bk, true));
+        const inf = el('div', 'rd-bookinfo'); inf.appendChild(el('h2', null, bk.title)); inf.appendChild(el('p', 'rd-note', bk.author));
+        const pg = bookProgress(bk, p.texts);
+        inf.appendChild(el('p', 'rd-bookprog', pg.finished ? '📚 ' + t.bookFinished : fmt(t.chaptersDone, { a: pg.done, b: pg.total }) + ' · ⭐ ' + pg.stars + '/' + (pg.total * 3)));
+        inf.appendChild(el('p', 'rd-credit', t.retold + ' · ' + t.license + ': ' + bk.license));
+        hd.appendChild(inf);
+        $('rd-bookback').textContent = '← ' + t.backShelf;
+        const ol = $('rd-path'); clear(ol); ol.setAttribute('aria-label', t.bookPath);
+        bk.chapters.forEach((c, i) => {
+            const open = chapterUnlocked(bk, p.texts, i), done = chapterDone(p.texts, c), e = p.texts[c.id] || {};
+            const li = el('li', 'rd-pathitem' + (done ? ' done' : '') + (open && !done ? ' current' : '') + (!open ? ' locked' : ''));
+            const b = el('button', 'rd-chap'); b.type = 'button'; b.dataset.idx = i; b.dataset.id = c.id;
+            if (!open) { b.disabled = true; b.setAttribute('aria-disabled', 'true'); }
+            b.appendChild(el('span', 'rd-node', done ? '⭐' : open ? String(i + 1) : '🔒'));
+            const inf2 = el('span', 'rd-iteminfo'); inf2.appendChild(el('b', null, fmt(t.chapterN, { n: i + 1 }) + ': ' + c.title));
+            const sub = !open ? fmt(t.chapterLocked, { n: i }) : (countWords(c.text) + ' ' + t.words + (e.bestPpm ? ' · ' + t.bestPpm + ' ' + e.bestPpm + ' ' + t.unit : '') + (done ? ' · ' + fmt(t.chapterStars, { n: e.stars || 1 }) : ' · ' + t.chapterGo));
+            inf2.appendChild(el('span', null, sub)); b.appendChild(inf2);
+            const md = el('span', 'rd-medals'); md.setAttribute('aria-label', medalCount(e) + '/4');
+            PHASES.forEach(ph => md.appendChild(el('i', e[ph] ? 'on' : '', e[ph] ? '●' : '○'))); b.appendChild(md);
+            b.onclick = () => openChapter(bk, i); li.appendChild(b); ol.appendChild(li);
+        });
+    }
+    function openChapter(bk, i) {
+        if (!chapterUnlocked(bk, S.prog.texts, i)) return;
+        S.book = bk; startText(chapterAsText(bk, i, bk.lang || readLang()));
+    }
+
     // ---- consent for listening
     function openConsent() { const m = $('rd-consent'); $('rd-consent-chk').checked = false; $('rd-consent-ok').disabled = true; m.hidden = false; $('rd-consent-chk').focus(); }
     function closeConsent() { $('rd-consent').hidden = true; }
 
     // ---- text screen
-    async function openText(id) {
-        const x = S.list.find(i => i.id === id); if (!x) return;
+    function openText(id) { const x = S.list.find(i => i.id === id); if (x) startText(x); }
+    function startText(x) {
         S.cur = x; S.phase = 'listen'; S.solo = null; S.quiz = null; S.pauseEx = null;
         S.kppm = targetPpm(level());
         $('rd-title').textContent = x.title; flash('');
-        $('rd-credit').textContent = T().author + ': ' + x.author + ' · ' + T().license + ': ' + x.license;
+        $('rd-credit').textContent = T().author + ': ' + x.author + ' · ' + T().license + ': ' + x.license + (x.book ? ' · ' + T().retold : '');
         $('rd-helpbox').hidden = true; $('rd-help').setAttribute('aria-expanded', 'false');
         renderText(); gotoPhase('listen'); show('rd-text');
     }
-    function leaveText() { stopKara(); stopRec(true); if (S.solo && S.solo.tick) clearInterval(S.solo.tick); S.solo = null; S.quiz = null; renderHome(); }
+    function leaveText() { stopKara(); stopRec(true); if (S.solo && S.solo.tick) clearInterval(S.solo.tick); S.solo = null; S.quiz = null; if (S.cur && S.cur.book) { renderBook(); show('rd-book'); } else renderHome(); }
     function gotoPhase(p) {
         stopKara(); stopRec(true); if (S.solo && S.solo.tick) clearInterval(S.solo.tick); S.solo = null;
         S.phase = p; S.pauseEx = null; flash('');
@@ -683,12 +780,29 @@ const ReadingCoach = (() => {
         c.appendChild(el('p', 'rd-big', fmt(t.quizScore, { a: Q.correct, b: n })));
         const e = S.prog.texts[S.cur.id] || {};
         if (e.lastPpm && e.lastPpm > zoneOf(level())[1] && !ok) c.appendChild(el('p', 'rd-note', t.quizTip));
-        if (ok) { award('quiz'); try { Juice.levelUp(sr); } catch (x) { /* optional */ } }
+        if (ok) { award('quiz'); if (S.cur.book) { const ee = S.prog.texts[S.cur.id]; ee.stars = Math.max(ee.stars || 0, st); save(); } try { Juice.levelUp(sr); } catch (x) { /* optional */ } }
         if (Q.correct === n) { S.prog.perfect = true; save(); }
         const row = el('div', 'rd-row wrap');
-        const idx = S.list.findIndex(x => x.id === S.cur.id), nxt = S.list[idx + 1];
-        if (nxt) row.appendChild(btn(t.nextText + ' →', 'big', () => openText(nxt.id), 'rd-nexttext'));
-        row.appendChild(btn(t.backList, 'ghost', leaveText, 'rd-backlist'));
+        if (S.cur.book) {
+            const bk = S.cur.book, ci = S.cur.chIdx, nc = bk.chapters[ci + 1];
+            if (ok && nc) {
+                const tz = el('div', 'rd-teaser'); tz.id = 'rd-teaser';
+                tz.appendChild(el('b', null, '📖 ' + t.nextTeaser + ': ' + fmt(t.chapterN, { n: ci + 2 }) + ', ' + nc.title));
+                if (S.cur.hook) tz.appendChild(el('p', null, '«' + S.cur.hook + '»'));
+                c.appendChild(tz);
+                row.appendChild(btn(t.nextChapter + ' →', 'big', () => openChapter(bk, ci + 1), 'rd-nextchapter'));
+            } else if (ok) {
+                const bd = el('p', 'rd-big', '📚 ' + t.bookDoneMsg); bd.id = 'rd-bookdone'; c.appendChild(bd);
+            } else {
+                c.appendChild(el('p', 'rd-note', t.quizRetryHint));
+                row.appendChild(btn('↺ ' + t.retryQuiz, 'big', () => gotoPhase('quiz'), 'rd-retryquiz'));
+            }
+            row.appendChild(btn(t.backBook, 'ghost', leaveText, 'rd-backbook'));
+        } else {
+            const idx = S.list.findIndex(x => x.id === S.cur.id), nxt = S.list[idx + 1];
+            if (nxt) row.appendChild(btn(t.nextText + ' →', 'big', () => openText(nxt.id), 'rd-nexttext'));
+            row.appendChild(btn(t.backList, 'ghost', leaveText, 'rd-backlist'));
+        }
         c.appendChild(row);
         if (S.user && typeof PlatformFirestore !== 'undefined') {
             try {
@@ -704,6 +818,7 @@ const ReadingCoach = (() => {
         $('rd-age-save').onclick = submitAge;
         $('rd-age-in').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); submitAge(); } });
         $('rd-quit').onclick = leaveText;
+        $('rd-bookback').onclick = () => renderHome();
         $('rd-help').onclick = () => { const hb = $('rd-helpbox'); hb.hidden = !hb.hidden; $('rd-help').setAttribute('aria-expanded', String(!hb.hidden)); if (!hb.hidden) renderHelp(); };
         $('rd-consent-chk').onchange = () => { $('rd-consent-ok').disabled = !$('rd-consent-chk').checked; };
         $('rd-consent-no').onclick = closeConsent;
@@ -714,6 +829,7 @@ const ReadingCoach = (() => {
         });
         document.addEventListener('keydown', e => {
             if (!$('rd-consent').hidden) { if (e.key === 'Escape') closeConsent(); return; }
+            if (!$('rd-book').hidden) { if (e.key === 'Escape') renderHome(); return; }
             if ($('rd-text').hidden) return;
             if (e.target && /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
             if (e.key === 'Escape') { leaveText(); return; }
@@ -728,12 +844,12 @@ const ReadingCoach = (() => {
         window.addEventListener('pagehide', () => { stopRec(true); silence(); });
         load(); renderHome();
         if (window.PlatformAuth && PlatformAuth.onAuthStateChanged) PlatformAuth.onAuthStateChanged(u => { S.user = u || null; load(); if (!$('rd-home').hidden || !$('rd-age').hidden) renderHome(); });
-        document.addEventListener('platformLanguageChanged', () => { applyStatic(); if (!$('rd-home').hidden) renderHome(); else if (!$('rd-text').hidden) { renderSteps(); if (S.phase === 'quiz') { if (S.quiz && !S.quiz.locked && S.quiz.i < S.quiz.qs.length) renderQuestion(); } else renderControls(); } });
+        document.addEventListener('platformLanguageChanged', () => { applyStatic(); if (!$('rd-home').hidden) renderHome(); else if (!$('rd-book').hidden) renderBook(); else if (!$('rd-text').hidden) { renderSteps(); if (S.phase === 'quiz') { if (S.quiz && !S.quiz.locked && S.quiz.i < S.quiz.qs.length) renderQuestion(); } else renderControls(); } });
     }
 
     const api = { init, _S: S, BANDS, BAND_IDS, PHASES, UI: I18N, FILES, TTS_LANG, MAX_PPM, MIN_SECS, bandForAge, zoneOf, targetPpm, zoneStatus, pauseOf, norm, tokenize, countWords, splitPunct,
         schedule, segments, computePpm, evaluateReading, alignWords, summarize, lev, pauseExercise, checkPauses, selectTexts, updateStreak, weeklyTrend, medalCount, totalMedals,
-        achievements, stars, quizPassed, fmt, dayStr, blank };
+        achievements, stars, quizPassed, fmt, dayStr, blank, BOOK_FILES, selectBooks, chapterDone, chapterUnlocked, bookProgress, chapterAsText };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     return api;
 })();

@@ -1,0 +1,31 @@
+{
+  "lang": "eu",
+  "books": [
+    {
+      "id": "eu-gul", "title": "Gulliver Liliputen", "author": "Jonathan Swift (berrekina)", "emoji": "⛵", "color": "#0f766e", "bands": ["b56", "b78"],
+      "source": "Jonathan Swift, Gulliver's Travels (1726), jabari publikoa; kapitulu laburrak joko honetarako idatziak",
+      "license": "public-domain (original work); original-project retelling",
+      "retelling": "Geure hitzetan berrekina, inongo itzulpen modernorik kopiatu gabe. Euskaldun batek berrikusi behar du.",
+      "chapters": [
+        {"id": "eu-gul-1", "title": "Itsasoko ekaitza",
+         "text": "Gulliver itsasontzietako medikua zen. Egun batean, itsasontzi handia ekaitz batean hondoratu zen. Gulliver igeri egin zuen eta hondartza batera iritsi zen, oso nekatuta. Lurrean lo geratu zen. Esnatu zenean, ezin zen mugitu: ehunka soka txiki zituen gorputzaren inguruan lotuta! Gorputz gainean gizon txiki-txikiak zebiltzan, hatz bat baino txikiagoak. Gulliver izugarri harrituta zegoen. Gizon txikiek lantzak zeramatzaten eta oihuka ari ziren. Zer gertatuko ote zen orain?",
+         "hook": "Zer gertatuko ote zen orain?",
+         "questions": [
+           {"q": "Zer lanbide zuen Gullivek?", "o": ["Itsasontzietako medikua", "Okina", "Artzaina"], "a": 0, "ev": "itsasontzietako medikua zen"},
+           {"q": "Nora iritsi zen igerian?", "o": ["Hondartza batera", "Mendi batera", "Hiri batera"], "a": 0, "ev": "hondartza batera iritsi zen"}]},
+        {"id": "eu-gul-2", "title": "Liliputeko erregea",
+         "text": "Gizon txikiek Gulliver Liliputeko hirira eraman zuten. Erregea oso txikia zen, baina oso ausarta. Erregeak esan zuen: «Lagundu gaitzazu, eta askatuko zaitugu.» Gulliver ados jarri zen. Hirian etxe txikiak, kale estuak eta soldadu txikiak zeuden. Egunero, Gulliverrek fruta eta ogi pila handiak jaten zituen, eta liliputarrek lan handia zuten hura elikatzeko. Egun batean, etsaiaren itsasontziak agertu ziren itsasoan.",
+         "hook": "Egun batean, etsaiaren itsasontziak agertu ziren itsasoan.",
+         "questions": [
+           {"q": "Zer eskatu zion erregeak Gulliveri?", "o": ["Laguntza", "Dirua", "Janaria"], "a": 0, "ev": "Lagundu gaitzazu"},
+           {"q": "Zer jaten zuen Gulliverrek egunero?", "o": ["Fruta eta ogi pila handiak", "Arrain gordina", "Gaileta txikiak"], "a": 0, "ev": "fruta eta ogi pila handiak"}]},
+        {"id": "eu-gul-3", "title": "Itsasontziak",
+         "text": "Gulliver itsasora joan zen, ur sakona ez baitzen berarentzat oso sakona. Itsasontzi guztiak soka batekin lotu zituen eta bere atzetik eraman zituen. Erregeak txalo egin zuen eta esan zuen: «Zu gure heroia zara!» Baina handik gutxira, erregeak beste lan arriskutsu bat eskatu zion, eta Gulliverrek ez zuen nahi. Orduan, Gulliver bere itsasontzi txikia prestatu eta etxera itzuli zen. Familiak besarkada handi bat eman zion.",
+         "hook": "",
+         "questions": [
+           {"q": "Zer egin zuen Gulliverrek etsaiaren itsasontziekin?", "o": ["Soka batekin lotu zituen", "Hondoratu zituen", "Erre zituen"], "a": 0, "ev": "soka batekin lotu zituen"},
+           {"q": "Zer esan zuen erregeak?", "o": ["Zu gure heroia zara", "Zoaz hemendik", "Ez zaitut ezagutzen"], "a": 0, "ev": "Zu gure heroia zara"}]}
+      ]
+    }
+  ]
+}

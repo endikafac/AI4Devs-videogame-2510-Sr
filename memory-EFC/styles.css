@@ -131,3 +131,8 @@ body { background: radial-gradient(900px 480px at 50% -8%, rgba(20,184,166,.22),
   .mm-main { max-width: 760px; }
   .mm-grid { max-width: 620px; gap: 12px; }
 }
+
+/* visual-qa */
+:root .jx-sound { min-width: 48px; min-height: 48px; }
+:root .dy-zone { font-size: .875rem; }
+.mm-quit, #mm-back { min-width: 48px; min-height: 48px; }

@@ -173,3 +173,10 @@ body { background: radial-gradient(900px 480px at 50% -8%, rgba(236,72,153,.22),
   .fr-prompt { font-size: 1.25rem; }
   .fr-shapewrap .fr-shape { width: 260px; }
 }
+
+/* visual-qa */
+:root .jx-sound { min-width: 48px; min-height: 48px; }
+:root .dy-zone { font-size: .875rem; }
+.fr-quit, #fr-quit { min-width: 48px; min-height: 48px; }
+.fr-dot span, .fr-dot small { font-size: .875rem; }
+:root .fr-info span { font-size: .875rem; }

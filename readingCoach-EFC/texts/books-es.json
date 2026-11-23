@@ -1,0 +1,244 @@
+{
+  "lang": "es",
+  "books": [
+    {
+      "id": "es-rob", "title": "Robinsón en la isla", "author": "Daniel Defoe (recontado)", "emoji": "🏝️", "color": "#0e7490", "bands": ["b56"],
+      "source": "Daniel Defoe, Robinson Crusoe (1719), dominio público; resumen en capítulos escrito para este juego",
+      "license": "public-domain (original work); original-project retelling",
+      "retelling": "Recontado con palabras propias, sin copiar ninguna traducción moderna.",
+      "chapters": [
+        {"id": "es-rob-1", "title": "La tormenta",
+         "text": "Robinsón era un marinero muy valiente. Un día, una gran tormenta rompió su barco. Las olas eran enormes y el viento aullaba. Todos los marineros se perdieron en el mar. Robinsón nadó y nadó con todas sus fuerzas hasta llegar a una playa. Estaba solo, mojado y cansado. Miró a su alrededor y no vio ninguna casa. Entonces oyó un ruido extraño detrás de las palmeras.",
+         "hook": "Entonces oyó un ruido extraño detrás de las palmeras.",
+         "questions": [
+           {"q": "¿Qué rompió el barco?", "o": ["Una tormenta", "Una ballena", "Un pirata"], "a": 0, "ev": "una gran tormenta rompió su barco"},
+           {"q": "¿Cómo llegó Robinsón a la playa?", "o": ["Nadando", "En un bote", "Volando"], "a": 0, "ev": "nadó y nadó con todas sus fuerzas"}]},
+        {"id": "es-rob-2", "title": "Una casa en la isla",
+         "text": "El ruido era solo un loro que gritaba en una rama. Robinsón se rió por primera vez en muchos días. Después buscó agua dulce y encontró un arroyo. Con palos y hojas grandes construyó una cabaña. También hizo fuego y cocinó pescado. Por la noche miró las estrellas y pensó en su familia. Al amanecer vio algo raro en la arena: una huella de pie, y no era la suya.",
+         "hook": "Al amanecer vio algo raro en la arena: una huella de pie, y no era la suya.",
+         "questions": [
+           {"q": "¿Qué animal hacía el ruido?", "o": ["Un loro", "Un lobo", "Un mono"], "a": 0, "ev": "un loro que gritaba en una rama"},
+           {"q": "¿Con qué construyó la cabaña?", "o": ["Con palos y hojas grandes", "Con piedras y barro", "Con las tablas del barco"], "a": 0, "ev": "Con palos y hojas grandes construyó una cabaña"}]},
+        {"id": "es-rob-3", "title": "Viernes",
+         "text": "Robinsón siguió la huella con mucho cuidado. Detrás de una roca había un joven asustado. Robinsón sonrió y le dio un trozo de pan. El joven también sonrió. Como lo encontró un viernes, Robinsón lo llamó Viernes. Pronto se hicieron grandes amigos y trabajaron juntos. Años después, un barco pasó cerca de la isla. Los dos amigos encendieron una gran hoguera, y el barco los vio. ¡Por fin volvían a casa!",
+         "hook": "",
+         "questions": [
+           {"q": "¿Cómo llamó Robinsón al joven?", "o": ["Viernes", "Lunes", "Domingo"], "a": 0, "ev": "Robinsón lo llamó Viernes"},
+           {"q": "¿Qué encendieron para que el barco los viera?", "o": ["Una hoguera", "Una linterna", "Una vela"], "a": 0, "ev": "encendieron una gran hoguera"}]}
+      ]
+    },
+    {
+      "id": "es-ali", "title": "Alicia y el conejo blanco", "author": "Lewis Carroll (recontado)", "emoji": "🐇", "color": "#7c3aed", "bands": ["b56"],
+      "source": "Lewis Carroll, Alice's Adventures in Wonderland (1865), dominio público; resumen en capítulos escrito para este juego",
+      "license": "public-domain (original work); original-project retelling",
+      "retelling": "Recontado con palabras propias, sin copiar ninguna traducción moderna.",
+      "chapters": [
+        {"id": "es-ali-1", "title": "El conejo blanco",
+         "text": "Alicia estaba sentada en el campo, muy aburrida. De pronto pasó corriendo un conejo blanco con un reloj en la mano. «¡Llego tarde, llego tarde!», decía. Alicia corrió detrás de él. El conejo se metió en una madriguera y Alicia entró también. Cayó, cayó y cayó por un túnel larguísimo. Al final aterrizó suavemente en una sala con muchas puertas. Una puertecita pequeña tenía una llave de oro. ¿Qué habría detrás?",
+         "hook": "¿Qué habría detrás?",
+         "questions": [
+           {"q": "¿Qué llevaba el conejo en la mano?", "o": ["Un reloj", "Una zanahoria", "Un paraguas"], "a": 0, "ev": "con un reloj en la mano"},
+           {"q": "¿Qué tenía la puertecita pequeña?", "o": ["Una llave de oro", "Un candado rojo", "Un timbre"], "a": 0, "ev": "tenía una llave de oro"}]},
+        {"id": "es-ali-2", "title": "Muy grande, muy pequeña",
+         "text": "Alicia abrió la puertecita y vio un jardín precioso, pero ella era demasiado grande para pasar. Encima de la mesa había una botella con una nota: «Bébeme». Alicia bebió un poquito y empezó a encogerse. Se quedó pequeña como un ratón. Pero ahora la llave estaba muy alta sobre la mesa. Entonces encontró una galleta que decía «Cómeme». La comió y creció tanto que su cabeza tocó el techo. ¡Qué lío! De pronto oyó unos pasos que se acercaban.",
+         "hook": "De pronto oyó unos pasos que se acercaban.",
+         "questions": [
+           {"q": "¿Qué decía la nota de la botella?", "o": ["Bébeme", "Cómeme", "Ábreme"], "a": 0, "ev": "«Bébeme»"},
+           {"q": "¿Qué pasó cuando Alicia comió la galleta?", "o": ["Creció mucho", "Se quedó dormida", "Se hizo invisible"], "a": 0, "ev": "creció tanto que su cabeza tocó el techo"}]},
+        {"id": "es-ali-3", "title": "El sombrerero",
+         "text": "Los pasos eran del conejo, que se asustó al ver a Alicia tan grande. Alicia bebió un poco de la botella y volvió a su tamaño normal. Salió corriendo al jardín y llegó a una mesa muy larga. Allí un sombrerero loco tomaba té con una liebre. «¡No hay sitio!», gritaron, aunque había muchísimas sillas. Alicia se sentó y rió con ellos. Aquel día aprendió que, en el País de las Maravillas, todo puede pasar.",
+         "hook": "",
+         "questions": [
+           {"q": "¿Con quién tomaba té el sombrerero?", "o": ["Con una liebre", "Con un gato", "Con una tortuga"], "a": 0, "ev": "tomaba té con una liebre"},
+           {"q": "¿Qué aprendió Alicia?", "o": ["Que todo puede pasar", "Que hay que llegar tarde", "Que el té es malo"], "a": 0, "ev": "todo puede pasar"}]}
+      ]
+    },
+    {
+      "id": "es-mow", "title": "Mowgli, el niño lobo", "author": "Rudyard Kipling (recontado)", "emoji": "🐺", "color": "#15803d", "bands": ["b78"],
+      "source": "Rudyard Kipling, The Jungle Book (1894), dominio público; resumen en capítulos escrito para este juego",
+      "license": "public-domain (original work); original-project retelling",
+      "retelling": "Recontado con palabras propias, sin copiar ninguna traducción moderna.",
+      "chapters": [
+        {"id": "es-mow-1", "title": "El niño en la selva",
+         "text": "En la selva de la India, una familia de lobos encontró a un bebé humano perdido. La madre loba lo cuidó como a uno de sus cachorros y lo llamó Mowgli. El niño creció fuerte y ágil. Aprendió a trepar a los árboles y a correr entre los arbustos. El oso Baloo le enseñó las leyes de la selva, y la pantera Bagheera lo vigilaba desde las ramas. Pero un tigre feroz, llamado Shere Khan, quería atrapar al niño. Una noche, Mowgli oyó su rugido muy cerca.",
+         "hook": "Una noche, Mowgli oyó su rugido muy cerca.",
+         "questions": [
+           {"q": "¿Quién cuidó a Mowgli?", "o": ["Una madre loba", "Una pantera", "Un oso"], "a": 0, "ev": "La madre loba lo cuidó"},
+           {"q": "¿Quién quería atrapar al niño?", "o": ["El tigre Shere Khan", "El oso Baloo", "La pantera Bagheera"], "a": 0, "ev": "un tigre feroz, llamado Shere Khan"}]},
+        {"id": "es-mow-2", "title": "Los monos y la serpiente",
+         "text": "Una mañana, unos monos traviesos agarraron a Mowgli y se lo llevaron por las copas de los árboles. ¡Iban tan rápido que el niño no podía escapar! Mowgli gritó pidiendo ayuda. Baloo y Bagheera lo oyeron y corrieron a salvarlo. Pidieron ayuda a Kaa, una serpiente enorme que dormía a los monos con la mirada. Gracias a ella, los monos se quedaron quietos y Mowgli pudo escapar. Los amigos volvieron a casa cansados. Pero Shere Khan los esperaba escondido entre la hierba.",
+         "hook": "Pero Shere Khan los esperaba escondido entre la hierba.",
+         "questions": [
+           {"q": "¿Quién se llevó a Mowgli por los árboles?", "o": ["Unos monos", "Unos pájaros", "Unos lobos"], "a": 0, "ev": "unos monos traviesos agarraron a Mowgli"},
+           {"q": "¿Quién ayudó a los amigos?", "o": ["Kaa, una serpiente", "Un elefante", "Un cocodrilo"], "a": 0, "ev": "Kaa, una serpiente enorme"}]},
+        {"id": "es-mow-3", "title": "La lucha final",
+         "text": "Shere Khan saltó para atrapar a Mowgli, pero el niño no tuvo miedo. Cogió una rama encendida, porque todos los animales temen al fuego. El tigre retrocedió gruñendo. Los lobos y los amigos de Mowgli rodearon a Shere Khan, y por fin el tigre huyó lejos de la selva. Mowgli había salvado a su familia. Desde entonces, fue el amigo de todos los animales y vivió feliz en la selva.",
+         "hook": "",
+         "questions": [
+           {"q": "¿Qué cogió Mowgli para asustar al tigre?", "o": ["Una rama encendida", "Una piedra", "Una cuerda"], "a": 0, "ev": "Cogió una rama encendida"},
+           {"q": "¿Por qué retrocedió el tigre?", "o": ["Porque los animales temen al fuego", "Porque tenía sueño", "Porque llovía mucho"], "a": 0, "ev": "todos los animales temen al fuego"}]}
+      ]
+    },
+    {
+      "id": "es-pan", "title": "Peter Pan", "author": "J. M. Barrie (recontado)", "emoji": "🧚", "color": "#1d4ed8", "bands": ["b78"],
+      "source": "J. M. Barrie, Peter and Wendy (1911), dominio público en la mayoría de países (en el Reino Unido rigen derechos especiales a favor de un hospital infantil); resumen en capítulos escrito para este juego",
+      "license": "public-domain (original work); original-project retelling",
+      "retelling": "Recontado con palabras propias, sin copiar ninguna traducción moderna.",
+      "chapters": [
+        {"id": "es-pan-1", "title": "La ventana abierta",
+         "text": "En una casa de Londres vivían tres hermanos: Wendy, Juan y Miguel. Cada noche, su madre dejaba la ventana abierta. Una noche entró por ella un niño vestido de hojas, con una pequeña luz que volaba a su lado. Era Peter Pan, y la luz era su amiga, el hada Campanilla. «Venid conmigo al País de Nunca Jamás», dijo Peter. «Allí nadie crece.» Los hermanos no sabían volar. Peter sopló un polvo brillante sobre ellos. De pronto, ¡sus pies se despegaron del suelo!",
+         "hook": "De pronto, ¡sus pies se despegaron del suelo!",
+         "questions": [
+           {"q": "¿Cómo se llamaba el hada?", "o": ["Campanilla", "Wendy", "Margarita"], "a": 0, "ev": "el hada Campanilla"},
+           {"q": "¿A dónde invitó Peter a los hermanos?", "o": ["Al País de Nunca Jamás", "A Londres", "A la luna"], "a": 0, "ev": "Venid conmigo al País de Nunca Jamás"}]},
+        {"id": "es-pan-2", "title": "El País de Nunca Jamás",
+         "text": "Volaron toda la noche, siguiendo la segunda estrella a la derecha. Al amanecer vieron una isla verde, con montañas, playas y una laguna con sirenas. Allí vivían los Niños Perdidos, que jugaban todo el día. Pero en la isla también vivía el capitán Garfio, un pirata con un garfio de hierro en lugar de mano. Garfio odiaba a Peter Pan, porque un cocodrilo le había comido la mano. Desde su barco, Garfio vio a los niños llegar y sonrió con maldad.",
+         "hook": "Desde su barco, Garfio vio a los niños llegar y sonrió con maldad.",
+         "questions": [
+           {"q": "¿Qué tenía el capitán Garfio en lugar de mano?", "o": ["Un garfio de hierro", "Una espada", "Un loro"], "a": 0, "ev": "un garfio de hierro en lugar de mano"},
+           {"q": "¿Quiénes jugaban todo el día en la isla?", "o": ["Los Niños Perdidos", "Los piratas", "Las sirenas"], "a": 0, "ev": "los Niños Perdidos, que jugaban todo el día"}]},
+        {"id": "es-pan-3", "title": "Wendy y el pirata",
+         "text": "Esa noche, Garfio capturó a Wendy y a sus hermanos y los llevó a su barco. Pero Peter Pan llegó volando y empezó una gran pelea de espadas. Campanilla ayudó con su luz. Peter venció al capitán, que cayó al mar, donde el cocodrilo lo esperaba con la boca abierta. Los niños, felices, volvieron volando a Londres. Su madre los abrazó con lágrimas de alegría, y la ventana siguió abierta por si Peter volvía.",
+         "hook": "",
+         "questions": [
+           {"q": "¿Quién esperaba a Garfio en el mar?", "o": ["El cocodrilo", "Una ballena", "Un tiburón"], "a": 0, "ev": "el cocodrilo lo esperaba con la boca abierta"},
+           {"q": "¿Qué hizo la madre al ver a sus hijos?", "o": ["Los abrazó", "Los regañó", "Se desmayó"], "a": 0, "ev": "Su madre los abrazó"}]}
+      ]
+    },
+    {
+      "id": "es-ver", "title": "Viaje al fondo del mar", "author": "Julio Verne (recontado)", "emoji": "🐙", "color": "#0369a1", "bands": ["b910", "b1112"],
+      "source": "Jules Verne, Vingt mille lieues sous les mers (1870), dominio público; resumen en capítulos escrito para este juego",
+      "license": "public-domain (original work); original-project retelling",
+      "retelling": "Recontado con palabras propias, sin copiar ninguna traducción moderna.",
+      "chapters": [
+        {"id": "es-ver-1", "title": "El monstruo del mar",
+         "text": "En el año 1866, los barcos de todo el mundo contaban algo extraño: un monstruo enorme y luminoso atacaba a los buques en el océano. Nadie sabía si era una ballena gigante o un animal desconocido. Algunos marineros juraban que lanzaba chorros de luz por la noche. El profesor Aronnax, un sabio francés muy respetado, fue invitado a bordo de una fragata americana para cazar al monstruo. Con él viajaba su fiel criado Conseil, y a bordo conocieron al arponero Ned Land, un canadiense fuerte, valiente y de mal genio. Durante semanas recorrieron el océano Pacífico sin ver nada. Una noche, por fin, apareció una luz brillante en las olas. La fragata se lanzó tras ella, pero el monstruo era más rápido y de un golpe terrible rompió el timón. Aronnax, Conseil y Ned Land salieron despedidos y cayeron al agua oscura. Nadaron como pudieron en medio de la noche. De pronto, Ned Land tocó con la mano algo duro y frío: no era una ballena, ¡era metal!",
+         "hook": "De pronto, Ned Land tocó con la mano algo duro y frío: no era una ballena, ¡era metal!",
+         "questions": [
+           {"q": "¿Quién era Ned Land?", "o": ["Un arponero canadiense", "Un criado francés", "El capitán del barco"], "a": 0, "ev": "arponero Ned Land, un canadiense"},
+           {"q": "¿Qué rompió el monstruo de un golpe?", "o": ["El timón", "El mástil", "La bandera"], "a": 0, "ev": "rompió el timón"},
+           {"q": "¿Qué tocó Ned Land en el agua?", "o": ["Metal duro y frío", "Una ballena", "Una roca con algas"], "a": 0, "ev": "algo duro y frío"}]},
+        {"id": "es-ver-2", "title": "El capitán Nemo",
+         "text": "Los tres náufragos subieron sobre el lomo metálico del monstruo. Era un submarino, una máquina increíble que navegaba bajo el agua. Nadie en el mundo conocía todavía un invento parecido. Una trampilla se abrió y unos hombres silenciosos los llevaron al interior. Allí los recibió el dueño del submarino, un hombre alto, de mirada serena y misteriosa. Se llamaba capitán Nemo, que en latín significa «nadie». Les explicó que su nave se llamaba Nautilus y que se movía gracias a la electricidad. «No volverán a la superficie», dijo. «Pero serán mis invitados y nada les faltará.» Ned Land protestó con rabia, pues quería escapar cuanto antes. En cambio, Aronnax estaba fascinado: el Nautilus tenía una biblioteca con miles de libros y un salón con grandes ventanales de cristal. Esa noche, por primera vez, vieron peces de colores que nadaban pegados al cristal. Y el capitán les anunció que al día siguiente los llevaría a pasear por el fondo del mar.",
+         "hook": "Y el capitán les anunció que al día siguiente los llevaría a pasear por el fondo del mar.",
+         "questions": [
+           {"q": "¿Cómo se llamaba el submarino?", "o": ["Nautilus", "Atlántida", "Nemo"], "a": 0, "ev": "su nave se llamaba Nautilus"},
+           {"q": "¿Qué energía movía el submarino?", "o": ["La electricidad", "El vapor", "El viento"], "a": 0, "ev": "gracias a la electricidad"}]},
+        {"id": "es-ver-3", "title": "Paseo bajo las olas",
+         "text": "Al día siguiente, el capitán Nemo les enseñó a ponerse escafandras, unos trajes con casco y tubos para respirar bajo el agua. Los cuatro salieron por una puerta del submarino y caminaron sobre el fondo del mar. Era un mundo mágico: había bosques de algas, corales rojos como el fuego y peces que brillaban entre las rocas. Aronnax lo miraba todo con los ojos muy abiertos, y Conseil daba el nombre científico de cada pez, aunque nadie se lo pedía. De repente, una sombra enorme pasó sobre sus cabezas: era un tiburón gigante que se acercaba abriendo la boca. Ned Land preparó su arpón para luchar. Pero el capitán Nemo levantó la mano y les hizo señas de quedarse quietos detrás de una roca. El tiburón dio una vuelta, no vio a nadie y se alejó nadando despacio. Los amigos volvieron al Nautilus sanos y salvos. Aronnax comprendió que el capitán era valiente, sabio y lleno de secretos. Y aquella noche decidió quedarse a su lado para conocer su historia.",
+         "hook": "",
+         "questions": [
+           {"q": "¿Qué usaron para respirar bajo el agua?", "o": ["Escafandras", "Botellas de cristal", "Pajitas largas"], "a": 0, "ev": "ponerse escafandras"},
+           {"q": "¿Qué hicieron cuando apareció el tiburón?", "o": ["Se quedaron quietos detrás de una roca", "Huyeron nadando", "Lo atacaron todos a la vez"], "a": 0, "ev": "quedarse quietos detrás de una roca"}]}
+      ]
+    },
+    {
+      "id": "es-qui", "title": "Don Quijote y los gigantes", "author": "Miguel de Cervantes (recontado)", "emoji": "🛡️", "color": "#b45309", "bands": ["b910", "b1112"],
+      "source": "Miguel de Cervantes, Don Quijote de la Mancha (1605), dominio público; resumen en capítulos escrito para este juego",
+      "license": "public-domain (original work); original-project retelling",
+      "retelling": "Recontado con palabras propias, sin copiar ninguna edición moderna.",
+      "chapters": [
+        {"id": "es-qui-1", "title": "El caballero de la Mancha",
+         "text": "En un pueblo de La Mancha vivía un hombre llamado Alonso Quijano, que tenía unos cincuenta años. Era delgado, tranquilo y muy aficionado a leer libros de caballeros que luchaban contra gigantes y dragones. Leyó tantos libros que su cabeza se llenó de aventuras, y un día decidió hacerse caballero andante para ayudar a los débiles. Quería que nadie volviera a sufrir una injusticia mientras él viviera. Limpió una armadura vieja que había sido de sus abuelos y se fabricó un casco con cartón. A su caballo flaco lo llamó Rocinante y a sí mismo se puso el nombre de Don Quijote de la Mancha. Le faltaba una dama a quien dedicar sus hazañas, así que eligió a una labradora del pueblo vecino y la llamó Dulcinea del Toboso. Una madrugada salió de su casa sin despedirse de nadie, con el corazón lleno de ilusión. Pero un caballero necesita un ayudante, y Don Quijote sabía muy bien quién podía serlo.",
+         "hook": "Pero un caballero necesita un ayudante, y Don Quijote sabía muy bien quién podía serlo.",
+         "questions": [
+           {"q": "¿Cómo llamó a su caballo flaco?", "o": ["Rocinante", "Babieca", "Platero"], "a": 0, "ev": "A su caballo flaco lo llamó Rocinante"},
+           {"q": "¿Qué libros leía Alonso Quijano?", "o": ["De caballeros", "De cocina", "De animales"], "a": 0, "ev": "libros de caballeros que luchaban contra gigantes y dragones"}]},
+        {"id": "es-qui-2", "title": "Sancho Panza",
+         "text": "El ayudante elegido fue Sancho Panza, un vecino labrador, bajo, barrigón y muy bueno. Aunque no sabía leer, tenía un gran sentido común y muchos refranes. Don Quijote le prometió que, si ganaban fama, lo haría gobernador de una isla. Sancho no sabía mucho de islas, pero le gustaba la idea y montó en su burro, al que quería muchísimo. Así salieron los dos por los campos, uno soñando con gloria y el otro pensando en la comida. Rocinante y el burro iban uno al lado del otro, como dos buenos amigos. Sancho llevaba un saco con pan, queso y una bota de vino. Mientras caminaban, Sancho hacía preguntas y Don Quijote contestaba con largos discursos. Al llegar a una llanura, Don Quijote se detuvo de golpe y señaló con el dedo: «Mira, Sancho, esos gigantes enormes. Voy a pelear contra ellos». Sancho miró con atención y no vio ningún gigante. ¿Qué había en realidad en aquella llanura?",
+         "hook": "¿Qué había en realidad en aquella llanura?",
+         "questions": [
+           {"q": "¿Qué le prometió Don Quijote a Sancho?", "o": ["Que sería gobernador de una isla", "Que sería rey", "Que tendría un castillo"], "a": 0, "ev": "lo haría gobernador de una isla"},
+           {"q": "¿Qué llevaba Sancho en el saco?", "o": ["Pan, queso y vino", "Espadas y cascos", "Libros y plumas"], "a": 0, "ev": "pan, queso y una bota de vino"}]},
+        {"id": "es-qui-3", "title": "Los gigantes",
+         "text": "Lo que había en la llanura eran molinos de viento, con sus grandes aspas que giraban despacio. «Son molinos, señor», dijo Sancho. «No lo son», respondió Don Quijote, «son gigantes con brazos larguísimos. Si tienes miedo, aléjate y reza mientras yo lucho.» Y sin escuchar más, espoleó a Rocinante y se lanzó con la lanza por delante. Clavó la punta en un aspa, pero el viento la hizo girar con tanta fuerza que levantó a caballo y caballero por los aires. Los dos cayeron rodando por el suelo. Rocinante relinchó asustado y el polvo del camino lo cubrió todo. Sancho llegó corriendo en su burro y lo ayudó a levantarse. «¿No se lo dije? Eran molinos», insistió. Pero su amo ya no escuchaba, porque estaba pensando en la próxima batalla. Don Quijote, dolorido pero sin desanimarse, dijo que un mago malvado había convertido a los gigantes en molinos para quitarle la gloria. Sancho suspiró, se encogió de hombros y siguieron caminando hacia nuevas aventuras.",
+         "hook": "",
+         "questions": [
+           {"q": "¿Qué eran en realidad los gigantes?", "o": ["Molinos de viento", "Árboles muy altos", "Torres de un castillo"], "a": 0, "ev": "molinos de viento"},
+           {"q": "¿Qué dijo Don Quijote que había pasado?", "o": ["Que un mago convirtió a los gigantes en molinos", "Que Sancho se había equivocado de camino", "Que los gigantes se habían ido"], "a": 0, "ev": "un mago malvado había convertido a los gigantes en molinos"}]}
+      ]
+    },
+    {
+      "id": "es-teo", "title": "Teseo y el Minotauro", "author": "Mito griego (recontado)", "emoji": "🐂", "color": "#be123c", "bands": ["b910", "b1112"],
+      "source": "Mito griego tradicional de Teseo, el Minotauro y Ariadna, de dominio público; resumen en capítulos escrito para este juego",
+      "license": "public-domain (original work); original-project retelling",
+      "retelling": "Recontado con palabras propias, sin copiar ninguna traducción moderna.",
+      "chapters": [
+        {"id": "es-teo-1", "title": "El tributo",
+         "text": "Hace mucho tiempo, en la isla de Creta, el rey Minos tenía un laberinto enorme con cientos de pasillos que se cruzaban. En el centro vivía el Minotauro, un monstruo con cuerpo de hombre y cabeza de toro. Cada nueve años, la ciudad de Atenas tenía que enviar a siete chicos y siete chicas para alimentar al monstruo. Era un castigo cruel que llenaba de tristeza a todas las familias. Teseo, el hijo del rey de Atenas, era joven, fuerte y valiente. Cuando llegó el día del tributo, se levantó delante de todos y dijo que él iría con los demás para vencer al Minotauro. Su padre, el rey Egeo, lloró al oírlo, pero no pudo convencerlo. Antes de partir le pidió una cosa: «Si vuelves vivo, cambia las velas negras del barco por unas blancas, para que yo lo sepa desde lejos». Teseo prometió hacerlo. El barco zarpó con sus velas negras rumbo a Creta. Y allí, en el puerto, alguien lo esperaba mirándolo con ojos muy atentos.",
+         "hook": "Y allí, en el puerto, alguien lo esperaba mirándolo con ojos muy atentos.",
+         "questions": [
+           {"q": "¿Cómo era el Minotauro?", "o": ["Cuerpo de hombre y cabeza de toro", "Cuerpo de toro y cabeza de hombre", "Un dragón con alas"], "a": 0, "ev": "cuerpo de hombre y cabeza de toro"},
+           {"q": "¿Qué le pidió el rey Egeo a Teseo?", "o": ["Cambiar las velas negras por blancas si volvía vivo", "Traer un tesoro de Creta", "No salir nunca de Atenas"], "a": 0, "ev": "cambia las velas negras del barco por unas blancas"}]},
+        {"id": "es-teo-2", "title": "El hilo de Ariadna",
+         "text": "Quien lo esperaba era Ariadna, la hija del rey Minos. En cuanto vio a Teseo, sintió que era un joven noble y decidió ayudarlo. Sabía que el laberinto era tan complicado que nadie había salido nunca de él. Esa noche le entregó un ovillo de hilo y le explicó cómo usarlo: «Ata un extremo a la entrada del laberinto y ve soltando el hilo mientras caminas. Así podrás encontrar la salida». Teseo le dio las gracias con una sonrisa. A la mañana siguiente, entró en el laberinto con su espada. Anduvo durante horas por pasillos oscuros, girando a la derecha y a la izquierda, sin dejar nunca de soltar el hilo. El aire olía a humedad y se oían pasos lejanos. Por fin llegó a un gran patio de piedra. Allí, en el centro, dormía el Minotauro, enorme como una montaña. Teseo respiró hondo y apretó la espada con las dos manos. Pero el monstruo abrió los ojos de repente.",
+         "hook": "Pero el monstruo abrió los ojos de repente.",
+         "questions": [
+           {"q": "¿Qué le dio Ariadna a Teseo?", "o": ["Un ovillo de hilo", "Una antorcha", "Un mapa"], "a": 0, "ev": "un ovillo de hilo"},
+           {"q": "¿Para qué servía el hilo?", "o": ["Para encontrar la salida", "Para atar al monstruo", "Para pescar"], "a": 0, "ev": "Así podrás encontrar la salida"}]},
+        {"id": "es-teo-3", "title": "La vuelta",
+         "text": "La lucha fue larga y terrible. Los muros temblaban con cada rugido y el polvo caía del techo. El Minotauro rugía y embestía con sus cuernos, pero Teseo era rápido y lo esquivaba una y otra vez. Al final, con un golpe certero de su espada, venció al monstruo. Siguió el hilo, paso a paso, hasta la salida, donde Ariadna lo esperaba con lágrimas de alegría. Los jóvenes de Atenas fueron liberados y todos subieron al barco para volver a casa. Pero, con la emoción de la victoria, Teseo olvidó cambiar las velas negras por las blancas. Su padre, que lo esperaba desde lo alto de un acantilado, vio el barco con las velas negras y creyó que su hijo había muerto. Lleno de pena, se arrojó al mar, que desde entonces se llama mar Egeo. Teseo llegó a Atenas y supo la triste noticia. Fue rey de la ciudad, y gobernó con justicia durante muchos años, recordando siempre a su padre.",
+         "hook": "",
+         "questions": [
+           {"q": "¿Cómo encontró Teseo la salida?", "o": ["Siguiendo el hilo", "Preguntando al monstruo", "Subiendo por una pared"], "a": 0, "ev": "Siguió el hilo"},
+           {"q": "¿Qué olvidó hacer Teseo?", "o": ["Cambiar las velas negras por blancas", "Despedirse de Ariadna", "Llevar la espada"], "a": 0, "ev": "olvidó cambiar las velas negras por las blancas"}]}
+      ]
+    },
+    {
+      "id": "es-isl", "title": "La isla del tesoro", "author": "Robert Louis Stevenson (recontado)", "emoji": "🏴‍☠️", "color": "#334155", "bands": ["b13", "adult"],
+      "source": "Robert Louis Stevenson, Treasure Island (1883), dominio público; resumen en capítulos escrito para este juego",
+      "license": "public-domain (original work); original-project retelling",
+      "retelling": "Recontado con palabras propias, sin copiar ninguna traducción moderna.",
+      "chapters": [
+        {"id": "es-isl-1", "title": "El mapa del viejo marino",
+         "text": "Yo me llamo Jim Hawkins, y cuando era muchacho mis padres tenían una posada junto al mar, la posada del Almirante Benbow. Un día llegó un viejo marinero con la cara cruzada por una cicatriz y un cofre muy pesado. Se hacía llamar el capitán, bebía ron sin parar y cantaba una canción de piratas que ponía los pelos de punta. Cuando cantaba, los clientes de la posada se callaban y miraban sus jarras, porque nadie quería llevarle la contraria a un hombre con una cicatriz así. Me pagaba unas monedas cada mes para que vigilase el camino por si aparecía un hombre con una sola pierna. Yo no entendía por qué le tenía tanto miedo a ese hombre, pero su temor era verdadero. Noches enteras lo oí caminar de un lado a otro de su cuarto, murmurando nombres de barcos y de islas que yo no conocía. Una tarde de invierno llegó un ciego que golpeaba el suelo con su bastón; le entregó al capitán un papel con una mancha negra, y el pobre marinero cayó muerto del susto. Mi madre y yo abrimos su cofre para cobrar lo que nos debía. Mi madre temblaba, pero era una mujer honrada y solo quería recuperar lo justo. Dentro había ropa vieja, unas pistolas, una bolsa de monedas y un paquete envuelto en tela. Cuando oímos pasos de hombres que se acercaban por el camino, cogimos el dinero que nos correspondía y el paquete, y huimos corriendo hacia la oscuridad. La luna apenas alumbraba el sendero y el corazón me golpeaba el pecho. Los bandidos rompieron la puerta y revolvieron toda la posada, pero no encontraron lo que buscaban. En el paquete había un mapa. Estaba dibujado con tinta roja: era la isla donde el viejo pirata Flint había enterrado su inmenso tesoro. Y en la cruz del mapa, escrito con letra pequeña, había un mensaje que me heló la sangre.",
+         "hook": "Y en la cruz del mapa, escrito con letra pequeña, había un mensaje que me heló la sangre.",
+         "questions": [
+           {"q": "¿Cómo se llamaba la posada de la familia de Jim?", "o": ["Almirante Benbow", "La Hispaniola", "El Loro Azul"], "a": 0, "ev": "la posada del Almirante Benbow"},
+           {"q": "¿A qué tipo de hombre temía el capitán?", "o": ["A un hombre con una sola pierna", "A un hombre muy alto", "A un hombre sin barba"], "a": 0, "ev": "un hombre con una sola pierna"},
+           {"q": "¿Qué había dentro del paquete envuelto en tela?", "o": ["Un mapa", "Un puñado de joyas", "Una llave de oro"], "a": 0, "ev": "En el paquete había un mapa"}]},
+        {"id": "es-isl-2", "title": "El viaje de la Hispaniola",
+         "text": "Llevé el mapa al doctor Livesey y al señor Trelawney, el hombre más rico de la comarca. Los dos lo estudiaron con los ojos brillantes y decidieron organizar una expedición. Durante semanas se habló en todo el puerto de aquel viaje secreto, y Trelawney, que no sabía guardar un secreto, se lo contó a medio mundo. Trelawney compró un barco llamado Hispaniola y contrató como cocinero a un hombre muy amable que se llamaba Long John Silver. Era alto, con una sola pierna, una muleta y un loro llamado Capitán Flint sobre el hombro. Yo me asusté al verlo, porque recordé al hombre del que huía el viejo marino, pero Silver sonreía y bromeaba con todos, y pronto me cayó simpático. Me enseñó a hacer nudos de marinero y me contó historias de mares lejanos, y yo lo admiraba como a un héroe. El capitán Smollett, que mandaba el barco, no se fiaba de la tripulación y lo dijo claramente, pero zarpamos igualmente. El mar estaba tranquilo y el viento soplaba a favor, y durante varios días todo fue paz. Durante la travesía, una noche me metí dentro de un barril de manzanas para coger una fruta. Allí oí una conversación terrible. Era la voz de Silver, que hablaba con otros marineros: «Cuando lleguemos a la isla, nos haremos con el tesoro y nos libraremos de los que mandan. Muchos de vosotros fuisteis piratas con el viejo Flint». Casi dejé de respirar, porque el cocinero que me había tratado con tanta amabilidad era el jefe de una banda de piratas. Esperé en silencio hasta que se alejaron y corrí a contárselo al doctor, al señor Trelawney y al capitán. Nos reunimos en secreto en la cabina. Hablamos en voz muy baja, porque cualquier tabla del barco podía tener oídos. Éramos pocos, pero teníamos armas y la ventaja de saber la verdad. Al amanecer, un grito desde lo alto del palo mayor nos avisó: ¡tierra a la vista!",
+         "hook": "Al amanecer, un grito desde lo alto del palo mayor nos avisó: ¡tierra a la vista!",
+         "questions": [
+           {"q": "¿Dónde se escondió Jim durante la travesía?", "o": ["En un barril de manzanas", "En un bote salvavidas", "En la cocina"], "a": 0, "ev": "dentro de un barril de manzanas"},
+           {"q": "¿Quién era en realidad el jefe de los piratas?", "o": ["El cocinero Long John Silver", "El capitán Smollett", "El doctor Livesey"], "a": 0, "ev": "el cocinero que me había tratado con tanta amabilidad era el jefe de una banda de piratas"}]},
+        {"id": "es-isl-3", "title": "El tesoro",
+         "text": "Desembarcamos en la isla, una tierra de pantanos, colinas y bosques de pinos. El aire olía a fango y a flores raras, y los loros chillaban desde lo alto de los árboles. Los piratas, ya sin disimulo, se rebelaron contra el capitán. Hubo disparos, gritos y carreras entre los troncos, y por un momento pensé que no saldríamos vivos de aquella playa. Nosotros nos hicimos fuertes en un viejo fortín de troncos. Yo me escapé una noche, sin pedir permiso, en un pequeño bote, y fui hasta la Hispaniola. Corté el ancla del barco y el viento lo arrastró hasta la playa, donde quedó a salvo de los piratas. En la isla encontré a Ben Gunn, un hombre solitario que llevaba tres años abandonado y hablaba solo con una voz ronca. Me contó que soñaba cada noche con comer queso, y yo no pude evitar sonreír, a pesar del peligro. Él conocía el lugar donde estaba el tesoro y ya lo había cambiado de sitio. Cuando los piratas llegaron por fin a la cruz del mapa, encontraron un hoyo vacío y se enfurecieron. Entonces nuestros amigos aparecieron entre los árboles y dispararon. Silver, que se había quedado sin su gente, me dijo en voz baja que se pasaba a nuestro bando. Los piratas huyeron, vencidos. El silencio que siguió me pareció el más grande que había oído en mi vida. Pronto llegamos al escondite de Ben Gunn, una cueva llena de monedas de oro, de plata y de joyas que brillaban a la luz de las antorchas. Cargamos el tesoro en la Hispaniola y partimos hacia casa. Fueron días de brisa suave, en los que casi no podía creer que todo hubiera terminado. En el primer puerto, Silver desapareció con un saco de monedas y no volvimos a verlo. Yo regresé a Inglaterra siendo rico, pero durante años, en sueños, seguía oyendo el grito del loro de Silver: «¡Doblones, doblones!».",
+         "hook": "",
+         "questions": [
+           {"q": "¿A quién encontró Jim en la isla?", "o": ["A Ben Gunn", "A un cocodrilo", "Al capitán Flint"], "a": 0, "ev": "encontré a Ben Gunn"},
+           {"q": "¿Dónde estaba el tesoro en realidad?", "o": ["En una cueva", "En el hoyo del mapa", "En el fortín de troncos"], "a": 0, "ev": "una cueva llena de monedas de oro"},
+           {"q": "¿Qué hizo Silver en el primer puerto?", "o": ["Desapareció con un saco de monedas", "Se quedó a vivir con Jim", "Entregó el barco al rey"], "a": 0, "ev": "Silver desapareció con un saco de monedas"}]}
+      ]
+    },
+    {
+      "id": "es-laz", "title": "Lázaro y sus amos", "author": "Anónimo, Lazarillo de Tormes (recontado)", "emoji": "🍞", "color": "#a16207", "bands": ["b13", "adult"],
+      "source": "La vida de Lazarillo de Tormes y de sus fortunas y adversidades (1554, anónimo), dominio público; resumen en capítulos escrito para este juego",
+      "license": "public-domain (original work); original-project retelling",
+      "retelling": "Recontado con palabras propias, sin copiar ninguna edición moderna.",
+      "chapters": [
+        {"id": "es-laz-1", "title": "El ciego",
+         "text": "Me llamo Lázaro y nací en el río Tormes, cerca de Salamanca; por eso me llaman Lázaro de Tormes. Mi infancia no fue fácil, pues en mi casa nunca sobraba nada, ni el dinero ni la comida. Mi padre trabajaba en un molino y murió pronto; mi madre se quedó sola y no tuvo más remedio que ponerme al servicio de un ciego que pedía limosna por los pueblos, para que yo fuera su guía. Aquel hombre era astuto como un zorro y muy tacaño. Tenía una memoria prodigiosa, rezaba oraciones por dinero y conocía mil remedios, pero nunca daba nada a quien le servía. Una vez, a la salida de un pueblo, me enseñó una estatua de piedra con forma de toro y me dijo: «Acerca la oreja y oirás un gran ruido dentro». Yo, que era un niño ingenuo, acerqué la cabeza y él me dio un golpe tan fuerte contra la piedra que me dolió durante tres días. «Aprende, muchacho, que el criado del ciego debe saber más que el diablo», se rió. Aquel golpe me abrió los ojos de golpe: el mundo era un lugar duro, y para sobrevivir hacía falta ingenio. Desde ese día decidí que yo también sería astuto. Con el ciego pasaba hambre, porque guardaba el pan en un saco que cerraba con mucho cuidado. Pero yo abrí una costura del saco y, cada día, sacaba un trocito de pan o de chorizo sin que él lo notara. Además, cuando nos daban vino, yo lo bebía con una pajita de caña que escondía en la manga. Más tarde el ciego me castigó cuando descubrió el truco. Me dejó la cabeza dolorida durante varios días, pero no por eso dejé de aprender. Un día llegamos a un arroyo y me puso frente a un pilar de piedra. Yo vi una buena ocasión para devolverle la jugada.",
+         "hook": "Yo vi una buena ocasión para devolverle la jugada.",
+         "questions": [
+           {"q": "¿Qué guardaba el ciego en un saco?", "o": ["El pan", "El dinero", "Los mapas"], "a": 0, "ev": "guardaba el pan en un saco"},
+           {"q": "¿Qué le hizo el ciego a Lázaro junto al toro de piedra?", "o": ["Le dio un golpe contra la piedra", "Le regaló unas monedas", "Lo dejó solo en el camino"], "a": 0, "ev": "me dio un golpe tan fuerte contra la piedra"}]},
+        {"id": "es-laz-2", "title": "El clérigo y el escudero",
+         "text": "Le dije al ciego: «El arroyo es estrecho, pero si corres y saltas con todas tus fuerzas, llegarás al otro lado». Me puse junto al pilar de piedra y el pobre ciego, confiado, retrocedió, tomó carrerilla y saltó con tantas ganas que se estrelló de cabeza contra el pilar. Cayó al suelo como un saco. «¡Huele ese golpe, que el toro huele!», le grité mientras me alejaba corriendo, y no volví a verlo. Fue la primera vez que me sentí dueño de mi vida. Pasé a servir a un clérigo, un hombre rico pero tan avaro que la comida no nos llegaba ni a la mitad del día. Guardaba el pan en un arcón viejo, y yo, con una llave que conseguí, me comía las migas a escondidas hasta que él me descubrió y me echó de la casa. Aquel hombre guardaba hasta las cortezas más secas, y yo, flaco como un palo, me preguntaba cómo cabía tanta avaricia en un solo cuerpo. Entonces, hambriento y sin un céntimo, llegué a una ciudad y me encontré con un escudero, un hombre elegante, con espada y buena capa, que me pidió que lo sirviera. Pensé que por fin tendría una buena vida. Pero la casa donde vivía era una habitación vacía, sin cama, sin mesa y sin comida. El escudero fingía no tener hambre y se paseaba con orgullo por la calle como si fuera un gran señor. Una mañana, yo salí a pedir y volví con tres panes y unas tripas de vaca. El escudero me miró con vergüenza y, sin decir nada, se sentó a comer conmigo. Entendí entonces que, aunque pasara más hambre que yo, su honra le impedía pedir limosna. Desde entonces le tuve cariño, y compartí con él lo poco que conseguía. Pero un día llegó a la casa un hombre muy serio con una orden del juez, y mi amo se puso pálido.",
+         "hook": "Pero un día llegó a la casa un hombre muy serio con una orden del juez, y mi amo se puso pálido.",
+         "questions": [
+           {"q": "¿Qué le pasó al ciego con el salto?", "o": ["Se estrelló contra el pilar", "Cayó al arroyo", "Cruzó sin problemas"], "a": 0, "ev": "se estrelló de cabeza contra el pilar"},
+           {"q": "¿Cómo era la casa del escudero?", "o": ["Una habitación vacía, sin cama ni mesa", "Un palacio con muchos criados", "Una cabaña junto al río"], "a": 0, "ev": "una habitación vacía, sin cama"},
+           {"q": "¿Por qué el escudero no pedía limosna?", "o": ["Por su honra", "Porque era rico", "Porque no tenía hambre"], "a": 0, "ev": "su honra le impedía pedir limosna"}]},
+        {"id": "es-laz-3", "title": "Un oficio con suerte",
+         "text": "Mi amo, el escudero, tenía deudas y no pudo pagarlas, así que desapareció una noche y me dejó solo otra vez. Yo volví a la calle y serví a varios amos: un fraile, un vendedor de bulas que engañaba a la gente, un pintor, un capellán. Con unos me llevé bien y con otros fui muy desgraciado, pero de todos aprendí algo, aunque fuera a base de golpes y de hambre. Con este último aprendí un trabajo digno: vender agua por la ciudad. Con cuatro años de ahorros me compré una ropa decente y una espada vieja, y dejé el oficio de aguador. Me sentía casi un caballero, aunque la espada estuviera oxidada y la ropa fuera de segunda mano. Después conseguí un puesto de pregonero: iba por las calles anunciando el vino que se vendía y los delitos de los castigados. Era un buen empleo y me dio dinero y fama. La gente me saludaba por la calle y los niños corrían detrás de mí cuando pasaba. El arcipreste de San Salvador, un señor importante, me ofreció casarme con su criada, una mujer de buen carácter. Acepté, y nos instalamos en una casa pequeña junto a la suya. Los domingos comíamos juntos y parecía que todo iba bien. Con el tiempo, la gente empezó a murmurar cosas feas de mi esposa y del arcipreste, y mis amigos me aconsejaban que abriera los ojos. Pero yo prefería no escuchar los chismes: la vida me había dado hambre, golpes y engaños, y ahora tenía una casa, un empleo y un plato de comida caliente cada noche. Así que cerré los oídos y cuidé mi tranquilidad. Quien diga lo contrario, que pruebe antes el hambre que yo pasé. Y esta, señores, es la historia de cómo Lázaro, un niño pobre del Tormes, llegó a la cima de su fortuna.",
+         "hook": "",
+         "questions": [
+           {"q": "¿Qué trabajo aprendió Lázaro con el capellán?", "o": ["Vender agua por la ciudad", "Fabricar espadas", "Cuidar caballos"], "a": 0, "ev": "vender agua por la ciudad"},
+           {"q": "¿Qué empleo le dio dinero y fama?", "o": ["Pregonero", "Escudero", "Pintor"], "a": 0, "ev": "un puesto de pregonero"},
+           {"q": "¿Qué decidió hacer Lázaro ante los chismes?", "o": ["No escucharlos", "Pelearse con todos", "Irse a otra ciudad"], "a": 0, "ev": "yo prefería no escuchar los chismes"}]}
+      ]
+    }
+  ]
+}

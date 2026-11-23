@@ -188,3 +188,9 @@ body.mp-full { overflow: hidden; }
 .mp-opt[data-shape="A0"] { border-left: 6px solid #22c55e; }
 @keyframes mp-opt-in { from { opacity: 0; transform: translateY(14px) scale(.96); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .mp-opt { animation: none; } }
+#mp-quit { width: 48px; height: 48px; }
+#mp-zin, #mp-zout, #mp-zhome { width: 48px; height: 48px; }
+#mp-hint { min-height: 48px; }
+:root .jx-sound { min-width: 48px; min-height: 48px; }
+.mp-credit, .mp-card small, small { font-size: .875rem; }
+:root .mp-mapcard small { font-size: .875rem; }
