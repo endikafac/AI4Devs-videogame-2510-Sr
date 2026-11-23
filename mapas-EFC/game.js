@@ -868,7 +868,7 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         // labels / dots depend on zoom: refresh when the camera changes
         (function loop() { if (S.dirty) { S.dirty = false; refreshOverlays(); } requestAnimationFrame(loop); })();
         renderHome(); show('mp-home');
-        loadData('world').then(W => { indexWorld(W); renderHome(); }).catch(() => { /* offline first visit */ });
+        loadData('world').then(W => { indexWorld(W); renderHome(); setTimeout(() => loadData('spain').catch(() => {}), 2500); /* warm the cache so every map works offline */ }).catch(() => { /* offline first visit */ });
         if (window.PlatformAuth && PlatformAuth.onAuthStateChanged) PlatformAuth.onAuthStateChanged(u => { S.user = u || null; if (S.screen === 'mp-home') renderHome(); });
         window.addEventListener('platformLanguageChanged', render);
     }
