@@ -32,6 +32,10 @@ const MemoryPairs = (() => {
               score: (m, p) => `${p} paires en ${m} coups.`, hintNumbers: 'Associe chaque nombre à ses points', hintLetters: 'Associe chaque majuscule à sa minuscule', xp: 'XP' }
     };
 
+    // Learn-first content (learn.js): strings of the Aprende step, guided round and "why not a pair" line
+    const ML = (typeof MemoryLearn !== 'undefined') ? MemoryLearn : require('./learn.js');
+    Object.keys(UI).forEach(l => Object.assign(UI[l], ML.UI[l]));
+
     const THEMES = [
         { id: 'emoji',   icon: '😀', pool: ['😀', '🚀', '🌈', '⚽', '🎈', '🍕', '🎸', '🌻', '🍩', '🚲', '🎁', '⭐', '🏰', '🎨', '🍦', '🔔'] },
         { id: 'animals', icon: '🐶', pool: ['🐶', '🐱', '🐭', '🐰', '🦊', '🐻', '🐼', '🐸', '🦁', '🐵', '🐧', '🐢', '🐙', '🦋', '🐝', '🐘'] },
@@ -54,21 +58,27 @@ const MemoryPairs = (() => {
         return [{ text: sym, kind: 'emoji' }, { text: sym, kind: 'emoji' }];
     }
 
-    /** Shuffled deck: [{ id, pair, text, kind }], 2 cards per pair. Pure. */
-    function makeDeck(theme, pairs, r = Math.random) {
+    /**
+     * Shuffled deck: [{ id, pair, text, kind, sym }], 2 cards per pair. Pure.
+     * `rotation` (games already played with this theme) moves the starting point inside the pool,
+     * so repeated games do not keep offering the same pairs.
+     */
+    function makeDeck(theme, pairs, r = Math.random, rotation = 0) {
         const t = THEMES.find(x => x.id === theme); if (!t) throw new Error('unknown theme: ' + theme);
-        const n = Math.min(pairs, t.pool.length), chosen = shuffle(t.pool.slice(), r).slice(0, n), deck = [];
-        chosen.forEach((sym, i) => faces(theme, sym).forEach(f => deck.push({ pair: i, text: f.text, kind: f.kind })));
+        const chosen = ML.pickItems(t.pool, pairs, rotation, r), deck = [];
+        chosen.forEach((sym, i) => faces(theme, sym).forEach(f => deck.push({ pair: i, text: f.text, kind: f.kind, sym })));
         shuffle(deck, r);
-        return deck.map((c, i) => ({ id: i, pair: c.pair, text: c.text, kind: c.kind }));
+        return deck.map((c, i) => ({ id: i, pair: c.pair, text: c.text, kind: c.kind, sym: c.sym }));
     }
+    const poolOf = theme => (THEMES.find(x => x.id === theme) || { pool: [] }).pool;
     const isMatch = (a, b) => !!a && !!b && a.id !== b.id && a.pair === b.pair;
     /** 3 stars near the perfect game, 2 for a decent one, 1 to finish. */
     const stars = (moves, pairs) => moves <= Math.ceil(pairs * 1.5) + 1 ? 3 : moves <= Math.ceil(pairs * 2.5) ? 2 : 1;
     const sizeById = id => SIZES.find(s => s.id === id) || SIZES[0];
 
     // ---- state / storage ----
-    const S = { user: null, prog: { best: {}, xp: 0, streak: 0, last: '', theme: 'emoji', size: 'easy' }, deck: [], flipped: [], matched: 0, moves: 0, run: 0, bestRun: 0, busy: false, theme: 'emoji', size: 'easy', t0: 0, timer: null };
+    const S = { user: null, prog: { best: {}, xp: 0, streak: 0, last: '', theme: 'emoji', size: 'easy', learned: {}, guided: {}, rot: {} }, deck: [], flipped: [], matched: 0, moves: 0, run: 0, bestRun: 0, busy: false, theme: 'emoji', size: 'easy', t0: 0, timer: null,
+                guided: false, misses: 0, dotTimer: null };
     const $ = id => document.getElementById(id);
     const lang = () => { const l = ((window.PlatformI18n && PlatformI18n.currentLanguage) || 'es').slice(0, 2); return UI[l] ? l : 'es'; };
     const T = () => UI[lang()];
@@ -79,13 +89,27 @@ const MemoryPairs = (() => {
         return u.uid + (pid ? '_' + pid : '');
     }
     const key = () => 'memory_prog_' + owner();
-    const blank = () => ({ best: {}, xp: 0, streak: 0, last: '', theme: 'emoji', size: 'easy' });
-    function load() { try { S.prog = Object.assign(blank(), JSON.parse(localStorage.getItem(key()))); } catch (e) { S.prog = blank(); } S.theme = S.prog.theme; S.size = S.prog.size; }
+    const blank = () => ({ best: {}, xp: 0, streak: 0, last: '', theme: 'emoji', size: 'easy', learned: {}, guided: {}, rot: {} });
+    function load() {
+        try { S.prog = Object.assign(blank(), JSON.parse(localStorage.getItem(key()))); } catch (e) { S.prog = blank(); }
+        ['learned', 'guided', 'rot'].forEach(k => { if (!S.prog[k] || typeof S.prog[k] !== 'object') S.prog[k] = {}; });
+        S.theme = S.prog.theme; S.size = S.prog.size;
+    }
+    const reducedMotion = () => { try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } };
+    /** Speech is a bonus: silently skipped when the browser has no Web Speech API. */
+    function speak(text, queue) {
+        try {
+            if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') return;
+            if (!queue) window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(String(text)); u.lang = ML.SPEECH[lang()] || 'es-ES'; u.rate = .85;
+            window.speechSynthesis.speak(u);
+        } catch (e) { /* no speech */ }
+    }
     function save() { try { localStorage.setItem(key(), JSON.stringify(S.prog)); } catch (e) {} }
     const dayStr = (d = new Date()) => d.toISOString().slice(0, 10);
 
     // ---- home ----
-    function show(id) { ['mm-home', 'mm-play', 'mm-end'].forEach(s => { $(s).hidden = s !== id; }); window.scrollTo(0, 0); }
+    function show(id) { ['mm-home', 'mm-learn', 'mm-play', 'mm-end'].forEach(s => { $(s).hidden = s !== id; }); window.scrollTo(0, 0); }
     function chips(parent, label, items, current, onPick) {
         parent.appendChild(el('h2', 'mm-label', label));
         const row = el('div', 'mm-chips'); row.setAttribute('role', 'radiogroup'); row.setAttribute('aria-label', label);
@@ -109,17 +133,102 @@ const MemoryPairs = (() => {
         if (hint) li.appendChild(el('p', 'mm-hint', hint));
         const b = S.prog.best[S.theme + '_' + S.size];
         li.appendChild(el('p', 'mm-best', b ? `${t.best}: ${'★'.repeat(b.stars)}${'☆'.repeat(3 - b.stars)} · ${b.moves} ${t.moves.toLowerCase()}` : ''));
-        const go = el('button', 'mm-btn mm-go', `▶ ${t.start}`); go.type = 'button'; go.id = 'mm-start'; go.onclick = start; li.appendChild(go);
+        const go = el('button', 'mm-btn mm-go', `▶ ${t.start}`); go.type = 'button'; go.id = 'mm-start'; go.onclick = play; li.appendChild(go);
+        const lr = el('button', 'mm-btn ghost mm-go mm-learn-open', `📖 ${t.learnAgain}`); lr.type = 'button'; lr.id = 'mm-learn-open'; lr.onclick = () => showLearn(); li.appendChild(lr);
         box.appendChild(li);
     }
 
+    // ---- learn first ----
+    /** Play button: the first time a theme is played, the Aprende step comes first. */
+    function play() { if (!S.prog.learned[S.theme]) showLearn(); else start(); }
+
+    function stopDots() { clearTimeout(S.dotTimer); S.dotTimer = null; try { if ('speechSynthesis' in window) window.speechSynthesis.cancel(); } catch (e) { /* ignore */ } }
+    function finishLearn() {
+        stopDots();
+        S.prog.learned[S.theme] = true; save(); start();
+    }
+    function learnItems() {
+        const th = THEMES.find(x => x.id === S.theme), pool = th.pool;
+        if (S.theme === 'numbers') return pool.map(n => ({ sym: n, label: String(n) }));
+        if (S.theme === 'letters') return pool.map(c => ({ sym: c, label: c + c.toLowerCase() }));
+        return pool.map((c, i) => ({ sym: c, label: c, i }));
+    }
+    function showLearn() {
+        const t = T(), theme = S.theme, body = $('mm-learn-body'); stopDots();
+        $('mm-learn-title').textContent = `${t.learnTitle}: ${t.themes[theme]}`;
+        $('mm-learn-text').textContent = theme === 'numbers' ? t.learnNumbers : theme === 'letters' ? t.learnLetters : t.learnOther;
+        $('mm-learn-go').textContent = t.learnGo; $('mm-learn-skip').textContent = t.learnSkip;
+        body.textContent = '';
+        const stage = el('div', 'mm-stage'); stage.id = 'mm-stage'; stage.setAttribute('aria-live', 'polite');
+        stage.appendChild(el('p', 'mm-stage-hint', t.learnPick));
+        const strip = el('div', 'mm-strip'); strip.setAttribute('role', 'group'); strip.setAttribute('aria-label', t.learnPick);
+        const pool = THEMES.find(x => x.id === theme).pool;
+        learnItems().forEach(it => {
+            const b = el('button', 'mm-pick', it.label); b.type = 'button'; b.dataset.sym = String(it.sym);
+            b.onclick = () => { strip.querySelectorAll('.mm-pick').forEach(x => x.classList.toggle('on', x === b)); learnShow(stage, it, pool); };
+            strip.appendChild(b);
+        });
+        body.append(stage, strip);
+        show('mm-learn');
+        const first = strip.querySelector('.mm-pick'); if (first) first.focus();
+    }
+    /** What the stage shows after tapping an item. Numbers: dots appear one by one with a spoken count. */
+    function learnShow(stage, it, pool) {
+        const t = T(), theme = S.theme; stopDots(); stage.textContent = '';
+        if (theme === 'numbers') {
+            const n = it.sym, word = ML.NUM_WORDS[lang()][n - 1] || String(n);
+            stage.appendChild(el('div', 'mm-bignum', String(n)));
+            const dots = el('div', 'mm-dotsrow'); dots.id = 'mm-dotsrow'; stage.appendChild(dots);
+            const say = el('p', 'mm-learn-count', ''); say.id = 'mm-learn-count'; stage.appendChild(say);
+            const addDot = () => { dots.appendChild(el('span', 'mm-dot-ball', '●')); };
+            if (reducedMotion()) {
+                for (let i = 0; i < n; i++) addDot();
+                say.textContent = `${n} = ${word} (${n} ${n === 1 ? t.dots1 : t.dotsN})`; speak(`${n}, ${word}`);
+            } else {
+                try { if ('speechSynthesis' in window) window.speechSynthesis.cancel(); } catch (e) { /* ignore */ }
+                let i = 0;
+                const step = () => {
+                    i++; addDot(); say.textContent = Array.from({ length: i }, (_, k) => k + 1).join(' · '); speak(i, true);
+                    if (i < n) S.dotTimer = setTimeout(step, 650);
+                    else { S.dotTimer = null; say.textContent = `${n} = ${word} (${n} ${n === 1 ? t.dots1 : t.dotsN})`; }
+                };
+                step();
+            }
+            return;
+        }
+        if (theme === 'letters') {
+            const c = it.sym, row = el('div', 'mm-letterpair');
+            const up = el('div', 'mm-letter', c), lo = el('div', 'mm-letter', c.toLowerCase());
+            row.append(up, lo); stage.appendChild(row);
+            stage.appendChild(el('p', 'mm-learn-count', `${c} (${t.upper}) · ${c.toLowerCase()} (${t.lower})`));
+            speak(c); return;
+        }
+        // emoji / animals: the card and its pair side by side, with the name
+        const row = el('div', 'mm-letterpair');
+        row.append(el('div', 'mm-letter', it.sym), el('div', 'mm-letter', it.sym)); stage.appendChild(row);
+        const name = (ML.NAMES[theme][lang()] || ML.NAMES[theme].es)[pool.indexOf(it.sym)] || '';
+        stage.appendChild(el('p', 'mm-learn-count', `${t.pairWord}: ${name}`)); speak(name);
+    }
+
     // ---- game ----
+    /** Starts a game. The first game of each theme is the guided round: only 3 pairs and hints. */
     function start() {
-        const sz = sizeById(S.size);
-        S.deck = makeDeck(S.theme, sz.pairs); S.flipped = []; S.matched = 0; S.moves = 0; S.run = 0; S.bestRun = 0; S.busy = false; S.t0 = Date.now();
-        show('mm-play'); renderBoard(sz); progress();
+        stopDots();
+        S.guided = !S.prog.guided[S.theme];
+        const sz = S.guided ? { id: 'guided', pairs: 3, cols: 3 } : sizeById(S.size);
+        const rot = S.prog.rot[S.theme] || 0; S.prog.rot[S.theme] = rot + 1; save();
+        S.deck = makeDeck(S.theme, sz.pairs, Math.random, rot); S.flipped = []; S.matched = 0; S.moves = 0; S.misses = 0; S.run = 0; S.bestRun = 0; S.busy = false; S.t0 = Date.now(); S.cols = sz.cols;
+        show('mm-play'); renderBoard(sz); progress(); setGuide(null); setWhy('');
         const first = document.querySelector('#mm-card .mm-tile'); if (first) first.focus();
     }
+    function setWhy(txt, good) { const w = $('mm-why'); w.textContent = txt || ''; w.classList.toggle('good', !!good); w.hidden = !txt; }
+    /** Guided round banner: title + (after the first flip) "find the pair of X". */
+    function setGuide(findText) {
+        const g = $('mm-guide'), t = T(); g.hidden = !S.guided; if (!S.guided) return;
+        g.textContent = ''; g.append(el('b', null, t.guidedTitle), el('span', null, ' ' + t.guidedHint));
+        if (findText) g.appendChild(el('div', 'mm-find', findText));
+    }
+    const clearHints = () => document.querySelectorAll('#mm-card .mm-tile.hint').forEach(x => x.classList.remove('hint'));
     function progress() {
         const t = T(), total = S.deck.length / 2, p = Math.round(S.matched / total * 100);
         $('mm-barfill').style.width = p + '%'; $('mm-barfill').parentNode.setAttribute('aria-valuenow', p);
@@ -146,15 +255,28 @@ const MemoryPairs = (() => {
         if (S.busy || S.flipped.includes(i)) return;
         const c = S.deck[i], b = tileEl(i); if (!c || !b || b.classList.contains('matched')) return;
         setOpen(i, true); S.flipped.push(i);
-        if (S.flipped.length < 2) return;
+        if (S.flipped.length < 2) {
+            // Guided round: say what to look for; after a miss the pair glows
+            if (S.guided) {
+                setGuide(T().find.split('{a}').join(ML.cardName(S.theme, c, lang(), poolOf(S.theme))));
+                if (S.misses >= 1) { const h = ML.findHint(S.deck, i), ht = tileEl(h); if (ht) ht.classList.add('hint'); }
+            }
+            return;
+        }
+        clearHints();
         S.moves++;
         const [a, d] = S.flipped.map(k => S.deck[k]);
         if (isMatch(a, d)) {
+            setWhy(T().matchedWhy.split('{a}').join(ML.cardName(S.theme, a, lang(), poolOf(S.theme))).split('{b}').join(ML.cardName(S.theme, d, lang(), poolOf(S.theme))), true);
+            if (S.guided) setGuide(null);
             S.flipped.forEach(k => { const t = tileEl(k); t.classList.add('matched'); t.disabled = true; t.setAttribute('aria-label', S.deck[k].text + ', ' + T().matched); });
             S.flipped = []; S.matched++; S.run++; S.bestRun = Math.max(S.bestRun, S.run); progress();
             if (S.matched === S.deck.length / 2) setTimeout(finish, 450);
         } else {
-            S.run = 0; S.busy = true; progress();
+            S.run = 0; S.busy = true; S.misses++; progress();
+            // Explain WHY: both card names (and a tip) stay on screen until the next flip
+            setWhy(ML.whyNot(S.theme, a, d, lang(), poolOf(S.theme)));
+            if (S.guided) setGuide(null);
             const pair = S.flipped.slice(); S.flipped = [];
             pair.forEach(k => tileEl(k).classList.add('miss'));
             S.timer = setTimeout(() => { pair.forEach(k => { setOpen(k, false); const t = tileEl(k); if (t) t.classList.remove('miss'); }); S.busy = false; }, MISMATCH_MS);
@@ -170,8 +292,10 @@ const MemoryPairs = (() => {
         $('mm-back').textContent = t.back; $('mm-back').onclick = () => { renderHome(); show('mm-home'); };
         show('mm-end');
         const k = S.theme + '_' + S.size, prev = S.prog.best[k];
-        if (!prev || st > prev.stars || (st === prev.stars && S.moves < prev.moves)) S.prog.best[k] = { stars: st, moves: S.moves };
-        S.prog.xp = (S.prog.xp || 0) + 10 + st * 5;
+        // The guided round (3 pairs) only unlocks the normal sizes, it does not set a record
+        if (S.guided) S.prog.guided[S.theme] = true;
+        else if (!prev || st > prev.stars || (st === prev.stars && S.moves < prev.moves)) S.prog.best[k] = { stars: st, moves: S.moves };
+        S.prog.xp = (S.prog.xp || 0) + (S.guided ? 5 : 10 + st * 5);
         const today = dayStr(), y = dayStr(new Date(Date.now() - 864e5));
         if (S.prog.last !== today) { S.prog.streak = S.prog.last === y ? (S.prog.streak || 0) + 1 : 1; S.prog.last = today; }
         save();
@@ -184,23 +308,25 @@ const MemoryPairs = (() => {
         }
     }
 
-    function leave() { clearTimeout(S.timer); S.busy = false; renderHome(); show('mm-home'); }
+    function leave() { clearTimeout(S.timer); stopDots(); S.busy = false; renderHome(); show('mm-home'); }
 
     function init() {
         $('mm-quit').onclick = leave;
+        $('mm-learn-go').onclick = finishLearn; $('mm-learn-skip').onclick = finishLearn;
+        $('mm-learn-back').onclick = leave;
         document.addEventListener('keydown', e => {
             if ($('mm-play').hidden) return;
             const tiles = [...document.querySelectorAll('#mm-card .mm-tile')], cur = tiles.indexOf(document.activeElement);
             if (cur < 0 || !tiles.length) return;
-            const cols = sizeById(S.size).cols, d = { ArrowRight: 1, ArrowLeft: -1, ArrowDown: cols, ArrowUp: -cols }[e.key];
+            const cols = S.cols || sizeById(S.size).cols, d = { ArrowRight: 1, ArrowLeft: -1, ArrowDown: cols, ArrowUp: -cols }[e.key];
             if (d) { e.preventDefault(); const n = cur + d; if (n >= 0 && n < tiles.length) tiles[n].focus(); }
         });
         load(); renderHome(); show('mm-home');
         if (window.PlatformAuth && PlatformAuth.onAuthStateChanged) PlatformAuth.onAuthStateChanged(u => { S.user = u || null; load(); renderHome(); });
-        window.addEventListener('platformLanguageChanged', () => { if (!$('mm-home').hidden) renderHome(); });
+        window.addEventListener('platformLanguageChanged', () => { if (!$('mm-home').hidden) renderHome(); else if (!$('mm-learn').hidden) showLearn(); });
     }
 
-    const api = { init, state: S, THEMES, SIZES, makeDeck, isMatch, stars, faces };
+    const api = { init, state: S, THEMES, SIZES, makeDeck, isMatch, stars, faces, pickItems: ML.pickItems, learn: ML };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     return api;
 })();

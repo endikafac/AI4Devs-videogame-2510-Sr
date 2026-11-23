@@ -145,32 +145,11 @@ const I18N = {
  *    Right index  → j h
  *    Right mid    → k   Right ring → l   Right pinky → ñ
  * ──────────────────────────────────────────────────────────── */
-const KEYBOARD_ROWS = [
-    ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
-    ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
-    ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'ñ'],
-    ['<', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '-'],
-    [' ']
-];
+const KEYBOARD_ROWS = TypingLesson.KEYBOARD_ROWS;
 
 /* 0=left-pinky  1=left-ring  2=left-mid  3=left-idx
    4=right-idx   5=right-mid  6=right-ring  7=right-pinky  8=thumb */
-const FINGER_MAP = {
-    // Numbers (same finger as letter underneath)
-    '1': 0, '2': 1, '3': 2, '4': 3, '5': 3,
-    '6': 4, '7': 4, '8': 5, '9': 6, '0': 7,
-    // QWERTY row
-    'q': 0, 'w': 1, 'e': 2, 'r': 3, 't': 3,
-    'y': 4, 'u': 4, 'i': 5, 'o': 6, 'p': 7,
-    // Home row  a s d f g | h j k l ñ
-    'a': 0, 's': 1, 'd': 2, 'f': 3, 'g': 3,
-    'h': 4, 'j': 4, 'k': 5, 'l': 6, 'ñ': 7,
-    // Bottom row  < z x c v b | n m , . -
-    '<': 0, 'z': 0, 'x': 1, 'c': 2, 'v': 3, 'b': 3,
-    'n': 4, 'm': 4, ',': 5, '.': 6, '-': 7,
-    // Space
-    ' ': 8
-};
+const FINGER_MAP = TypingLesson.FINGER_MAP;
 
 const FINGER_CLASSES = [
     'ty-finger-left-pinky','ty-finger-left-ring','ty-finger-left-mid','ty-finger-left-idx',
@@ -293,6 +272,7 @@ const TypeMasterGame = {
         this._setText('ty-quit-cancel', this._t('cancel'));
         this._setText('ty-quit-ok', this._t('quit'));
         this._setText('ty-kb-tip', this._t('kbTip'));
+        this._setText('ty-lesson-btn', TypingLesson.text(this.state.lang, 'lessonReplay'));
         if (!this.state.selectedLevel) this._setText('ty-level-desc', this._t('levelPrompt'));
         this._buildAgeRow();
 
@@ -413,6 +393,13 @@ const TypeMasterGame = {
             if (this.state.selectedLevel) this._startLevel(this.state.selectedLevel);
         });
         on('ty-quit-btn',   () => this._quitGame());
+        on('ty-lesson-btn', () => {
+            const lvl = this.state.selectedLevel || 1;
+            this._openLesson(TypingLesson.groupForLevel(lvl), lvl);
+        });
+        on('ty-lesson-skip',  () => this._lessonFinish());
+        on('ty-lesson-start', () => this._lessonFinish());
+        on('ty-lesson-try',   () => this._lessonStartDrill());
         on('ty-retry-btn',  () => this._startLevel(this.state.level));
         on('ty-next-btn',   () => {
             const next = Math.min(this.state.level + 1, MAX_LEVEL);
@@ -425,6 +412,8 @@ const TypeMasterGame = {
         document.addEventListener('platformLanguageChanged', () => {
             this._detectLanguage();
             this._updateStaticUI();
+            const ls = document.getElementById('ty-lesson');
+            if (this._lesson && ls && ls.classList.contains('active')) this._renderLesson();
         });
     },
 
@@ -481,6 +470,184 @@ const TypeMasterGame = {
         }
     },
 
+    /* ── Keyboard lesson (before a new key group) ───────── */
+
+    _lesson: null,   // { group, level, seq, step, drilling, done }
+
+    _lessonSeen(id) {
+        try { return localStorage.getItem('typemaster_lesson_' + id) === '1'; } catch (e) { return false; }
+    },
+    _markLessonSeen(id) {
+        try { localStorage.setItem('typemaster_lesson_' + id, '1'); } catch (e) { /* ignore */ }
+    },
+    _lt(key, vars) { return TypingLesson.text(this.state.lang, key, vars); },
+
+    _openLesson(group, level) {
+        this._stopTimer();
+        this._detachKeydown();
+        this._detachLessonKeys();
+        this._lesson = { group, level, seq: [], step: 0, drilling: false, done: false };
+        this._renderLesson();
+        this._showScreen('ty-lesson');
+    },
+
+    _el(tag, cls, text) {
+        const e = document.createElement(tag);
+        if (cls) e.className = cls;
+        if (text !== undefined && text !== null) e.textContent = text;
+        return e;
+    },
+
+    /** Builds the lesson: coloured keyboard, hands diagram, drill panel. All text through textContent. */
+    _renderLesson() {
+        const L = this._lesson; if (!L) return;
+        const lang = this.state.lang, group = L.group;
+        const groupKey = { home: 'groupHome', letters: 'groupLetters', numbers: 'groupNumbers' }[group.id];
+        const descKey = { home: 'descHome', letters: 'descLetters', numbers: 'descNumbers' }[group.id];
+        this._setText('ty-lesson-title', this._lt('lessonTitle') + ': ' + this._lt(groupKey));
+        this._setText('ty-lesson-desc', this._lt(descKey));
+        this._setText('ty-lesson-keys-title', this._lt('lessonKeysTitle'));
+        this._setText('ty-lesson-hands-title', this._lt('lessonHandsTitle'));
+        this._setText('ty-lesson-tap', this._lt('lessonTap'));
+        this._setText('ty-lesson-skip', this._lt('lessonSkip'));
+        this._setText('ty-lesson-try', this._lt('lessonTry'));
+        this._setText('ty-lesson-start', this._lt('lessonStart'));
+        this._setText('ty-drill-title', this._lt('lessonDrillTitle'));
+        this._setText('ty-drill-intro', this._lt('lessonDrillIntro'));
+
+        // On-screen keyboard: each key has its finger colour; keys of this group are bright
+        const kb = document.getElementById('ty-lesson-kb');
+        kb.textContent = '';
+        KEYBOARD_ROWS.forEach(row => {
+            const r = this._el('div', 'ty-kb-row');
+            row.forEach(key => {
+                const k = this._el('div', 'ty-key ' + FINGER_CLASSES[FINGER_MAP[key]] + (group.keys.includes(key) || key === ' ' ? '' : ' dim') + (key === ' ' ? ' space' : ''), TypingLesson.keyLabel(key));
+                k.dataset.key = key;
+                r.appendChild(k);
+            });
+            kb.appendChild(r);
+        });
+
+        // Hands: one row per hand, one tappable bar per finger
+        const hands = document.getElementById('ty-lesson-hands');
+        hands.textContent = '';
+        [['leftHand', [0, 1, 2, 3]], ['rightHand', [4, 5, 6, 7]]].forEach(([labelKey, fingers]) => {
+            const hand = this._el('div', 'ty-hand');
+            hand.appendChild(this._el('div', 'ty-hand-label', this._lt(labelKey)));
+            const bars = this._el('div', 'ty-hand-bars');
+            fingers.forEach(fi => {
+                const b = this._el('button', 'ty-fbar');
+                b.type = 'button';
+                b.dataset.finger = fi;
+                b.style.setProperty('--fc', TypingLesson.FINGER_COLORS[fi]);
+                b.appendChild(this._el('span', 'ty-fbar-keys', TypingLesson.keysOfFinger(group, fi).map(k => k.toUpperCase()).join(' ') || '·'));
+                b.appendChild(this._el('span', 'ty-fbar-name', TypingLesson.fingerName(lang, fi)));
+                b.addEventListener('click', () => this._lessonSelectFinger(fi));
+                bars.appendChild(b);
+            });
+            hand.appendChild(bars);
+            hands.appendChild(hand);
+        });
+        const th = this._el('button', 'ty-fbar ty-fbar-thumb');
+        th.type = 'button'; th.dataset.finger = 8;
+        th.style.setProperty('--fc', TypingLesson.FINGER_COLORS[8]);
+        th.appendChild(this._el('span', 'ty-fbar-name', this._lt('thumbLabel')));
+        th.addEventListener('click', () => this._lessonSelectFinger(8));
+        hands.appendChild(th);
+
+        // Drill panel / buttons depending on the step
+        document.getElementById('ty-drill').classList.toggle('hidden', !L.drilling && !L.done);
+        document.getElementById('ty-lesson-try').classList.toggle('hidden', L.drilling || L.done);
+        document.getElementById('ty-lesson-start').classList.toggle('hidden', !L.done);
+        this._setText('ty-lesson-info', '');
+        if (L.drilling && !L.done) this._lessonShowTarget();
+        if (L.done) this._setText('ty-drill-msg', this._lt('lessonDone'));
+    },
+
+    _lessonSelectFinger(fi) {
+        const group = this._lesson.group;
+        document.querySelectorAll('#ty-lesson-hands .ty-fbar').forEach(b => b.classList.toggle('selected', Number(b.dataset.finger) === fi));
+        const keys = fi === 8 ? ['ESP'] : TypingLesson.keysOfFinger(group, fi).map(k => k.toUpperCase());
+        document.querySelectorAll('#ty-lesson-kb .ty-key').forEach(k => {
+            k.classList.toggle('current-key', FINGER_MAP[k.dataset.key] === fi);
+        });
+        this._setText('ty-lesson-info', this._lt('fingerKeys', { finger: TypingLesson.fingerName(this.state.lang, fi), keys: keys.join(' ') || '·' }));
+    },
+
+    _lessonStartDrill() {
+        const L = this._lesson; if (!L) return;
+        L.seq = TypingLesson.drillSequence(L.group);
+        L.step = 0; L.drilling = true; L.done = false;
+        this._renderLesson();
+        this._attachLessonKeys();
+    },
+
+    _lessonShowTarget() {
+        const L = this._lesson, key = L.seq[L.step], fi = FINGER_MAP[key];
+        this._setText('ty-drill-key', TypingLesson.keyLabel(key));
+        document.getElementById('ty-drill-key').style.setProperty('--fc', TypingLesson.FINGER_COLORS[fi]);
+        this._setText('ty-drill-progress', this._lt('lessonDrillProgress', { n: L.step + 1, m: L.seq.length }));
+        this._setText('ty-drill-msg', this._lt('lessonDrillNow', { k: TypingLesson.keyLabel(key), finger: TypingLesson.fingerName(this.state.lang, fi) }));
+        document.querySelectorAll('#ty-lesson-kb .ty-key').forEach(k => k.classList.toggle('current-key', k.dataset.key === key));
+        document.querySelectorAll('#ty-lesson-hands .ty-fbar').forEach(b => b.classList.toggle('selected', Number(b.dataset.finger) === fi));
+    },
+
+    /** A key pressed during the guided drill: no timer, no errors counted, always explained. */
+    _lessonKey(ch) {
+        const L = this._lesson;
+        if (!L || !L.drilling || L.done) return;
+        const expected = L.seq[L.step];
+        if (String(ch).toLowerCase() === expected) {
+            L.step++;
+            if (L.step >= L.seq.length) {
+                L.drilling = false; L.done = true;
+                this._detachLessonKeys();
+                this._renderLesson();
+                const st = document.getElementById('ty-lesson-start'); if (st) st.focus();
+            } else {
+                this._lessonShowTarget();
+            }
+        } else {
+            this._setText('ty-drill-msg', TypingLesson.explainWrong(this.state.lang, expected, ch));
+            const kEl = document.getElementById('ty-drill-key');
+            if (kEl) { kEl.classList.remove('ty-shake'); void kEl.offsetWidth; kEl.classList.add('ty-shake'); }
+        }
+    },
+
+    _attachLessonKeys() {
+        this._detachLessonKeys();
+        this._lessonKeydown = (e) => {
+            if (e.key === 'Escape') { this._showHome(); return; }
+            if (e.ctrlKey || e.metaKey || e.altKey || IGNORED_KEYS.has(e.key) || e.key.length !== 1) return;
+            if (e.key === ' ') e.preventDefault();
+            this._lessonKey(e.key);
+        };
+        document.addEventListener('keydown', this._lessonKeydown);
+        const mi = document.getElementById('ty-mobile-input');
+        if (mi) {
+            mi.value = '';
+            this._lessonInput = () => { const v = mi.value; mi.value = ''; if (v) this._lessonKey(v[v.length - 1]); };
+            mi.addEventListener('input', this._lessonInput);
+            setTimeout(() => { try { mi.focus(); } catch (e) { /* ignore */ } }, 100);
+        }
+    },
+
+    _detachLessonKeys() {
+        if (this._lessonKeydown) { document.removeEventListener('keydown', this._lessonKeydown); this._lessonKeydown = null; }
+        const mi = document.getElementById('ty-mobile-input');
+        if (mi && this._lessonInput) { mi.removeEventListener('input', this._lessonInput); this._lessonInput = null; }
+    },
+
+    /** Lesson done or skipped: remember it and start the timed level. */
+    _lessonFinish() {
+        const L = this._lesson; if (!L) return;
+        this._markLessonSeen(L.group.id);
+        const level = L.level;
+        this._detachLessonKeys();
+        this._lesson = null;
+        this._beginLevel(level);
+    },
+
     /* ── Screen navigation ──────────────────────────────── */
 
     _showScreen(id) {
@@ -498,6 +665,8 @@ const TypeMasterGame = {
     _showHome() {
         this._stopTimer();
         this._detachKeydown();
+        this._detachLessonKeys();
+        this._lesson = null;
         this.state.gameStarted = false;
         this.state.gameOver    = false;
         this._buildLevelGrid();
@@ -506,8 +675,17 @@ const TypeMasterGame = {
 
     /* ── Start level ─────────────────────────────────────── */
 
+    /** Entry point for every level start: a new key group gets its keyboard lesson first. */
     _startLevel(level) {
+        const group = TypingLesson.lessonForLevel(level, id => this._lessonSeen(id));
+        if (group) { this._openLesson(group, level); return; }
+        this._beginLevel(level);
+    },
+
+    _beginLevel(level) {
         this._stopTimer();
+        this._detachLessonKeys();
+        this._lesson = null;
 
         Object.assign(this.state, {
             level,
@@ -527,6 +705,7 @@ const TypeMasterGame = {
         this._setText('ty-acc-val',  '100%');
         this._setText('ty-time-val', '0:00');
         this._setText('ty-input-hint', this._t('startTyping'));
+        this._setText('ty-finger-tip', '');
 
         const bar = document.getElementById('ty-progress');
         if (bar) bar.style.width = '0%';
@@ -610,9 +789,12 @@ const TypeMasterGame = {
         if (e.key === current.char) {
             current.state = 'correct';
             this.state.correctKeys++;
+            this._setText('ty-finger-tip', '');
         } else {
             current.state = 'wrong';
             this.state.errors++;
+            // Explain the right finger for the key that was expected
+            this._setText('ty-finger-tip', TypingLesson.explainWrong(this.state.lang, current.char, e.key));
         }
 
         this.state.pos++;

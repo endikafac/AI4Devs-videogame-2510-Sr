@@ -622,3 +622,20 @@ html[data-large-text]{font-size:125%}
 .pid-del { min-width: 48px; padding: 0; }
 
 .platform-install-btn{min-height:40px;padding:0 18px;border:0;border-radius:12px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;font-weight:700;font-size:.95rem;cursor:pointer}
+
+/* ── Family accounts (Familia screen) ─────────────────────────────────────── */
+.pid-modal h3.pid-fam-h { margin: 18px 0 8px; font-family: var(--font-display); font-size: 1rem; }
+.pid-fam-input { width: 100%; box-sizing: border-box; min-height: 48px; padding: 10px 12px; font-size: 1rem; font-family: inherit;
+  border-radius: var(--radius-sm); border: 1px solid var(--border-color); background: var(--bg-raised); color: var(--text-primary); }
+.pid-fam-wide { width: 100%; min-height: 48px; margin-top: 12px; }
+.pid-fam-card { margin: 8px 0; padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--bg-raised); }
+.pid-fam-card p { margin: 0 0 8px; font-size: .92rem; line-height: 1.45; }
+.pid-fam-card .pid-actions { margin-top: 8px; }
+.pid-fam-card .pid-btn { min-height: 48px; }
+.pid-fam-msg { white-space: pre-wrap; overflow-wrap: anywhere; user-select: all; }
+.pid-fam-row { display: flex; gap: 8px; align-items: center; justify-content: space-between; margin: 8px 0; }
+.pid-fam-who { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.pid-fam-who small { display: block; color: var(--text-secondary); font-size: .8rem; }
+.pid-fam-btn { min-height: 48px; min-width: 48px; flex: none; }
+.pid-fam-head { margin: 10px 0 0; font-size: .85rem; font-weight: 600; color: var(--text-secondary); }
+.pid-modal .pid-btn { min-height: 48px; }

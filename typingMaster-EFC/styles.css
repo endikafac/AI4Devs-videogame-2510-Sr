@@ -711,3 +711,40 @@
 .ty-kb-tip { text-align: center; font-size: 0.75rem; color: var(--text-muted); margin: 6px 0; }
 @media (hover: none) { .ty-kb-tip { display: none; } }
 .ty-age-btn:focus-visible, .ty-level-btn:focus-visible, .ty-btn:focus-visible { outline: 3px solid var(--hub-brand-color); outline-offset: 2px; }
+
+/* ── Keyboard lesson ───────────────────────────────────── */
+.ty-lesson-title { margin: 0 0 6px; font-size: 1.35rem; }
+.ty-lesson-desc, .ty-lesson-tap { color: var(--text-secondary); margin: 4px 0 10px; }
+.ty-lesson-sub { margin: 16px 0 6px; font-size: 1rem; }
+.ty-lesson-kb { display: block !important; }
+.ty-lesson-kb .ty-key.dim { opacity: .35; }
+.ty-hands { display: flex; flex-direction: column; gap: 10px; }
+.ty-hand-label { font-weight: 700; font-size: .85rem; margin-bottom: 4px; }
+.ty-hand-bars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.ty-fbar { min-height: 72px; min-width: 48px; padding: 6px 4px; border-radius: 14px; border: 3px solid var(--fc, #888); background: color-mix(in srgb, var(--fc, #888) 22%, transparent);
+  color: var(--text-primary); font: inherit; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 4px; }
+.ty-fbar.selected { background: var(--fc, #888); color: #111; box-shadow: 0 0 0 3px rgba(255,255,255,.35); }
+.ty-fbar:focus-visible { outline: 3px solid #fbbf24; outline-offset: 2px; }
+.ty-fbar-keys { font-weight: 800; font-size: 1rem; letter-spacing: 1px; overflow-wrap: anywhere; }
+.ty-fbar-name { font-size: .68rem; line-height: 1.1; text-align: center; overflow-wrap: anywhere; }
+.ty-fbar-thumb { min-height: 52px; flex-direction: row; justify-content: center; }
+.ty-lesson-info { min-height: 1.4em; font-weight: 700; margin: 8px 0; }
+.ty-drill { margin-top: 8px; padding: 12px; border-radius: 16px; border: 2px dashed var(--border-color, rgba(255,255,255,.2)); text-align: center; }
+.ty-drill-key { display: inline-flex; align-items: center; justify-content: center; min-width: 88px; height: 88px; padding: 0 12px; border-radius: 20px; font-size: 2.6rem; font-weight: 900;
+  background: var(--fc, #888); color: #111; margin: 6px 0; }
+.ty-drill-progress { margin: 0; color: var(--text-secondary); font-size: .85rem; }
+.ty-drill-msg { min-height: 2.6em; font-weight: 700; margin: 6px 0 0; }
+.ty-shake { animation: tyShake .35s; }
+@keyframes tyShake { 20%, 60% { transform: translateX(-7px); } 40%, 80% { transform: translateX(7px); } }
+.ty-lesson-actions { display: flex; flex-direction: column; gap: 10px; margin: 16px 0 24px; }
+.ty-lesson-actions .ty-btn { min-height: 48px; width: 100%; }
+.ty-lesson-open { min-height: 48px; }
+.ty-finger-tip { text-align: center; min-height: 1.4em; font-weight: 700; color: var(--hub-danger, #ef4444); margin: 6px 0; }
+@media (prefers-reduced-motion: reduce) { .ty-shake { animation: none; } }
+
+.ty-lesson-kb { overflow-x: visible; }
+.ty-lesson-kb .ty-kb-row { gap: 3px; }
+.ty-lesson-kb .ty-key { width: auto; flex: 1 1 0; min-width: 0; max-width: 44px; height: 38px; font-size: .7rem; opacity: .8; }
+.ty-lesson-kb .ty-key.dim { opacity: .3; }
+.ty-lesson-kb .ty-key.space { flex: 0 1 60%; max-width: none; }
+.ty-lesson-kb .ty-key.current-key { opacity: 1; }

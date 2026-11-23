@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Fracciones con Pizza">
     <link rel="apple-touch-icon" href="../icons/icon-192.png">
-    <meta name="description" content="Fracciones con Pizza: reconoce, compara, convierte y suma fracciones con pizzas y barras.">
+    <meta name="description" content="Fracciones con Pizza: aprende cada tema con dibujos interactivos y practica fracciones, equivalentes, recta numérica, fracción de una cantidad, números mixtos y porcentajes.">
     <title>Fracciones con Pizza – Games Hub</title>
     <link rel="stylesheet" href="../platform/platform.css">
     <link rel="stylesheet" href="styles.css">
@@ -26,11 +26,33 @@
         <ol class="fr-path" id="fr-path"></ol>
     </section>
 
+    <section id="fr-learn" class="fr-screen" hidden>
+        <div class="fr-top">
+            <button class="fr-quit" id="fr-l-quit" type="button" aria-label="Salir">✕</button>
+            <h2 class="fr-ltitle" id="fr-l-title"></h2>
+            <button class="fr-btn ghost fr-skip" id="fr-skip" type="button">Saltar</button>
+        </div>
+        <div class="fr-card fr-lcard">
+            <p class="fr-intro" id="fr-l-intro"></p>
+            <div id="fr-widget"></div>
+            <div class="fr-live" id="fr-live" aria-live="polite"></div>
+            <div class="fr-example" id="fr-example">
+                <b id="fr-ex-label"></b>
+                <p id="fr-ex-text"></p>
+            </div>
+            <div class="fr-lbtns">
+                <button class="fr-btn" id="fr-ex-next" type="button"></button>
+                <button class="fr-btn" id="fr-learn-done" type="button" hidden></button>
+            </div>
+        </div>
+    </section>
+
     <section id="fr-play" class="fr-screen" hidden>
         <div class="fr-top">
             <button class="fr-quit" id="fr-quit" type="button" aria-label="Salir">✕</button>
             <div class="fr-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i id="fr-barfill"></i></div>
             <span class="fr-count" id="fr-count" aria-live="polite"></span>
+            <button class="fr-btn ghost fr-learnbtn" id="fr-learnbtn" type="button">📖 Aprender</button>
         </div>
         <div class="fr-card" id="fr-card"></div>
         <div class="fr-feedback" id="fr-feedback" hidden aria-live="assertive"></div>

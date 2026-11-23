@@ -176,6 +176,8 @@ const cc = CT('countries.json') || {}, rc = CT('rivers.json') || {}, mc = CT('mo
   const r2 = CT('rivers-spain2.json') || {}, m2 = CT('mountains-spain2.json') || {};
   const ids = new Set((rc.spain || []).map(x => x.id).concat(Object.keys(rc.spainExisting || {})));
   rc.spain = (rc.spain || []).concat((r2.spain || []).filter(x => !ids.has(x.id)));
+  const r3 = CT('rivers-spain3.json') || {}, ids3 = new Set(rc.spain.map(x => x.id).concat(Object.keys(rc.spainExisting || {})));
+  rc.spain = rc.spain.concat((r3.spain || []).filter(x => !ids3.has(x.id)));
   const mi = new Set((mc.spain || []).map(x => x.id));
   mc.spain = (mc.spain || []).concat((m2.spain || []).filter(x => !mi.has(x.id)));
 }
@@ -236,7 +238,15 @@ const sivers = rsp.map(([id, es, en, ls]) => smooth(id, es, en, ls, (rc.spainExi
 const smount = ((mc.spain) || []).map(m => { const p = sp([m.lon, m.lat]); return p && {id: m.id, es: m.es, en: m.en, m: m.m, kind: m.kind, where: m.where, fact: m.fact, x: +p[0].toFixed(1), y: +p[1].toFixed(1)}; }).filter(Boolean);
 const addInf = (arr, tbl) => arr.map(r => { const x = (tbl || {})[r.n]; if (x) r.inf = x; if (eu && eu.territories && eu.territories[r.n]) r.inf = Object.assign({}, r.inf, eu.territories[r.n]); return r; });
 const bb2 = sg.bounds({type: 'FeatureCollection', features: ccaa}), vbS = [Math.round(bb2[0][0]) - 12, Math.round(bb2[0][1]) - 12, Math.round(bb2[1][0] - bb2[0][0]) + 24, Math.round(bb2[1][1] - bb2[0][1]) + 24];
+// neighbouring countries drawn with the Spain projection, for orientation (Portugal, France, Andorra, Morocco, Algeria)
+const NBR = {'620': 'PT', '250': 'FR', '020': 'AD', '504': 'MA', '012': 'DZ'};
+const neighbors = wf.filter(f => NBR[String(f.id).padStart(3, '0')]).map(f => {
+  const iso2 = NBR[String(f.id).padStart(3, '0')], d = sg(f); if (!d) return null;
+  const c = labelPoint(f, sp, sg), inside = c && c[0] > vbS[0] && c[0] < vbS[0] + vbS[2] && c[1] > vbS[1] && c[1] < vbS[1] + vbS[3];
+  return {i: iso2, n: f.properties.name, d, x: inside ? +c[0].toFixed(1) : null, y: inside ? +c[1].toFixed(1) : null};
+}).filter(Boolean);
 const eu = CT('euskadi.json');
+if (eu) { const e2 = CT('euskadi-rivers2.json'); if (e2) { const have = new Set((eu.rivers || []).map(x => x.id)); eu.rivers = (eu.rivers || []).concat((e2.rivers || []).filter(x => !have.has(x.id))); Object.entries(e2.kmFix || {}).forEach(([id, km]) => { const r = eu.rivers.find(x => x.id === id); if (r && !r.km) r.km = km; }); } }
 let eus = null;
 if (eu) {
   const EUP = ['Araba/Álava', 'Bizkaia', 'Gipuzkoa'], euFeats = prov.filter(f => EUP.includes(f.properties.name));
@@ -249,7 +259,7 @@ if (eu) {
     rivers: (eu.rivers || []).filter(r => r.pts && r.pts.length > 2).map(r => smooth('eu-' + r.id, r.es, r.en || r.es, r.pts, Object.assign({eu: r.eu}, r), euFeats))
   };
 }
-const spain = {eus, vb: vbS, w: W, h: H, ccaa: addInf(pack(ccaa), spc.ccaa), prov: addInf(pack(prov), spc.prov), rivers: sivers, mount: smount, border: sp.getCompositionBorders()};
+const spain = {neighbors, eus, vb: vbS, w: W, h: H, ccaa: addInf(pack(ccaa), spc.ccaa), prov: addInf(pack(prov), spc.prov), rivers: sivers, mount: smount, border: sp.getCompositionBorders()};
 fs.writeFileSync(OUT + 'spain.js', 'window.MapData=window.MapData||{};MapData.spain=' + JSON.stringify(spain) + ';\n');
 console.log('spain', fs.statSync(OUT + 'spain.js').size, spain.ccaa.map(c => c.n).join('|'));
 console.log(spain.prov.map(c => c.n).join('|'));

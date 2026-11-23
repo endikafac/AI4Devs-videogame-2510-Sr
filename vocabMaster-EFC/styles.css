@@ -24,7 +24,7 @@ body { background: var(--bg-page); color: var(--text-primary); font-family: var(
 @media (min-width: 640px) { .vm-packs { grid-template-columns: repeat(3, 1fr); } }
 
 .vm-top { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
-.vm-quit { min-height: 40px; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--border-color);
+.vm-quit { min-height: 48px; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--border-color);
   background: transparent; color: var(--text-primary); font: inherit; cursor: pointer; }
 .vm-bar { flex: 1; height: 10px; border-radius: 5px; background: var(--bg-raised); overflow: hidden; }
 .vm-bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #ec4899, #f59e0b); transition: width .3s; }
@@ -65,3 +65,21 @@ body { background: var(--bg-page); color: var(--text-primary); font-family: var(
 .vm-endbtns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
 [data-high-contrast="true"] .vm-opt, [data-high-contrast="true"] .vm-pack { border-width: 2px; border-color: var(--text-primary); }
 @media (prefers-reduced-motion: reduce) { .vm-bar i { transition: none; } }
+
+/* study cards, guided check, explained feedback */
+.vm-hint { color: var(--text-secondary); margin: 0; font-size: .9rem; }
+.vm-flip { width: 100%; max-width: 360px; min-height: 220px; padding: 16px; border-radius: var(--radius-lg, 20px); border: 3px solid #ec4899; background: var(--bg-raised);
+  color: var(--text-primary); font: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; }
+.vm-flip:focus-visible { outline: 3px solid var(--hub-accent, #f59e0b); outline-offset: 3px; }
+.vm-face { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.vm-flip .vm-backface { display: none; }
+.vm-flip.flipped .vm-front { display: none; }
+.vm-flip.flipped .vm-backface { display: flex; animation: vmFlipIn .25s ease-out; }
+@keyframes vmFlipIn { from { opacity: 0; transform: rotateY(90deg); } to { opacity: 1; transform: none; } }
+.vm-count-s { color: var(--text-secondary); margin: 0; font-size: .85rem; }
+.vm-fb-head { display: block; font-weight: 800; }
+.vm-fb-line { display: block; font-weight: 600; margin-top: 4px; overflow-wrap: anywhere; }
+.vm-fb-tail { font-weight: 700; }
+.vm-fb .vm-fb-line { color: var(--text-primary); }
+.vm-btn[hidden] { display: none; }
+@media (prefers-reduced-motion: reduce) { .vm-flip.flipped .vm-backface { animation: none; } .vm-bar i { transition: none; } }

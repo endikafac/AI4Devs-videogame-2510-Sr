@@ -1066,3 +1066,27 @@ body {
 .ev-level-grid > div { display: flex; }
 .ev-level-grid .ev-level-btn { width: 100%; }
 .ev-type-grid .ev-fill-input { width: 100%; max-width: 320px; min-height: 48px; font-size: 1.05rem; }
+
+/* ── Lesson: regular vs irregular ───────────────────────── */
+.ev-lesson-title { margin: 0 0 8px; font-size: 1.3rem; }
+.ev-lesson-intro { color: var(--text-secondary); margin: 6px 0 12px; }
+.ev-lesson-open { min-height: 48px; width: 100%; margin-bottom: 8px; }
+.ev-lcard { border: 2px solid var(--border-color, rgba(255,255,255,.15)); border-radius: 16px; padding: 12px; margin: 0 0 12px; background: var(--bg-surface, transparent); }
+.ev-lcard.regular { border-color: #22c55e; }
+.ev-lcard.irregular { border-color: #f59e0b; }
+.ev-lcard-title { margin: 0 0 4px; font-size: 1.05rem; }
+.ev-lcard-text { margin: 0 0 8px; color: var(--text-secondary); }
+.ev-ltiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.ev-ltile { min-height: 84px; min-width: 48px; padding: 8px 4px; border-radius: 12px; border: 2px dashed var(--border-color, rgba(255,255,255,.3)); background: transparent; color: var(--text-primary);
+  font: inherit; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 4px; }
+.ev-ltile.revealed { border-style: solid; border-color: #6366f1; background: rgba(99,102,241,.14); }
+.ev-ltile:focus-visible { outline: 3px solid #fbbf24; outline-offset: 2px; }
+.ev-ltile-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; color: var(--text-secondary); }
+.ev-ltile-val { font-size: 1.25rem; font-weight: 800; }
+.ev-ltile-sent { font-size: .72rem; line-height: 1.2; color: var(--text-secondary); overflow-wrap: anywhere; }
+.ev-ltag { margin: 8px 0 0; font-weight: 700; font-size: .85rem; }
+.ev-ltap { color: var(--text-secondary); text-align: center; margin: 4px 0 8px; font-size: .85rem; }
+.ev-lesson-fb { min-height: 2.8em; margin: 10px 0; font-weight: 700; }
+.ev-lesson-fb.ok { color: #16a34a; }
+.ev-lesson-fb.bad { color: #dc2626; }
+#ev-lesson-try, #ev-lesson-next, #ev-lesson-start { width: 100%; min-height: 48px; }

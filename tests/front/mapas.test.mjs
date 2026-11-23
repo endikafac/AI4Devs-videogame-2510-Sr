@@ -26,13 +26,14 @@ before(async () => {
 after(async () => { await browser?.close(); server?.close(); });
 
 const IGNORE = /favicon|Missing or insufficient permissions|unauthorized-domain|net::ERR|Failed to load resource|firestore\.googleapis|identitytoolkit|offline|WebChannel|manifest/i;
-async function open({ width = 390, height = 800 } = {}) {
-  const ctx = await browser.newContext({ viewport: { width, height }, serviceWorkers: 'block' });
+async function open({ width = 390, height = 800, gate = false } = {}) {
+  const ctx = await browser.newContext({ viewport: { width, height }, serviceWorkers: 'block', locale: 'es-ES' });
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', e => errors.push('pageerror: ' + e.message));
   page.on('console', m => { if (m.type() === 'error' && !IGNORE.test(m.text())) errors.push(m.text()); });
   await page.addInitScript(() => Object.defineProperty(navigator, 'doNotTrack', { get: () => '1' }));
+  if (!gate) await page.addInitScript(() => { ['world', 'es', 'prov', 'rivw', 'rives', 'mont', 'montes', 'eus', 'eustown', 'eusriv', 'eusmont'].forEach(s => localStorage.setItem('mapas_skip_' + s, '1')); });
   await page.goto(base + '/mapas-EFC/index.html', { waitUntil: 'load' });
   await page.waitForFunction(() => document.querySelectorAll('.mp-mapcard').length === 17, null, { timeout: 8000 });
   return { ctx, page, errors };
@@ -328,6 +329,48 @@ test('F-MAPAS flags, timer chip, search and Euskadi maps', async () => {
     await page.click('#mp-quit');
     await start(page, 'eusmont', 'name'); await page.waitForSelector('.mp-opt');
     await shot(page, 'eus-mount-name');
+    assert.deepEqual(errors, []);
+  } finally { await ctx.close(); }
+});
+
+test('F-MAPAS learn first: look, remember, practise; practice is gated until something is learned', async () => {
+  const { ctx, page, errors } = await open({ width: 390, height: 844, gate: true });
+  try {
+    await page.click('.mp-mapcard[data-map="SA"]');
+    assert.ok(await page.locator('.mp-modecard[data-mode="learnflag"].start').count(), 'flags lesson is highlighted as the place to start');
+    // asking for the flags game with nothing learned sends the child to learn first
+    await page.click('.mp-modecard[data-mode="flag"]');
+    await page.waitForFunction(() => Mapas._S.lesson && Mapas._S.mode === 'learnflag', null, { timeout: 8000 });
+    assert.match(await page.textContent('#mp-prompt'), /Mira/);
+    await shot(page, 'learn-study');
+    // step 1: five cards, the big flag is shown
+    for (let k = 0; k < 5; k++) {
+      await page.waitForSelector('#mp-learn:not([hidden]) .flag.big');
+      await page.click('#mp-next'); await page.waitForTimeout(150);
+    }
+    // step 2: remember (flashcards)
+    assert.match(await page.textContent('#mp-prompt'), /Recuerda/);
+    for (let k = 0; k < 5; k++) {
+      await page.click('#mp-learn .mp-btn >> text=Mostrar');
+      if (k === 0) await shot(page, 'learn-recall');
+      await page.click('#mp-learn .mp-btn.good');
+    }
+    // step 3: practise the five places
+    await page.waitForFunction(() => Mapas._S.run && Mapas._S.run.lesson, null, { timeout: 5000 });
+    for (let k = 0; k < 5; k++) {
+      const r = await runState(page);
+      if (r.type === 'flagName') await page.click('.mp-opt[data-opt="' + r.id + '"]');
+      else { await page.evaluate(id => Mapas._focus(id, 5), r.id); await tapItem(page, r.id); }
+      await advanced(page, k);
+    }
+    await page.waitForSelector('#mp-end:not([hidden])');
+    assert.match(await page.textContent('#mp-endtitle'), /Lección terminada/);
+    const learned = await page.evaluate(() => JSON.parse(localStorage.getItem('mapas_learned_world_flag_guest') || '[]').length);
+    assert.equal(learned, 5);
+    // now practising flags only asks about the learned five
+    await page.click('#mp-home-btn'); await page.click('.mp-mapcard[data-map="SA"]'); await page.click('.mp-modecard[data-mode="flag"]');
+    await page.waitForFunction(() => Mapas._S.run && Mapas._S.mode === 'flag', null, { timeout: 8000 });
+    const qs = await page.evaluate(() => Mapas._S.run.qs.length); assert.ok(qs <= 5 && qs >= 1, 'questions drawn from learned places: ' + qs);
     assert.deepEqual(errors, []);
   } finally { await ctx.close(); }
 });

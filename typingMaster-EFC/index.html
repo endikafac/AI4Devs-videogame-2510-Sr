@@ -62,6 +62,10 @@
         </button>
     </div>
 
+    <div class="ty-home-actions">
+        <button class="ty-btn ty-btn-secondary ty-lesson-open" id="ty-lesson-btn" type="button">⌨️</button>
+    </div>
+
     <div class="ty-quick-links">
         <button class="ty-quick-link-btn" id="ty-stats-btn">📊 Estadísticas</button>
         <button class="ty-quick-link-btn" id="ty-achievements-btn">🏆 Logros</button>
@@ -119,6 +123,7 @@
     <p class="ty-input-hint" id="ty-input-hint">Comienza a escribir...</p>
 
     <p class="ty-kb-tip" id="ty-kb-tip"></p>
+    <p class="ty-finger-tip" id="ty-finger-tip" aria-live="polite"></p>
 
     <!-- Quit -->
     <div class="ty-game-footer">
@@ -137,6 +142,36 @@
            tabindex="-1"
            style="position:fixed;left:-9999px;top:0;width:1px;height:1px;opacity:0;pointer-events:none;border:none;outline:none;">
 
+</div>
+</section>
+
+<!-- ══ SCREEN 2b: KEYBOARD LESSON ══════════════════════════════════════════ -->
+<section id="ty-lesson" class="ty-screen" aria-label="Lesson">
+<div class="tm-page">
+    <h2 class="ty-lesson-title" id="ty-lesson-title"></h2>
+    <p class="ty-lesson-desc" id="ty-lesson-desc"></p>
+
+    <h3 class="ty-lesson-sub" id="ty-lesson-keys-title"></h3>
+    <div id="ty-lesson-kb" class="ty-keyboard ty-lesson-kb" aria-hidden="true"></div>
+
+    <h3 class="ty-lesson-sub" id="ty-lesson-hands-title"></h3>
+    <p class="ty-lesson-tap" id="ty-lesson-tap"></p>
+    <div id="ty-lesson-hands" class="ty-hands"></div>
+    <p class="ty-lesson-info" id="ty-lesson-info" aria-live="polite"></p>
+
+    <div id="ty-drill" class="ty-drill hidden">
+        <h3 class="ty-lesson-sub" id="ty-drill-title"></h3>
+        <p class="ty-lesson-desc" id="ty-drill-intro"></p>
+        <div class="ty-drill-key" id="ty-drill-key" aria-hidden="true"></div>
+        <p class="ty-drill-progress" id="ty-drill-progress"></p>
+        <p class="ty-drill-msg" id="ty-drill-msg" role="status" aria-live="polite"></p>
+    </div>
+
+    <div class="ty-lesson-actions">
+        <button class="ty-btn ty-btn-primary" id="ty-lesson-try" type="button"></button>
+        <button class="ty-btn ty-btn-primary hidden" id="ty-lesson-start" type="button"></button>
+        <button class="ty-btn ty-btn-ghost" id="ty-lesson-skip" type="button"></button>
+    </div>
 </div>
 </section>
 
@@ -215,6 +250,7 @@
 <script src="texts.js"></script>
 <script src="texts-extra.js"></script>
 <script src="i18n-extra.js"></script>
+<script src="lesson.js"></script>
 <script src="game.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {

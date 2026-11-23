@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Aprende la Hora">
     <link rel="apple-touch-icon" href="../icons/icon-192.png">
-    <meta name="description" content="Aprende la Hora: lee el reloj analógico, coloca las agujas y practica horas, medias, cuartos y cinco minutos.">
+    <meta name="description" content="Aprende la Hora: lee el reloj analógico, coloca las agujas y aprende cada tema con un reloj interactivo y practica horas, medias, cuartos, minutos, 24 horas y duraciones.">
     <title>Aprende la Hora – Games Hub</title>
     <link rel="stylesheet" href="../platform/platform.css">
     <link rel="stylesheet" href="styles.css">
@@ -26,11 +26,39 @@
         <ol class="ck-path" id="ck-path"></ol>
     </section>
 
+    <section id="ck-learn" class="ck-screen" hidden>
+        <div class="ck-top">
+            <button class="ck-quit" id="ck-l-quit" type="button" aria-label="Salir">✕</button>
+            <h2 class="ck-ltitle" id="ck-l-title"></h2>
+            <button class="ck-btn ghost ck-skip" id="ck-skip" type="button">Saltar</button>
+        </div>
+        <div class="ck-card ck-lcard">
+            <p class="ck-intro" id="ck-l-intro"></p>
+            <div class="ck-learnclock" id="ck-learn-clock"></div>
+            <p class="ck-draghint" id="ck-l-drag"></p>
+            <div class="ck-digwrap"><span class="ck-diglabel" id="ck-diglabel"></span><div class="ck-digital" id="ck-digital" aria-live="polite"></div></div>
+            <ul class="ck-legend">
+                <li><i class="sw h"></i><span id="ck-leg-h"></span></li>
+                <li><i class="sw m"></i><span id="ck-leg-m"></span></li>
+            </ul>
+            <button class="ck-btn ghost" id="ck-nums" type="button"></button>
+            <div class="ck-example" id="ck-example">
+                <b id="ck-ex-label"></b>
+                <p id="ck-ex-text"></p>
+            </div>
+            <div class="ck-lbtns">
+                <button class="ck-btn" id="ck-ex-next" type="button"></button>
+                <button class="ck-btn" id="ck-learn-done" type="button" hidden></button>
+            </div>
+        </div>
+    </section>
+
     <section id="ck-play" class="ck-screen" hidden>
         <div class="ck-top">
             <button class="ck-quit" id="ck-quit" type="button" aria-label="Salir">✕</button>
             <div class="ck-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i id="ck-barfill"></i></div>
             <span class="ck-count" id="ck-count" aria-live="polite"></span>
+            <button class="ck-btn ghost ck-learnbtn" id="ck-learnbtn" type="button">📖 Aprender</button>
         </div>
         <div class="ck-card" id="ck-card"></div>
         <div class="ck-feedback" id="ck-feedback" hidden aria-live="assertive"></div>

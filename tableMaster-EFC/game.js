@@ -88,7 +88,38 @@ const TableMasterGame = {
             const key = el.dataset.i18n;
             el.textContent = t(key);
         });
+        document.querySelectorAll('[data-i18n-rich]').forEach(el => this._setRich(el, t(el.dataset.i18nRich)));
+        document.querySelectorAll('[data-i18n-aria]').forEach(el => el.setAttribute('aria-label', t(el.dataset.i18nAria)));
+        document.querySelectorAll('[data-i18n-title]').forEach(el => el.setAttribute('title', t(el.dataset.i18nTitle)));
         this._refreshDrillTexts();
+        this._renderMultDemo();
+        this._renderDivDemo();
+    },
+
+    /**
+     * Rebuilds an element from a translated "rich" string (a tiny whitelisted HTML subset:
+     * strong, em, code, br and span with tm-* classes). Nodes are created one by one, never
+     * inserted as raw HTML, so a bad string cannot inject anything.
+     */
+    _setRich(el, str) {
+        el.textContent = '';
+        const doc = new DOMParser().parseFromString('<body>' + String(str) + '</body>', 'text/html');
+        const copy = (from, into) => {
+            from.childNodes.forEach(n => {
+                if (n.nodeType === 3) { into.appendChild(document.createTextNode(n.nodeValue)); return; }
+                if (n.nodeType !== 1) return;
+                const tag = n.tagName.toLowerCase();
+                if (!TableMasterLearn.ALLOWED[tag.toUpperCase()]) { copy(n, into); return; }
+                const e = document.createElement(tag);
+                if (tag === 'span') {
+                    const cls = (n.getAttribute('class') || '').split(/\s+/).filter(c => TableMasterLearn.CLASS_OK.test(c));
+                    if (cls.length) e.className = cls.join(' ');
+                }
+                copy(n, e);
+                into.appendChild(e);
+            });
+        };
+        copy(doc.body, el);
     },
 
     // ── Pantalla Inicio ───────────────────────────────────────────────────────
@@ -100,9 +131,7 @@ const TableMasterGame = {
                 const op     = btn.dataset.op;
 
                 if (action === 'learn') {
-                    this._showScreen(op === 'multiply'
-                        ? 'screen-learn-multiply'
-                        : 'screen-learn-divide');
+                    this._openLearn(op === 'multiply' ? 'screen-learn-multiply' : 'screen-learn-divide', null, 'screen-home');
                 } else if (action === 'practice') {
                     this.state.practice.operation = op;
                     this._buildLevelGrid(op);
@@ -117,6 +146,20 @@ const TableMasterGame = {
 
     // ── Pantalla Aprender ─────────────────────────────────────────────────────
 
+    // Where the "back" and "start practice" buttons of a learn screen lead (home, or the practice/drill menu it was opened from)
+    _learnBack: 'screen-home',
+
+    /** Opens a learn screen, optionally on a given card, and remembers where "back" goes. */
+    _openLearn(screenId, slide, backTo) {
+        this._learnBack = backTo || 'screen-home';
+        document.querySelectorAll(`#${screenId} [data-back]`).forEach(b => { b.dataset.back = this._learnBack; });
+        this._showScreen(screenId);
+        if (slide !== null && slide !== undefined) {
+            const tab = document.querySelector(`#${screenId} .tm-slide-tab[data-slide="${slide}"]`);
+            if (tab) tab.click();
+        }
+    },
+
     _bindLearnEvents() {
         // Multiplicación (ahora 6 fichas)
         this._bindSlideNav('screen-learn-multiply', 'lm', 6,
@@ -129,6 +172,7 @@ const TableMasterGame = {
         });
 
         document.getElementById('btn-start-practice-multiply')?.addEventListener('click', () => {
+            if (this._learnBack === 'screen-drill-select') { this._showScreen('screen-drill-select'); return; }
             this.state.practice.operation = 'multiply';
             this._buildLevelGrid('multiply');
             this._showScreen('screen-practice-select');
@@ -145,6 +189,7 @@ const TableMasterGame = {
         });
 
         document.getElementById('btn-start-practice-divide')?.addEventListener('click', () => {
+            if (this._learnBack === 'screen-drill-select') { this._showScreen('screen-drill-select'); return; }
             this.state.practice.operation = 'divide';
             this._buildLevelGrid('divide');
             this._showScreen('screen-practice-select');
@@ -247,25 +292,12 @@ const TableMasterGame = {
         container.innerHTML = '';
 
         // Encabezado del algoritmo
-        const header = document.createElement('div');
-        header.className = 'tm-demo-step';
-        header.innerHTML = `
-            <div class="tm-step-num" aria-hidden="true">?</div>
-            <div class="tm-step-text">
-                Calculamos <span class="tm-step-math">${a} × ${b}</span>
-            </div>`;
-        container.appendChild(header);
+        container.appendChild(this._demoStep('?', 'demoCalc', { m: `${a} × ${b}` }, 0));
 
         // Generar pasos del algoritmo escrito por 1 cifra
         const steps = this._buildMultSteps(a, b);
         steps.forEach((step, i) => {
-            const el = document.createElement('div');
-            el.className = 'tm-demo-step';
-            el.style.animationDelay = `${(i + 1) * 0.15}s`;
-            el.innerHTML = `
-                <div class="tm-step-num" aria-hidden="true">${i + 1}</div>
-                <div class="tm-step-text">${step.html}</div>`;
-            container.appendChild(el);
+            container.appendChild(this._demoStep(String(i + 1), null, null, (i + 1) * 0.15, step.html));
         });
 
         // Resultado
@@ -273,6 +305,20 @@ const TableMasterGame = {
         result.className = 'tm-demo-result';
         result.textContent = `${a} × ${b} = ${a * b}`;
         container.appendChild(result);
+    },
+
+    /** One step row of a worked demo. Text comes from i18n (key + params) or from an already-built rich string. */
+    _demoStep(num, key, params, delay, richStr) {
+        const row = document.createElement('div');
+        row.className = 'tm-demo-step';
+        if (delay) row.style.animationDelay = `${delay}s`;
+        const n = document.createElement('div');
+        n.className = 'tm-step-num'; n.setAttribute('aria-hidden', 'true'); n.textContent = num;
+        const txt = document.createElement('div');
+        txt.className = 'tm-step-text';
+        this._setRich(txt, key ? TableMasterI18n.t(key, params) : richStr);
+        row.append(n, txt);
+        return row;
     },
 
     _buildMultSteps(a, b) {
@@ -290,24 +336,22 @@ const TableMasterGame = {
             const newCarry = Math.floor(product / 10);
             partials.unshift(digit);
 
+            const tt = (k, p) => TableMasterI18n.t(k, p);
             let html = `<span class="tm-step-math">${b} × ${d}</span>`;
             if (carry > 0) {
-                html += ` + <span class="tm-step-carry">${carry} que llevaba</span>`;
+                html += ` + <span class="tm-step-carry">${tt('demoCarryIn', { c: carry })}</span>`;
             }
             html += ` = <span class="tm-step-math">${product}</span>`;
-            if (newCarry > 0) {
-                html += ` → escribo <strong>${digit}</strong>,`;
-                html += ` me llevo <span class="tm-step-carry">${newCarry}</span>`;
-            } else {
-                html += ` → escribo <strong>${product}</strong>`;
-            }
+            html += newCarry > 0
+                ? tt('demoWriteCarry', { d: digit, c: newCarry })
+                : tt('demoWrite', { p: product });
             steps.push({ html });
             carry = newCarry;
         });
 
         if (carry > 0) {
             steps.push({
-                html: `Queda una llevada de <span class="tm-step-carry">${carry}</span> → la escribimos`
+                html: TableMasterI18n.t('demoFinalCarry', { c: carry })
             });
         }
 
@@ -322,31 +366,17 @@ const TableMasterGame = {
         const { dividend, divisor } = this._divExamples[this._divExIdx];
         container.innerHTML = '';
 
-        const header = document.createElement('div');
-        header.className = 'tm-demo-step';
-        header.innerHTML = `
-            <div class="tm-step-num" aria-hidden="true">?</div>
-            <div class="tm-step-text">
-                Calculamos <span class="tm-step-math">${dividend} ÷ ${divisor}</span>
-            </div>`;
-        container.appendChild(header);
+        container.appendChild(this._demoStep('?', 'demoCalc', { m: `${dividend} ÷ ${divisor}` }, 0));
 
         const steps = this._buildDivSteps(dividend, divisor);
         steps.forEach((step, i) => {
-            const el = document.createElement('div');
-            el.className = 'tm-demo-step';
-            el.style.animationDelay = `${(i + 1) * 0.18}s`;
-            el.innerHTML = `
-                <div class="tm-step-num" aria-hidden="true">${i + 1}</div>
-                <div class="tm-step-text">${step.html}</div>`;
-            container.appendChild(el);
+            container.appendChild(this._demoStep(String(i + 1), null, null, (i + 1) * 0.18, step.html));
         });
 
         const quotient  = Math.floor(dividend / divisor);
         const remainder = dividend % divisor;
-        const resText   = remainder === 0
-            ? `${dividend} ÷ ${divisor} = ${quotient}`
-            : `${dividend} ÷ ${divisor} = ${quotient} (resto ${remainder})`;
+        const resText   = TableMasterI18n.t(remainder === 0 ? 'demoDivRes' : 'demoDivResRem',
+            { a: dividend, b: divisor, q: quotient, r: remainder });
 
         const result = document.createElement('div');
         result.className = 'tm-demo-result';
@@ -366,7 +396,7 @@ const TableMasterGame = {
             if (current < divisor && quotientStr.length === 0) {
                 // No cabe aún: cojo siguiente cifra
                 steps.push({
-                    html: `¿Cabe <span class="tm-step-math">${divisor}</span> en <strong>${current}</strong>? No. Cojo la siguiente cifra.`
+                    html: TableMasterI18n.t('demoNoFit', { d: divisor, c: current })
                 });
                 continue;
             }
@@ -375,11 +405,7 @@ const TableMasterGame = {
             const rem = current % divisor;
 
             steps.push({
-                html: `¿Cuántas veces cabe <span class="tm-step-math">${divisor}</span> en <strong>${current}</strong>?
-                    → <strong>${q}</strong> veces
-                    (<span class="tm-step-math">${q}×${divisor}=${q * divisor}</span>).
-                    Escribo <strong>${q}</strong> en el cociente.
-                    Resto: <span class="tm-step-carry">${current}−${q * divisor}=${rem}</span>`
+                html: TableMasterI18n.t('demoFit', { d: divisor, c: current, q, m: q * divisor, r: rem })
             });
 
             quotientStr += String(q);
@@ -392,6 +418,10 @@ const TableMasterGame = {
     // ── Pantalla Selección Nivel ──────────────────────────────────────────────
 
     _bindPracticeSelectEvents() {
+        document.getElementById('btn-practice-learn')?.addEventListener('click', () => {
+            const mul = this.state.practice.operation !== 'divide';
+            this._openLearn(mul ? 'screen-learn-multiply' : 'screen-learn-divide', null, 'screen-practice-select');
+        });
         document.getElementById('btn-review')?.addEventListener('click', () => this._startReview());
         document.getElementById('level-grid')?.addEventListener('click', e => {
             const btn = e.target.closest('.tm-level-btn');
@@ -1599,43 +1629,53 @@ const TableMasterGame = {
         const result= document.getElementById('div-checker-result');
         if (!btn || !input || !result) return;
 
+        const tt = (k, p) => TableMasterI18n.t(k, p);
         const check = () => {
             const raw = (input.value || '').trim().replace(/\./g, '');
             const n   = parseInt(raw, 10);
             if (isNaN(n) || n <= 0) {
-                result.innerHTML = '<span style="color:var(--hub-danger)">Introduce un número entero positivo.</span>';
+                result.textContent = '';
+                const bad = document.createElement('span');
+                bad.className = 'tm-danger-text';
+                bad.textContent = TableMasterI18n.t('dcInvalid');
+                result.appendChild(bad);
                 return;
             }
 
             const tests = [
                 { d: 2,  fn: x => x % 2 === 0,
-                  why: `termina en ${n % 10}` },
+                  why: () => tt('dcEndsIn', { n: n % 10 }) },
                 { d: 3,  fn: x => { const s = String(x).split('').reduce((a,c) => a + parseInt(c,10), 0); return s % 3 === 0; },
-                  why: () => { const s = String(n).split('').reduce((a,c) => a + parseInt(c,10), 0); return `suma de dígitos = ${s}`; } },
+                  why: () => { const s = String(n).split('').reduce((a,c) => a + parseInt(c,10), 0); return tt('dcDigitSum', { n: s }); } },
                 { d: 4,  fn: x => (x % 100) % 4 === 0,
-                  why: `últimas 2 cifras = ${n % 100}` },
+                  why: () => tt('dcLast2', { n: n % 100 }) },
                 { d: 5,  fn: x => x % 5 === 0,
-                  why: `termina en ${n % 10}` },
+                  why: () => tt('dcEndsIn', { n: n % 10 }) },
                 { d: 6,  fn: x => x % 2 === 0 && (String(x).split('').reduce((a,c) => a + parseInt(c,10), 0)) % 3 === 0,
-                  why: 'divisible por 2 y por 3' },
+                  why: () => tt('dcBy2and3') },
                 { d: 9,  fn: x => { const s = String(x).split('').reduce((a,c) => a + parseInt(c,10), 0); return s % 9 === 0; },
-                  why: () => { const s = String(n).split('').reduce((a,c) => a + parseInt(c,10), 0); return `suma de dígitos = ${s}`; } },
+                  why: () => { const s = String(n).split('').reduce((a,c) => a + parseInt(c,10), 0); return tt('dcDigitSum', { n: s }); } },
                 { d: 10, fn: x => x % 10 === 0,
-                  why: `termina en ${n % 10}` },
+                  why: () => tt('dcEndsIn', { n: n % 10 }) },
             ];
 
-            const rows = tests.map(t => {
+            const grid = document.createElement('div');
+            grid.className = 'tm-dc-grid';
+            const num = document.createElement('div');
+            num.className = 'tm-dc-number'; num.textContent = String(n);
+            grid.appendChild(num);
+            tests.forEach(t => {
                 const ok  = t.fn(n);
-                const why = typeof t.why === 'function' ? t.why() : t.why;
-                return `<div class="tm-dc-row ${ok ? 'tm-dc-yes' : 'tm-dc-no'}">
-                    <span class="tm-dc-icon">${ok ? '✓' : '✗'}</span>
-                    <span class="tm-dc-label">÷ ${t.d}</span>
-                    <span class="tm-dc-why">${why}</span>
-                    <span class="tm-dc-verdict">${ok ? 'Sí' : 'No'}</span>
-                </div>`;
-            }).join('');
-
-            result.innerHTML = `<div class="tm-dc-grid"><div class="tm-dc-number">${n}</div>${rows}</div>`;
+                const row = document.createElement('div');
+                row.className = 'tm-dc-row ' + (ok ? 'tm-dc-yes' : 'tm-dc-no');
+                [['tm-dc-icon', ok ? '✓' : '✗'], ['tm-dc-label', '÷ ' + t.d], ['tm-dc-why', t.why()],
+                 ['tm-dc-verdict', tt(ok ? 'dcYes' : 'dcNo')]].forEach(([c, txt]) => {
+                    const s = document.createElement('span'); s.className = c; s.textContent = txt; row.appendChild(s);
+                });
+                grid.appendChild(row);
+            });
+            result.textContent = '';
+            result.appendChild(grid);
         };
 
         btn.addEventListener('click', check);
@@ -1700,6 +1740,12 @@ const TableMasterGame = {
         });
 
         document.getElementById('btn-drill-start')?.addEventListener('click', () => this._startDrill(false));
+        const openDrillLearn = () => {
+            const target = TableMasterLearn.learnTarget(this._drillSel.mode, this._drillSel.table);
+            this._openLearn(target.screen, target.slide, 'screen-drill-select');
+        };
+        document.getElementById('btn-drill-learn')?.addEventListener('click', openDrillLearn);
+        document.getElementById('drill-learn')?.addEventListener('click', openDrillLearn);
         document.getElementById('btn-drill-retry')?.addEventListener('click', () => this._startDrill(false));
         document.getElementById('btn-drill-review')?.addEventListener('click', () => this._startDrill(true));
         document.getElementById('btn-drill-home')?.addEventListener('click', () => this._showScreen('screen-home'));
@@ -1767,6 +1813,17 @@ const TableMasterGame = {
             }).join('');
         }
 
+        const learnBtn = document.getElementById('btn-drill-learn');
+        const learnHint = document.getElementById('drill-learn-hint');
+        if (learnBtn && learnHint) {
+            const specific = meta.chips && table !== 'all';
+            learnBtn.textContent = mode === 'divide' ? t('learnBtnDivide') : specific ? t('learnBtnTable', { n: table }) : t('learnBtnAll');
+            const isNew = specific && TableMasterLearn.isNewTable(progress.stars, mode, table);
+            learnBtn.classList.toggle('tm-learn-link--new', isNew);
+            learnHint.textContent = isNew ? t('learnNewTable') : '';
+            learnHint.classList.toggle('hidden', !isNew);
+        }
+
         const bestEl = document.getElementById('drill-best');
         if (mode === 'timed') {
             const best = Number(progress.best[`timed:${table}`]) || 0;
@@ -1801,12 +1858,13 @@ const TableMasterGame = {
         if (mode === 'mixed') type = 'table';
         if (mode === 'timed') type = ['table', 'divide', 'missing'][Math.floor(Math.random() * 3)];
 
-        if (type === 'table') return { text: `${a} × ${b} = ?`, answer: p, key };
-        if (type === 'divide') return { text: `${p} ÷ ${a} = ?`, answer: b, key };
+        const tbl = table === 'all' ? a : parseInt(table, 10);
+        if (type === 'table') return { text: `${a} × ${b} = ?`, answer: p, key, kind: 'mul', a, b, tbl };
+        if (type === 'divide') return { text: `${p} ÷ ${a} = ?`, answer: b, key, kind: 'div', a, b, tbl };
         if (type === 'missing') {
             return Math.random() < 0.5
-                ? { text: `${a} × ? = ${p}`, answer: b, key }
-                : { text: `? × ${b} = ${p}`, answer: a, key };
+                ? { text: `${a} × ? = ${p}`, answer: b, key, kind: 'missing', k: a, x: b, tbl }
+                : { text: `? × ${b} = ${p}`, answer: a, key, kind: 'missing', k: b, x: a, tbl };
         }
         // problems: a and b >= 2 so stories make sense
         const pa = Math.max(2, a === 1 ? 2 : a);
@@ -1819,6 +1877,8 @@ const TableMasterGame = {
             answer: isMult ? pp : pa,
             key,
             story: true,
+            // multiplication story: pa x pb = pp; sharing story: pp / pb = pa
+            kind: isMult ? 'mul' : 'div', a: isMult ? pa : pb, b: isMult ? pb : pa, tbl,
         };
     },
 
@@ -1837,7 +1897,7 @@ const TableMasterGame = {
             timed: mode === 'timed' && !review,
             idx: 0, correct: 0, asked: 0,
             streak: 0, bestStreak: 0, score: 0,
-            wrong: [],
+            wrong: [], wrongByTable: {},
             answer: '', locked: false, current: null, lastKey: null,
             startTs: Date.now(), timeLeft: this._TIMED_SECONDS,
             timerId: null, nextTimer: null, ended: false,
@@ -1886,6 +1946,7 @@ const TableMasterGame = {
         document.getElementById('drill-feedback').className = 'tm-drill-feedback';
         document.getElementById('drill-numpad').classList.remove('hidden');
         document.getElementById('drill-next').classList.add('hidden');
+        document.getElementById('drill-learn')?.classList.add('hidden');
         this._renderDrillAnswer();
         this._renderDrillHud();
     },
@@ -1965,15 +2026,29 @@ const TableMasterGame = {
             d.nextTimer = setTimeout(() => this._drillNext(), 700);
         } else {
             d.streak = 0;
-            d.wrong.push({ text: cur.text, answer: cur.answer, key: cur.key, story: !!cur.story });
+            d.wrong.push({ text: cur.text, answer: cur.answer, key: cur.key, story: !!cur.story,
+                kind: cur.kind, a: cur.a, b: cur.b, k: cur.k, x: cur.x, tbl: cur.tbl });
+            if (cur.tbl) d.wrongByTable[cur.tbl] = (d.wrongByTable[cur.tbl] || 0) + 1;
             progress.facts[cur.key] = (Number(progress.facts[cur.key]) || 0) + 1;
             this._saveProgress(progress);
             card.classList.add('bad');
             fb.className = 'tm-drill-feedback bad';
-            fb.textContent = '✗ ' + t('drillAnswerWas', { n: cur.answer }) + '. ' + t('oops' + (1 + Math.floor(Math.random() * 3)));
+            // Explain WHY: the worked step (7 × 6 = 7 × 5 + 7 = 35 + 7 = 42) and, for ÷ and ?, the matching multiplication
+            const ex = TableMasterLearn.explainWrong(cur);
+            const line = (cls, txt) => { const s = document.createElement('div'); s.className = cls; s.textContent = txt; fb.appendChild(s); };
+            fb.textContent = '';
+            line('tm-fb-line', '✗ ' + t('drillAnswerWas', { n: cur.answer }) + '. ' + t('oops' + (1 + Math.floor(Math.random() * 3))));
+            if (ex.key) line('tm-fb-line tm-fb-why', t(ex.key, ex.params));
+            if (ex.worked) line('tm-fb-line tm-fb-worked', t('drillWhy') + ' ' + ex.worked);
+            const suggest = !d.timed && cur.tbl && TableMasterLearn.shouldSuggestLearn(d.wrongByTable, cur.tbl);
+            if (suggest) {
+                line('tm-fb-line tm-fb-learn', t('learnStruggle', { n: cur.tbl }));
+                const lb = document.getElementById('drill-learn');
+                if (lb) { lb.textContent = t('learnBtnTable', { n: cur.tbl }); lb.classList.remove('hidden'); }
+            }
             this._renderDrillHud();
             if (d.timed) {
-                d.nextTimer = setTimeout(() => this._drillNext(), 1200);
+                d.nextTimer = setTimeout(() => this._drillNext(), 2800);
             } else {
                 document.getElementById('drill-numpad').classList.add('hidden');
                 const nextBtn = document.getElementById('drill-next');

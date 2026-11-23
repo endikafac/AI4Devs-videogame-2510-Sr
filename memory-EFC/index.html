@@ -26,13 +26,30 @@
         <ol class="mm-path" id="mm-path"></ol>
     </section>
 
+    <section id="mm-learn" class="mm-screen" hidden aria-labelledby="mm-learn-title">
+        <div class="mm-top">
+            <button class="mm-quit" id="mm-learn-back" type="button" aria-label="Salir">✕</button>
+            <h2 class="mm-learn-title" id="mm-learn-title"></h2>
+        </div>
+        <div class="mm-card mm-learncard">
+            <p class="mm-prompt" id="mm-learn-text"></p>
+            <div id="mm-learn-body"></div>
+        </div>
+        <div class="mm-endbtns mm-learnbtns">
+            <button class="mm-btn" id="mm-learn-go" type="button"></button>
+            <button class="mm-btn ghost" id="mm-learn-skip" type="button"></button>
+        </div>
+    </section>
+
     <section id="mm-play" class="mm-screen" hidden>
         <div class="mm-top">
             <button class="mm-quit" id="mm-quit" type="button" aria-label="Salir">✕</button>
             <div class="mm-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i id="mm-barfill"></i></div>
             <span class="mm-count" id="mm-count" aria-live="polite"></span>
         </div>
+        <p class="mm-guide" id="mm-guide" hidden aria-live="polite"></p>
         <div class="mm-card" id="mm-card"></div>
+        <p class="mm-why" id="mm-why" hidden aria-live="polite"></p>
         <div class="mm-feedback" id="mm-feedback" hidden aria-live="assertive"></div>
     </section>
 
@@ -59,6 +76,7 @@
 <script src="../platform/firestore.js"></script>
 <script src="../platform/identity.js"></script>
 <script src="../platform/platform-header.js"></script>
+<script src="learn.js"></script>
 <script src="game.js"></script>
 <script>
     PlatformHeader.init({ gameName: 'Memoria de Parejas', gameIcon: '🃏', rootPath: '../' });

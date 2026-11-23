@@ -107,6 +107,25 @@ const Mapas = (function () {
         meusmont: ['Euskadi: montañas', 'Euskadi: mountains', 'Euskadi: mendiak', 'Euskadi: montañas', 'Euskadi: muntanyes', 'Euskadi : montagnes'],
         townK: ['Localidad', 'Town', 'Herria', 'Localidade', 'Localitat', 'Ville'],
         terr: ['Territorio', 'Territory', 'Lurraldea', 'Territorio', 'Territori', 'Territoire'],
+        mdLearn: ['Aprender', 'Learn', 'Ikasi', 'Aprender', 'Aprendre', 'Apprendre'],
+        mdLearnD: ['Descubre 5 lugares nuevos, recuérdalos y practícalos', 'Discover 5 new places, remember them and practise them', 'Aurkitu 5 toki berri, gogoratu eta praktikatu', 'Descubre 5 lugares novos, lémbraos e practícaos', 'Descobreix 5 llocs nous, recorda’ls i practica’ls', 'Découvre 5 nouveaux lieux, retiens-les et entraîne-toi'],
+        mdLearnFlag: ['Aprender banderas', 'Learn flags', 'Banderak ikasi', 'Aprender bandeiras', 'Aprendre banderes', 'Apprendre les drapeaux'],
+        mdLearnFlagD: ['Mira cada bandera, recuérdala y practícala', 'Look at each flag, remember it and practise it', 'Begiratu bandera bakoitza, gogoratu eta praktikatu', 'Mira cada bandeira, lémbraa e practícaa', 'Mira cada bandera, recorda-la i practica-la', 'Regarde chaque drapeau, retiens-le et entraîne-toi'],
+        startHere: ['Empieza aquí', 'Start here', 'Hasi hemen', 'Comeza aquí', 'Comença aquí', 'Commence ici'],
+        learnedOf: ['{a} de {b} aprendidos', '{a} of {b} learned', '{b}tik {a} ikasita', '{a} de {b} aprendidos', '{a} de {b} après', '{a} sur {b} appris'],
+        step1: ['1. Mira y aprende', '1. Look and learn', '1. Begiratu eta ikasi', '1. Mira e aprende', '1. Mira i aprèn', '1. Regarde et apprends'],
+        step2: ['2. Recuerda', '2. Remember', '2. Gogoratu', '2. Lembra', '2. Recorda', '2. Souviens-toi'],
+        step3: ['3. Practica', '3. Practise', '3. Praktikatu', '3. Practica', '3. Practica', '3. Entraîne-toi'],
+        toRecall: ['Ahora, a recordar', 'Now, let us remember', 'Orain, gogora dezagun', 'Agora, a lembrar', 'Ara, a recordar', 'Maintenant, on se souvient'],
+        recallQ: ['¿Te acuerdas de cuál es?', 'Do you remember which one it is?', 'Gogoratzen zara zein den?', 'Lémbraste de cal é?', 'Recordes quin és?', 'Te souviens-tu duquel il s’agit ?'],
+        reveal: ['Mostrar', 'Show', 'Erakutsi', 'Amosar', 'Mostrar', 'Montrer'],
+        knew: ['Lo sabía', 'I knew it', 'Banekien', 'Sabíao', 'Ho sabia', 'Je le savais'],
+        notYet: ['Aún no', 'Not yet', 'Oraindik ez', 'Aínda non', 'Encara no', 'Pas encore'],
+        learnFirst: ['Primero aprende unos cuantos lugares y luego practica', 'First learn a few places, then practise', 'Lehenik ikasi toki batzuk eta gero praktikatu', 'Primeiro aprende uns cantos lugares e despois practica', 'Primer aprèn uns quants llocs i després practica', 'Apprends d’abord quelques lieux, puis entraîne-toi'],
+        allLearned: ['¡Ya has aprendido todo esto! Ahora practica para dominarlo.', 'You have learned all of this! Now practise to master it.', 'Hau guztia ikasi duzu! Orain praktikatu menderatzeko.', 'Xa aprendeches todo isto! Agora practica para dominalo.', 'Ja has après tot això! Ara practica per dominar-ho.', 'Tu as tout appris ! Entraîne-toi pour le maîtriser.'],
+        lessonDone: ['¡Lección terminada!', 'Lesson complete!', 'Ikasgaia amaituta!', 'Lección rematada!', 'Lliçó acabada!', 'Leçon terminée !'],
+        nextLesson: ['Siguiente lección', 'Next lesson', 'Hurrengo ikasgaia', 'Seguinte lección', 'Següent lliçó', 'Leçon suivante'],
+        skipLearn: ['Ya me lo sé', 'I already know it', 'Dagoeneko badakit', 'Xa o sei', 'Ja ho sé', 'Je le sais déjà'],
         zoomTip: ['Pellizca o usa la rueda para acercar', 'Pinch or use the wheel to zoom', 'Atximurtu edo erabili gurpila zoom egiteko', 'Pellizca ou usa a roda para achegar', 'Pessiga o usa la roda per apropar', 'Pince ou utilise la molette pour zoomer']
     };
 
@@ -235,12 +254,15 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         });
         return S.dataP[name];
     }
+    // Intl names with a fallback chain: Basque/Galician/Catalan fall back to Spanish, the rest to English
     const dnCache = {};
-    function regionName(iso, fb) {
-        const l = lang();
-        try { if (!dnCache[l]) dnCache[l] = new Intl.DisplayNames([l], { type: 'region' }); const n = dnCache[l].of(iso); if (n && n !== iso) return n; } catch (e) { /* old browser */ }
-        return fb || iso;
+    function dnames(l, type) { const k = l + ':' + type; if (!(k in dnCache)) { try { dnCache[k] = new Intl.DisplayNames([l], { type: type }); } catch (e) { dnCache[k] = null; } } return dnCache[k]; }
+    function intlName(type, code, fb) {
+        const l = lang(), chain = (l === 'eu' || l === 'gl' || l === 'ca') ? [l, 'es', 'en'] : [l, 'en'];
+        for (const c of chain) { const d = dnames(c, type); let n = null; try { n = d && d.of(code); } catch (e) { n = null; } if (n && n !== code && n.toLowerCase() !== code.toLowerCase()) return n; }
+        return fb || code;
     }
+    const regionName = (iso, fb) => intlName('region', iso, fb);
     function flagOf(iso) { if (!iso || iso.length !== 2) return ''; return String.fromCodePoint.apply(null, iso.toUpperCase().split('').map(c => 0x1F1E6 + c.charCodeAt(0) - 65)); }
     const smallArea = 60; // px² in the 1000x500 projection
 
@@ -248,11 +270,12 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
     function buildMap(def, W, SP) {
         const items = [], ctx = [], out = { def, kind: def.kind, items, ctx, vb: [0, 0, 1000, 500], border: null, oceans: [], lakes: [], caps: {} };
         const worldCtx = lab => W.countries.forEach(c => { const f = c.i && W.facts[c.i]; ctx.push({ d: c.d, cont: f && f[1], lab: lab && c.i ? { iso: c.i, ne: c.n, x: c.x, y: c.y, a: c.a } : null }); });
-        const spainCtx = () => SP.ccaa.forEach(r => ctx.push({ d: r.d, lab: /^Gibraltar/.test(r.n) ? null : { raw: r.n, x: r.x, y: r.y, a: r.a } }));
+        const neighCtx = () => (SP.neighbors || []).forEach(n => ctx.push({ d: n.d, lab: n.x != null ? { iso: n.i, ne: n.n, x: n.x, y: n.y, a: 6000 } : null }));
+        const spainCtx = () => { neighCtx(); SP.ccaa.forEach(r => ctx.push({ d: r.d, lab: /^Gibraltar/.test(r.n) ? null : { raw: r.n, x: r.x, y: r.y, a: r.a } })); };
         const EUP = ['Araba/Álava', 'Bizkaia', 'Gipuzkoa'];
         const rv = r => ({ eu: r.eu, id: r.id, d: r.d, x: r.x, y: r.y, a: Math.pow(maxDim(r.b), 2), b: r.b, es: r.es, en: r.en, c: r.c, km: r.km, kmNote: r.kmNote, src: r.src, mouth: r.mouth, fact: r.fact });
         const pk = m => ({ id: m.id, x: m.x, y: m.y, a: 40, es: m.es, en: m.en, eu: m.eu, m: m.m, mk: m.kind || 'town', where: m.where, fact: m.fact, known: m.known, territory: m.territory, inf: m.pop != null ? { pop: m.pop } : undefined });
-        const euCtx = () => { SP.ccaa.forEach(r => { if (r.n !== 'País Vasco/Euskadi') ctx.push({ d: r.d, lab: /^Gibraltar/.test(r.n) ? null : { raw: r.n, x: r.x, y: r.y, a: r.a } }); }); SP.prov.forEach(r => { if (EUP.includes(r.n)) ctx.push({ d: r.d, lab: { raw: r.n, prov: true, x: r.x, y: r.y, a: r.a * 4 } }); }); };
+        const euCtx = () => { neighCtx(); SP.ccaa.forEach(r => { if (r.n !== 'País Vasco/Euskadi') ctx.push({ d: r.d, lab: /^Gibraltar/.test(r.n) ? null : { raw: r.n, x: r.x, y: r.y, a: r.a } }); }); SP.prov.forEach(r => { if (EUP.includes(r.n)) ctx.push({ d: r.d, lab: { raw: r.n, prov: true, x: r.x, y: r.y, a: r.a * 4 } }); }); };
         if (def.kind === 'country') {
             W.countries.forEach(c => {
                 const f = c.i && W.facts[c.i];
@@ -263,6 +286,7 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
             W.caps.forEach(c => { if (!out.caps[c.i]) out.caps[c.i] = c; });
             out.lakes = W.lakes; out.oceans = W.oceans; out.vb = def.cont ? W.views[def.cont] : [0, 0, W.w, W.h];
         } else if (def.kind === 'region') {
+            neighCtx();
             if (def.src === 'eus') { SP.ccaa.forEach(r => { if (r.n !== 'País Vasco/Euskadi') ctx.push({ d: r.d, lab: /^Gibraltar/.test(r.n) ? null : { raw: r.n, x: r.x, y: r.y, a: r.a } }); }); }
             (def.src === 'ccaa' ? SP.ccaa : SP.prov).forEach(r => {
                 if (/^Gibraltar/.test(r.n) || (def.src === 'eus' && !EUP.includes(r.n))) { if (def.src !== 'eus') ctx.push({ d: r.d }); return; }
@@ -311,9 +335,90 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         if (S.map.kind === 'country' && S.diff === 'easy') its = its.filter(i => i.level <= 2);
         if (S.mode === 'cap') its = its.filter(i => capOf(i));
         if (S.mode === 'review') { const pg = S.progs[S.def.store] || {}; its = its.filter(i => needsReview(pg[i.id])); }
+        if (!['explore', 'learn', 'learnflag', 'review'].includes(S.mode) && !skipLearn(S.def)) { // beginners are only asked what they have learned
+            const flag = S.mode === 'flag', learned = loadLearned(S.def, flag), pg = S.progs[S.def.store] || {};
+            const known = its.filter(i => learned.has(i.id) || (!flag && pg[i.id]));
+            if (known.length >= 4) its = known;
+        }
         return its.map(i => i.id);
     }
     const itemById = id => S.map.items.find(i => i.id === id);
+
+    // ---- learn first: look and learn (5 places), remember (flashcards), practise ----
+    const LEARN_N = 5;
+    const learnedKey = (def, flag) => 'mapas_learned_' + def.store + (flag ? '_flag' : '') + '_' + owner();
+    function loadLearned(def, flag) { try { return new Set(JSON.parse(localStorage.getItem(learnedKey(def, flag)) || '[]')); } catch (e) { return new Set(); } }
+    function saveLearned(def, flag, set) { try { localStorage.setItem(learnedKey(def, flag), JSON.stringify(Array.from(set))); } catch (e) { /* ignore */ } }
+    const skipKey = def => 'mapas_skip_' + def.store;
+    const skipLearn = def => { try { return localStorage.getItem(skipKey(def)) === '1'; } catch (e) { return false; } };
+    function needLearnFirst(def, mode) {
+        if (mode === 'review' || skipLearn(def)) return null;
+        const flag = mode === 'flag';
+        const known = flag ? loadLearned(def, true).size : new Set(Array.from(loadLearned(def, false)).concat(Object.keys(S.progs[def.store] || {}))).size;
+        return known < LEARN_N ? (flag ? 'learnflag' : 'learn') : null;
+    }
+    function lessonItems(flag) {
+        const learned = loadLearned(S.def, flag), kind = S.map.kind;
+        let its = S.map.items.filter(i => !learned.has(i.id));
+        if (kind === 'country' && S.diff === 'easy') its = its.filter(i => i.level <= 2);
+        const score = i => kind === 'country' ? (i.level || 3) * 1000 - Math.min(i.a || 0, 999) : kind === 'river' ? -(i.km || 0) : kind === 'peak' ? -(i.m || (i.inf && i.inf.pop) || 0) : -(i.a || 0);
+        return its.sort((a, b) => score(a) - score(b)).slice(0, LEARN_N).map(i => i.id);
+    }
+    function lessonPrompt(step, a, n) { $('mp-prompt').textContent = t('step' + step) + (n ? '  ' + a + '/' + n : ''); $('mp-count').textContent = ''; }
+    function lessonCardReset() { resetClasses(); clearMarks(); $('mp-toast').hidden = true; $('mp-options').hidden = true; $('mp-hint').hidden = true; $('mp-info').hidden = true; }
+    function highlightLesson(it, cls) {
+        if (S.map.kind !== 'peak' && S.map.kind !== 'river') S.els[it.id].parentNode.appendChild(S.els[it.id]);
+        S.els[it.id].classList.add(cls); if (S.map.kind === 'river' && cls === 'tgt') S.els[it.id].classList.add('flow');
+        mark(it, 'ping').classList.add('loop');
+        focusItem(it, 3.6); setTimeout(refreshOverlays, 80);
+    }
+    function startLearn(flag) {
+        S.run = null; S.lessonNext = null; $('mp-search').hidden = true; $('mp-sugg').hidden = true; $('mp-prompt').hidden = false;
+        S.labels = S.labels.filter(l => { if (l.ctx) return true; l.node.remove(); return false; });
+        const ids = lessonItems(flag);
+        const lc = $('mp-learn');
+        if (!ids.length) {
+            lessonCardReset(); lc.textContent = ''; lc.appendChild(el('div', 'hd', '🎉 ' + t('allLearned'))); lc.hidden = false;
+            $('mp-nextrow').hidden = false; $('mp-next').textContent = t('back'); S.lessonNext = () => openSetup(S.def); gotoBox(boxOf(homeBox()), true); return;
+        }
+        S.lesson = { ids: ids, flag: flag, i: 0, queue: [], redo: {} };
+        if (S.notice) { showToast(S.notice, 3800); S.notice = null; }
+        studyStep();
+    }
+    function studyStep() {
+        const L = S.lesson, it = itemById(L.ids[L.i]); lessonCardReset(); lessonPrompt(1, L.i + 1, L.ids.length);
+        highlightLesson(it, 'sel'); const lab = addLabel(it, true); lab.temp = true;
+        const lc = $('mp-learn'); fillCard(lc, it, false, L.flag, true); lc.hidden = false;
+        const row = el('div', 'mp-lchips');
+        L.ids.forEach((id, k) => { const o = itemById(id); const b = el('button', 'mp-lchip' + (k === L.i ? ' on' : ''), L.flag ? flagOf(o.iso) : String(k + 1)); b.type = 'button'; b.setAttribute('aria-label', nameOf(o)); b.onclick = () => { L.i = k; studyStep(); }; row.appendChild(b); });
+        lc.insertBefore(row, lc.firstChild);
+        $('mp-nextrow').hidden = false; $('mp-next').textContent = L.i < L.ids.length - 1 ? t('next') : t('toRecall');
+        S.lessonNext = () => { if (L.i < L.ids.length - 1) { L.i++; studyStep(); } else { recallStart(); } };
+    }
+    function recallStart() { const L = S.lesson; L.queue = L.ids.slice().sort(() => Math.random() - 0.5); L.done = 0; recallStep(); }
+    function recallStep() {
+        const L = S.lesson; if (!L.queue.length) return startLessonQuiz();
+        const id = L.queue.shift(), it = itemById(id); lessonCardReset(); lessonPrompt(2, L.done + 1, L.ids.length);
+        highlightLesson(it, 'tgt');
+        const lc = $('mp-learn'); lc.textContent = ''; lc.hidden = false; $('mp-nextrow').hidden = true; S.lessonNext = null;
+        const head = el('div', 'hd'); head.appendChild(el('span', 'flag big', L.flag && it.iso ? flagOf(it.iso) : '❓')); head.appendChild(el('b', '', t('recallQ'))); lc.appendChild(head);
+        const btns = el('div', 'mp-lbtns'); lc.appendChild(btns);
+        const show = el('button', 'mp-btn', t('reveal')); show.type = 'button';
+        show.onclick = () => {
+            fillCard(lc, it, false, L.flag, true); const b2 = el('div', 'mp-lbtns');
+            const yes = el('button', 'mp-btn good', '✔ ' + t('knew')); yes.type = 'button'; yes.onclick = () => { L.done++; recallStep(); };
+            const no = el('button', 'mp-btn ghost', '↺ ' + t('notYet')); no.type = 'button'; no.onclick = () => { if (!L.redo[id]) { L.redo[id] = 1; L.queue.push(id); } else L.done++; recallStep(); };
+            b2.appendChild(yes); b2.appendChild(no); lc.appendChild(b2);
+            const lab = addLabel(it, true); lab.temp = true; setTimeout(refreshOverlays, 30);
+        };
+        btns.appendChild(show);
+    }
+    function startLessonQuiz() {
+        const L = S.lesson; $('mp-learn').hidden = true; $('mp-nextrow').hidden = true; S.lessonNext = null;
+        lessonPrompt(3, 0, 0); lessonCardReset();
+        S.run = { qs: L.ids.slice().sort(() => Math.random() - 0.5), i: 0, right: 0, wrong: 0, streak: 0, best: 0, tries: 0, attempts: 0, mistakes: [], newMastered: 0, t0: Date.now(), locked: false, hinted: false, lesson: true };
+        nextQ();
+    }
 
     // ---- screens ----
     function show(id) {
@@ -369,17 +474,20 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         S.def = def;
         $('mp-setuptitle').textContent = (def.icon || '') + ' ' + t('m' + def.id);
         const modes = $('mp-modes'); modes.textContent = '';
-        const list = [['explore', 'mdExplore', 'mdExploreD', '🔍'], ['find', 'mdFind', 'mdFindD', '🎯'], ['name', 'mdName', 'mdNameD', '🏷️']];
+        const list = [['learn', 'mdLearn', 'mdLearnD', '🎓'], ['explore', 'mdExplore', 'mdExploreD', '🔍'], ['find', 'mdFind', 'mdFindD', '🎯'], ['name', 'mdName', 'mdNameD', '🏷️']];
         if (def.kind === 'country' || def.src === 'ccaa' || def.src === 'eus') list.push(['cap', 'mdCap', 'mdCapD', '⭐']);
-        if (def.kind === 'country') list.push(['flag', 'mdFlag', 'mdFlagD', '🚩']);
+        if (def.kind === 'country') { list.splice(1, 0, ['learnflag', 'mdLearnFlag', 'mdLearnFlagD', '🎴']); list.push(['flag', 'mdFlag', 'mdFlagD', '🚩']); }
+        const nLearn = loadLearned(def, false).size, nFlag = loadLearned(def, true).size, skipped = skipLearn(def);
         const pg = loadProg(def.store);
         const dueN = Object.keys(pg).filter(id => needsReview(pg[id]) && (!def.cont || !W_FACTS || W_CONT[id] === def.cont)).length;
         list.push(['review', 'mdReview', 'mdReviewD', '🔁']);
         list.forEach(([m, k, kd, ic]) => {
             const b = el('button', 'mp-modecard'); b.type = 'button'; b.dataset.mode = m;
             if (m === 'review' && !dueN) { b.disabled = true; b.classList.add('off'); }
+            if ((m === 'learn' && nLearn < LEARN_N && !skipped) || (m === 'learnflag' && nFlag < LEARN_N && !skipped)) b.classList.add('start');
             b.appendChild(el('span', 'ic', ic));
-            const tx = el('span', 'tx'); tx.appendChild(el('b', '', t(k) + (m === 'review' && dueN ? ' (' + dueN + ')' : ''))); tx.appendChild(el('small', '', m === 'review' && !dueN ? t('noReview') : t(kd))); b.appendChild(tx);
+            const tx = el('span', 'tx'); tx.appendChild(el('b', '', t(k) + (m === 'review' && dueN ? ' (' + dueN + ')' : '')));
+            if (b.classList.contains('start')) tx.firstChild.appendChild(el('em', 'mp-start', t('startHere'))); tx.appendChild(el('small', '', m === 'review' && !dueN ? t('noReview') : t(kd))); b.appendChild(tx);
             b.onclick = () => startMap(def, m);
             modes.appendChild(b);
         });
@@ -388,6 +496,8 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
             const c = el('button', 'mp-chip' + (S.diff === v ? ' on' : ''), t(k)); c.type = 'button';
             c.onclick = () => { S.diff = v; openSetup(def); }; dr.appendChild(c);
         });
+        const sk = el('button', 'mp-chip' + (skipLearn(def) ? ' on' : ''), '✅ ' + t('skipLearn')); sk.type = 'button'; sk.setAttribute('aria-pressed', String(skipLearn(def)));
+        sk.onclick = () => { try { localStorage.setItem(skipKey(def), skipLearn(def) ? '0' : '1'); } catch (e) { /* ignore */ } openSetup(def); }; dr.appendChild(sk);
         const tc = el('button', 'mp-chip timed' + (S.timed ? ' on' : ''), '⏱️ ' + t('timed')); tc.type = 'button'; tc.setAttribute('aria-pressed', String(!!S.timed));
         tc.onclick = () => { S.timed = !S.timed; try { localStorage.setItem('mapas_timed', S.timed ? '1' : '0'); } catch (e) { /* ignore */ } openSetup(def); }; dr.appendChild(tc);
         show('mp-setup');
@@ -413,7 +523,9 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         rememberTotal(def.id, S.map.items.length);
         S.progs[def.store] = loadProg(def.store);
         drawMap();
-        if (mode === 'explore') startExplore(); else startRun();
+        if (mode === 'explore') startExplore();
+        else if (mode === 'learn' || mode === 'learnflag') startLearn(mode === 'learnflag');
+        else { const g = needLearnFirst(def, mode); if (g) { S.notice = t('learnFirst'); S.mode = g; startLearn(g === 'learnflag'); } else startRun(); }
     }
 
     function stageSize() { const r = $('mp-stage').getBoundingClientRect(); return { w: Math.max(200, r.width), h: Math.max(200, r.height) }; }
@@ -534,7 +646,7 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
     }
 
     function addLabel(it, force) {
-        const n = nameOf(it);
+        const n = nameOf(it) + (S.map.kind === 'river' && it.km && S.mode === 'explore' ? ' · ' + nf(it.km) + ' km' : '');
         const x = sv('text', { x: it.x, y: it.y, 'text-anchor': 'middle', 'dominant-baseline': 'middle', 'pointer-events': 'none' }, 'mp-lbl'); x.textContent = n;
         S.layers.gLb.appendChild(x); const l = { it, node: x, len: Math.max(3, n.length), a: it.a, x: it.x, y: it.y, peak: !!it.mk, force: !!force }; S.labels.push(l); return l;
     }
@@ -628,18 +740,18 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         if (it.inf && it.inf.pop != null) { const v = it.inf.pop; return v >= 1000 ? nfd(v / 1000) + ' ' + t('million') : nf(v) + ' ' + t('thousand'); }
         return '';
     }
-    function dispName(type, code, fb) { try { return new Intl.DisplayNames([lang()], { type: type }).of(code) || fb; } catch (e) { return fb; } }
+    const dispName = (type, code, fb) => intlName(type, code, fb);
     // Fills a container with the learning card of an item (used when exploring and after each quiz answer)
-    function fillCard(box, it, withClose) {
+    function fillCard(box, it, withClose, big, compact) {
         box.textContent = '';
         if (withClose) { const close = el('button', 'x', '✕'); close.type = 'button'; close.setAttribute('aria-label', t('close')); close.onclick = closeInfo; box.appendChild(close); }
         const k = S.map.kind, head = el('div', 'hd');
-        if (k === 'country') head.appendChild(el('span', 'flag', flagOf(it.iso)));
+        if (k === 'country') head.appendChild(el('span', 'flag' + (big ? ' big' : ''), flagOf(it.iso)));
         if (k === 'peak') head.appendChild(el('span', 'flag', it.mk === 'town' ? '🏘️' : it.mk === 'range' ? '⛰️' : '🏔️'));
         if (k === 'river') head.appendChild(el('span', 'flag', '🌊'));
         head.appendChild(el('b', '', nameOf(it))); box.appendChild(head);
         const rows = el('div', 'rows'); box.appendChild(rows);
-        const add = (label, val) => { if (!val) return; const r = el('div', 'row'); r.appendChild(el('span', '', label)); r.appendChild(el('b', '', val)); rows.appendChild(r); };
+        const add = (label, val) => { if (!val || (compact && rows.children.length >= 3)) return; const r = el('div', 'row'); r.appendChild(el('span', '', label)); r.appendChild(el('b', '', val)); rows.appendChild(r); };
         let fact = null;
         if (k === 'country') {
             const i = it.info || {};
@@ -724,7 +836,7 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         nextQ();
     }
     const TAP_TYPES = ['find', 'capFind', 'flagFind'];
-    function qType() { return S.mode === 'review' ? 'find' : S.mode === 'flag' ? (Math.random() < 0.5 ? 'flagFind' : 'flagName') : S.mode === 'cap' ? (Math.random() < 0.5 ? 'capFind' : 'capName') : S.mode; }
+    function qType() { if (S.mode === 'learn') return S.run.i % 2 === 0 ? 'find' : 'name'; if (S.mode === 'learnflag') return S.run.i % 2 === 0 ? 'flagFind' : 'flagName'; return S.mode === 'review' ? 'find' : S.mode === 'flag' ? (Math.random() < 0.5 ? 'flagFind' : 'flagName') : S.mode === 'cap' ? (Math.random() < 0.5 ? 'capFind' : 'capName') : S.mode; }
     function resetClasses() { Object.keys(S.els).forEach(id => S.els[id].classList.remove('good', 'bad', 'tgt', 'sel', 'flow')); }
     function nextQ() {
         const r = S.run; if (!r) return;
@@ -736,7 +848,7 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         const it = r.it, n = nameOf(it);
         const pr = $('mp-prompt'); pr.textContent = '';
         if (r.type === 'flagFind' || r.type === 'flagName') { pr.appendChild(el('span', 'fflag', flagOf(it.iso))); pr.appendChild(document.createTextNode(' ' + t(r.type === 'flagFind' ? 'qFlagFind' : 'qFlagName'))); }
-        if (r.type === 'find') { $('mp-prompt').textContent = t('qFind', { n: n }); }
+        if (r.type === 'find') { $('mp-prompt').textContent = t('qFind', { n: n + (S.map.kind === 'river' && it.km ? ' (' + nf(it.km) + ' km)' : '') }); }
         else if (r.type === 'capFind') { $('mp-prompt').textContent = t('qCapFind', { n: capOf(it) }); }
         else if (r.type === 'flagFind') { /* prompt already set */ }
         else {
@@ -764,7 +876,7 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
     // against the clock: a soft bar, running out counts as a miss and shows the answer
     function startTimer(r) {
         clearTimeout(S.timerT); const tm = $('mp-timer'), fill = $('mp-timerfill');
-        if (!S.timed) { tm.hidden = true; return; }
+        if (!S.timed || S.mode === 'learn' || S.mode === 'learnflag') { tm.hidden = true; return; }
         const secs = TAP_TYPES.includes(r.type) ? 25 : 15;
         tm.hidden = false; fill.style.transition = 'none'; fill.style.transform = 'scaleX(1)';
         void fill.offsetWidth; fill.style.transition = 'transform ' + secs + 's linear'; fill.style.transform = 'scaleX(0)';
@@ -832,6 +944,7 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
             m.appendChild(ul);
         }
         $('mp-again').textContent = t('again'); $('mp-home-btn').textContent = t('back');
+        if (r.lesson && S.lesson) { const set = loadLearned(S.def, S.lesson.flag); S.lesson.ids.forEach(id => set.add(id)); saveLearned(S.def, S.lesson.flag, set); $('mp-endtitle').textContent = t('lessonDone'); $('mp-again').textContent = t('nextLesson'); }
         if (S.user && typeof PlatformFirestore !== 'undefined') {
             try {
                 const prog = S.progs[S.def.store]; const mastered = Object.keys(prog).filter(i => prog[i].s >= 2).length;
@@ -851,14 +964,14 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
     }
     function onKey(e) {
         if (e.key === 'Escape' && S.screen === 'mp-game') quitGame();
-        if ((e.key === 'Enter' || e.key === ' ') && S.screen === 'mp-game' && S.run && !$('mp-nextrow').hidden) { e.preventDefault(); S.run.i++; nextQ(); }
+        if ((e.key === 'Enter' || e.key === ' ') && S.screen === 'mp-game' && !$('mp-nextrow').hidden) { e.preventDefault(); $('mp-next').click(); }
     }
-    function quitGame() { stopTimer(); $('mp-timer').hidden = true; S.run = null; renderHome(); show('mp-home'); }
+    function quitGame() { S.lessonNext = null; S.lesson = null; stopTimer(); $('mp-timer').hidden = true; S.run = null; renderHome(); show('mp-home'); }
 
     function init() {
         $('mp-quit').onclick = quitGame;
         $('mp-setupback').onclick = () => { renderHome(); show('mp-home'); };
-        $('mp-next').onclick = () => { if (S.run) { S.run.i++; nextQ(); } };
+        $('mp-next').onclick = () => { if (S.lessonNext) { const f = S.lessonNext; f(); } else if (S.run) { S.run.i++; nextQ(); } };
         $('mp-hint').onclick = useHint;
         $('mp-again').onclick = () => startMap(S.def, S.mode);
         $('mp-home-btn').onclick = () => { renderHome(); show('mp-home'); };

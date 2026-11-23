@@ -12,6 +12,30 @@ service cloud.firestore {
       return v is string && v.size() <= max;
     }
 
+    // Family accounts (docs/cuenta-familiar.md). Children hang under the owner:
+    // users/{owner}/players/{pid}. Other adults ("guardians", doc
+    // users/{owner}/guardians/{guardianUid}) get role 'edit' or 'view' on the
+    // children ONLY. They never reach the owner's own profile or games.
+    function guardianPath(ownerId) {
+      return /databases/$(database)/documents/users/$(ownerId)/guardians/$(request.auth.uid);
+    }
+    function isGuardian(ownerId) {
+      return signedIn() && exists(guardianPath(ownerId));
+    }
+    function guardianRole(ownerId) {
+      return get(guardianPath(ownerId)).data.role;
+    }
+    function canEditKids(ownerId) {
+      return isOwner(ownerId) || (isGuardian(ownerId) && guardianRole(ownerId) == 'edit');
+    }
+    function canReadKids(ownerId) {
+      return isOwner(ownerId) || isGuardian(ownerId);
+    }
+    // Verified Google e-mail of the caller, lowercased ('' when there is none).
+    function verifiedEmail() {
+      return signedIn() && request.auth.token.email_verified == true ? request.auth.token.email.lower() : '';
+    }
+
     // Users: only the authenticated user can read/write/delete their own data.
     // Delete is allowed so the GDPR "right to erasure" can be done from the client.
     match /users/{userId} {
@@ -21,10 +45,89 @@ service cloud.firestore {
         && (!('xp' in request.resource.data) || (request.resource.data.xp is number && request.resource.data.xp >= 0))
         && (!('totalPoints' in request.resource.data) || (request.resource.data.totalPoints is number && request.resource.data.totalPoints >= 0));
 
-      // Everything below (stats per game, child players and their stats): owner only
-      match /{sub}/{document=**} {
-        allow read, write: if isOwner(userId);
+      // Child players and their stats: owner, plus guardians by role.
+      // Deleting a player (or anything under it) is reserved to the owner.
+      match /players/{pid} {
+        allow read: if canReadKids(userId);
+        allow create, update: if canEditKids(userId);
+        allow delete: if isOwner(userId);
+
+        match /{sub}/{document=**} {
+          allow read: if canReadKids(userId);
+          allow create, update: if canEditKids(userId);
+          allow delete: if isOwner(userId);
+        }
       }
+
+      // Guardians of this family. A guardian can only create their own doc by
+      // consuming a valid invitation addressed to their verified e-mail.
+      match /guardians/{gid} {
+        allow get: if isOwner(userId) || isOwner(gid);
+        allow list: if isOwner(userId) || (signedIn() && resource.data.uid == request.auth.uid);
+        allow create: if isOwner(gid) && gid != userId
+          && request.resource.data.keys().hasOnly(['uid', 'email', 'name', 'role', 'since', 'inviteId'])
+          && request.resource.data.keys().hasAll(['uid', 'email', 'name', 'role', 'since', 'inviteId'])
+          && request.resource.data.uid == gid
+          && request.resource.data.inviteId is string
+          && !existsAfter(/databases/$(database)/documents/invites/$(request.resource.data.inviteId))  // the invitation is consumed in the same batch (no replay after a revocation)
+          && request.resource.data.name is string && request.resource.data.name.size() <= 40
+          && request.resource.data.since == request.time
+          && exists(/databases/$(database)/documents/invites/$(request.resource.data.inviteId))
+          && get(/databases/$(database)/documents/invites/$(request.resource.data.inviteId)).data.ownerUid == userId
+          && get(/databases/$(database)/documents/invites/$(request.resource.data.inviteId)).data.email == verifiedEmail()
+          && request.resource.data.email == verifiedEmail()
+          && request.time < get(/databases/$(database)/documents/invites/$(request.resource.data.inviteId)).data.expires
+          && request.resource.data.role == get(/databases/$(database)/documents/invites/$(request.resource.data.inviteId)).data.role;
+        allow update: if false;
+        allow delete: if isOwner(userId) || isOwner(gid);
+      }
+
+      // Families this user belongs to (so the app needs no collection-group query).
+      match /memberships/{ownerId} {
+        allow read: if isOwner(userId);
+        // existsAfter/getAfter: the guardian doc is created in the same batch.
+        allow create: if isOwner(userId) && ownerId != userId
+          && request.resource.data.keys().hasOnly(['ownerUid', 'ownerName', 'role', 'since'])
+          && request.resource.data.keys().hasAll(['ownerUid', 'ownerName', 'role', 'since'])
+          && request.resource.data.ownerUid == ownerId
+          && request.resource.data.ownerName is string && request.resource.data.ownerName.size() <= 40
+          && request.resource.data.since == request.time
+          && existsAfter(/databases/$(database)/documents/users/$(ownerId)/guardians/$(userId))
+          && getAfter(/databases/$(database)/documents/users/$(ownerId)/guardians/$(userId)).data.role == request.resource.data.role;
+        allow update: if false;
+        allow delete: if isOwner(userId);
+      }
+
+      // Everything else below (stats per game of the adult): owner only.
+      // players, guardians and memberships have their own matches above, so they
+      // are excluded here (rules are additive: this must not grant the owner
+      // writes on guardians or memberships).
+      match /{sub}/{document=**} {
+        allow read, write: if isOwner(userId) && !(sub in ['players', 'guardians', 'memberships']);
+      }
+    }
+
+    // Invitations: the owner creates them, the invited verified e-mail reads and
+    // deletes them. Nothing is e-mailed automatically.
+    match /invites/{inviteId} {
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['ownerUid', 'ownerName', 'email', 'role', 'createdAt', 'expires'])
+        && request.resource.data.keys().hasAll(['ownerUid', 'ownerName', 'email', 'role', 'createdAt', 'expires'])
+        && request.resource.data.ownerUid == request.auth.uid
+        && request.resource.data.ownerName is string && request.resource.data.ownerName.size() <= 40
+        && request.resource.data.email is string
+        && request.resource.data.email.size() <= 254
+        && request.resource.data.email == request.resource.data.email.lower()
+        && request.resource.data.email.matches('^[^@ ]+@[^@ ]+[.][^@ ]+$')
+        && request.resource.data.role in ['edit', 'view']
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.expires > request.time
+        && request.resource.data.expires <= request.time + duration.value(31, 'd')
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.username == request.resource.data.ownerName;
+      allow read, delete: if signedIn()
+        && (resource.data.ownerUid == request.auth.uid || resource.data.email == verifiedEmail());
+      allow update: if false;
     }
 
     // Leaderboard. The client writes to leaderboard/{game}/scores/{uid}
@@ -34,10 +137,21 @@ service cloud.firestore {
     function ownsScore(id) {
       return signedIn() && (id == request.auth.uid || id.matches(request.auth.uid + '_[a-z0-9]{6,20}'));
     }
+    // A guardian with role 'edit' writes the child's score under the OWNER's uid
+    // (id = ownerUid_pid, data.uid = ownerUid), never under their own.
+    function guardianScore(id) {
+      return signedIn()
+        && id.split('_').size() == 2
+        && id.split('_')[1].matches('[a-z0-9]{6,20}')
+        && id.split('_')[0] != request.auth.uid
+        && request.resource.data.uid == id.split('_')[0]
+        && isGuardian(id.split('_')[0])
+        && guardianRole(id.split('_')[0]) == 'edit';
+    }
     match /leaderboard/{game}/scores/{userId} {
       allow read: if signedIn();
-      allow create, update: if ownsScore(userId)
-        && request.resource.data.uid == request.auth.uid
+      allow create, update: if ((ownsScore(userId) && request.resource.data.uid == request.auth.uid)
+                                || guardianScore(userId))
         && shortString(request.resource.data.username, 40)
         && request.resource.data.totalPoints is number
         && request.resource.data.totalPoints >= 0;

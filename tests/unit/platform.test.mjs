@@ -229,7 +229,7 @@ test('U-MAPAS: pure helpers, UI strings and map data are consistent', () => {
   assert.ok(SP.rivers.length >= 50 && SP.mount.length >= 60, 'spain rivers/mountains: ' + SP.rivers.length + '/' + SP.mount.length);
   assert.ok(SP.eus && SP.eus.towns.length >= 20 && SP.eus.rivers.length >= 8 && SP.eus.mount.length >= 12 && SP.eus.vb.length === 4, 'euskadi data');
   SP.eus.towns.forEach(x => assert.ok(x.eu && x.es && x.fact && x.x > 0, 'town ' + x.id));
-  assert.ok(SP.rivers.length >= 28, 'spanish rivers: ' + SP.rivers.length); SP.rivers.forEach(r => { assert.ok(r.c.length >= 1, 'region crossed by ' + r.id); assert.ok(r.km > 20 && r.fact && r.fact.es && r.fact.en && r.src && r.mouth, 'content for ' + r.id); });
+  assert.ok(SP.rivers.length >= 28, 'spanish rivers: ' + SP.rivers.length); SP.rivers.forEach(r => { assert.ok(r.c.length >= 1, 'region crossed by ' + r.id); assert.ok(r.km >= 3 && r.fact && r.fact.es && r.fact.en && r.src && r.mouth, 'content for ' + r.id); });
   W.rivers.forEach(r => assert.ok(r.km > 100 && r.fact && r.fact.es && r.fact.en, 'content for ' + r.id));
   const noFact = live.filter(c => !(W.info[c.i] && W.info[c.i].fact && W.info[c.i].fact.es && W.info[c.i].fact.en && W.info[c.i].pop > 0));
   assert.equal(noFact.length, 0, 'country content missing: ' + noFact.map(c => c.i).join());

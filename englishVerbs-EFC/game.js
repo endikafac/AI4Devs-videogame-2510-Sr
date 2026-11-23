@@ -288,9 +288,11 @@ const EnglishVerbsGame = (() => {
     }
 
     // ── Game start ─────────────────────────────────────────────────────
-    function startLevel(levelId) {
+    function startLevel(levelId, skipLesson) {
         const lvl = ENGLISH_LEVELS.find(l => l.id === levelId);
         if (!lvl) return;
+        // First time on level 1: the "regular vs irregular" card comes first
+        if (levelId === 1 && !skipLesson && !lessonSeen()) { openLesson(); return; }
         state.groupPracticeMode = false;
         state.groupPracticeGroup = null;
         state.level = levelId;
@@ -315,6 +317,128 @@ const EnglishVerbsGame = (() => {
         updateHUD();
         renderQuestion();
         showScreen('game');
+    }
+
+    // ── Lesson: regular vs irregular past (before level 1) ─────────────
+    const LESSON_KEY = 'ev_lesson_seen';
+    function lessonSeen() { try { return localStorage.getItem(LESSON_KEY) === '1'; } catch (e) { return false; } }
+    function markLessonSeen() { try { localStorage.setItem(LESSON_KEY, '1'); } catch (e) { /* ignore */ } }
+    const lessonState = { step: 'cards', q: 0 };
+    function mk(tag, cls, text) {
+        const e = document.createElement(tag);
+        if (cls) e.className = cls;
+        if (text !== undefined && text !== null) e.textContent = text;
+        return e;
+    }
+
+    function openLesson() {
+        lessonState.step = 'cards'; lessonState.q = 0;
+        renderLesson();
+        showScreen('lesson');
+    }
+    function finishLesson() {
+        markLessonSeen();
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+        startLevel(1, true);
+    }
+
+    function renderLesson() {
+        const root = $('ev-lesson-body');
+        if (!root) return;
+        root.textContent = '';
+        $('ev-lesson-title').textContent = t('lrn_title');
+        $('ev-lesson-skip').textContent = t('lrn_skip');
+        if (lessonState.step === 'cards') renderLessonCards(root);
+        else if (lessonState.step === 'try') renderLessonTry(root);
+        else renderLessonDone(root);
+    }
+
+    /** Three worked examples; every form is a button that reveals the word and a sentence. */
+    function renderLessonCards(root) {
+        root.appendChild(mk('p', 'ev-lesson-intro', t('lrn_intro')));
+        const titles = [['lrn_regular_title', 'lrn_regular_text'], ['lrn_irregular_title', 'lrn_irregular_text'], ['lrn_forms_title', 'lrn_forms_text']];
+        const forms = [['base', 'lrn_form_base'], ['past', 'lrn_form_past'], ['part', 'lrn_form_part']];
+        EnglishVerbsLearn.EXAMPLES.forEach((ex, i) => {
+            const card = mk('div', 'ev-lcard ' + (ex.regular ? 'regular' : 'irregular'));
+            card.appendChild(mk('h3', 'ev-lcard-title', t(titles[i][0])));
+            card.appendChild(mk('p', 'ev-lcard-text', t(titles[i][1])));
+            const row = mk('div', 'ev-ltiles');
+            forms.forEach(([f, labelKey]) => {
+                const word = f === 'base' ? ex.v : ex[f];
+                const b = mk('button', 'ev-ltile');
+                b.type = 'button';
+                b.setAttribute('aria-pressed', 'false');
+                b.dataset.form = f; b.dataset.verb = ex.v;
+                const label = mk('span', 'ev-ltile-label', t(labelKey));
+                const val = mk('span', 'ev-ltile-val', '?');
+                const sent = mk('span', 'ev-ltile-sent', '');
+                b.append(label, val, sent);
+                b.addEventListener('click', () => {
+                    if (b.getAttribute('aria-pressed') === 'true') { speak(word); return; }
+                    b.setAttribute('aria-pressed', 'true'); b.classList.add('revealed');
+                    val.textContent = word; sent.textContent = ex.uses[f];
+                    speak(ex.uses[f]);
+                });
+                row.appendChild(b);
+            });
+            card.appendChild(row);
+            card.appendChild(mk('p', 'ev-ltag', ex.v + ' → ' + t(ex.regular ? 'lrn_tag_regular' : 'lrn_tag_irregular')));
+            root.appendChild(card);
+        });
+        const hint = mk('p', 'ev-ltap', t('lrn_tap'));
+        const go = mk('button', 'ev-btn ev-btn-primary', t('lrn_try'));
+        go.type = 'button'; go.id = 'ev-lesson-try';
+        go.addEventListener('click', () => { lessonState.step = 'try'; lessonState.q = 0; renderLesson(); });
+        root.append(hint, go);
+    }
+
+    /** Three guided questions: wrong answers are explained and can be retried. */
+    function renderLessonTry(root) {
+        const qs = EnglishVerbsLearn.TRY_QUESTIONS, q = qs[lessonState.q];
+        root.appendChild(mk('h3', 'ev-lcard-title', t('lrn_try_title')));
+        root.appendChild(mk('p', 'ev-lesson-intro', t('lrn_try_hint')));
+        const card = mk('div', 'ev-question-card');
+        card.appendChild(mk('p', 'ev-question-counter', t('lrn_try_count', { n: lessonState.q + 1, m: qs.length })));
+        card.appendChild(mk('p', 'ev-question-text', t(q.kind === 'past' ? 'q_past' : 'q_part', { v: q.v })));
+        root.appendChild(card);
+        const opts = mk('div', 'ev-options');
+        const fb = mk('p', 'ev-lesson-fb', ''); fb.id = 'ev-lesson-fb'; fb.setAttribute('role', 'status'); fb.setAttribute('aria-live', 'polite');
+        const next = mk('button', 'ev-btn ev-btn-primary hidden', t(lessonState.q + 1 < qs.length ? 'lrn_next' : 'lrn_start'));
+        next.type = 'button'; next.id = 'ev-lesson-next';
+        EnglishVerbsLearn.shuffledOptions(q).forEach(opt => {
+            const b = mk('button', 'ev-option-btn');
+            b.type = 'button';
+            b.appendChild(mk('span', null, opt));
+            b.addEventListener('click', () => {
+                if (opt === EnglishVerbsLearn.answerOf(q)) {
+                    opts.querySelectorAll('button').forEach(x => { x.disabled = true; });
+                    b.classList.add('correct');
+                    fb.className = 'ev-lesson-fb ok';
+                    fb.textContent = '\u2713 ' + t('lrn_try_ok', { v: q.v, p: q.past, pp: q.part });
+                    next.classList.remove('hidden'); next.focus();
+                } else {
+                    b.disabled = true; b.classList.add('wrong');
+                    const why = EnglishVerbsLearn.whyWrong(q, opt);
+                    fb.className = 'ev-lesson-fb bad';
+                    fb.textContent = '\u2717 ' + t(why.key, why.vars) + ' ' + t('lrn_try_again');
+                }
+            });
+            opts.appendChild(b);
+        });
+        next.addEventListener('click', () => {
+            if (lessonState.q + 1 < qs.length) { lessonState.q++; renderLesson(); }
+            else { lessonState.step = 'done'; renderLesson(); }
+        });
+        root.append(opts, fb, next);
+    }
+
+    function renderLessonDone(root) {
+        root.appendChild(mk('p', 'ev-lesson-intro ev-lesson-done', t('lrn_done')));
+        const go = mk('button', 'ev-btn ev-btn-primary', t('lrn_start'));
+        go.type = 'button'; go.id = 'ev-lesson-start';
+        go.addEventListener('click', finishLesson);
+        root.appendChild(go);
+        go.focus();
     }
 
     // ── Group practice start ───────────────────────────────────────────
@@ -938,6 +1062,7 @@ const EnglishVerbsGame = (() => {
         document.addEventListener('platformLanguageChanged', () => {
             detectLang();
             applyStatic();
+            if ($('ev-screen-lesson')?.classList.contains('active')) renderLesson();
             renderVerbTable();
             renderGroupCards();
             renderLevelGrid();
@@ -962,6 +1087,8 @@ const EnglishVerbsGame = (() => {
         $('ev-verb-search')?.addEventListener('input', e => searchVerbs(e.target.value));
 
         $('ev-next-btn')?.addEventListener('click', nextQuestion);
+        $('ev-lesson-skip')?.addEventListener('click', finishLesson);
+        $('ev-lesson-open')?.addEventListener('click', openLesson);
         $('ev-quit-btn')?.addEventListener('click', showQuitModal);
         $('ev-quit-cancel')?.addEventListener('click', hideQuitModal);
         $('ev-quit-ok')?.addEventListener('click', () => { hideQuitModal(); renderHome(); });
@@ -986,6 +1113,7 @@ const EnglishVerbsGame = (() => {
             const modal = $('ev-quit-modal');
             const modalOpen = modal && !modal.classList.contains('hidden');
             const inGame = $('ev-screen-game')?.classList.contains('active');
+            if (e.key === 'Escape' && $('ev-screen-lesson')?.classList.contains('active')) { renderHome(); return; }
             if (e.key === 'Escape') {
                 if (modalOpen) hideQuitModal();
                 else if (inGame) showQuitModal();
@@ -1018,6 +1146,7 @@ const EnglishVerbsGame = (() => {
         speakVerb,
         searchVerbs,
         showTab,
-        toggleGroupVerbs
+        toggleGroupVerbs,
+        openLesson
     };
 })();

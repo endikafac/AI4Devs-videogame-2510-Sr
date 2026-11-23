@@ -1,0 +1,309 @@
+{
+ "rivers": [
+  {
+   "id": "arratia",
+   "es": "Arratia",
+   "eu": "Arratia",
+   "en": "Arratia",
+   "km": 30,
+   "source": {
+    "es": "Sierra de Gorbea (Bizkaia)",
+    "en": "Gorbea mountains (Bizkaia)"
+   },
+   "mouth": {
+    "es": "Río Ibaizabal, cerca de Bedia",
+    "en": "Ibaizabal River, near Bedia"
+   },
+   "fact": {
+    "es": "Recorre el valle de Arratia, entre bosques y pueblos pequeños de Bizkaia.",
+    "en": "It runs through the Arratia valley, among forests and small villages in Bizkaia.",
+    "eu": "Arratiako bailaratik igarotzen da eta Ibaizabalera isurtzen da."
+   },
+   "pts": [
+    [
+     -2.77,
+     43
+    ],
+    [
+     -2.78,
+     43.02
+    ],
+    [
+     -2.8,
+     43.05
+    ],
+    [
+     -2.82,
+     43.1
+    ],
+    [
+     -2.83,
+     43.15
+    ],
+    [
+     -2.83,
+     43.2
+    ],
+    [
+     -2.85,
+     43.23
+    ]
+   ]
+  },
+  {
+   "id": "butron",
+   "es": "Butrón",
+   "eu": "Butroe",
+   "en": "Butrón",
+   "km": 28,
+   "source": {
+    "es": "Cerca de Mungia (Bizkaia)",
+    "en": "Near Mungia (Bizkaia)"
+   },
+   "mouth": {
+    "es": "Ría de Plentzia (Mar Cantábrico)",
+    "en": "Plentzia estuary (Cantabrian Sea)"
+   },
+   "fact": {
+    "es": "Cruza Gatika y llega al mar en Plentzia, cerca del castillo de Butrón.",
+    "en": "It crosses Gatika and reaches the sea at Plentzia, near Butrón castle.",
+    "eu": "Mungiatik igarotzen da eta Plentziako itsasadarrean itsasoratzen da."
+   },
+   "pts": [
+    [
+     -2.82,
+     43.3
+    ],
+    [
+     -2.83,
+     43.33
+    ],
+    [
+     -2.84,
+     43.36
+    ],
+    [
+     -2.86,
+     43.38
+    ],
+    [
+     -2.9,
+     43.38
+    ],
+    [
+     -2.93,
+     43.4
+    ],
+    [
+     -2.95,
+     43.41
+    ]
+   ]
+  },
+  {
+   "id": "oka",
+   "es": "Oka",
+   "eu": "Oka",
+   "en": "Oka",
+   "km": 30,
+   "source": {
+    "es": "Monte Oiz (Bizkaia)",
+    "en": "Mount Oiz (Bizkaia)"
+   },
+   "mouth": {
+    "es": "Ría de Urdaibai, en Mundaka (Mar Cantábrico)",
+    "en": "Urdaibai estuary, at Mundaka (Cantabrian Sea)"
+   },
+   "fact": {
+    "es": "Pasa por Gernika y forma la ría de Urdaibai, reserva de la biosfera.",
+    "en": "It flows through Gernika and forms the Urdaibai estuary, a biosphere reserve.",
+    "eu": "Gernikatik igarotzen da eta Urdaibaiko itsasadarra osatzen du, biosfera erreserba."
+   },
+   "pts": [
+    [
+     -2.55,
+     43.3
+    ],
+    [
+     -2.6,
+     43.28
+    ],
+    [
+     -2.65,
+     43.3
+    ],
+    [
+     -2.68,
+     43.32
+    ],
+    [
+     -2.67,
+     43.35
+    ],
+    [
+     -2.7,
+     43.38
+    ],
+    [
+     -2.7,
+     43.4
+    ]
+   ]
+  },
+  {
+   "id": "barbadun",
+   "es": "Barbadún",
+   "eu": "Barbadun",
+   "en": "Barbadún",
+   "km": 23,
+   "source": {
+    "es": "Sierra de Ordunte (Bizkaia)",
+    "en": "Ordunte mountains (Bizkaia)"
+   },
+   "mouth": {
+    "es": "Mar Cantábrico, en Pobeña (Muskiz)",
+    "en": "Cantabrian Sea, at Pobeña (Muskiz)"
+   },
+   "fact": {
+    "es": "Es un río del oeste de Bizkaia que forma el límite con Cantabria.",
+    "en": "It is a river in western Bizkaia that forms the border with Cantabria.",
+    "eu": "Bizkaiko mendebaldeko ibaia da eta Kantabriarekiko muga osatzen du."
+   },
+   "pts": [
+    [
+     -3.28,
+     43.2
+    ],
+    [
+     -3.24,
+     43.24
+    ],
+    [
+     -3.2,
+     43.28
+    ],
+    [
+     -3.15,
+     43.32
+    ],
+    [
+     -3.12,
+     43.34
+    ],
+    [
+     -3.12,
+     43.36
+    ],
+    [
+     -3.11,
+     43.37
+    ]
+   ]
+  },
+  {
+   "id": "leitzaran",
+   "es": "Leitzaran",
+   "eu": "Leitzaran",
+   "en": "Leitzaran",
+   "km": 40,
+   "source": {
+    "es": "Cerca de Leitza (Navarra)",
+    "en": "Near Leitza (Navarre)"
+   },
+   "mouth": {
+    "es": "Río Oria, en Andoain",
+    "en": "Oria River, at Andoain"
+   },
+   "fact": {
+    "es": "Recorre un valle muy verde entre Navarra y Gipuzkoa, con una antigua vía de tren convertida en ruta verde.",
+    "en": "It runs through a very green valley between Navarre and Gipuzkoa, with an old railway turned into a greenway.",
+    "eu": "Nafarroa eta Gipuzkoa artean doa eta Andoainen Oriara isurtzen da."
+   },
+   "pts": [
+    [
+     -1.87,
+     43.05
+    ],
+    [
+     -1.9,
+     43.1
+    ],
+    [
+     -1.95,
+     43.15
+    ],
+    [
+     -1.98,
+     43.18
+    ],
+    [
+     -2,
+     43.2
+    ],
+    [
+     -2.02,
+     43.22
+    ],
+    [
+     -2.03,
+     43.23
+    ]
+   ]
+  },
+  {
+   "id": "oiartzun",
+   "es": "Oiartzun",
+   "eu": "Oiartzun",
+   "en": "Oiartzun",
+   "km": 20,
+   "source": {
+    "es": "Aiako Harria (Gipuzkoa)",
+    "en": "Aiako Harria (Gipuzkoa)"
+   },
+   "mouth": {
+    "es": "Bahía de Pasaia (Mar Cantábrico)",
+    "en": "Pasaia bay (Cantabrian Sea)"
+   },
+   "fact": {
+    "es": "Pasa por Errenteria y acaba en el puerto de Pasaia.",
+    "en": "It passes Errenteria and ends in the port of Pasaia.",
+    "eu": "Errenteriatik igarotzen da eta Pasaiako portuan amaitzen da."
+   },
+   "pts": [
+    [
+     -1.78,
+     43.25
+    ],
+    [
+     -1.78,
+     43.28
+    ],
+    [
+     -1.82,
+     43.3
+    ],
+    [
+     -1.87,
+     43.3
+    ],
+    [
+     -1.9,
+     43.3
+    ],
+    [
+     -1.92,
+     43.32
+    ],
+    [
+     -1.93,
+     43.33
+    ]
+   ]
+  }
+ ],
+ "kmFix": {
+  "kadagua": 65,
+  "artibai": 27,
+  "lea": 24
+ }
+}

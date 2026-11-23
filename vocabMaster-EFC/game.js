@@ -15,7 +15,7 @@ const VocabMaster = (() => {
               words: 'palabras', learned: 'aprendidas', quit: 'Salir', listen: '🔊 Escuchar', gotit: 'Entendido',
               next: 'Siguiente', check: 'Comprobar', newWord: 'Palabra nueva', choose: '¿Qué significa?',
               chooseBack: '¿Cómo se dice en inglés?', hear: 'Escucha y elige el significado', type: 'Escríbelo en inglés',
-              ok: '¡Correcto!', bad: 'Era: ', again: 'Otra ronda', home: 'Temas', end: 'Ronda terminada',
+              ok: '¡Correcto!', again: 'Otra ronda', home: 'Temas', end: 'Ronda terminada',
               score: (a, b) => `${a} de ${b} a la primera`, review: 'Para repasar', saved: 'Tu progreso se guarda en este dispositivo.',
               none: 'No hay nada que repasar ahora: ¡vuelve mañana!', place: 'Escribe aquí', lang: 'Idioma a aprender',
               due: 'por repasar' },
@@ -23,7 +23,7 @@ const VocabMaster = (() => {
               words: 'words', learned: 'learned', quit: 'Quit', listen: '🔊 Listen', gotit: 'Got it',
               next: 'Next', check: 'Check', newWord: 'New word', choose: 'What does it mean?',
               chooseBack: 'How do you say it?', hear: 'Listen and choose the meaning', type: 'Type it',
-              ok: 'Correct!', bad: 'It was: ', again: 'Another round', home: 'Topics', end: 'Round finished',
+              ok: 'Correct!', again: 'Another round', home: 'Topics', end: 'Round finished',
               score: (a, b) => `${a} of ${b} first time`, review: 'To review', saved: 'Your progress is saved on this device.',
               none: 'Nothing to review right now: come back tomorrow!', place: 'Type here', lang: 'Language to learn',
               due: 'to review' },
@@ -31,11 +31,15 @@ const VocabMaster = (() => {
               words: 'hitz', learned: 'ikasita', quit: 'Irten', listen: '🔊 Entzun', gotit: 'Ulertu dut',
               next: 'Hurrengoa', check: 'Egiaztatu', newWord: 'Hitz berria', choose: 'Zer esan nahi du?',
               chooseBack: 'Nola esaten da?', hear: 'Entzun eta aukeratu esanahia', type: 'Idatzi ezazu',
-              ok: 'Zuzena!', bad: 'Hau zen: ', again: 'Beste txanda bat', home: 'Gaiak', end: 'Txanda amaitu da',
+              ok: 'Zuzena!', again: 'Beste txanda bat', home: 'Gaiak', end: 'Txanda amaitu da',
               score: (a, b) => `${b}tik ${a} lehen aldiz`, review: 'Errepasatzeko', saved: 'Zure aurrerapena gailu honetan gordetzen da.',
               none: 'Ez dago ezer errepasatzeko orain: bihar itzuli!', place: 'Idatzi hemen', lang: 'Ikasteko hizkuntza',
               due: 'errepasatzeko' }
     };
+
+    // Study cards, guided check and the new feedback (learn.js). gl, ca and fr dictionaries live there too.
+    const VL = (typeof VocabLearn !== 'undefined') ? VocabLearn : require('./learn.js');
+    Object.keys(VL.NEW_KEYS).forEach(l => { UI[l] = Object.assign(UI[l] || {}, VL.NEW_KEYS[l]); });
 
     const S = { index: null, lang: null, pack: null, user: null, prog: {}, queue: [], total: 0, done: 0,
                 ok1: 0, attempts: 0, streak: 0, best: 0, t0: 0, missed: [], seen: [], current: null };
@@ -114,8 +118,84 @@ const VocabMaster = (() => {
         if (pick.length < ROUND) pick = pick.concat(fresh.filter(w => !pick.includes(w)).slice(0, ROUND - pick.length));
         if (!pick.length) pick = shuffle(S.pack.words.slice()).slice(0, ROUND);
         S.queue = shuffle(pick).map(w => ({ w, tries: 0, isNew: !pr[w.w] }));
-        Object.assign(S, { total: S.queue.length, done: 0, ok1: 0, attempts: 0, streak: 0, best: 0, t0: Date.now(), missed: [], seen: [] });
-        show('vm-play'); next();
+        Object.assign(S, { total: S.queue.length, done: 0, ok1: 0, attempts: 0, streak: 0, best: 0, t0: Date.now(), missed: [], seen: [], study: null, check: null });
+        show('vm-play');
+        // New words of this round are studied first (flip cards, then a guided check of 3), then the normal quiz
+        const studyWords = VL.pickStudyWords(S.queue);
+        if (studyWords.length) { S.study = { words: studyWords, idx: 0, flipped: false }; renderStudy(); return; }
+        next();
+    }
+
+    // ---- study cards + guided check (before the quiz) ----
+    function endStudy(completed) {
+        if (window.speechSynthesis) { try { speechSynthesis.cancel(); } catch (e) { /* ignore */ } }
+        if (completed && S.study) S.queue.forEach(i => { if (S.study.words.includes(i.w)) i.introDone = true; });
+        S.study = null; S.check = null; next();
+    }
+    function skipBtn() {
+        const b = el('button', 'vm-btn ghost', T().studySkip); b.type = 'button'; b.id = 'vm-study-skip';
+        b.onclick = () => endStudy(false); return b;
+    }
+    /** One flip card: front = emoji + English word, back = meaning + example sentence. */
+    function renderStudy() {
+        const st = S.study, t = T(), c = $('vm-card'), w = st.words[st.idx], last = st.idx === st.words.length - 1;
+        c.textContent = '';
+        c.append(el('span', 'vm-kind', t.studyTitle), el('p', 'vm-hint', t.studyTap));
+        const card = el('button', 'vm-flip' + (st.flipped ? ' flipped' : '')); card.type = 'button'; card.id = 'vm-flip';
+        card.setAttribute('aria-pressed', String(st.flipped));
+        const front = el('span', 'vm-face vm-front'), back = el('span', 'vm-face vm-backface');
+        front.append(el('span', 'vm-emoji', w.i), el('span', 'vm-word', w.w));
+        back.append(el('span', 'vm-emoji', w.i), el('span', 'vm-trans', w.t));
+        if (w.e) back.appendChild(el('span', 'vm-ex', '“' + w.e + '”'));
+        card.append(front, back);
+        card.onclick = () => { st.flipped = !st.flipped; card.classList.toggle('flipped', st.flipped); card.setAttribute('aria-pressed', String(st.flipped)); speak(w.w); };
+        c.appendChild(card);
+        c.appendChild(el('p', 'vm-count-s', VL.fill(t.studyCount, { n: st.idx + 1, m: st.words.length })));
+        if (canSpeak()) { const l = el('button', 'vm-listen', t.listen); l.type = 'button'; l.onclick = () => speak(w.w); c.appendChild(l); }
+        const nb = el('button', 'vm-btn', last ? t.studyCheck : t.studyNext); nb.type = 'button'; nb.id = 'vm-study-next';
+        nb.onclick = () => { if (last) startCheck(); else { st.idx++; st.flipped = false; renderStudy(); } };
+        c.append(nb, skipBtn());
+        speak(w.w); card.focus();
+    }
+    function startCheck() {
+        S.check = { qs: VL.buildCheck(S.study.words, S.pack.words), i: 0 };
+        renderCheck();
+    }
+    /** Guided check: wrong answers are explained and can be retried; nothing here changes the spaced-repetition boxes. */
+    function renderCheck() {
+        const ck = S.check, q = ck.qs[ck.i], w = q.word, t = T(), c = $('vm-card'); c.textContent = '';
+        const lastQ = ck.i === ck.qs.length - 1;
+        c.append(el('span', 'vm-kind', t.checkTitle), el('p', 'vm-hint', VL.fill(t.checkCount, { n: ck.i + 1, m: ck.qs.length })));
+        c.append(el('span', 'vm-emoji', w.i), q.back ? el('p', 'vm-trans', w.t) : el('p', 'vm-word', w.w));
+        c.appendChild(el('p', 'vm-hint', q.back ? t.chooseBack : t.choose));
+        const wrap = el('div', 'vm-opts'), fb = el('p', 'vm-fb'); fb.id = 'vm-check-fb';
+        const nb = el('button', 'vm-btn', lastQ ? t.checkStart : t.next); nb.type = 'button'; nb.id = 'vm-check-next'; nb.hidden = true;
+        q.options.forEach(o => {
+            const b = el('button', 'vm-opt', o[q.field]); b.type = 'button';
+            b.onclick = () => {
+                if (o === w) {
+                    wrap.querySelectorAll('button').forEach(x => { x.disabled = true; });
+                    b.classList.add('ok'); fb.className = 'vm-fb ok'; fb.textContent = t.checkOk;
+                    nb.hidden = false; nb.focus();
+                } else {
+                    b.disabled = true; b.classList.add('bad'); fb.className = 'vm-fb bad';
+                    renderFeedback(fb, w, q.back ? 'back' : 'choice', o, t.checkTry);
+                }
+            };
+            wrap.appendChild(b);
+        });
+        nb.onclick = () => { if (lastQ) endStudy(true); else { ck.i++; renderCheck(); } };
+        c.append(wrap, fb, nb, skipBtn());
+    }
+    /** Wrong-answer text: the correct word with its meaning, why the chosen one is not it, and the example sentence. */
+    function renderFeedback(fb, w, mode, chosen, tail) {
+        const t = T();
+        fb.textContent = '';
+        fb.appendChild(el('span', 'vm-fb-head', '✗ ' + t.incorrect));
+        VL.feedbackLines(w, mode, chosen).forEach(line => {
+            fb.appendChild(el('span', 'vm-fb-line', line.example ? t.exampleLabel + ': “' + line.example + '”' : VL.fill(t[line.key], line.vars)));
+        });
+        if (tail) fb.appendChild(el('span', 'vm-fb-line vm-fb-tail', tail));
     }
     function progress() {
         $('vm-barfill').style.width = Math.round(S.done / S.total * 100) + '%';
@@ -175,7 +255,7 @@ const VocabMaster = (() => {
                 const good = o === w;
                 wrap.querySelectorAll('button').forEach(x => { x.disabled = true; if (x.textContent === w[field]) x.classList.add('ok'); });
                 if (!good) b.classList.add('bad');
-                answer(item, good, fb, w);
+                answer(item, good, fb, w, { mode: back ? 'back' : 'choice', chosen: o });
             };
             wrap.appendChild(b);
         });
@@ -192,16 +272,17 @@ const VocabMaster = (() => {
             if (inp.disabled || !inp.value.trim()) return;
             const good = norm(inp.value) === norm(w.w);
             inp.disabled = true; inp.classList.add(good ? 'ok' : 'bad'); btn.hidden = true;
-            answer(item, good, fb, w);
+            answer(item, good, fb, w, { mode: 'type', chosen: inp.value });
         };
         btn.onclick = go; inp.onkeydown = e => { if (e.key === 'Enter') go(); };
         c.append(inp, btn, fb); inp.focus();
     }
-    function answer(item, good, fb, w) {
+    function answer(item, good, fb, w, ctx) {
         const t = T(); S.attempts++;
         const first = item.tries === 0;
         fb.className = 'vm-fb ' + (good ? 'ok' : 'bad');
-        fb.textContent = good ? t.ok : t.bad + w.w + ' = ' + w.t;
+        if (good) fb.textContent = t.ok;
+        else renderFeedback(fb, w, ctx.mode, ctx.chosen);
         const cur = (wp(S.pack.id, w.w) || { b: 0 }).b;
         if (good) { S.streak++; S.best = Math.max(S.best, S.streak); speak(w.w); }
         else { S.streak = 0; if (first) S.missed.push(w); }

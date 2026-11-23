@@ -166,3 +166,14 @@ body.mp-full { overflow: hidden; }
 .mp-peak.town .b { fill: #be123c; }
 .mp-chip.timed.on { background: #f59e0b; border-color: #f59e0b; color: #1c1917; }
 @media (min-width: 760px) { .mp-full .mp-info { top: 74px; bottom: 10px; } }
+
+/* learn first */
+.mp-info .flag.big, .mp-learn .flag.big { font-size: 3.4rem; }
+.mp-lchips { display: flex; gap: 8px; margin: 0 0 10px; flex-wrap: wrap; }
+.mp-lchip { min-width: 48px; min-height: 48px; border-radius: 14px; border: 2px solid #cbd5e1; background: #f1f5f9; color: #0f172a; font: inherit; font-size: 1.5rem; font-weight: 800; cursor: pointer; }
+.mp-lchip.on { border-color: #1d4ed8; background: #dbeafe; }
+.mp-lbtns { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+.mp-lbtns .mp-btn { flex: 1; min-width: 130px; }
+.mp-learn .mp-btn.ghost { color: #0f172a; border-color: #94a3b8; }
+.mp-modecard.start { border-color: #22c55e; box-shadow: 0 0 0 2px rgba(34,197,94,.35); }
+.mp-start { display: inline-block; margin-left: 8px; padding: 2px 9px; border-radius: 999px; background: #22c55e; color: #052e16; font-size: .72rem; font-style: normal; font-weight: 800; vertical-align: middle; }

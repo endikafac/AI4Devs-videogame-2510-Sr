@@ -82,6 +82,7 @@
 
         <!-- TAB 3: Niveles -->
         <div class="ev-tab-content" id="ev-tab-niveles" role="tabpanel" aria-labelledby="ev-tabBtn-niveles">
+            <button class="ev-btn ev-btn-secondary ev-lesson-open" id="ev-lesson-open" type="button" data-i18n="lrn_open"></button>
             <p class="ev-section-label" data-i18n="chooseLevel">Choose your level</p>
             <div class="ev-level-grid" id="ev-level-grid" role="list"></div>
 
@@ -137,6 +138,17 @@
             <button class="ev-btn ev-btn-ghost" id="ev-quit-btn" data-i18n="quit">Quit</button>
         </div>
 
+    </div>
+</section>
+
+<!-- ══ SCREEN 2b: LESSON (regular vs irregular) ═════════════ -->
+<section id="ev-screen-lesson" class="ev-screen" aria-label="Lesson">
+    <div class="ev-page">
+        <h2 class="ev-lesson-title" id="ev-lesson-title"></h2>
+        <div id="ev-lesson-body"></div>
+        <div class="ev-action-row">
+            <button class="ev-btn ev-btn-ghost" id="ev-lesson-skip" type="button"></button>
+        </div>
     </div>
 </section>
 
@@ -201,6 +213,7 @@
 <script src="data.js"></script>
 <script src="data-extra.js"></script>
 <script src="i18n.js"></script>
+<script src="learn.js"></script>
 <script src="game.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {

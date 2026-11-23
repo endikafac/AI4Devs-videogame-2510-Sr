@@ -77,25 +77,239 @@ const PlatformFirestore = {
     },
     setActivePlayer(uid, pid) {
         try { pid ? localStorage.setItem('games_hub_player_' + uid, pid) : localStorage.removeItem('games_hub_player_' + uid); } catch (e) {}
+        if (!pid) this._setOwnerKey(uid, '');
+    },
+
+    // ── Family accounts (docs/cuenta-familiar.md) ────────────────────────────
+    // Other adults can play with the children of an owner. The children stay
+    // under users/{ownerUid}/players/{pid}; this device remembers which family
+    // is active in games_hub_owner_{authUid}. The value is only trusted when it
+    // is also a validated membership (cached in games_hub_mem_{authUid}) AND a
+    // child is selected; otherwise everything silently falls back to the
+    // user's own account. Security is enforced by the Firestore rules anyway.
+
+    MAX_GUARDIANS: 6,
+    INVITE_DAYS: 30,
+    ROLES: ['edit', 'view'],
+
+    /** Pure: which account holds the data? Orphan or missing membership => the user's own uid. */
+    resolveOwner(uid, storedOwner, pid, memberships) {
+        if (!uid || !pid || !storedOwner || storedOwner === uid) return uid;
+        if (!/^[A-Za-z0-9]{6,128}$/.test(storedOwner)) return uid;
+        const ok = Array.isArray(memberships) && memberships.some(m => m && m.ownerUid === storedOwner);
+        return ok ? storedOwner : uid;
+    },
+    /** Pure: lowercase and trim an e-mail. */
+    normEmail(e) { return typeof e === 'string' ? e.trim().toLowerCase() : ''; },
+    /** Pure: same shape the Firestore rules accept for invitations. */
+    isValidEmail(e) {
+        const v = this.normEmail(e);
+        return v.length <= 254 && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v);
+    },
+    isRole(r) { return this.ROLES.includes(r); },
+    /** Pure: is an invitation still usable? `expires` may be a Date, a millisecond number or a Firestore Timestamp. */
+    isInviteActive(inv, now) {
+        if (!inv || !this.isRole(inv.role) || !inv.ownerUid) return false;
+        const e = inv.expires;
+        const ms = e && typeof e.toMillis === 'function' ? e.toMillis() : (e instanceof Date ? e.getTime() : Number(e));
+        return Number.isFinite(ms) && ms > (now == null ? Date.now() : now);
+    },
+
+    _ownerKey(uid) { return 'games_hub_owner_' + uid; },
+    _setOwnerKey(uid, owner) {
+        try { owner && owner !== uid ? localStorage.setItem(this._ownerKey(uid), owner) : localStorage.removeItem(this._ownerKey(uid)); } catch (e) {}
+    },
+    _storedOwner(uid) {
+        try { return localStorage.getItem(this._ownerKey(uid)) || ''; } catch (e) { return ''; }
+    },
+    _memCache(uid) {
+        try {
+            const v = JSON.parse(localStorage.getItem('games_hub_mem_' + uid) || '[]');
+            return Array.isArray(v) ? v : [];
+        } catch (e) { return []; }
+    },
+    _setMemCache(uid, list) {
+        try { localStorage.setItem('games_hub_mem_' + uid, JSON.stringify(list.map(m => ({ ownerUid: m.ownerUid, ownerName: m.ownerName || '', role: m.role })))); } catch (e) {}
+    },
+    /** Account that holds the active child's data: the family owner, or uid itself. */
+    _owner(uid) {
+        return this.resolveOwner(uid, this._storedOwner(uid), this._pid(uid), this._memCache(uid));
+    },
+    /** True when the active child belongs to a family where this user may only look. */
+    _viewOnly(uid) {
+        const o = this._owner(uid);
+        if (o === uid) return false;
+        const m = this._memCache(uid).find(x => x.ownerUid === o);
+        return !m || m.role !== 'edit';
     },
     _ref(uid) {
-        const u = GamesHubDB.collection('users').doc(uid);
+        const u = GamesHubDB.collection('users').doc(this._owner(uid));
         const pid = this._pid(uid);
         return pid ? u.collection('players').doc(pid) : u;
     },
-    _lbId(uid) { const pid = this._pid(uid); return pid ? uid + '_' + pid : uid; },
-    async listPlayers(uid) {
+    _lbId(uid) { const pid = this._pid(uid); return pid ? this._owner(uid) + '_' + pid : uid; },
+    async listPlayers(uid, ownerUid) {
         if (!window.GamesHubDB) return [];
-        const snap = await GamesHubDB.collection('users').doc(uid).collection('players').get();
+        const snap = await GamesHubDB.collection('users').doc(ownerUid || uid).collection('players').get();
         return snap.docs.map(d => ({ pid: d.id, ...d.data() }));
     },
     /** Profile of the active child, or null when the adult plays. */
     async getActivePlayer(uid) {
         const pid = this._pid(uid);
         if (!pid || !window.GamesHubDB) return null;
-        const snap = await GamesHubDB.collection('users').doc(uid).collection('players').doc(pid).get();
+        if (this._storedOwner(uid)) await this._validateOwner(uid);
+        const owner = this._owner(uid);
+        const snap = await GamesHubDB.collection('users').doc(owner).collection('players').doc(pid).get();
         if (!snap.exists) { this.setActivePlayer(uid, ''); return null; }
-        return { pid, ...snap.data() };
+        const out = { pid, ...snap.data() };
+        if (owner !== uid) { out.ownerUid = owner; out.familyRole = (this._memCache(uid).find(m => m.ownerUid === owner) || {}).role; }
+        return out;
+    },
+
+    _authUser() {
+        return window.GamesHubAuth && GamesHubAuth.currentUser ? GamesHubAuth.currentUser : null;
+    },
+    _needDB() {
+        if (!window.GamesHubDB || typeof firebase === 'undefined') throw new Error('offline');
+    },
+    /** Checks the stored active family against the owner's guardians doc; cleans an orphan silently. */
+    async _validateOwner(uid) {
+        const owner = this._storedOwner(uid);
+        if (!owner || owner === uid) return;
+        try {
+            const g = await GamesHubDB.collection('users').doc(owner).collection('guardians').doc(uid).get();
+            if (g.exists) {
+                const cache = this._memCache(uid).filter(m => m.ownerUid !== owner);
+                const old = this._memCache(uid).find(m => m.ownerUid === owner);
+                cache.push({ ownerUid: owner, ownerName: old ? old.ownerName : '', role: g.data().role });
+                this._setMemCache(uid, cache);
+            } else {
+                await this._dropMembership(uid, owner);
+            }
+        } catch (e) {
+            // Network or permission error: do not trust the stored family.
+            this._setOwnerKey(uid, '');
+            try { localStorage.removeItem('games_hub_player_' + uid); } catch (e2) {}
+        }
+    },
+    async _dropMembership(uid, owner) {
+        this._setMemCache(uid, this._memCache(uid).filter(m => m.ownerUid !== owner));
+        if (this._storedOwner(uid) === owner) {
+            this._setOwnerKey(uid, '');
+            try { localStorage.removeItem('games_hub_player_' + uid); } catch (e) {}
+        }
+        try { await GamesHubDB.collection('users').doc(uid).collection('memberships').doc(owner).delete(); } catch (e) {}
+    },
+
+    /** Families this user belongs to (orphans are removed). [] offline. */
+    async listMemberships(uid) {
+        if (!window.GamesHubDB || !uid) return [];
+        const snap = await GamesHubDB.collection('users').doc(uid).collection('memberships').get();
+        const valid = [];
+        for (const d of snap.docs) {
+            const m = d.data();
+            if (!m || m.ownerUid !== d.id || !this.isRole(m.role)) continue;
+            let g = null;
+            try { g = await GamesHubDB.collection('users').doc(d.id).collection('guardians').doc(uid).get(); } catch (e) { continue; }
+            if (g.exists) valid.push({ ownerUid: d.id, ownerName: String(m.ownerName || ''), role: g.data().role });
+            else await this._dropMembership(uid, d.id);
+        }
+        this._setMemCache(uid, valid);
+        return valid;
+    },
+    /** Choose whose children play on this device ('' or own uid = own account). Throws 'not-member' if not a member. */
+    async setActiveFamily(uid, ownerUid) {
+        if (!ownerUid || ownerUid === uid) { this._setOwnerKey(uid, ''); return; }
+        if (!/^[A-Za-z0-9]{6,128}$/.test(ownerUid)) throw new Error('not-member');
+        this._needDB();
+        const mem = await this.listMemberships(uid);
+        if (!mem.some(m => m.ownerUid === ownerUid)) throw new Error('not-member');
+        this._setOwnerKey(uid, ownerUid);
+    },
+
+    /** Owner: create an invitation. Nothing is e-mailed; the owner shares the site link by hand. Returns the invite id. */
+    async createInvite(ownerUid, email, role, ownerName) {
+        this._needDB();
+        const mail = this.normEmail(email);
+        if (!this.isValidEmail(mail) || !this.isRole(role) || !ownerUid) throw new Error('invalid');
+        const me = this._authUser();
+        if (me && me.email && this.normEmail(me.email) === mail) throw new Error('self');
+        const [guardians, sent] = await Promise.all([this.listGuardians(ownerUid), this.listSentInvites(ownerUid)]);
+        if (guardians.some(g => this.normEmail(g.email) === mail)) throw new Error('duplicate');
+        if (guardians.length + sent.length >= this.MAX_GUARDIANS) throw new Error('max');
+        const TS = firebase.firestore.Timestamp;
+        const ref = await GamesHubDB.collection('invites').add({
+            ownerUid,
+            ownerName: String(ownerName || '').slice(0, 40),
+            email: mail,
+            role,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            expires: TS.fromMillis(Date.now() + this.INVITE_DAYS * 86400000)
+        });
+        return ref.id;
+    },
+    /** Owner: invitations still pending. */
+    async listSentInvites(ownerUid) {
+        if (!window.GamesHubDB || !ownerUid) return [];
+        const snap = await GamesHubDB.collection('invites').where('ownerUid', '==', ownerUid).get();
+        return snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(i => this.isInviteActive(i));
+    },
+    /** Invitations addressed to the verified e-mail of the signed in user. [] offline or unverified. */
+    async listMyInvites() {
+        const me = this._authUser();
+        if (!window.GamesHubDB || !me || !me.email || !me.emailVerified) return [];
+        const snap = await GamesHubDB.collection('invites').where('email', '==', this.normEmail(me.email)).get();
+        return snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(i => i.ownerUid !== me.uid && this.isInviteActive(i));
+    },
+    /** Guest: accept an invitation (guardian doc + membership + delete the invitation, atomically). */
+    async acceptInvite(invite, myName) {
+        this._needDB();
+        const me = this._authUser();
+        if (!me || !invite || !invite.id || !this.isInviteActive(invite) || invite.ownerUid === me.uid) throw new Error('invalid');
+        const SV = firebase.firestore.FieldValue.serverTimestamp();
+        const db = GamesHubDB;
+        const b = db.batch();
+        b.set(db.collection('users').doc(invite.ownerUid).collection('guardians').doc(me.uid), {
+            uid: me.uid, email: this.normEmail(me.email), name: String(myName || '').slice(0, 40),
+            role: invite.role, since: SV, inviteId: invite.id
+        });
+        b.set(db.collection('users').doc(me.uid).collection('memberships').doc(invite.ownerUid), {
+            ownerUid: invite.ownerUid, ownerName: String(invite.ownerName || '').slice(0, 40), role: invite.role, since: SV
+        });
+        b.delete(db.collection('invites').doc(invite.id));
+        await b.commit();
+        this._setMemCache(me.uid, this._memCache(me.uid).filter(m => m.ownerUid !== invite.ownerUid)
+            .concat([{ ownerUid: invite.ownerUid, ownerName: invite.ownerName || '', role: invite.role }]));
+    },
+    /** Delete an invitation (guest declines, or owner cancels). */
+    async declineInvite(id) {
+        this._needDB();
+        if (!id) throw new Error('invalid');
+        await GamesHubDB.collection('invites').doc(id).delete();
+    },
+    async listGuardians(ownerUid) {
+        if (!window.GamesHubDB || !ownerUid) return [];
+        const snap = await GamesHubDB.collection('users').doc(ownerUid).collection('guardians').get();
+        return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    },
+    /** Owner: revoke access. The guest's membership is cleaned by their app when it notices. */
+    async removeGuardian(ownerUid, guardianUid) {
+        this._needDB();
+        if (!ownerUid || !guardianUid) throw new Error('invalid');
+        await GamesHubDB.collection('users').doc(ownerUid).collection('guardians').doc(guardianUid).delete();
+    },
+    /** Guest: leave a family. */
+    async leaveFamily(ownerUid) {
+        this._needDB();
+        const me = this._authUser();
+        if (!me || !ownerUid) throw new Error('invalid');
+        const db = GamesHubDB;
+        const b = db.batch();
+        b.delete(db.collection('users').doc(ownerUid).collection('guardians').doc(me.uid));
+        b.delete(db.collection('users').doc(me.uid).collection('memberships').doc(ownerUid));
+        await b.commit();
+        this._setMemCache(me.uid, this._memCache(me.uid).filter(m => m.ownerUid !== ownerUid));
+        if (this._storedOwner(me.uid) === ownerUid) this.setActivePlayer(me.uid, '');
     },
 
     // ── User profile ─────────────────────────────────────────────────────────
@@ -168,6 +382,8 @@ const PlatformFirestore = {
         const snap = await ref.get();
         const stats = snap.exists ? snap.data() : this._defaultStats();
         this._mergeStats(stats, gameResult);
+        // Family role 'view': look but do not save (the rules would refuse anyway).
+        if (this._viewOnly(uid)) return { stats, points };
         await ref.set(stats);
 
         // Update global XP and points on user profile
@@ -204,6 +420,7 @@ const PlatformFirestore = {
             }
             return true;
         }
+        if (this._viewOnly(uid)) return true;
         const ref = this._ref(uid).collection('games').doc(gameId);
         await ref.set({
             unlockedAchievements: firebase.firestore.FieldValue.arrayUnion(achievementId)
@@ -229,7 +446,7 @@ const PlatformFirestore = {
         const user     = userSnap.data();
         await GamesHubDB.collection('leaderboard').doc(gameId)
             .collection('scores').doc(this._lbId(uid)).set({
-                uid,
+                uid: this._owner(uid), // the account that owns the child (a guardian writes under the owner uid)
                 username:    user.username,
                 avatar:      user.avatar || null,
                 photoURL:    null,

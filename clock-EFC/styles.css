@@ -66,3 +66,63 @@ body { background: radial-gradient(900px 480px at 50% -8%, rgba(245,158,11,.22),
 .ck-stepval { min-width: 52px; font-size: 2rem; font-weight: 900; font-variant-numeric: tabular-nums; }
 .ck-key { width: 56px; height: 56px; border-radius: 14px; border: 0; font: inherit; font-size: 1.8rem; font-weight: 800; cursor: pointer; color: var(--text-primary); background: var(--bg-raised); box-shadow: 0 3px 0 rgba(0,0,0,.25); }
 .ck-key:active { transform: translateY(2px); box-shadow: none; }
+
+/* learn-first additions */
+.ck-quit { width: 48px; height: 48px; flex: none; }
+.ck-btn { min-height: 48px; }
+.ck-key { min-width: 56px; }
+.ck-btn.ghost.ck-learnbtn, .ck-skip { min-height: 48px; padding: 0 14px; font-size: .95rem; flex: none; }
+.ck-count { min-width: 0; font-size: .95rem; white-space: nowrap; }
+.ck-ltitle { flex: 1; margin: 0; font-size: 1.05rem; min-width: 0; }
+.ck-lbtn { flex: none; width: 52px; height: 52px; margin-left: auto; border-radius: 14px; border: 1px solid rgba(255,255,255,.18); background: var(--bg-surface); font-size: 1.4rem; cursor: pointer; }
+.ck-lbtn:focus-visible, .ck-skip:focus-visible, .ck-learnbtn:focus-visible, .ck-face.drag:focus-visible { outline: 3px solid #fbbf24; outline-offset: 2px; }
+.ck-info { min-width: 0; }
+@media (max-width: 420px) {
+  .ck-node:nth-child(4n+2) { padding-left: 18px; } .ck-node:nth-child(4n+3) { padding-left: 34px; } .ck-node:nth-child(4n+4) { padding-left: 18px; }
+  .ck-dot { width: 68px; height: 68px; }
+}
+.ck-lcard { padding: 16px 12px 20px; min-height: 0; }
+.ck-intro { margin: 0 0 8px; font-size: 1rem; line-height: 1.4; color: var(--text-primary); text-align: left; }
+.ck-learnclock { width: min(86vw, 330px); margin: 0 auto; }
+.ck-learnclock .ck-face { width: 100%; }
+.ck-face.drag { touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; }
+.ck-face.drag:active { cursor: grabbing; }
+.ck-draghint { margin: 4px 0 6px; color: var(--text-secondary); font-weight: 700; font-size: .9rem; }
+.ck-digwrap { display: flex; align-items: baseline; justify-content: center; gap: 10px; margin-bottom: 8px; }
+.ck-diglabel { color: var(--text-secondary); font-size: .85rem; font-weight: 700; }
+.ck-digital { font-size: 2.4rem; font-weight: 900; font-variant-numeric: tabular-nums; }
+.ck-legend { list-style: none; margin: 0 0 10px; padding: 0; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; font-weight: 800; font-size: .95rem; }
+.ck-legend li { display: flex; align-items: center; gap: 10px; }
+.ck-legend .sw { display: inline-block; border-radius: 4px; flex: none; }
+.ck-legend .sw.h { width: 22px; height: 9px; background: #dc2626; }
+.ck-legend .sw.m { width: 44px; height: 5px; background: #2563eb; }
+.ck-minnums { opacity: 0; transition: opacity .6s; }
+.ck-minnums.on { opacity: 1; }
+.ck-example { margin: 12px 0; padding: 12px; border-radius: 14px; background: var(--bg-raised); text-align: left; border-left: 5px solid #f59e0b; }
+.ck-example b { color: #fbbf24; }
+.ck-example p { margin: 6px 0 0; line-height: 1.45; }
+.ck-lbtns { display: flex; flex-direction: column; gap: 10px; align-items: stretch; }
+.ck-hintbox { margin: 0 0 10px; padding: 10px 12px; border-radius: 12px; background: var(--bg-raised); border-left: 5px solid #38bdf8; text-align: left; font-size: .92rem; line-height: 1.4; }
+.ck-typed { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 0 14px; }
+.ck-colon { font-size: 2rem; font-weight: 900; }
+.ck-input { width: 76px; height: 60px; text-align: center; font: inherit; font-size: 2rem; font-weight: 900; border-radius: 14px; border: 2px solid rgba(255,255,255,.2); background: var(--bg-raised); color: var(--text-primary); }
+.ck-input:focus-visible { outline: 3px solid #fbbf24; outline-offset: 2px; }
+.ck-match { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 360px; margin: 0 auto 8px; }
+.ck-matchcol { display: flex; flex-direction: column; gap: 10px; }
+.ck-mclock { min-height: 96px; padding: 4px; }
+.ck-mclock .ck-face { width: 88px; margin: 0 auto; filter: none; }
+.ck-mtime { min-height: 96px; font-size: 1.6rem; }
+.ck-opt.sel { border-color: #fbbf24; box-shadow: 0 0 0 3px rgba(251,191,36,.5); }
+.ck-twoclocks { display: flex; justify-content: center; gap: 18px; margin-bottom: 14px; }
+.ck-fig { margin: 0; text-align: center; }
+.ck-fig .ck-face { width: 92px; filter: none; }
+.ck-fig figcaption { font-weight: 800; font-size: .95rem; margin-top: 2px; }
+.ck-face.hl .ck-hand-h, .ck-face.hl .ck-hand-m { filter: drop-shadow(0 0 3px #fbbf24); }
+.ck-feedback { flex-direction: column; align-items: stretch; max-height: 75vh; overflow-y: auto; }
+.ck-fbcol { text-align: left; }
+.ck-fbcol .ck-ans { font-size: 1.15rem; font-weight: 800; }
+.ck-why { margin: 8px 0; line-height: 1.45; font-size: .95rem; }
+.ck-figs { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin: 8px 0; }
+.ck-figs .ck-fig .ck-face { background: #fffaf0; border-radius: 50%; }
+.ck-feedback .ck-btn { align-self: stretch; }
+@media (prefers-reduced-motion: reduce) { .ck-minnums { transition: none; } }

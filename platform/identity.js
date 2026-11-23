@@ -217,45 +217,275 @@ const PlatformIdentity = {
         const key = snap.exists && snap.data().nicknameKey;
         if (key) await db.collection('nicknames').doc(key).delete().catch(() => {});
         await ref.delete();
-        if (PlatformFirestore._pid(uid) === pid) PlatformFirestore.setActivePlayer(uid, '');
+        if (PlatformFirestore._pid(uid) === pid && PlatformFirestore._owner(uid) === uid) PlatformFirestore.setActivePlayer(uid, '');
     },
 
-    /** Who is playing? Lists the adult and the children; adds or removes children. Reloads the page on change. */
+    // ── Family accounts (docs/cuenta-familiar.md) ────────────────────────────
+    // Other adults play with the children of an account holder. Strings live in
+    // PlatformI18n (six languages). Everything that comes from Firestore is set
+    // with textContent, never innerHTML.
+
+    _F(key, vars) {
+        let s = PlatformI18n.t(key);
+        Object.keys(vars || {}).forEach(k => { s = s.split('{' + k + '}').join(String(vars[k] == null ? '' : vars[k])); });
+        return s;
+    },
+    _roleLabel(role) { return PlatformI18n.t(role === 'view' ? 'famRoleView' : 'famRoleEdit'); },
+    _siteUrl() {
+        try {
+            const sc = Array.prototype.find.call(document.scripts, x => /platform\/identity\.js/.test(x.src));
+            return new URL('../', sc ? sc.src : location.href).href;
+        } catch (e) { return location.origin + '/'; }
+    },
+    _mk(tag, cls, text, attrs) {
+        const n = document.createElement(tag);
+        if (cls) n.className = cls;
+        if (text != null) n.textContent = text;
+        if (attrs) Object.keys(attrs).forEach(k => n.setAttribute(k, attrs[k]));
+        return n;
+    },
+    /** Text the owner pastes into WhatsApp. No e-mail is sent by the app. */
+    inviteMessage(ownerName, role, email) {
+        return this._F('famMsg', { name: ownerName, role: this._roleLabel(role), url: this._siteUrl(), email });
+    },
+    async _copyText(text) {
+        try { await navigator.clipboard.writeText(text); return true; } catch (e) { /* fall back below */ }
+        try {
+            const ta = this._mk('textarea', null, text, { readonly: '', 'aria-hidden': 'true' });
+            ta.style.position = 'fixed'; ta.style.opacity = '0';
+            document.body.appendChild(ta); ta.select();
+            const ok = document.execCommand('copy');
+            ta.remove();
+            return ok;
+        } catch (e) { return false; }
+    },
+    _famError(e) {
+        const m = e && e.message;
+        return m === 'invalid' ? PlatformI18n.t('famInvalidEmail') : m === 'self' ? PlatformI18n.t('famSelf')
+            : m === 'duplicate' ? PlatformI18n.t('famDup') : m === 'max' ? PlatformI18n.t('famMax')
+            : m === 'offline' ? PlatformI18n.t('famOffline') : PlatformI18n.t('famError');
+    },
+
+    /** One invitation card with the explanation of what is shared and what is not. */
+    _inviteCard(inv, uid, profile, onChange, onError) {
+        const t = k => PlatformI18n.t(k);
+        const card = this._mk('div', 'pid-fam-card', null, { role: 'group' });
+        card.appendChild(this._mk('p', null, this._F('famInviteText', { name: inv.ownerName || '?', role: this._roleLabel(inv.role) })));
+        const act = this._mk('div', 'pid-actions');
+        const no = this._mk('button', 'pid-btn ghost', t('famDecline'), { type: 'button' });
+        const yes = this._mk('button', 'pid-btn', t('famAccept'), { type: 'button' });
+        const run = fn => async () => {
+            no.disabled = yes.disabled = true;
+            try { await fn(); await onChange(); } catch (e) { no.disabled = yes.disabled = false; onError(this._famError(e)); }
+        };
+        no.onclick = run(() => PlatformFirestore.declineInvite(inv.id));
+        yes.onclick = run(() => PlatformFirestore.acceptInvite(inv, profile && profile.username));
+        act.append(no, yes);
+        card.appendChild(act);
+        return card;
+    },
+
+    /** Family screen: invite and manage guardians (owner), answer invitations and leave families (guest). */
+    async _renderFamily(wrap, uid, profile, st, back) {
+        const t = k => PlatformI18n.t(k);
+        const P = PlatformFirestore;
+        const modal = this._mk('div', 'pid-modal', null, { role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'pid-title' });
+        const title = this._mk('h2', null, t('famTitle'), { id: 'pid-title', tabindex: '-1' });
+        modal.appendChild(title);
+        wrap.replaceChildren(modal);
+        title.focus();
+        const render = () => this._renderFamily(wrap, uid, profile, st, back);
+
+        const safe = p => p.catch(() => null);
+        const [guardians, sent, invites, mems] = await Promise.all([
+            safe(P.listGuardians(uid)), safe(P.listSentInvites(uid)), safe(P.listMyInvites()), safe(P.listMemberships(uid))]);
+        const errNode = this._mk('p', 'pid-error', '', { id: 'pid-error', role: 'alert' });
+        const err = m => { errNode.textContent = m || ''; };
+        if ([guardians, sent, invites, mems].some(x => x === null)) err(t('famError'));
+
+        // Invitations received
+        if (invites && invites.length) {
+            modal.appendChild(this._mk('h3', 'pid-fam-h', t('famInvitesTitle')));
+            invites.forEach(inv => modal.appendChild(this._inviteCard(inv, uid, profile, render, err)));
+        }
+
+        // Families I belong to
+        if (mems && mems.length) {
+            modal.appendChild(this._mk('h3', 'pid-fam-h', t('famMine')));
+            mems.forEach(m => {
+                const row = this._mk('div', 'pid-fam-row');
+                const txt = this._mk('div', 'pid-fam-who');
+                txt.appendChild(this._mk('span', null, this._F('famOf', { name: m.ownerName || '?' })));
+                txt.appendChild(this._mk('small', null, this._roleLabel(m.role)));
+                const btn = this._mk('button', 'pid-btn ghost pid-fam-btn', t('famLeave'),
+                    { type: 'button', 'aria-label': t('famLeave') + ' ' + this._F('famOf', { name: m.ownerName || '?' }) });
+                btn.onclick = async () => {
+                    if (!confirm(this._F('famLeaveAsk', { name: m.ownerName || '?' }))) return;
+                    btn.disabled = true;
+                    try { await P.leaveFamily(m.ownerUid); await render(); } catch (e) { btn.disabled = false; err(this._famError(e)); }
+                };
+                row.append(txt, btn);
+                modal.appendChild(row);
+            });
+        }
+
+        // Owner: invite
+        modal.appendChild(this._mk('h3', 'pid-fam-h', t('famGuardians')));
+        modal.appendChild(this._mk('p', 'pid-help', t('famIntro')));
+        modal.appendChild(this._mk('label', null, t('famEmail'), { for: 'pid-fam-email' }));
+        const email = this._mk('input', 'pid-fam-input', null, { id: 'pid-fam-email', type: 'email', inputmode: 'email',
+            maxlength: '254', autocomplete: 'off', autocapitalize: 'off', spellcheck: 'false' });
+        modal.appendChild(email);
+        modal.appendChild(this._mk('label', null, t('famRole'), { for: 'pid-fam-role' }));
+        const role = this._mk('select', 'pid-fam-input', null, { id: 'pid-fam-role' });
+        [['edit', 'famRoleEdit'], ['view', 'famRoleView']].forEach(([v, k]) => role.appendChild(this._mk('option', null, t(k), { value: v })));
+        modal.appendChild(role);
+        const inviteBtn = this._mk('button', 'pid-btn pid-fam-wide', t('famInvite'), { type: 'button', id: 'pid-fam-invite' });
+        inviteBtn.onclick = async () => {
+            err('');
+            if (!P.isValidEmail(email.value)) { err(t('famInvalidEmail')); email.focus(); return; }
+            inviteBtn.disabled = true;
+            try {
+                await P.createInvite(uid, email.value, role.value, profile && profile.username);
+                st.msg = this.inviteMessage((profile && profile.username) || '', role.value, P.normEmail(email.value));
+                await render();
+            } catch (e) { inviteBtn.disabled = false; err(this._famError(e)); }
+        };
+        modal.appendChild(inviteBtn);
+
+        // Message to copy and paste (WhatsApp...)
+        if (st.msg) {
+            const box = this._mk('div', 'pid-fam-card');
+            box.appendChild(this._mk('p', 'pid-fam-msg', st.msg));
+            const status = this._mk('p', 'pid-help', '', { role: 'status' });
+            const copy = this._mk('button', 'pid-btn pid-fam-wide', t('famShare'), { type: 'button', id: 'pid-fam-copy' });
+            copy.onclick = async () => { status.textContent = t((await this._copyText(st.msg)) ? 'famCopied' : 'famCopyFail'); };
+            box.append(copy, status);
+            modal.appendChild(box);
+        }
+
+        // Owner: people with access and pending invitations
+        if (guardians && guardians.length) {
+            guardians.forEach(g => {
+                const row = this._mk('div', 'pid-fam-row');
+                const txt = this._mk('div', 'pid-fam-who');
+                txt.appendChild(this._mk('span', null, g.name || g.email || '?'));
+                txt.appendChild(this._mk('small', null, (g.email || '') + ' · ' + this._roleLabel(g.role)));
+                const btn = this._mk('button', 'pid-btn ghost pid-fam-btn', t('famRemove'),
+                    { type: 'button', 'aria-label': t('famRemove') + ' ' + (g.name || g.email || '') });
+                btn.onclick = async () => {
+                    if (!confirm(t('famRemoveAsk'))) return;
+                    btn.disabled = true;
+                    try { await P.removeGuardian(uid, g.id || g.uid); await render(); } catch (e) { btn.disabled = false; err(this._famError(e)); }
+                };
+                row.append(txt, btn);
+                modal.appendChild(row);
+            });
+        } else if (guardians && !(sent && sent.length)) {
+            modal.appendChild(this._mk('p', 'pid-help', t('famNone')));
+        }
+        if (sent && sent.length) {
+            modal.appendChild(this._mk('h3', 'pid-fam-h', t('famPending')));
+            sent.forEach(inv => {
+                const row = this._mk('div', 'pid-fam-row');
+                const txt = this._mk('div', 'pid-fam-who');
+                txt.appendChild(this._mk('span', null, inv.email || '?'));
+                txt.appendChild(this._mk('small', null, this._roleLabel(inv.role)));
+                const btn = this._mk('button', 'pid-btn ghost pid-fam-btn', t('famCancelInvite'),
+                    { type: 'button', 'aria-label': t('famCancelInvite') + ' ' + (inv.email || '') });
+                btn.onclick = async () => {
+                    btn.disabled = true;
+                    try { await P.declineInvite(inv.id); await render(); } catch (e) { btn.disabled = false; err(this._famError(e)); }
+                };
+                row.append(txt, btn);
+                modal.appendChild(row);
+            });
+        }
+
+        modal.appendChild(errNode);
+        const actions = this._mk('div', 'pid-actions');
+        const backBtn = this._mk('button', 'pid-btn ghost', t('famBack'), { type: 'button', id: 'pid-fam-back' });
+        backBtn.onclick = back;
+        actions.appendChild(backBtn);
+        modal.appendChild(actions);
+    },
+
+    /** Who is playing? Lists the adult, the children and the children of the families this user belongs to. Reloads the page on change. */
     async showPlayers(uid, profile) {
         const t = k => this._t(k);
         const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        const P = PlatformFirestore;
         const wrap = document.createElement('div');
         wrap.className = 'pid-overlay';
         document.body.appendChild(wrap);
         const done = () => { wrap.remove(); };
-        const active = PlatformFirestore._pid(uid);
-        const switchTo = pid => { PlatformFirestore.setActivePlayer(uid, pid); location.reload(); };
+        wrap.addEventListener('keydown', e => { if (e.key === 'Escape') done(); });
+        const active = P._pid(uid);
+        const activeOwner = P._owner(uid);
+        const st = { msg: '' };
+        const fail = () => { const n = wrap.querySelector('#pid-error'); if (n) n.textContent = PlatformI18n.t('famError'); };
+        // owner = '' (or own uid): own account. Otherwise a family the user belongs to.
+        const switchTo = async (pid, owner) => {
+            try {
+                await P.setActiveFamily(uid, owner || '');
+                P.setActivePlayer(uid, pid);
+                location.reload();
+            } catch (e) { fail(); }
+        };
 
         const list = async () => {
-            let kids = [];
-            try { kids = await PlatformFirestore.listPlayers(uid); } catch (e) {}
+            const quiet = p => p.catch(() => []);
+            const [kids, mems, invites] = await Promise.all([quiet(P.listPlayers(uid)), quiet(P.listMemberships(uid)), quiet(P.listMyInvites())]);
+            const famKids = await Promise.all(mems.map(async m => ({ m, ks: await quiet(P.listPlayers(uid, m.ownerUid)) })));
             wrap.innerHTML = `<div class="pid-modal" role="dialog" aria-modal="true" aria-labelledby="pid-title">
                 <h2 id="pid-title">${t('players')}</h2>
+                <div id="pid-fam-top"></div>
                 <div class="pid-players">
                   <button type="button" class="pid-player${active ? '' : ' sel'}" data-pid="">
                     <span class="pid-pav">${esc(profile.avatar || '🙂')}</span><span>${esc(profile.username)}<small>${t('me')}</small></span></button>
-                  ${kids.map(k => `<div class="pid-prow"><button type="button" class="pid-player${k.pid === active ? ' sel' : ''}" data-pid="${esc(k.pid)}">
+                  ${kids.map(k => `<div class="pid-prow"><button type="button" class="pid-player${k.pid === active && activeOwner === uid ? ' sel' : ''}" data-pid="${esc(k.pid)}">
                     <span class="pid-pav">${esc(k.avatar)}</span><span>${esc(k.username)}<small>⭐ ${Number(k.totalPoints) || 0}</small></span></button>
                     <button type="button" class="pid-btn ghost pid-del" data-del="${esc(k.pid)}" aria-label="${t('remove')} ${esc(k.username)}">🗑</button></div>`).join('')}
                 </div>
                 <p class="pid-error" id="pid-error" role="alert"></p>
                 <div class="pid-actions">
                   <button type="button" class="pid-btn ghost" id="pid-close">${t('back')}</button>
+                  <button type="button" class="pid-btn ghost" id="pid-family">👪 ${esc(PlatformI18n.t('famTitle'))}</button>
                   <button type="button" class="pid-btn" id="pid-add">${t('addKid')}</button>
                 </div></div>`;
             wrap.querySelector('#pid-close').onclick = done;
+            wrap.querySelector('#pid-family').onclick = () => this._renderFamily(wrap, uid, profile, st, list);
             wrap.querySelector('#pid-add').onclick = () => kids.length >= this.MAX_PLAYERS
                 ? (wrap.querySelector('#pid-error').textContent = t('max')) : form();
-            wrap.querySelectorAll('.pid-player').forEach(b => b.onclick = () => switchTo(b.dataset.pid));
+            wrap.querySelectorAll('.pid-player').forEach(b => b.onclick = () => switchTo(b.dataset.pid, ''));
             wrap.querySelectorAll('[data-del]').forEach(b => b.onclick = async () => {
                 if (!confirm(t('removeAsk'))) return;
                 try { await this.deletePlayer(uid, b.dataset.del); } catch (e) { wrap.querySelector('#pid-error').textContent = t('error'); return; }
-                if (b.dataset.del === active) location.reload(); else list();
+                if (b.dataset.del === active && activeOwner === uid) location.reload(); else list();
+            });
+
+            // Pending invitations (banner) and the children of the families I belong to
+            const err = m => { wrap.querySelector('#pid-error').textContent = m || ''; };
+            const top = wrap.querySelector('#pid-fam-top');
+            if (invites.length) {
+                top.appendChild(this._mk('h3', 'pid-fam-h', PlatformI18n.t('famInvitesTitle')));
+                invites.forEach(inv => top.appendChild(this._inviteCard(inv, uid, profile, list, err)));
+            }
+            const box = wrap.querySelector('.pid-players');
+            famKids.forEach(({ m, ks }) => {
+                if (!ks.length) return;
+                const head = this._F('famOf', { name: m.ownerName || '?' }) + (m.role === 'view' ? ' · ' + PlatformI18n.t('famRoleView') : '');
+                box.appendChild(this._mk('div', 'pid-fam-head', head));
+                ks.forEach(k => {
+                    const b = this._mk('button', 'pid-player' + (k.pid === active && activeOwner === m.ownerUid ? ' sel' : ''), null,
+                        { type: 'button', 'data-owner': m.ownerUid, 'data-pid': k.pid });
+                    b.appendChild(this._mk('span', 'pid-pav', k.avatar || '🙂'));
+                    const info = this._mk('span', null, k.username || '');
+                    info.appendChild(this._mk('small', null, '⭐ ' + (Number(k.totalPoints) || 0)));
+                    b.appendChild(info);
+                    b.onclick = () => switchTo(k.pid, m.ownerUid);
+                    box.appendChild(b);
+                });
             });
         };
 
@@ -283,7 +513,7 @@ const PlatformIdentity = {
                 const err = m => { wrap.querySelector('#pid-error').textContent = m; };
                 const nick = wrap.querySelector('#pid-nick').value;
                 if (!this.isValidNickname(nick)) return err(t('invalid'));
-                try { switchTo(await this.createPlayer(uid, nick, avatar)); }
+                try { switchTo(await this.createPlayer(uid, nick, avatar), ''); }
                 catch (e) { err(e.message === 'taken' ? t('taken') : e.message === 'invalid' ? t('invalid') : e.message === 'max' ? t('max') : t('error')); }
             };
             wrap.querySelector('#pid-nick').focus();
