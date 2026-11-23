@@ -221,5 +221,11 @@ test('U-MAPAS: pure helpers, UI strings and map data are consistent', () => {
   const regions = SP.ccaa.filter(r => !/^Gibraltar/.test(r.n));
   assert.equal(regions.length, 19); regions.forEach(r => assert.ok(M.CCAA[r.n] && M.CCAA[r.n][0], 'table for ' + r.n));
   assert.equal(SP.prov.filter(r => !/^Gibraltar/.test(r.n)).length, 52);
-  assert.equal(SP.rivers.length, 8); SP.rivers.forEach(r => assert.ok(r.c.length >= 1, 'region crossed by ' + r.id));
+  assert.ok(SP.rivers.length >= 28, 'spanish rivers: ' + SP.rivers.length); SP.rivers.forEach(r => { assert.ok(r.c.length >= 1, 'region crossed by ' + r.id); assert.ok(r.km > 20 && r.fact && r.fact.es && r.fact.en && r.src && r.mouth, 'content for ' + r.id); });
+  W.rivers.forEach(r => assert.ok(r.km > 100 && r.fact && r.fact.es && r.fact.en, 'content for ' + r.id));
+  const noFact = live.filter(c => !(W.info[c.i] && W.info[c.i].fact && W.info[c.i].fact.es && W.info[c.i].fact.en && W.info[c.i].pop > 0));
+  assert.equal(noFact.length, 0, 'country content missing: ' + noFact.map(c => c.i).join());
+  assert.ok(W.mount.length >= 30 && SP.mount.length >= 28); [...W.mount, ...SP.mount].forEach(m => assert.ok(m.m > 500 && m.fact.es && m.x > 0 && m.y > 0, 'mountain ' + m.id));
+  regions.forEach(r => assert.ok(r.inf && r.inf.fact && r.inf.pop > 0 && r.inf.cap, 'region content ' + r.n));
+  SP.prov.filter(r => !/^Gibraltar/.test(r.n)).forEach(r => assert.ok(r.inf && r.inf.fact && r.inf.pop > 0, 'province content ' + r.n));
 });

@@ -1,0 +1,2158 @@
+{
+ "ZW": {
+  "pop": 16.3,
+  "fact": {
+   "es": "Zimbabue toma su nombre de Gran Zimbabue, unas ruinas medievales de piedra cuyo nombre significa \"casas de piedra\".",
+   "en": "Zimbabwe is named after Great Zimbabwe, medieval stone ruins whose name means \"houses of stone\"."
+  },
+  "known": {
+   "es": "Gran Zimbabue, cataratas Victoria, elefantes",
+   "en": "Great Zimbabwe, Victoria Falls, elephants"
+  }
+ },
+ "ZM": {
+  "pop": 20.2,
+  "fact": {
+   "es": "En Zambia, las cataratas Victoria se llaman Mosi-oa-Tunya, que significa \"el humo que truena\".",
+   "en": "In Zambia, Victoria Falls is called Mosi-oa-Tunya, which means \"the smoke that thunders\"."
+  },
+  "known": {
+   "es": "cataratas Victoria, cobre, safaris a pie",
+   "en": "Victoria Falls, copper, walking safaris"
+  }
+ },
+ "YE": {
+  "pop": 34.4,
+  "fact": {
+   "es": "En la isla yemení de Socotra crecen árboles de sangre de drago con forma de paraguas, que no existen en casi ningún otro lugar.",
+   "en": "On Yemen's island of Socotra grow umbrella-shaped dragon blood trees found almost nowhere else."
+  },
+  "known": {
+   "es": "Socotra, café moca, torres de barro de Saná",
+   "en": "Socotra, mocha coffee, Sana'a mud towers"
+  }
+ },
+ "VN": {
+  "pop": 98.9,
+  "fact": {
+   "es": "La bahía de Ha Long tiene miles de islotes de roca caliza que sobresalen del mar como torres verdes.",
+   "en": "Ha Long Bay has thousands of limestone islets rising from the sea like green towers."
+  },
+  "known": {
+   "es": "pho, sombrero cónico, café",
+   "en": "pho, conical hat, coffee"
+  }
+ },
+ "VE": {
+  "pop": 28.4,
+  "fact": {
+   "es": "El Salto Ángel, en Venezuela, es la cascada más alta del mundo: cae casi 1.000 metros desde la cima de una meseta.",
+   "en": "Angel Falls in Venezuela is the world's tallest waterfall, dropping almost 1,000 metres from a flat-topped mountain."
+  },
+  "known": {
+   "es": "Salto Ángel, arepas, petróleo",
+   "en": "Angel Falls, arepas, oil"
+  }
+ },
+ "VA": {
+  "pop": 0.001,
+  "fact": {
+   "es": "El Vaticano es el país más pequeño del mundo: cabe entero dentro de la ciudad de Roma y mide menos de medio kilómetro cuadrado.",
+   "en": "Vatican City is the smallest country in the world: it sits inside Rome and covers less than half a square kilometre."
+  },
+  "known": {
+   "es": "el Papa, basílica de San Pedro, Guardia Suiza",
+   "en": "the Pope, St Peter's Basilica, Swiss Guard"
+  }
+ },
+ "VU": {
+  "pop": 0.33,
+  "fact": {
+   "es": "En la isla de Tanna, en Vanuatu, el volcán Yasur está en erupción casi sin parar y se puede ver desde el borde del cráter.",
+   "en": "On Vanuatu's island of Tanna, Mount Yasur volcano erupts almost non-stop and can be watched from the crater rim."
+  },
+  "known": {
+   "es": "volcanes, salto de la tierra, kava",
+   "en": "volcanoes, land diving, kava"
+  }
+ },
+ "UZ": {
+  "pop": 36,
+  "fact": {
+   "es": "Uzbekistán es uno de los dos países del mundo doblemente sin mar, y Samarcanda fue una gran ciudad de la Ruta de la Seda.",
+   "en": "Uzbekistan is one of only two doubly landlocked countries, and Samarkand was a great city on the Silk Road."
+  },
+  "known": {
+   "es": "Samarcanda, plov, algodón",
+   "en": "Samarkand, plov, cotton"
+  }
+ },
+ "UY": {
+  "pop": 3.4,
+  "fact": {
+   "es": "Uruguay organizó y ganó el primer Mundial de fútbol, en 1930.",
+   "en": "Uruguay hosted and won the very first football World Cup, in 1930."
+  },
+  "known": {
+   "es": "fútbol, mate, carne asada",
+   "en": "football, mate tea, grilled beef"
+  }
+ },
+ "FM": {
+  "pop": 0.11,
+  "fact": {
+   "es": "En Micronesia está Nan Madol, una ciudad antigua construida con enormes bloques de piedra sobre islotes de coral.",
+   "en": "Micronesia has Nan Madol, an ancient city built with huge stone blocks on coral islets."
+  },
+  "known": {
+   "es": "Nan Madol, cocos, buceo",
+   "en": "Nan Madol, coconuts, diving"
+  }
+ },
+ "MH": {
+  "pop": 0.04,
+  "fact": {
+   "es": "Las Islas Marshall son 29 atolones de coral y cinco islas, casi todos a solo un par de metros sobre el mar.",
+   "en": "The Marshall Islands are 29 coral atolls and five islands, almost all just a couple of metres above sea level."
+  },
+  "known": {
+   "es": "atolones, canoas, buceo",
+   "en": "atolls, outrigger canoes, diving"
+  }
+ },
+ "US": {
+  "pop": 335,
+  "fact": {
+   "es": "El Gran Cañón, en Arizona, mide más de 400 kilómetros de largo y más de un kilómetro de profundidad.",
+   "en": "The Grand Canyon in Arizona is over 400 kilometres long and more than a kilometre deep."
+  },
+  "known": {
+   "es": "Estatua de la Libertad, hamburguesas, béisbol",
+   "en": "Statue of Liberty, hamburgers, baseball"
+  }
+ },
+ "GB": {
+  "pop": 67.7,
+  "fact": {
+   "es": "El meridiano cero, desde el que se miden las longitudes del mundo, pasa por Greenwich, en Londres.",
+   "en": "The prime meridian, from which the world's longitudes are measured, passes through Greenwich in London."
+  },
+  "known": {
+   "es": "Big Ben, té, fútbol",
+   "en": "Big Ben, tea, football"
+  }
+ },
+ "AE": {
+  "pop": 9.5,
+  "fact": {
+   "es": "Los Emiratos Árabes Unidos son siete emiratos, y en Dubái se alza el Burj Khalifa, el edificio más alto del mundo.",
+   "en": "The United Arab Emirates is made of seven emirates, and Dubai has the Burj Khalifa, the tallest building in the world."
+  },
+  "known": {
+   "es": "Burj Khalifa, camellos, dátiles",
+   "en": "Burj Khalifa, camels, dates"
+  }
+ },
+ "UA": {
+  "pop": 37,
+  "fact": {
+   "es": "Ucrania tiene suelos negros muy fértiles, llamados chernozem, que la convierten en un gran productor de cereales.",
+   "en": "Ukraine has very fertile black soil, called chernozem, which makes it a major grain producer."
+  },
+  "known": {
+   "es": "girasoles, trigo, borsch",
+   "en": "sunflowers, wheat, borscht"
+  }
+ },
+ "UG": {
+  "pop": 48.6,
+  "fact": {
+   "es": "El río Nilo nace del lago Victoria cerca de Jinja, en Uganda, y desde allí empieza su largo viaje hacia el mar Mediterráneo.",
+   "en": "The Nile River leaves Lake Victoria near Jinja in Uganda and starts its long journey to the Mediterranean Sea."
+  },
+  "known": {
+   "es": "gorilas de montaña, lago Victoria, matoke",
+   "en": "mountain gorillas, Lake Victoria, matoke"
+  }
+ },
+ "TM": {
+  "pop": 6.4,
+  "fact": {
+   "es": "En Turkmenistán hay un enorme cráter de gas en llamas, Darvaza, que arde desde hace décadas y se llama \"la puerta del infierno\".",
+   "en": "Turkmenistan has a huge burning gas crater, Darvaza, that has burned for decades and is called \"the Door to Hell\"."
+  },
+  "known": {
+   "es": "cráter de Darvaza, alfombras, caballos Akhal-Teke",
+   "en": "Darvaza crater, carpets, Akhal-Teke horses"
+  }
+ },
+ "TR": {
+  "pop": 85.3,
+  "fact": {
+   "es": "Estambul, en Turquía, está en dos continentes a la vez: Europa y Asia, separados por el estrecho del Bósforo.",
+   "en": "Istanbul in Turkey lies on two continents at once: Europe and Asia, divided by the Bosphorus strait."
+  },
+  "known": {
+   "es": "kebab, delicias turcas, globos de Capadocia",
+   "en": "kebab, Turkish delight, Cappadocia balloons"
+  }
+ },
+ "TN": {
+  "pop": 12.5,
+  "fact": {
+   "es": "Algunas escenas del desierto de Star Wars se rodaron en Túnez, y cerca de la capital están las ruinas de la antigua Cartago.",
+   "en": "Some desert scenes of Star Wars were filmed in Tunisia, and near the capital lie the ruins of ancient Carthage."
+  },
+  "known": {
+   "es": "Cartago, cuscús, aceite de oliva",
+   "en": "Carthage, couscous, olive oil"
+  }
+ },
+ "TT": {
+  "pop": 1.5,
+  "fact": {
+   "es": "En Trinidad y Tobago se inventó el steelpan, un instrumento hecho con barriles de metal que se creó en el siglo XX.",
+   "en": "The steelpan, an instrument made from metal barrels, was invented in Trinidad and Tobago in the 20th century."
+  },
+  "known": {
+   "es": "steelpan, Carnaval, Lago de Asfalto",
+   "en": "steelpan, Carnival, Pitch Lake"
+  }
+ },
+ "TO": {
+  "pop": 0.1,
+  "fact": {
+   "es": "Tonga es un reino de unas 170 islas, y cada año las ballenas jorobadas llegan a sus aguas para tener a sus crías.",
+   "en": "Tonga is a kingdom of about 170 islands, and every year humpback whales come to its waters to have their calves."
+  },
+  "known": {
+   "es": "ballenas jorobadas, rugby, cocos",
+   "en": "humpback whales, rugby, coconuts"
+  }
+ },
+ "TG": {
+  "pop": 8.8,
+  "fact": {
+   "es": "Togo es un país largo y estrecho, y su capital, Lomé, está casi pegada a la frontera con Ghana.",
+   "en": "Togo is a long, narrow country, and its capital, Lomé, is right next to the border with Ghana."
+  },
+  "known": {
+   "es": "fosfatos, cacao, fufú",
+   "en": "phosphates, cocoa, fufu"
+  }
+ },
+ "TL": {
+  "pop": 1.4,
+  "fact": {
+   "es": "Timor Oriental es uno de los países más jóvenes del mundo: se independizó en 2002, y una leyenda dice que su isla es un cocodrilo.",
+   "en": "Timor-Leste is one of the world's youngest countries, independent since 2002, and a legend says its island is a crocodile."
+  },
+  "known": {
+   "es": "café, cocodrilos, monte Ramelau",
+   "en": "coffee, crocodiles, Mount Ramelau"
+  }
+ },
+ "TH": {
+  "pop": 71.8,
+  "fact": {
+   "es": "Tailandia es el único país del sudeste asiático que nunca fue colonia europea, y el elefante es uno de sus símbolos.",
+   "en": "Thailand is the only Southeast Asian country that was never a European colony, and the elephant is one of its symbols."
+  },
+  "known": {
+   "es": "pad thai, elefantes, playas",
+   "en": "pad thai, elephants, beaches"
+  }
+ },
+ "TZ": {
+  "pop": 67.4,
+  "fact": {
+   "es": "El Kilimanjaro, en Tanzania, es la montaña más alta de África, con 5.895 metros, y tiene nieve cerca del ecuador.",
+   "en": "Mount Kilimanjaro in Tanzania is Africa's highest mountain at 5,895 metres, and it has snow near the equator."
+  },
+  "known": {
+   "es": "Kilimanjaro, Serengeti, Zanzíbar",
+   "en": "Kilimanjaro, Serengeti, Zanzibar"
+  }
+ },
+ "TJ": {
+  "pop": 10.1,
+  "fact": {
+   "es": "Casi todo Tayikistán son montañas, y su cordillera del Pamir es conocida como \"el techo del mundo\".",
+   "en": "Almost all of Tajikistan is mountains, and its Pamir range is known as the \"roof of the world\"."
+  },
+  "known": {
+   "es": "montañas del Pamir, albaricoques, leopardos de las nieves",
+   "en": "Pamir mountains, apricots, snow leopards"
+  }
+ },
+ "TW": {
+  "pop": 23.4,
+  "fact": {
+   "es": "El té con perlas de tapioca, o bubble tea, se inventó en Taiwán en los años 80.",
+   "en": "Bubble tea, tea with tapioca pearls, was invented in Taiwan in the 1980s."
+  },
+  "known": {
+   "es": "bubble tea, Taipei 101, chips de ordenador",
+   "en": "bubble tea, Taipei 101, computer chips"
+  }
+ },
+ "SY": {
+  "pop": 23.2,
+  "fact": {
+   "es": "Damasco, la capital de Siria, es una de las ciudades habitadas desde hace más tiempo en el mundo, durante miles de años.",
+   "en": "Damascus, the capital of Syria, is one of the world's longest continuously inhabited cities, for thousands of years."
+  },
+  "known": {
+   "es": "Damasco, ruinas de Palmira, jabón de Alepo",
+   "en": "Damascus, Palmyra ruins, Aleppo soap"
+  }
+ },
+ "CH": {
+  "pop": 8.8,
+  "fact": {
+   "es": "En Suiza se hablan cuatro idiomas oficiales: alemán, francés, italiano y romanche, y gran parte del país está en los Alpes.",
+   "en": "Switzerland has four official languages: German, French, Italian and Romansh, and much of the country lies in the Alps."
+  },
+  "known": {
+   "es": "chocolate, relojes, queso",
+   "en": "chocolate, watches, cheese"
+  }
+ },
+ "SE": {
+  "pop": 10.5,
+  "fact": {
+   "es": "En verano, en el norte de Suecia el Sol casi no se pone: es el llamado Sol de medianoche.",
+   "en": "In summer, in northern Sweden the Sun barely sets: it is called the midnight sun."
+  },
+  "known": {
+   "es": "IKEA, albóndigas, premios Nobel",
+   "en": "IKEA, meatballs, Nobel Prizes"
+  }
+ },
+ "SZ": {
+  "pop": 1.2,
+  "fact": {
+   "es": "Esuatini se llamaba Suazilandia hasta 2018, y es uno de los pocos reinos que quedan en África.",
+   "en": "Eswatini was called Swaziland until 2018, and it is one of the few kingdoms left in Africa."
+  },
+  "known": {
+   "es": "danza del Junco, rinocerontes, montañas",
+   "en": "Reed Dance, rhinos, mountains"
+  }
+ },
+ "SR": {
+  "pop": 0.6,
+  "fact": {
+   "es": "Surinam es el único país de Sudamérica donde el neerlandés es idioma oficial, y casi todo su territorio es selva.",
+   "en": "Suriname is the only South American country where Dutch is official, and almost all of it is rainforest."
+  },
+  "known": {
+   "es": "selva, oro, casas de madera",
+   "en": "rainforest, gold, wooden houses"
+  }
+ },
+ "SS": {
+  "pop": 11.1,
+  "fact": {
+   "es": "Sudán del Sur es el país más joven del mundo, independiente desde 2011, y el Nilo cruza su enorme humedal, el Sudd.",
+   "en": "South Sudan is the world's youngest country, independent since 2011, and the Nile crosses its huge wetland, the Sudd."
+  },
+  "known": {
+   "es": "Nilo, humedal del Sudd, ganado",
+   "en": "Nile, Sudd wetland, cattle"
+  }
+ },
+ "SD": {
+  "pop": 48.1,
+  "fact": {
+   "es": "En Jartum, la capital de Sudán, se juntan el Nilo Azul y el Nilo Blanco para formar el gran río Nilo.",
+   "en": "In Khartoum, Sudan's capital, the Blue Nile and the White Nile meet to form the great Nile River."
+  },
+  "known": {
+   "es": "pirámides nubias, Nilo, goma arábiga",
+   "en": "Nubian pyramids, Nile, gum arabic"
+  }
+ },
+ "LK": {
+  "pop": 21.9,
+  "fact": {
+   "es": "Sri Lanka tiene Sigiriya, una fortaleza construida sobre una enorme roca, con una entrada que imita las garras de un león.",
+   "en": "Sri Lanka has Sigiriya, a fortress built on a huge rock, with an entrance shaped like lion paws."
+  },
+  "known": {
+   "es": "té, elefantes, críquet",
+   "en": "tea, elephants, cricket"
+  }
+ },
+ "ES": {
+  "pop": 48.4,
+  "fact": {
+   "es": "El Teide, en la isla de Tenerife, es el pico más alto de España, con más de 3.700 metros, y es un volcán.",
+   "en": "Mount Teide on the island of Tenerife is Spain's highest peak at over 3,700 metres, and it is a volcano."
+  },
+  "known": {
+   "es": "paella, flamenco, fútbol",
+   "en": "paella, flamenco, football"
+  }
+ },
+ "KR": {
+  "pop": 51.7,
+  "fact": {
+   "es": "El alfabeto coreano, el hangul, fue creado por el rey Sejong en el siglo XV para que todos pudieran aprender a leer.",
+   "en": "The Korean alphabet, hangul, was created by King Sejong in the 15th century so everyone could learn to read."
+  },
+  "known": {
+   "es": "kimchi, K-pop, taekwondo",
+   "en": "kimchi, K-pop, taekwondo"
+  }
+ },
+ "ZA": {
+  "pop": 60.4,
+  "fact": {
+   "es": "Sudáfrica tiene tres capitales: Pretoria, Ciudad del Cabo y Bloemfontein, cada una con una función distinta.",
+   "en": "South Africa has three capital cities: Pretoria, Cape Town and Bloemfontein, each with a different role."
+  },
+  "known": {
+   "es": "Montaña de la Mesa, safaris, rugby",
+   "en": "Table Mountain, safaris, rugby"
+  }
+ },
+ "SO": {
+  "pop": 17.6,
+  "fact": {
+   "es": "Somalia tiene la costa más larga de toda el África continental, más de 3.000 kilómetros, en el Cuerno de África.",
+   "en": "Somalia has the longest coastline of mainland Africa, over 3,000 kilometres, on the Horn of Africa."
+  },
+  "known": {
+   "es": "camellos, bananas, incienso",
+   "en": "camels, bananas, frankincense"
+  }
+ },
+ "SB": {
+  "pop": 0.7,
+  "fact": {
+   "es": "Las Islas Salomón son casi 1.000 islas del Pacífico, con arrecifes de coral muy ricos que atraen a buceadores.",
+   "en": "The Solomon Islands are almost 1,000 Pacific islands, with rich coral reefs that attract divers."
+  },
+  "known": {
+   "es": "arrecifes de coral, buceo, Guadalcanal",
+   "en": "coral reefs, diving, Guadalcanal"
+  }
+ },
+ "SK": {
+  "pop": 5.4,
+  "fact": {
+   "es": "Eslovaquia tiene cientos de castillos y ruinas, y sus montañas más altas son los Altos Tatras.",
+   "en": "Slovakia has hundreds of castles and ruins, and its highest mountains are the High Tatras."
+  },
+  "known": {
+   "es": "castillos, Altos Tatras, halušky",
+   "en": "castles, High Tatras, halušky"
+  }
+ },
+ "SI": {
+  "pop": 2.1,
+  "fact": {
+   "es": "En el lago Bled, en Eslovenia, hay una pequeña isla con una iglesia a la que se llega en barca.",
+   "en": "On Lake Bled in Slovenia there is a small island with a church that you reach by boat."
+  },
+  "known": {
+   "es": "lago Bled, cuevas, apicultura",
+   "en": "Lake Bled, caves, beekeeping"
+  }
+ },
+ "SG": {
+  "pop": 5.9,
+  "fact": {
+   "es": "Singapur es una isla-ciudad muy pequeña que ha ganado terreno al mar para hacerse más grande.",
+   "en": "Singapore is a very small island city-state that has added land from the sea to grow bigger."
+  },
+  "known": {
+   "es": "Merlion, Gardens by the Bay, cangrejo con chile",
+   "en": "Merlion, Gardens by the Bay, chilli crab"
+  }
+ },
+ "SL": {
+  "pop": 8.6,
+  "fact": {
+   "es": "La capital de Sierra Leona, Freetown, significa \"ciudad libre\" y se fundó para personas liberadas de la esclavitud.",
+   "en": "Sierra Leone's capital, Freetown, means \"free town\" and was founded for people freed from slavery."
+  },
+  "known": {
+   "es": "playas, diamantes, chimpancés",
+   "en": "beaches, diamonds, chimpanzees"
+  }
+ },
+ "SC": {
+  "pop": 0.1,
+  "fact": {
+   "es": "En las Seychelles crece el coco de mar, que tiene la semilla más grande del mundo, y viven tortugas gigantes.",
+   "en": "Seychelles is home to the coco de mer palm, which has the world's biggest seed, and to giant tortoises."
+  },
+  "known": {
+   "es": "tortugas gigantes, playas, coco de mar",
+   "en": "giant tortoises, beaches, coco de mer"
+  }
+ },
+ "RS": {
+  "pop": 6.7,
+  "fact": {
+   "es": "En Belgrado, la capital de Serbia, el río Sava se une al gran río Danubio.",
+   "en": "In Belgrade, Serbia's capital, the Sava River joins the mighty Danube."
+  },
+  "known": {
+   "es": "Belgrado, frambuesas, tenis",
+   "en": "Belgrade, raspberries, tennis"
+  }
+ },
+ "SN": {
+  "pop": 17.7,
+  "fact": {
+   "es": "Dakar, la capital de Senegal, es la ciudad más occidental del África continental.",
+   "en": "Dakar, Senegal's capital, is the westernmost city on mainland Africa."
+  },
+  "known": {
+   "es": "lago Retba rosa, baobabs, thieboudienne",
+   "en": "pink Lake Retba, baobabs, thieboudienne"
+  }
+ },
+ "SA": {
+  "pop": 36.9,
+  "fact": {
+   "es": "Arabia Saudí no tiene ríos permanentes y gran parte de su territorio es desierto, pero allí está La Meca.",
+   "en": "Saudi Arabia has no permanent rivers and much of it is desert, but it is home to Mecca."
+  },
+  "known": {
+   "es": "La Meca, petróleo, dátiles",
+   "en": "Mecca, oil, dates"
+  }
+ },
+ "ST": {
+  "pop": 0.23,
+  "fact": {
+   "es": "Santo Tomé y Príncipe son dos islas volcánicas en el golfo de Guinea, muy cerca del ecuador.",
+   "en": "São Tomé and Príncipe are two volcanic islands in the Gulf of Guinea, very close to the equator."
+  },
+  "known": {
+   "es": "cacao, chocolate, playas",
+   "en": "cocoa, chocolate, beaches"
+  }
+ },
+ "SM": {
+  "pop": 0.03,
+  "fact": {
+   "es": "San Marino es una de las repúblicas más antiguas del mundo y está construida sobre el monte Titano.",
+   "en": "San Marino is one of the world's oldest republics and is built on Mount Titano."
+  },
+  "known": {
+   "es": "monte Titano, tres torres, sellos",
+   "en": "Mount Titano, three towers, stamps"
+  }
+ },
+ "WS": {
+  "pop": 0.22,
+  "fact": {
+   "es": "En 2011 Samoa se cambió al otro lado de la línea de cambio de fecha y se saltó un día entero: el 30 de diciembre.",
+   "en": "In 2011 Samoa moved to the other side of the date line and skipped a whole day: 30 December."
+  },
+  "known": {
+   "es": "rugby, tatuajes, cocos",
+   "en": "rugby, tattoos, coconuts"
+  }
+ },
+ "VC": {
+  "pop": 0.1,
+  "fact": {
+   "es": "San Vicente y las Granadinas tienen una isla principal con el volcán La Soufrière y muchas islitas ideales para navegar.",
+   "en": "Saint Vincent and the Grenadines has a main island with La Soufrière volcano and many small islands ideal for sailing."
+  },
+  "known": {
+   "es": "Granadinas, vela, arrurruz",
+   "en": "the Grenadines, sailing, arrowroot"
+  }
+ },
+ "LC": {
+  "pop": 0.18,
+  "fact": {
+   "es": "Santa Lucía tiene los Pitons, dos picos volcánicos que salen del mar y son Patrimonio de la Humanidad.",
+   "en": "Saint Lucia has the Pitons, two volcanic peaks rising from the sea that are a World Heritage Site."
+  },
+  "known": {
+   "es": "Pitons, bananas, playas",
+   "en": "the Pitons, bananas, beaches"
+  }
+ },
+ "KN": {
+  "pop": 0.05,
+  "fact": {
+   "es": "San Cristóbal y Nieves es el país más pequeño de América, tanto en superficie como en población.",
+   "en": "Saint Kitts and Nevis is the smallest country in the Americas, in both area and population."
+  },
+  "known": {
+   "es": "fortaleza de Brimstone Hill, caña de azúcar, playas",
+   "en": "Brimstone Hill Fortress, sugar cane, beaches"
+  }
+ },
+ "RW": {
+  "pop": 13.5,
+  "fact": {
+   "es": "Ruanda se llama \"el país de las mil colinas\", y en sus montañas viven gorilas de montaña.",
+   "en": "Rwanda is called \"the land of a thousand hills\", and mountain gorillas live in its mountains."
+  },
+  "known": {
+   "es": "gorilas de montaña, café, té",
+   "en": "mountain gorillas, coffee, tea"
+  }
+ },
+ "RU": {
+  "pop": 144.4,
+  "fact": {
+   "es": "Rusia es el país más grande del mundo y tiene once husos horarios distintos.",
+   "en": "Russia is the largest country in the world and has eleven different time zones."
+  },
+  "known": {
+   "es": "matrioshkas, ferrocarril Transiberiano, ballet",
+   "en": "matryoshka dolls, Trans-Siberian Railway, ballet"
+  }
+ },
+ "RO": {
+  "pop": 19,
+  "fact": {
+   "es": "El río Danubio termina en Rumanía formando un enorme delta lleno de aves, uno de los mejor conservados de Europa.",
+   "en": "The Danube River ends in Romania in a huge delta full of birds, one of Europe's best preserved."
+  },
+  "known": {
+   "es": "castillo de Bran, Cárpatos, sarmale",
+   "en": "Bran Castle, Carpathians, sarmale"
+  }
+ },
+ "QA": {
+  "pop": 2.7,
+  "fact": {
+   "es": "Catar es una pequeña península y fue el primer país árabe en organizar un Mundial de fútbol, en 2022.",
+   "en": "Qatar is a small peninsula and was the first Arab country to host a football World Cup, in 2022."
+  },
+  "known": {
+   "es": "Mundial 2022, halcones, rascacielos de Doha",
+   "en": "2022 World Cup, falcons, Doha skyscrapers"
+  }
+ },
+ "PT": {
+  "pop": 10.4,
+  "fact": {
+   "es": "El Cabo da Roca, en Portugal, es el punto más occidental de la Europa continental.",
+   "en": "Cabo da Roca in Portugal is the westernmost point of mainland Europe."
+  },
+  "known": {
+   "es": "pastel de nata, fado, tranvías de Lisboa",
+   "en": "pastel de nata, fado, Lisbon trams"
+  }
+ },
+ "PL": {
+  "pop": 36.8,
+  "fact": {
+   "es": "Marie Curie, una de las científicas más famosas de la historia, nació en Varsovia, la capital de Polonia.",
+   "en": "Marie Curie, one of history's most famous scientists, was born in Warsaw, Poland's capital."
+  },
+  "known": {
+   "es": "pierogi, Chopin, bisontes",
+   "en": "pierogi, Chopin, bison"
+  }
+ },
+ "PH": {
+  "pop": 117.3,
+  "fact": {
+   "es": "Filipinas está formada por más de 7.000 islas.",
+   "en": "The Philippines is made up of more than 7,000 islands."
+  },
+  "known": {
+   "es": "jeepneys, Colinas de Chocolate, adobo",
+   "en": "jeepneys, Chocolate Hills, adobo"
+  }
+ },
+ "PE": {
+  "pop": 34,
+  "fact": {
+   "es": "Machu Picchu, la ciudad inca de Perú, está en lo alto de los Andes, a unos 2.400 metros de altura.",
+   "en": "Machu Picchu, Peru's Inca city, stands high in the Andes at about 2,400 metres above sea level."
+  },
+  "known": {
+   "es": "Machu Picchu, llamas, patatas",
+   "en": "Machu Picchu, llamas, potatoes"
+  }
+ },
+ "PY": {
+  "pop": 6.8,
+  "fact": {
+   "es": "En Paraguay se hablan el español y el guaraní, una lengua indígena que usa gran parte de la población.",
+   "en": "In Paraguay people speak Spanish and Guaraní, an indigenous language used by much of the population."
+  },
+  "known": {
+   "es": "represa de Itaipú, tereré, arpa",
+   "en": "Itaipú dam, tereré, harp"
+  }
+ },
+ "PG": {
+  "pop": 10.3,
+  "fact": {
+   "es": "En Papúa Nueva Guinea se hablan más de 800 lenguas, más que en ningún otro país del mundo.",
+   "en": "In Papua New Guinea more than 800 languages are spoken, more than in any other country."
+  },
+  "known": {
+   "es": "aves del paraíso, selvas, café",
+   "en": "birds of paradise, rainforests, coffee"
+  }
+ },
+ "PA": {
+  "pop": 4.4,
+  "fact": {
+   "es": "El Canal de Panamá une el océano Atlántico y el Pacífico y los barcos lo cruzan usando esclusas que los suben y bajan.",
+   "en": "The Panama Canal joins the Atlantic and Pacific oceans, and ships cross it using locks that lift and lower them."
+  },
+  "known": {
+   "es": "Canal de Panamá, molas, selvas",
+   "en": "Panama Canal, molas, rainforests"
+  }
+ },
+ "PW": {
+  "pop": 0.02,
+  "fact": {
+   "es": "En Palaos hay un lago de medusas inofensivas, donde se puede nadar entre miles de ellas.",
+   "en": "Palau has a lake of harmless jellyfish where you can swim among thousands of them."
+  },
+  "known": {
+   "es": "lago de las Medusas, Islas Rocosas, buceo",
+   "en": "Jellyfish Lake, Rock Islands, diving"
+  }
+ },
+ "PK": {
+  "pop": 240.5,
+  "fact": {
+   "es": "El K2, en la frontera de Pakistán con China, es la segunda montaña más alta del mundo, con unos 8.600 metros.",
+   "en": "K2, on Pakistan's border with China, is the world's second highest mountain at about 8,600 metres."
+  },
+  "known": {
+   "es": "K2, críquet, mangos",
+   "en": "K2, cricket, mangoes"
+  }
+ },
+ "OM": {
+  "pop": 4.6,
+  "fact": {
+   "es": "Durante miles de años Omán ha vendido incienso, una resina perfumada que sale de un árbol del desierto.",
+   "en": "For thousands of years Oman has traded frankincense, a fragrant resin from a desert tree."
+  },
+  "known": {
+   "es": "incienso, fuertes, dhows",
+   "en": "frankincense, forts, dhow boats"
+  }
+ },
+ "NO": {
+  "pop": 5.5,
+  "fact": {
+   "es": "Noruega tiene fiordos, valles marinos largos y profundos, y en el norte se ven auroras boreales.",
+   "en": "Norway has fjords, long deep sea inlets, and in the north you can see the northern lights."
+  },
+  "known": {
+   "es": "fiordos, salmón, esquí",
+   "en": "fjords, salmon, skiing"
+  }
+ },
+ "KP": {
+  "pop": 26.2,
+  "fact": {
+   "es": "El monte Paektu es la montaña más alta de Corea del Norte, con unos 2.700 metros, y es un volcán.",
+   "en": "Mount Paektu is North Korea's highest mountain at about 2,700 metres, and it is a volcano."
+  },
+  "known": {
+   "es": "monte Paektu, kimchi, Pionyang",
+   "en": "Mount Paektu, kimchi, Pyongyang"
+  }
+ },
+ "NG": {
+  "pop": 223.8,
+  "fact": {
+   "es": "Nigeria es el país con más habitantes de África y tiene una gran industria de cine llamada Nollywood.",
+   "en": "Nigeria has the most people of any African country and a big film industry called Nollywood."
+  },
+  "known": {
+   "es": "Nollywood, arroz jollof, fútbol",
+   "en": "Nollywood, jollof rice, football"
+  }
+ },
+ "NE": {
+  "pop": 27.2,
+  "fact": {
+   "es": "La mayor parte de Níger es desierto del Sáhara, y el río Níger cruza el suroeste del país.",
+   "en": "Most of Niger is Sahara desert, and the Niger River crosses the southwest of the country."
+  },
+  "known": {
+   "es": "Sáhara, Agadez, jirafas de África occidental",
+   "en": "Sahara, Agadez, West African giraffes"
+  }
+ },
+ "NI": {
+  "pop": 6.9,
+  "fact": {
+   "es": "El lago de Nicaragua es el más grande de Centroamérica y tiene volcanes que salen del agua en sus islas.",
+   "en": "Lake Nicaragua is the largest in Central America and has volcanoes rising from its islands."
+  },
+  "known": {
+   "es": "lago de Nicaragua, volcanes, gallo pinto",
+   "en": "Lake Nicaragua, volcanoes, gallo pinto"
+  }
+ },
+ "NZ": {
+  "pop": 5.2,
+  "fact": {
+   "es": "Antes de la llegada de los humanos, Nueva Zelanda no tenía mamíferos terrestres, salvo unos murciélagos, y sí muchas aves que no vuelan.",
+   "en": "Before humans arrived, New Zealand had no land mammals except some bats, but many birds that cannot fly."
+  },
+  "known": {
+   "es": "kiwi, haka, All Blacks",
+   "en": "kiwi bird, haka, All Blacks"
+  }
+ },
+ "NL": {
+  "pop": 17.6,
+  "fact": {
+   "es": "Casi una cuarta parte de los Países Bajos está por debajo del nivel del mar, protegida por diques y canales.",
+   "en": "About a quarter of the Netherlands lies below sea level, protected by dikes and canals."
+  },
+  "known": {
+   "es": "tulipanes, molinos, bicicletas",
+   "en": "tulips, windmills, bicycles"
+  }
+ },
+ "NP": {
+  "pop": 30.9,
+  "fact": {
+   "es": "Nepal tiene la única bandera nacional que no es rectangular: está formada por dos triángulos.",
+   "en": "Nepal has the only national flag that is not rectangular: it is made of two triangles."
+  },
+  "known": {
+   "es": "Everest, sherpas, momos",
+   "en": "Everest, Sherpas, momo dumplings"
+  }
+ },
+ "NR": {
+  "pop": 0.01,
+  "fact": {
+   "es": "Nauru es una pequeña isla de coral de unos 21 kilómetros cuadrados y la república isleña más pequeña del mundo.",
+   "en": "Nauru is a small coral island of about 21 square kilometres and the world's smallest island republic."
+  },
+  "known": {
+   "es": "fosfato, isla de coral, pesca",
+   "en": "phosphate, coral island, fishing"
+  }
+ },
+ "NA": {
+  "pop": 2.6,
+  "fact": {
+   "es": "El desierto del Namib, en Namibia, es uno de los más antiguos del mundo y sus dunas rojas llegan hasta el océano.",
+   "en": "The Namib Desert in Namibia is one of the oldest in the world, and its red dunes reach the ocean."
+  },
+  "known": {
+   "es": "dunas de Sossusvlei, guepardos, Etosha",
+   "en": "Sossusvlei dunes, cheetahs, Etosha"
+  }
+ },
+ "MZ": {
+  "pop": 33.9,
+  "fact": {
+   "es": "Mozambique tiene más de 2.000 kilómetros de costa en el océano Índico, con islas de coral como las de Bazaruto.",
+   "en": "Mozambique has over 2,000 kilometres of coast on the Indian Ocean, with coral islands such as Bazaruto."
+  },
+  "known": {
+   "es": "anacardos, gambas, islas Bazaruto",
+   "en": "cashew nuts, prawns, Bazaruto islands"
+  }
+ },
+ "MA": {
+  "pop": 37.8,
+  "fact": {
+   "es": "La Universidad de Al Qarawiyyin, en Fez, Marruecos, fundada en el año 859, es una de las más antiguas del mundo todavía en funcionamiento.",
+   "en": "The University of al-Qarawiyyin in Fez, Morocco, founded in 859, is one of the oldest still working in the world."
+  },
+  "known": {
+   "es": "cuscús, té de menta, Chefchaouen",
+   "en": "couscous, mint tea, Chefchaouen"
+  }
+ },
+ "ME": {
+  "pop": 0.6,
+  "fact": {
+   "es": "El nombre de Montenegro significa \"montaña negra\", y su bahía de Kotor parece un fiordo rodeado de montañas.",
+   "en": "Montenegro's name means \"black mountain\", and its Bay of Kotor looks like a fjord ringed by mountains."
+  },
+  "known": {
+   "es": "bahía de Kotor, montañas, cañón del Tara",
+   "en": "Bay of Kotor, mountains, Tara Canyon"
+  }
+ },
+ "MN": {
+  "pop": 3.4,
+  "fact": {
+   "es": "Mongolia es de los países con menos gente por kilómetro cuadrado del mundo, y muchas familias viven en tiendas redondas llamadas gers.",
+   "en": "Mongolia has one of the fewest people per square kilometre in the world, and many families live in round tents called gers."
+  },
+  "known": {
+   "es": "gers, caballos, Naadam",
+   "en": "gers, horses, Naadam festival"
+  }
+ },
+ "MD": {
+  "pop": 2.5,
+  "fact": {
+   "es": "Moldavia tiene bodegas subterráneas tan enormes que sus túneles parecen calles, llenas de millones de botellas de vino.",
+   "en": "Moldova has underground wine cellars so huge their tunnels look like streets, filled with millions of bottles."
+  },
+  "known": {
+   "es": "vino, plăcinte, girasoles",
+   "en": "wine, plăcinte pies, sunflowers"
+  }
+ },
+ "MC": {
+  "pop": 0.04,
+  "fact": {
+   "es": "Mónaco mide unos 2 kilómetros cuadrados, y en sus calles se celebra una famosa carrera de Fórmula 1.",
+   "en": "Monaco covers about 2 square kilometres, and a famous Formula 1 race is held on its streets."
+  },
+  "known": {
+   "es": "Gran Premio de Fórmula 1, casino, palacio del Príncipe",
+   "en": "Formula 1 Grand Prix, casino, Prince's Palace"
+  }
+ },
+ "MX": {
+  "pop": 128.5,
+  "fact": {
+   "es": "La Ciudad de México está construida sobre Tenochtitlan, la capital azteca que estaba en medio de un lago.",
+   "en": "Mexico City is built on Tenochtitlan, the Aztec capital that once stood in the middle of a lake."
+  },
+  "known": {
+   "es": "tacos, mariachis, Chichén Itzá",
+   "en": "tacos, mariachi, Chichen Itza"
+  }
+ },
+ "MU": {
+  "pop": 1.3,
+  "fact": {
+   "es": "En la isla Mauricio vivió el dodo, un ave que no volaba y que se extinguió hace siglos.",
+   "en": "The dodo, a bird that could not fly and became extinct centuries ago, lived on the island of Mauritius."
+  },
+  "known": {
+   "es": "dodo, playas, caña de azúcar",
+   "en": "dodo, beaches, sugar cane"
+  }
+ },
+ "MR": {
+  "pop": 4.9,
+  "fact": {
+   "es": "En Mauritania está la Estructura de Richat, o \"Ojo del Sáhara\", un círculo de roca de unos 40 kilómetros visible desde el espacio.",
+   "en": "Mauritania has the Richat Structure, or \"Eye of the Sahara\", a rock circle about 40 kilometres wide visible from space."
+  },
+  "known": {
+   "es": "Ojo del Sáhara, camellos, mineral de hierro",
+   "en": "Eye of the Sahara, camels, iron ore"
+  }
+ },
+ "MT": {
+  "pop": 0.5,
+  "fact": {
+   "es": "La capital de Malta, La Valeta, fue construida por los Caballeros de San Juan, y Malta es de los países más pequeños de Europa.",
+   "en": "Malta's capital, Valletta, was built by the Knights of St John, and Malta is one of Europe's smallest countries."
+  },
+  "known": {
+   "es": "La Valeta, pastizzi, Laguna Azul",
+   "en": "Valletta, pastizzi, Blue Lagoon"
+  }
+ },
+ "ML": {
+  "pop": 22.6,
+  "fact": {
+   "es": "La Gran Mezquita de Djenné, en Mali, es el mayor edificio de adobe del mundo, y Tombuctú fue un famoso centro de estudio.",
+   "en": "The Great Mosque of Djenné in Mali is the world's largest mud-brick building, and Timbuktu was a famous centre of learning."
+  },
+  "known": {
+   "es": "Tombuctú, mezquita de Djenné, griots",
+   "en": "Timbuktu, Djenné mosque, griots"
+  }
+ },
+ "MV": {
+  "pop": 0.5,
+  "fact": {
+   "es": "Las Maldivas son el país más bajo del mundo: casi todas sus islas de coral están a solo un par de metros sobre el mar.",
+   "en": "The Maldives is the world's lowest country: almost all its coral islands are only a couple of metres above sea level."
+  },
+  "known": {
+   "es": "atolones, arrecifes de coral, cocos",
+   "en": "atolls, coral reefs, coconuts"
+  }
+ },
+ "MY": {
+  "pop": 34.3,
+  "fact": {
+   "es": "Las Torres Petronas, en Kuala Lumpur, fueron los edificios más altos del mundo durante unos años, y Malasia tiene selva con orangutanes.",
+   "en": "The Petronas Towers in Kuala Lumpur were the world's tallest buildings for some years, and Malaysia has rainforest with orangutans."
+  },
+  "known": {
+   "es": "Torres Petronas, orangutanes, nasi lemak",
+   "en": "Petronas Towers, orangutans, nasi lemak"
+  }
+ },
+ "MW": {
+  "pop": 20.4,
+  "fact": {
+   "es": "El lago Malaui es famoso por sus cientos de especies de peces de colores, que no se encuentran en otros lagos.",
+   "en": "Lake Malawi is famous for its hundreds of species of colourful fish, found in no other lakes."
+  },
+  "known": {
+   "es": "lago Malaui, té, maíz",
+   "en": "Lake Malawi, tea, maize"
+  }
+ },
+ "MG": {
+  "pop": 29.6,
+  "fact": {
+   "es": "Los lémures solo viven en estado salvaje en Madagascar, una de las islas más grandes del mundo.",
+   "en": "Lemurs live in the wild only in Madagascar, one of the largest islands in the world."
+  },
+  "known": {
+   "es": "lémures, baobabs, vainilla",
+   "en": "lemurs, baobabs, vanilla"
+  }
+ },
+ "MK": {
+  "pop": 1.8,
+  "fact": {
+   "es": "El lago Ohrid, en Macedonia del Norte, es uno de los lagos más antiguos y profundos de Europa.",
+   "en": "Lake Ohrid in North Macedonia is one of the oldest and deepest lakes in Europe."
+  },
+  "known": {
+   "es": "lago Ohrid, Skopie, ajvar",
+   "en": "Lake Ohrid, Skopje, ajvar"
+  }
+ },
+ "LU": {
+  "pop": 0.66,
+  "fact": {
+   "es": "Luxemburgo es un pequeño gran ducado con muchos castillos, y su gente habla luxemburgués, francés y alemán.",
+   "en": "Luxembourg is a small grand duchy with many castles, and its people speak Luxembourgish, French and German."
+  },
+  "known": {
+   "es": "castillos, ciudad de Luxemburgo, bancos",
+   "en": "castles, Luxembourg City, banking"
+  }
+ },
+ "LT": {
+  "pop": 2.8,
+  "fact": {
+   "es": "En Lituania hay una colina cubierta por cientos de miles de cruces, la Colina de las Cruces.",
+   "en": "Lithuania has a hill covered with hundreds of thousands of crosses, the Hill of Crosses."
+  },
+  "known": {
+   "es": "Colina de las Cruces, baloncesto, ámbar",
+   "en": "Hill of Crosses, basketball, amber"
+  }
+ },
+ "LI": {
+  "pop": 0.04,
+  "fact": {
+   "es": "Liechtenstein es uno de los dos únicos países del mundo doblemente sin mar y mide unos 160 kilómetros cuadrados.",
+   "en": "Liechtenstein is one of only two doubly landlocked countries and covers about 160 square kilometres."
+  },
+  "known": {
+   "es": "castillo de Vaduz, sellos, Alpes",
+   "en": "Vaduz Castle, stamps, Alps"
+  }
+ },
+ "LY": {
+  "pop": 6.9,
+  "fact": {
+   "es": "La mayor parte de Libia es desierto del Sáhara, y en la costa están las ruinas romanas de Leptis Magna.",
+   "en": "Most of Libya is Sahara desert, and on the coast lie the Roman ruins of Leptis Magna."
+  },
+  "known": {
+   "es": "Leptis Magna, Sáhara, petróleo",
+   "en": "Leptis Magna, Sahara, oil"
+  }
+ },
+ "LR": {
+  "pop": 5.4,
+  "fact": {
+   "es": "La capital de Liberia, Monrovia, lleva el nombre de un presidente de Estados Unidos, James Monroe.",
+   "en": "Liberia's capital, Monrovia, is named after a US president, James Monroe."
+  },
+  "known": {
+   "es": "caucho, selvas, hipopótamos pigmeos",
+   "en": "rubber, rainforests, pygmy hippos"
+  }
+ },
+ "LS": {
+  "pop": 2.3,
+  "fact": {
+   "es": "Lesoto está completamente rodeado por Sudáfrica y todo su territorio está a más de 1.000 metros de altura.",
+   "en": "Lesotho is completely surrounded by South Africa and all of it lies above 1,000 metres in altitude."
+  },
+  "known": {
+   "es": "sombrero basotho, montañas, ponis",
+   "en": "Basotho hat, mountains, ponies"
+  }
+ },
+ "LB": {
+  "pop": 5.4,
+  "fact": {
+   "es": "La bandera del Líbano tiene un cedro, un árbol de montaña que es el símbolo del país desde hace miles de años.",
+   "en": "Lebanon's flag shows a cedar, a mountain tree that has been the country's symbol for thousands of years."
+  },
+  "known": {
+   "es": "cedros, hummus, Biblos",
+   "en": "cedar trees, hummus, Byblos"
+  }
+ },
+ "LV": {
+  "pop": 1.9,
+  "fact": {
+   "es": "Riga, la capital de Letonia, tiene cientos de edificios de estilo modernista con fachadas muy decoradas.",
+   "en": "Riga, Latvia's capital, has hundreds of Art Nouveau buildings with richly decorated fronts."
+  },
+  "known": {
+   "es": "Riga, ámbar, pan de centeno",
+   "en": "Riga, amber, rye bread"
+  }
+ },
+ "LA": {
+  "pop": 7.6,
+  "fact": {
+   "es": "El nombre antiguo de Laos, Lan Xang, significa \"un millón de elefantes\".",
+   "en": "Laos' old name, Lan Xang, means \"a million elephants\"."
+  },
+  "known": {
+   "es": "río Mekong, arroz glutinoso, elefantes",
+   "en": "Mekong River, sticky rice, elephants"
+  }
+ },
+ "KG": {
+  "pop": 7,
+  "fact": {
+   "es": "Kirguistán es casi todo montañas, y su lago Issyk-Kul no se congela en invierno aunque está muy alto.",
+   "en": "Kyrgyzstan is almost all mountains, and its Issyk-Kul lake does not freeze in winter even though it is very high."
+  },
+  "known": {
+   "es": "yurtas, lago Issyk-Kul, caballos",
+   "en": "yurts, Issyk-Kul lake, horses"
+  }
+ },
+ "KW": {
+  "pop": 4.3,
+  "fact": {
+   "es": "Kuwait es un país pequeño y caluroso del golfo Pérsico, famoso por las Torres de Kuwait, que parecen agujas con bolas.",
+   "en": "Kuwait is a small, hot country on the Persian Gulf, famous for the Kuwait Towers, which look like needles with spheres."
+  },
+  "known": {
+   "es": "Torres de Kuwait, petróleo, perlas",
+   "en": "Kuwait Towers, oil, pearls"
+  }
+ },
+ "XK": {
+  "pop": 1.8,
+  "fact": {
+   "es": "La bandera de Kosovo tiene dibujado el mapa del país y seis estrellas.",
+   "en": "Kosovo's flag shows a map of the country and six stars."
+  },
+  "known": {
+   "es": "montañas, Prizren, Pristina",
+   "en": "mountains, Prizren, Pristina"
+  }
+ },
+ "KI": {
+  "pop": 0.13,
+  "fact": {
+   "es": "Kiribati se extiende por los hemisferios este y oeste, norte y sur: es el único país que está en los cuatro.",
+   "en": "Kiribati stretches across the eastern, western, northern and southern hemispheres: the only country in all four."
+  },
+  "known": {
+   "es": "atolones, pesca, cocos",
+   "en": "atolls, fishing, coconuts"
+  }
+ },
+ "KE": {
+  "pop": 55.1,
+  "fact": {
+   "es": "En Kenia, cada año millones de ñus cruzan el río Mara en una de las migraciones animales más grandes del mundo.",
+   "en": "In Kenya, each year millions of wildebeest cross the Mara River in one of the biggest animal migrations on Earth."
+  },
+  "known": {
+   "es": "safaris, corredores de maratón, masáis",
+   "en": "safaris, marathon runners, Maasai"
+  }
+ },
+ "KZ": {
+  "pop": 19.6,
+  "fact": {
+   "es": "Kazajistán es el país sin mar más grande del mundo, y desde su base de Baikonur despegó la primera nave con un humano al espacio.",
+   "en": "Kazakhstan is the world's largest landlocked country, and from its Baikonur base the first human flew to space."
+  },
+  "known": {
+   "es": "cosmódromo de Baikonur, manzanas, estepa",
+   "en": "Baikonur spaceport, apples, steppe"
+  }
+ },
+ "JO": {
+  "pop": 11.3,
+  "fact": {
+   "es": "Petra, en Jordania, es una ciudad antigua tallada en la roca rosada de la montaña.",
+   "en": "Petra in Jordan is an ancient city carved into the pink rock of the mountains."
+  },
+  "known": {
+   "es": "Petra, mar Muerto, Wadi Rum",
+   "en": "Petra, Dead Sea, Wadi Rum"
+  }
+ },
+ "JP": {
+  "pop": 124.5,
+  "fact": {
+   "es": "Japón tiene más de 14.000 islas y muchos volcanes, entre ellos el famoso monte Fuji.",
+   "en": "Japan has more than 14,000 islands and many volcanoes, among them the famous Mount Fuji."
+  },
+  "known": {
+   "es": "sushi, anime, monte Fuji",
+   "en": "sushi, anime, Mount Fuji"
+  }
+ },
+ "JM": {
+  "pop": 2.8,
+  "fact": {
+   "es": "Jamaica es la cuna del reggae, la música de Bob Marley.",
+   "en": "Jamaica is the birthplace of reggae, the music of Bob Marley."
+  },
+  "known": {
+   "es": "Usain Bolt, café Blue Mountain, pollo jerk",
+   "en": "Usain Bolt, Blue Mountain coffee, jerk chicken"
+  }
+ },
+ "IT": {
+  "pop": 58.9,
+  "fact": {
+   "es": "Venecia está construida sobre más de 100 islitas y en vez de calles tiene canales.",
+   "en": "Venice is built on more than 100 small islands and has canals instead of streets."
+  },
+  "known": {
+   "es": "pizza, Coliseo, pasta",
+   "en": "pizza, Colosseum, pasta"
+  }
+ },
+ "IL": {
+  "pop": 9.7,
+  "fact": {
+   "es": "El mar Muerto, entre Israel y sus vecinos, es el lugar de la Tierra con la superficie más baja, y su agua es tan salada que flotas.",
+   "en": "The Dead Sea, between Israel and its neighbours, is the lowest land surface on Earth, and its water is so salty you float."
+  },
+  "known": {
+   "es": "mar Muerto, falafel, Jerusalén",
+   "en": "Dead Sea, falafel, Jerusalem"
+  }
+ },
+ "PS": {
+  "pop": 5.4,
+  "fact": {
+   "es": "Jericó, en Palestina, es una de las ciudades más antiguas del mundo: la gente vive allí desde hace unos 10.000 años.",
+   "en": "Jericho in Palestine is one of the world's oldest cities: people have lived there for about 10,000 years."
+  },
+  "known": {
+   "es": "Belén, aceite de oliva, bordados",
+   "en": "Bethlehem, olive oil, embroidery"
+  }
+ },
+ "IE": {
+  "pop": 5.2,
+  "fact": {
+   "es": "Irlanda es el único país del mundo que tiene un instrumento musical como símbolo nacional: el arpa.",
+   "en": "Ireland is the only country in the world with a musical instrument as its national symbol: the harp."
+  },
+  "known": {
+   "es": "trébol, música irlandesa, acantilados de Moher",
+   "en": "shamrock, Irish music, Cliffs of Moher"
+  }
+ },
+ "IQ": {
+  "pop": 45.5,
+  "fact": {
+   "es": "Irak es la antigua Mesopotamia, la tierra entre los ríos Tigris y Éufrates, donde los sumerios inventaron la escritura.",
+   "en": "Iraq is ancient Mesopotamia, the land between the Tigris and Euphrates rivers, where the Sumerians invented writing."
+  },
+  "known": {
+   "es": "Babilonia, Tigris y Éufrates, dátiles",
+   "en": "Babylon, Tigris and Euphrates, dates"
+  }
+ },
+ "IR": {
+  "pop": 89.2,
+  "fact": {
+   "es": "Irán es la antigua Persia, y conserva las ruinas de Persépolis, una gran ciudad de hace unos 2.500 años.",
+   "en": "Iran is ancient Persia and keeps the ruins of Persepolis, a great city about 2,500 years old."
+  },
+  "known": {
+   "es": "alfombras persas, azafrán, Persépolis",
+   "en": "Persian carpets, saffron, Persepolis"
+  }
+ },
+ "ID": {
+  "pop": 277.5,
+  "fact": {
+   "es": "Indonesia tiene unas 17.000 islas y muchos volcanes, y en la isla de Komodo vive el dragón de Komodo.",
+   "en": "Indonesia has about 17,000 islands and many volcanoes, and the Komodo dragon lives on Komodo island."
+  },
+  "known": {
+   "es": "dragón de Komodo, Bali, batik",
+   "en": "Komodo dragon, Bali, batik"
+  }
+ },
+ "IN": {
+  "pop": 1428.6,
+  "fact": {
+   "es": "El ajedrez nació en la India hace más de mil años, y hoy es el país con más habitantes del mundo.",
+   "en": "Chess was born in India over a thousand years ago, and today it is the world's most populous country."
+  },
+  "known": {
+   "es": "Taj Mahal, críquet, curry",
+   "en": "Taj Mahal, cricket, curry"
+  }
+ },
+ "IS": {
+  "pop": 0.38,
+  "fact": {
+   "es": "Islandia tiene volcanes, glaciares y géiseres, y la palabra \"géiser\" viene del famoso Geysir de este país.",
+   "en": "Iceland has volcanoes, glaciers and geysers, and the word \"geyser\" comes from this country's famous Geysir."
+  },
+  "known": {
+   "es": "géiseres, auroras boreales, frailecillos",
+   "en": "geysers, northern lights, puffins"
+  }
+ },
+ "HU": {
+  "pop": 9.6,
+  "fact": {
+   "es": "El cubo de Rubik lo inventó en 1974 un húngaro, Ernő Rubik, que era profesor de arquitectura.",
+   "en": "The Rubik's Cube was invented in 1974 by a Hungarian, Ernő Rubik, who was an architecture teacher."
+  },
+  "known": {
+   "es": "cubo de Rubik, gulash, baños de Budapest",
+   "en": "Rubik's Cube, goulash, Budapest baths"
+  }
+ },
+ "HN": {
+  "pop": 10.6,
+  "fact": {
+   "es": "En Copán, Honduras, hay una gran ciudad maya con escaleras cubiertas de jeroglíficos.",
+   "en": "Copán in Honduras is a great Maya city with a staircase covered in hieroglyphs."
+  },
+  "known": {
+   "es": "Copán, café, islas de la Bahía",
+   "en": "Copán, coffee, Bay Islands"
+  }
+ },
+ "HT": {
+  "pop": 11.6,
+  "fact": {
+   "es": "Haití se independizó en 1804 tras una revuelta de personas esclavizadas y comparte la isla La Española con la República Dominicana.",
+   "en": "Haiti became independent in 1804 after a revolt of enslaved people and shares the island of Hispaniola with the Dominican Republic."
+  },
+  "known": {
+   "es": "Citadelle Laferrière, arte, mangos",
+   "en": "Citadelle Laferrière, art, mangoes"
+  }
+ },
+ "GY": {
+  "pop": 0.81,
+  "fact": {
+   "es": "En Guyana, la catarata Kaieteur cae de una sola vez más de 200 metros, y es el único país sudamericano donde el inglés es oficial.",
+   "en": "In Guyana, Kaieteur Falls drops over 200 metres in one go, and it is the only South American country where English is official."
+  },
+  "known": {
+   "es": "catarata Kaieteur, selva, arroz",
+   "en": "Kaieteur Falls, rainforest, rice"
+  }
+ },
+ "GW": {
+  "pop": 2.1,
+  "fact": {
+   "es": "Guinea-Bisáu tiene el archipiélago de las Bijagós, formado por decenas de islas donde anidan tortugas marinas.",
+   "en": "Guinea-Bissau has the Bijagós archipelago, made of dozens of islands where sea turtles nest."
+  },
+  "known": {
+   "es": "anacardos, islas Bijagós, tortugas marinas",
+   "en": "cashew nuts, Bijagós islands, sea turtles"
+  }
+ },
+ "GN": {
+  "pop": 14.2,
+  "fact": {
+   "es": "En las montañas de Guinea nacen ríos importantes de África occidental, como el Níger, el Senegal y el Gambia.",
+   "en": "In Guinea's mountains rise major West African rivers, such as the Niger, the Senegal and the Gambia."
+  },
+  "known": {
+   "es": "bauxita, Fouta Djallon, djembé",
+   "en": "bauxite, Fouta Djallon, djembe drum"
+  }
+ },
+ "GT": {
+  "pop": 18.1,
+  "fact": {
+   "es": "En la selva de Guatemala se alza Tikal, una ciudad maya con pirámides más altas que los árboles.",
+   "en": "In Guatemala's jungle stands Tikal, a Maya city with pyramids taller than the trees."
+  },
+  "known": {
+   "es": "Tikal, quetzal, café",
+   "en": "Tikal, quetzal bird, coffee"
+  }
+ },
+ "GD": {
+  "pop": 0.12,
+  "fact": {
+   "es": "Granada se llama la \"Isla de las Especias\" y tiene una nuez moscada dibujada en su bandera.",
+   "en": "Grenada is called the \"Spice Island\" and has a nutmeg on its flag."
+  },
+  "known": {
+   "es": "nuez moscada, especias, playas",
+   "en": "nutmeg, spices, beaches"
+  }
+ },
+ "GR": {
+  "pop": 10.4,
+  "fact": {
+   "es": "Los primeros Juegos Olímpicos se celebraron en Olimpia, en la antigua Grecia, hace casi 2.800 años.",
+   "en": "The first Olympic Games were held in Olympia, in ancient Greece, almost 2,800 years ago."
+  },
+  "known": {
+   "es": "Acrópolis, queso feta, islas",
+   "en": "Acropolis, feta cheese, islands"
+  }
+ },
+ "GH": {
+  "pop": 33.5,
+  "fact": {
+   "es": "El lago Volta, en Ghana, es uno de los lagos artificiales más grandes del mundo.",
+   "en": "Lake Volta in Ghana is one of the largest man-made lakes in the world."
+  },
+  "known": {
+   "es": "cacao, oro, tela kente",
+   "en": "cocoa, gold, kente cloth"
+  }
+ },
+ "DE": {
+  "pop": 84.5,
+  "fact": {
+   "es": "Los hermanos Grimm recogieron en Alemania cuentos como Hansel y Gretel y Blancanieves.",
+   "en": "The Brothers Grimm collected fairy tales in Germany such as Hansel and Gretel and Snow White."
+  },
+  "known": {
+   "es": "pan, coches, Oktoberfest",
+   "en": "bread, cars, Oktoberfest"
+  }
+ },
+ "GE": {
+  "pop": 3.7,
+  "fact": {
+   "es": "En Georgia se hace vino desde hace unos 8.000 años, y se guardaba en grandes vasijas de barro enterradas.",
+   "en": "People in Georgia have made wine for about 8,000 years, storing it in big clay jars buried in the ground."
+  },
+  "known": {
+   "es": "vino, khachapuri, montañas del Cáucaso",
+   "en": "wine, khachapuri, Caucasus mountains"
+  }
+ },
+ "GM": {
+  "pop": 2.7,
+  "fact": {
+   "es": "Gambia es el país más pequeño del África continental y es una larga franja de tierra a ambos lados del río Gambia.",
+   "en": "The Gambia is the smallest country on mainland Africa, a long strip of land on both sides of the Gambia River."
+  },
+  "known": {
+   "es": "río Gambia, cacahuetes, playas",
+   "en": "Gambia River, peanuts, beaches"
+  }
+ },
+ "GA": {
+  "pop": 2.4,
+  "fact": {
+   "es": "Casi todo Gabón está cubierto de selva, el ecuador lo cruza y en sus parques viven elefantes de bosque.",
+   "en": "Almost all of Gabon is covered in rainforest, the equator crosses it, and forest elephants live in its parks."
+  },
+  "known": {
+   "es": "selva, elefantes de bosque, manganeso",
+   "en": "rainforest, forest elephants, manganese"
+  }
+ },
+ "FR": {
+  "pop": 68.2,
+  "fact": {
+   "es": "La Torre Eiffel se construyó en 1889 para una exposición mundial y mide unos 330 metros.",
+   "en": "The Eiffel Tower was built in 1889 for a world fair and is about 330 metres tall."
+  },
+  "known": {
+   "es": "baguette, Torre Eiffel, quesos",
+   "en": "baguette, Eiffel Tower, cheese"
+  }
+ },
+ "FI": {
+  "pop": 5.6,
+  "fact": {
+   "es": "Finlandia tiene cerca de 180.000 lagos, y en el norte, en Laponia, vive Papá Noel según la tradición.",
+   "en": "Finland has about 180,000 lakes, and in the north, in Lapland, Santa Claus lives according to tradition."
+  },
+  "known": {
+   "es": "sauna, pueblo de Papá Noel, renos",
+   "en": "sauna, Santa Claus Village, reindeer"
+  }
+ },
+ "FJ": {
+  "pop": 0.93,
+  "fact": {
+   "es": "Fiyi tiene más de 300 islas, y mucha gente vive en solo dos de ellas.",
+   "en": "Fiji has more than 300 islands, and most people live on just two of them."
+  },
+  "known": {
+   "es": "arrecifes de coral, rugby, kava",
+   "en": "coral reefs, rugby, kava"
+  }
+ },
+ "ET": {
+  "pop": 126.5,
+  "fact": {
+   "es": "Etiopía tiene su propio calendario de 13 meses, y se cree que el café nació en sus montañas.",
+   "en": "Ethiopia has its own calendar with 13 months, and coffee is believed to have started in its mountains."
+  },
+  "known": {
+   "es": "café, injera, corredores de fondo",
+   "en": "coffee, injera, long-distance runners"
+  }
+ },
+ "EE": {
+  "pop": 1.4,
+  "fact": {
+   "es": "Estonia es muy digital: se puede votar por internet, y Skype fue creado por programadores estonios.",
+   "en": "Estonia is very digital: people can vote online, and Skype was created by Estonian programmers."
+  },
+  "known": {
+   "es": "Tallin, saunas, Skype",
+   "en": "Tallinn, saunas, Skype"
+  }
+ },
+ "ER": {
+  "pop": 3.6,
+  "fact": {
+   "es": "Asmara, la capital de Eritrea, es famosa por sus edificios modernistas de los años 30, Patrimonio de la Humanidad.",
+   "en": "Asmara, Eritrea's capital, is famous for its 1930s modernist buildings, a World Heritage Site."
+  },
+  "known": {
+   "es": "Asmara, costa del mar Rojo, café",
+   "en": "Asmara, Red Sea coast, coffee"
+  }
+ },
+ "GQ": {
+  "pop": 1.7,
+  "fact": {
+   "es": "Guinea Ecuatorial es el único país de África donde el español es idioma oficial.",
+   "en": "Equatorial Guinea is the only African country where Spanish is an official language."
+  },
+  "known": {
+   "es": "petróleo, isla de Bioko, selva",
+   "en": "oil, Bioko island, rainforest"
+  }
+ },
+ "SV": {
+  "pop": 6.3,
+  "fact": {
+   "es": "El Salvador es el país más pequeño de Centroamérica y tiene unos 20 volcanes.",
+   "en": "El Salvador is the smallest country in Central America and has about 20 volcanoes."
+  },
+  "known": {
+   "es": "pupusas, volcanes, surf",
+   "en": "pupusas, volcanoes, surfing"
+  }
+ },
+ "EG": {
+  "pop": 112.7,
+  "fact": {
+   "es": "La Gran Pirámide de Guiza tiene unos 4.500 años y fue la construcción más alta del mundo durante más de tres mil años.",
+   "en": "The Great Pyramid of Giza is about 4,500 years old and was the world's tallest structure for over three thousand years."
+  },
+  "known": {
+   "es": "pirámides, Esfinge, momias",
+   "en": "pyramids, Sphinx, mummies"
+  }
+ },
+ "EC": {
+  "pop": 18,
+  "fact": {
+   "es": "Ecuador se llama así porque la línea del ecuador lo cruza, y sus islas Galápagos inspiraron a Darwin.",
+   "en": "Ecuador is named after the equator line that crosses it, and its Galápagos Islands inspired Darwin."
+  },
+  "known": {
+   "es": "tortugas de Galápagos, bananas, sombreros de paja toquilla",
+   "en": "Galápagos tortoises, bananas, toquilla straw hats"
+  }
+ },
+ "DO": {
+  "pop": 11.3,
+  "fact": {
+   "es": "Santo Domingo, en la República Dominicana, es la ciudad europea más antigua de América, fundada hace más de 500 años.",
+   "en": "Santo Domingo in the Dominican Republic is the oldest European-founded city in the Americas, over 500 years old."
+  },
+  "known": {
+   "es": "béisbol, merengue, playas",
+   "en": "baseball, merengue, beaches"
+  }
+ },
+ "DM": {
+  "pop": 0.07,
+  "fact": {
+   "es": "Dominica es la \"isla de la naturaleza\", con selvas y un lago hirviente que tiene agua muy caliente.",
+   "en": "Dominica is the \"nature island\", with rainforests and a boiling lake of very hot water."
+  },
+  "known": {
+   "es": "Lago Hirviente, selva, cachalotes",
+   "en": "Boiling Lake, rainforest, sperm whales"
+  }
+ },
+ "DJ": {
+  "pop": 1.1,
+  "fact": {
+   "es": "El lago Assal, en Yibuti, está a unos 155 metros bajo el nivel del mar y es muy salado.",
+   "en": "Lake Assal in Djibouti lies about 155 metres below sea level and is very salty."
+  },
+  "known": {
+   "es": "lago Assal, tiburones ballena, camellos",
+   "en": "Lake Assal, whale sharks, camels"
+  }
+ },
+ "DK": {
+  "pop": 5.9,
+  "fact": {
+   "es": "Los bloques LEGO se inventaron en Dinamarca y su nombre viene de \"leg godt\", que significa \"juega bien\".",
+   "en": "LEGO bricks were invented in Denmark, and the name comes from \"leg godt\", which means \"play well\"."
+  },
+  "known": {
+   "es": "LEGO, la Sirenita, pasteles",
+   "en": "LEGO, the Little Mermaid, pastries"
+  }
+ },
+ "CZ": {
+  "pop": 10.5,
+  "fact": {
+   "es": "La palabra \"robot\" viene del checo y se usó por primera vez en una obra de teatro de Karel Čapek en 1920.",
+   "en": "The word \"robot\" comes from Czech and was first used in a play by Karel Čapek in 1920."
+  },
+  "known": {
+   "es": "castillo de Praga, cristal de Bohemia, el topito Krtek",
+   "en": "Prague Castle, Bohemian crystal, Krtek the little mole"
+  }
+ },
+ "CY": {
+  "pop": 1.3,
+  "fact": {
+   "es": "Según la leyenda, la diosa griega Afrodita nació del mar junto a las costas de Chipre.",
+   "en": "According to legend, the Greek goddess Aphrodite was born from the sea off Cyprus."
+  },
+  "known": {
+   "es": "halloumi, Roca de Afrodita, playas",
+   "en": "halloumi, Aphrodite's Rock, beaches"
+  }
+ },
+ "CU": {
+  "pop": 11,
+  "fact": {
+   "es": "En La Habana, Cuba, todavía circulan coches americanos de los años 50, cuidados durante décadas.",
+   "en": "In Havana, Cuba, American cars from the 1950s still drive around, kept going for decades."
+  },
+  "known": {
+   "es": "salsa, coches antiguos, puros",
+   "en": "salsa music, vintage cars, cigars"
+  }
+ },
+ "HR": {
+  "pop": 3.9,
+  "fact": {
+   "es": "Croacia tiene más de 1.000 islas en el mar Adriático, y la región de Dalmacia dio nombre al perro dálmata.",
+   "en": "Croatia has more than 1,000 islands in the Adriatic Sea, and the region of Dalmatia gave its name to the Dalmatian dog."
+  },
+  "known": {
+   "es": "Dubrovnik, lagos de Plitvice, perros dálmatas",
+   "en": "Dubrovnik, Plitvice Lakes, Dalmatian dogs"
+  }
+ },
+ "CI": {
+  "pop": 28.2,
+  "fact": {
+   "es": "Costa de Marfil es el mayor productor de cacao del mundo, la materia prima del chocolate.",
+   "en": "Côte d'Ivoire is the world's biggest producer of cocoa, the raw material of chocolate."
+  },
+  "known": {
+   "es": "cacao, chocolate, fútbol",
+   "en": "cocoa, chocolate, football"
+  }
+ },
+ "CR": {
+  "pop": 5.2,
+  "fact": {
+   "es": "Costa Rica ocupa muy poco territorio pero alberga cerca del 5 % de las especies del planeta.",
+   "en": "Costa Rica is small but is home to about 5% of the species on the planet."
+  },
+  "known": {
+   "es": "perezosos, café, selvas",
+   "en": "sloths, coffee, rainforests"
+  }
+ },
+ "CD": {
+  "pop": 102.3,
+  "fact": {
+   "es": "El río Congo es el río más profundo del mundo, con más de 200 metros, y rodea una gran selva tropical.",
+   "en": "The Congo River is the deepest river in the world, over 200 metres, and runs through a huge rainforest."
+  },
+  "known": {
+   "es": "okapi, río Congo, gorilas",
+   "en": "okapi, Congo River, gorillas"
+  }
+ },
+ "CG": {
+  "pop": 6.1,
+  "fact": {
+   "es": "Brazzaville, capital de la República del Congo, está frente a Kinsasa, al otro lado del río: son las capitales más cercanas del mundo tras Roma y el Vaticano.",
+   "en": "Brazzaville, capital of the Republic of the Congo, faces Kinshasa across the river: the two closest capitals in the world after Rome and the Vatican."
+  },
+  "known": {
+   "es": "gorilas, río Congo, selva",
+   "en": "gorillas, Congo River, rainforest"
+  }
+ },
+ "KM": {
+  "pop": 0.85,
+  "fact": {
+   "es": "En Comoras hay un volcán activo, el Karthala, y es de los mayores productores de ylang-ylang, una flor para perfumes.",
+   "en": "The Comoros has an active volcano, Karthala, and is a top producer of ylang-ylang, a flower used in perfume."
+  },
+  "known": {
+   "es": "ylang-ylang, vainilla, clavo",
+   "en": "ylang-ylang, vanilla, cloves"
+  }
+ },
+ "CO": {
+  "pop": 52.1,
+  "fact": {
+   "es": "Colombia es el único país de Sudamérica con costa tanto en el océano Pacífico como en el mar Caribe.",
+   "en": "Colombia is the only South American country with coasts on both the Pacific Ocean and the Caribbean Sea."
+  },
+  "known": {
+   "es": "café, esmeraldas, flores",
+   "en": "coffee, emeralds, flowers"
+  }
+ },
+ "CN": {
+  "pop": 1410.7,
+  "fact": {
+   "es": "En China se inventaron el papel, la imprenta, la brújula y la pólvora, y vive el panda gigante.",
+   "en": "Paper, printing, the compass and gunpowder were invented in China, which is also home to the giant panda."
+  },
+  "known": {
+   "es": "panda gigante, Gran Muralla, té",
+   "en": "giant panda, Great Wall, tea"
+  }
+ },
+ "CL": {
+  "pop": 19.6,
+  "fact": {
+   "es": "Chile es larguísimo y estrecho: mide más de 4.000 kilómetros de norte a sur y menos de 200 de ancho.",
+   "en": "Chile is extremely long and narrow: over 4,000 kilometres from north to south and under 200 wide."
+  },
+  "known": {
+   "es": "desierto de Atacama, moáis, vino",
+   "en": "Atacama Desert, moai statues, wine"
+  }
+ },
+ "TD": {
+  "pop": 18.3,
+  "fact": {
+   "es": "El lago Chad, en el país del mismo nombre, se ha hecho mucho más pequeño en las últimas décadas.",
+   "en": "Lake Chad, which gives the country its name, has become much smaller in recent decades."
+  },
+  "known": {
+   "es": "lago Chad, Sáhara, elefantes",
+   "en": "Lake Chad, Sahara, elephants"
+  }
+ },
+ "CF": {
+  "pop": 5.7,
+  "fact": {
+   "es": "En la selva de la República Centroafricana hay claros donde se juntan elefantes de bosque y gorilas.",
+   "en": "In the rainforest of the Central African Republic there are clearings where forest elephants and gorillas gather."
+  },
+  "known": {
+   "es": "elefantes de bosque, diamantes, selva",
+   "en": "forest elephants, diamonds, rainforest"
+  }
+ },
+ "CV": {
+  "pop": 0.6,
+  "fact": {
+   "es": "Cabo Verde son diez islas volcánicas frente a África, y en una de ellas está el volcán Pico do Fogo, de casi 2.800 metros.",
+   "en": "Cabo Verde has ten volcanic islands off Africa, and one has the Pico do Fogo volcano, almost 2,800 metres high."
+  },
+  "known": {
+   "es": "morna, volcán Pico do Fogo, playas",
+   "en": "morna music, Pico do Fogo volcano, beaches"
+  }
+ },
+ "CA": {
+  "pop": 40.1,
+  "fact": {
+   "es": "Canadá tiene la costa más larga del mundo, con miles de kilómetros en tres océanos.",
+   "en": "Canada has the longest coastline of any country, thousands of kilometres on three oceans."
+  },
+  "known": {
+   "es": "sirope de arce, hockey sobre hielo, osos polares",
+   "en": "maple syrup, ice hockey, polar bears"
+  }
+ },
+ "CM": {
+  "pop": 28,
+  "fact": {
+   "es": "Camerún se llama \"el África en miniatura\" porque tiene playas, selvas, sabana, desierto y montañas.",
+   "en": "Cameroon is called \"Africa in miniature\" because it has beaches, rainforest, savanna, desert and mountains."
+  },
+  "known": {
+   "es": "monte Camerún, fútbol, cacao",
+   "en": "Mount Cameroon, football, cocoa"
+  }
+ },
+ "KH": {
+  "pop": 16.9,
+  "fact": {
+   "es": "Angkor Wat, en Camboya, es el mayor monumento religioso del mundo y aparece en la bandera del país.",
+   "en": "Angkor Wat in Cambodia is the world's largest religious monument and appears on the country's flag."
+  },
+  "known": {
+   "es": "Angkor Wat, lago Tonlé Sap, arroz",
+   "en": "Angkor Wat, Tonlé Sap lake, rice"
+  }
+ },
+ "MM": {
+  "pop": 54.6,
+  "fact": {
+   "es": "En Bagan, Birmania, hay miles de templos y pagodas de ladrillo repartidos por una llanura.",
+   "en": "In Bagan, Myanmar, thousands of brick temples and pagodas are spread across a plain."
+  },
+  "known": {
+   "es": "pagodas de Bagan, río Irawadi, teca",
+   "en": "Bagan pagodas, Irrawaddy River, teak"
+  }
+ },
+ "BI": {
+  "pop": 13.2,
+  "fact": {
+   "es": "Burundi tiene parte del lago Tanganica, el segundo lago más profundo del mundo.",
+   "en": "Burundi has part of Lake Tanganyika, the second deepest lake in the world."
+  },
+  "known": {
+   "es": "tambores reales, café, lago Tanganica",
+   "en": "royal drummers, coffee, Lake Tanganyika"
+  }
+ },
+ "BF": {
+  "pop": 22.7,
+  "fact": {
+   "es": "El nombre Burkina Faso significa \"tierra de gente íntegra\".",
+   "en": "The name Burkina Faso means \"land of upright people\"."
+  },
+  "known": {
+   "es": "festival de cine FESPACO, karité, algodón",
+   "en": "FESPACO film festival, shea butter, cotton"
+  }
+ },
+ "BG": {
+  "pop": 6.4,
+  "fact": {
+   "es": "El alfabeto cirílico, que se usa en Bulgaria, Rusia y otros países, se desarrolló en la antigua Bulgaria hace más de mil años.",
+   "en": "The Cyrillic alphabet, used in Bulgaria, Russia and other countries, was developed in early Bulgaria over a thousand years ago."
+  },
+  "known": {
+   "es": "rosas, yogur, monasterio de Rila",
+   "en": "roses, yogurt, Rila Monastery"
+  }
+ },
+ "BN": {
+  "pop": 0.45,
+  "fact": {
+   "es": "En Brunéi está Kampong Ayer, un enorme poblado de casas sobre pilotes construido sobre un río.",
+   "en": "Brunei has Kampong Ayer, a huge village of stilt houses built over a river."
+  },
+  "known": {
+   "es": "Kampong Ayer, petróleo, selva",
+   "en": "Kampong Ayer, oil, rainforest"
+  }
+ },
+ "BR": {
+  "pop": 216.4,
+  "fact": {
+   "es": "Brasil tiene la mayor parte de la selva del Amazonas, la mayor selva tropical del planeta.",
+   "en": "Brazil holds most of the Amazon rainforest, the largest tropical rainforest on the planet."
+  },
+  "known": {
+   "es": "fútbol, Carnaval, Cristo Redentor",
+   "en": "football, Carnival, Christ the Redeemer"
+  }
+ },
+ "BW": {
+  "pop": 2.6,
+  "fact": {
+   "es": "El delta del Okavango, en Botsuana, es un río que acaba en el desierto y se llena de animales en la época seca.",
+   "en": "Botswana's Okavango Delta is a river that ends in the desert and fills with animals in the dry season."
+  },
+  "known": {
+   "es": "delta del Okavango, elefantes, diamantes",
+   "en": "Okavango Delta, elephants, diamonds"
+  }
+ },
+ "BA": {
+  "pop": 3.2,
+  "fact": {
+   "es": "El Puente Viejo de Mostar, en Bosnia y Herzegovina, es un puente de piedra del siglo XVI que fue reconstruido en 2004.",
+   "en": "The Old Bridge of Mostar in Bosnia and Herzegovina is a 16th-century stone bridge that was rebuilt in 2004."
+  },
+  "known": {
+   "es": "Puente Viejo de Mostar, burek, ćevapi",
+   "en": "Mostar Old Bridge, burek, ćevapi"
+  }
+ },
+ "BO": {
+  "pop": 12.4,
+  "fact": {
+   "es": "El Salar de Uyuni, en Bolivia, es el mayor desierto de sal del mundo y con lluvia parece un gigantesco espejo.",
+   "en": "Bolivia's Salar de Uyuni is the world's largest salt flat, and after rain it looks like a giant mirror."
+  },
+  "known": {
+   "es": "Salar de Uyuni, llamas, quinua",
+   "en": "Uyuni salt flat, llamas, quinoa"
+  }
+ },
+ "BT": {
+  "pop": 0.79,
+  "fact": {
+   "es": "Bután se llama en su idioma \"la tierra del dragón del trueno\" y tiene un monasterio colgado en un acantilado.",
+   "en": "Bhutan is called \"the land of the thunder dragon\" in its language and has a monastery hanging on a cliff."
+  },
+  "known": {
+   "es": "monasterio Nido del Tigre, tiro con arco, dragón",
+   "en": "Tiger's Nest monastery, archery, dragon flag"
+  }
+ },
+ "BJ": {
+  "pop": 13.7,
+  "fact": {
+   "es": "En Benín está Ganvié, un pueblo de casas sobre pilotes construido en un lago.",
+   "en": "Benin has Ganvié, a village of stilt houses built on a lake."
+  },
+  "known": {
+   "es": "Ganvié, palacios de Abomey, ñame",
+   "en": "Ganvié, Abomey palaces, yams"
+  }
+ },
+ "BZ": {
+  "pop": 0.41,
+  "fact": {
+   "es": "Belice tiene la segunda barrera de coral más grande del mundo y el Gran Agujero Azul, un enorme pozo marino.",
+   "en": "Belize has the world's second largest barrier reef and the Great Blue Hole, a huge marine sinkhole."
+  },
+  "known": {
+   "es": "Gran Agujero Azul, arrecife de coral, ruinas mayas",
+   "en": "Great Blue Hole, coral reef, Maya ruins"
+  }
+ },
+ "BE": {
+  "pop": 11.7,
+  "fact": {
+   "es": "Tintín y los Pitufos, dos famosos personajes de cómic, nacieron en Bélgica.",
+   "en": "Tintin and the Smurfs, two famous comic characters, were born in Belgium."
+  },
+  "known": {
+   "es": "chocolate, gofres, patatas fritas",
+   "en": "chocolate, waffles, fries"
+  }
+ },
+ "BY": {
+  "pop": 9.2,
+  "fact": {
+   "es": "En el bosque de Białowieża, entre Bielorrusia y Polonia, vive el bisonte europeo, el mayor mamífero terrestre de Europa.",
+   "en": "In the Białowieża Forest, between Belarus and Poland, lives the European bison, Europe's largest land mammal."
+  },
+  "known": {
+   "es": "bisontes, bosques, patatas",
+   "en": "bison, forests, potatoes"
+  }
+ },
+ "BB": {
+  "pop": 0.28,
+  "fact": {
+   "es": "Barbados es llamada \"la tierra de los peces voladores\", que son parte de su plato nacional.",
+   "en": "Barbados is called \"the land of the flying fish\", which is part of its national dish."
+  },
+  "known": {
+   "es": "pez volador, críquet, playas",
+   "en": "flying fish, cricket, beaches"
+  }
+ },
+ "BD": {
+  "pop": 172.9,
+  "fact": {
+   "es": "Los Sundarbans, en Bangladés, son el mayor bosque de manglares del mundo y allí viven tigres de Bengala.",
+   "en": "The Sundarbans in Bangladesh are the world's largest mangrove forest, and Bengal tigers live there."
+  },
+  "known": {
+   "es": "tigre de Bengala, yute, críquet",
+   "en": "Bengal tiger, jute, cricket"
+  }
+ },
+ "BH": {
+  "pop": 1.5,
+  "fact": {
+   "es": "Baréin es un país formado por islas en el golfo Pérsico y su nombre significa \"dos mares\".",
+   "en": "Bahrain is a country of islands in the Persian Gulf, and its name means \"two seas\"."
+  },
+  "known": {
+   "es": "perlas, Gran Premio de Fórmula 1, Árbol de la Vida",
+   "en": "pearls, Formula 1 Grand Prix, Tree of Life"
+  }
+ },
+ "BS": {
+  "pop": 0.41,
+  "fact": {
+   "es": "Bahamas tiene unas 700 islas, y en una de ellas hay cerdos que nadan en el mar junto a los turistas.",
+   "en": "The Bahamas has about 700 islands, and on one of them pigs swim in the sea next to tourists."
+  },
+  "known": {
+   "es": "cerdos nadadores, playas, arrecifes de coral",
+   "en": "swimming pigs, beaches, coral reefs"
+  }
+ },
+ "AZ": {
+  "pop": 10.4,
+  "fact": {
+   "es": "En Azerbaiyán hay cientos de volcanes de lodo, que escupen barro y gas en vez de lava.",
+   "en": "Azerbaijan has hundreds of mud volcanoes, which spit out mud and gas instead of lava."
+  },
+  "known": {
+   "es": "Bakú, alfombras, granadas",
+   "en": "Baku, carpets, pomegranates"
+  }
+ },
+ "AT": {
+  "pop": 9.1,
+  "fact": {
+   "es": "Mozart nació en Salzburgo, en Austria, y compuso música desde que era un niño muy pequeño.",
+   "en": "Mozart was born in Salzburg, Austria, and composed music from the time he was a very small child."
+  },
+  "known": {
+   "es": "Mozart, escalope vienés, esquí en los Alpes",
+   "en": "Mozart, Wiener schnitzel, skiing in the Alps"
+  }
+ },
+ "AU": {
+  "pop": 26.6,
+  "fact": {
+   "es": "Australia es el único país que ocupa todo un continente, y tiene el mayor arrecife de coral del mundo.",
+   "en": "Australia is the only country that covers a whole continent, and it has the world's largest coral reef."
+  },
+  "known": {
+   "es": "canguros, koalas, Ópera de Sídney",
+   "en": "kangaroos, koalas, Sydney Opera House"
+  }
+ },
+ "AM": {
+  "pop": 2.8,
+  "fact": {
+   "es": "Armenia fue el primer país en adoptar el cristianismo como religión oficial, en el año 301, y desde Ereván se ve el monte Ararat.",
+   "en": "Armenia was the first country to adopt Christianity as its official religion, in 301, and Mount Ararat is visible from Yerevan."
+  },
+  "known": {
+   "es": "monte Ararat, albaricoques, ajedrez",
+   "en": "Mount Ararat, apricots, chess"
+  }
+ },
+ "AR": {
+  "pop": 45.8,
+  "fact": {
+   "es": "El Aconcagua, en Argentina, es la montaña más alta fuera de Asia, con casi 7.000 metros.",
+   "en": "Aconcagua in Argentina is the highest mountain outside Asia, at almost 7,000 metres."
+  },
+  "known": {
+   "es": "tango, asado, fútbol",
+   "en": "tango, barbecue, football"
+  }
+ },
+ "AG": {
+  "pop": 0.1,
+  "fact": {
+   "es": "Antigua y Barbuda presume de tener una playa para cada día del año, y en Antigua hay un puerto histórico de la marina británica.",
+   "en": "Antigua and Barbuda boasts a beach for every day of the year, and Antigua has a historic British naval dockyard."
+  },
+  "known": {
+   "es": "playas, vela, Nelson's Dockyard",
+   "en": "beaches, sailing, Nelson's Dockyard"
+  }
+ },
+ "AO": {
+  "pop": 36.7,
+  "fact": {
+   "es": "Angola tiene las cataratas de Kalandula, de más de 100 metros de ancho, y su idioma oficial es el portugués.",
+   "en": "Angola has the Kalandula Falls, over 100 metres wide, and its official language is Portuguese."
+  },
+  "known": {
+   "es": "petróleo, diamantes, cataratas de Kalandula",
+   "en": "oil, diamonds, Kalandula Falls"
+  }
+ },
+ "AD": {
+  "pop": 0.08,
+  "fact": {
+   "es": "Andorra es un pequeño país en los Pirineos, entre España y Francia, y su idioma oficial es el catalán.",
+   "en": "Andorra is a small country in the Pyrenees, between Spain and France, and its official language is Catalan."
+  },
+  "known": {
+   "es": "esquí, compras, Pirineos",
+   "en": "skiing, shopping, Pyrenees"
+  }
+ },
+ "DZ": {
+  "pop": 45.6,
+  "fact": {
+   "es": "Argelia es el país más grande de África y la mayor parte de su territorio es el desierto del Sáhara.",
+   "en": "Algeria is the largest country in Africa and most of its land is the Sahara desert."
+  },
+  "known": {
+   "es": "Sáhara, cuscús, arte rupestre del Tassili",
+   "en": "Sahara, couscous, Tassili rock art"
+  }
+ },
+ "AL": {
+  "pop": 2.8,
+  "fact": {
+   "es": "Albania se llama en su idioma Shqipëria, \"la tierra de las águilas\", y una águila de dos cabezas aparece en su bandera.",
+   "en": "Albania is called Shqipëria in its language, \"land of the eagles\", and a double-headed eagle is on its flag."
+  },
+  "known": {
+   "es": "águila de dos cabezas, Riviera albanesa, byrek",
+   "en": "double-headed eagle, Albanian Riviera, byrek"
+  }
+ },
+ "AF": {
+  "pop": 41.1,
+  "fact": {
+   "es": "Afganistán es muy montañoso y cruza el país la cordillera del Hindu Kush, con picos de más de 7.000 metros.",
+   "en": "Afghanistan is very mountainous and the Hindu Kush range crosses it, with peaks over 7,000 metres."
+  },
+  "known": {
+   "es": "montañas del Hindu Kush, alfombras, granadas",
+   "en": "Hindu Kush mountains, carpets, pomegranates"
+  }
+ }
+}

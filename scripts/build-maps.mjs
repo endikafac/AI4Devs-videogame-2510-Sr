@@ -22,6 +22,8 @@ import iso from 'i18n-iso-countries';
 import {createRequire} from 'module'; const {geoConicConformalSpain} = createRequire(import.meta.url)('./dcp.cjs');
 const R = f => JSON.parse(fs.readFileSync(f, 'utf8'));
 const OUT = REPO + 'mapas-EFC/data/';
+const CONTENT = REPO + 'scripts/mapas-content/';
+const CT = f => fs.existsSync(CONTENT + f) ? R(CONTENT + f) : null;
 fs.mkdirSync(OUT, {recursive: true});
 const W = 1000, H = 500;
 import polylabel from 'polylabel';
@@ -146,7 +148,8 @@ for (const [id, es, en, names] of RIV) {
   const d = gp({type: 'MultiLineString', coordinates: lines});
   const cs = crossed(pts, wf, f => f.id ? n3(f.id) : null);
   const lg = lines.slice().sort((a, b) => b.length - a.length)[0]; const mid = proj(lg[Math.floor(lg.length / 2)]);
-  rivers.push({id, es, en, d, c: cs, x: +mid[0].toFixed(1), y: +mid[1].toFixed(1)});
+  const bb = gp.bounds({type: 'MultiLineString', coordinates: lines}).flat().map(v => Math.round(v));
+  rivers.push({id, es, en, d, c: cs, b: bb, x: +mid[0].toFixed(1), y: +mid[1].toFixed(1)});
 }
 const oceans = [
  ['Océano Atlántico','Atlantic Ocean',-35,15],['Océano Pacífico','Pacific Ocean',-150,5],['Océano Pacífico','Pacific Ocean',160,-5],
@@ -168,7 +171,17 @@ for (const c of G.countries) if (c.iso) { const f = facts[c.iso] || ['', CONT[c.
 console.log('facts', Object.keys(facts).length, 'missing:', countries.filter(c => c.i && !facts[c.i]).map(c => c.i + ':' + c.n).join(', '));
 const box = (l0, la0, l1, la1) => { const a = proj([l0, la1]), b = proj([l1, la0]); return [Math.round(a[0]), Math.round(a[1]), Math.round(b[0] - a[0]), Math.round(b[1] - a[1])]; };
 const views = {EU: box(-25, 34, 45, 72), AS: box(26, -11, 150, 78), AF: box(-20, -36, 52, 38), NA: box(-170, 6, -50, 84), SA: box(-84, -57, -33, 14), OC: box(110, -48, 180, -2)};
-const world = {w: W, h: H, countries, lakes, caps, rivers, oceans, facts, views};
+const cc = CT('countries.json') || {}, rc = CT('rivers.json') || {}, mc = CT('mountains.json') || {};
+const a3 = {}; wc.forEach(c => { a3[c.cca3] = c.cca2; });
+const info = {};
+wc.forEach(c => {
+  if (!facts[c.cca2] || !facts[c.cca2][3]) return;
+  const x = cc[c.cca2] || {};
+  info[c.cca2] = {km2: Math.round(c.area || 0), langs: Object.keys(c.languages || {}), cur: Object.keys(c.currencies || {}), nb: (c.borders || []).map(b => a3[b]).filter(Boolean), pop: x.pop, fact: x.fact, known: x.known};
+});
+rivers.forEach(r => { const x = (rc.world || {})[r.id]; if (x) { r.km = x.km; r.src = x.source; r.mouth = x.mouth; r.fact = x.fact; } });
+const mount = ((mc.world) || []).map(m => { const p = proj([m.lon, m.lat]); return p && {id: m.id, es: m.es, en: m.en, m: m.m, kind: m.kind, where: m.where, fact: m.fact, x: +p[0].toFixed(1), y: +p[1].toFixed(1)}; }).filter(Boolean);
+const world = {w: W, h: H, countries, lakes, caps, rivers, oceans, facts, views, info, mount};
 fs.writeFileSync(OUT + 'world.js', 'window.MapData=window.MapData||{};MapData.world=' + JSON.stringify(world) + ';\n');
 console.log('world', fs.statSync(OUT + 'world.js').size, 'countries', countries.length, 'caps', caps.length, 'rivers', rivers.length);
 const have = new Set(countries.map(c => c.i));
@@ -193,7 +206,8 @@ const rsp = [
  ['jucar','Júcar','Júcar',[[-1.95,40.3],[-2.13,40.07],[-2.08,39.55],[-1.6,39.2],[-1.1,39.22],[-0.7,39.12],[-0.4,39.15],[-0.24,39.17]]],
  ['segura','Segura','Segura',[[-2.6,38.0],[-2.1,38.2],[-1.42,38.24],[-1.13,37.98],[-0.94,38.08],[-0.65,38.09]]],
 ];
-const sivers = rsp.map(([id, es, en, ls]) => {
+const spc = CT('spain.json') || {};
+const smooth = (id, es, en, ls, extra) => {
   const pts = [];
   for (let k = 0; k < ls.length - 1; k++) for (let t = 0; t < 1; t += 0.2) pts.push([ls[k][0] + (ls[k + 1][0] - ls[k][0]) * t, ls[k][1] + (ls[k + 1][1] - ls[k][1]) * t]);
   const pr = ls.map(p => sp(p));
@@ -201,10 +215,19 @@ const sivers = rsp.map(([id, es, en, ls]) => {
   let d = 'M' + f1(pr[0]) + 'L' + f1(mid(pr[0], pr[1]));
   for (let k = 1; k < pr.length - 1; k++) d += 'Q' + f1(pr[k]) + ' ' + f1(mid(pr[k], pr[k + 1]));
   d += 'L' + f1(pr[pr.length - 1]);
+  const out = ls.slice(0, -1).filter(p => !ccaa.some(f => d3.geoContains(f, p)));
+  if (out.length > 1) console.warn('RIVER POINTS OUTSIDE SPAIN', id, JSON.stringify(out));
   const m = pr[Math.floor(pr.length / 2)];
-  return {id, es, en, d, c: crossed(pts, ccaa, f => f.properties.name), x: +m[0].toFixed(1), y: +m[1].toFixed(1)};
-});
-const spain = {w: W, h: H, ccaa: pack(ccaa), prov: pack(prov), rivers: sivers, border: sp.getCompositionBorders()};
+  const xs = pr.map(p => p[0]), ys = pr.map(p => p[1]);
+  const o = {id, es, en, d, c: crossed(pts, ccaa, f => f.properties.name), b: [Math.round(Math.min(...xs)), Math.round(Math.min(...ys)), Math.round(Math.max(...xs)), Math.round(Math.max(...ys))], x: +m[0].toFixed(1), y: +m[1].toFixed(1)};
+  if (extra) { o.km = extra.km; o.kmNote = extra.kmNote; o.src = extra.source; o.mouth = extra.mouth; o.fact = extra.fact; }
+  return o;
+};
+const sivers = rsp.map(([id, es, en, ls]) => smooth(id, es, en, ls, (rc.spainExisting || {})[id]));
+(rc.spain || []).forEach(r => { if (r.pts && r.pts.length > 2) sivers.push(smooth(r.id, r.es, r.en, r.pts, r)); });
+const smount = ((mc.spain) || []).map(m => { const p = sp([m.lon, m.lat]); return p && {id: m.id, es: m.es, en: m.en, m: m.m, kind: m.kind, where: m.where, fact: m.fact, x: +p[0].toFixed(1), y: +p[1].toFixed(1)}; }).filter(Boolean);
+const addInf = (arr, tbl) => arr.map(r => { const x = (tbl || {})[r.n]; if (x) r.inf = x; return r; });
+const spain = {w: W, h: H, ccaa: addInf(pack(ccaa), spc.ccaa), prov: addInf(pack(prov), spc.prov), rivers: sivers, mount: smount, border: sp.getCompositionBorders()};
 fs.writeFileSync(OUT + 'spain.js', 'window.MapData=window.MapData||{};MapData.spain=' + JSON.stringify(spain) + ';\n');
 console.log('spain', fs.statSync(OUT + 'spain.js').size, spain.ccaa.map(c => c.n).join('|'));
 console.log(spain.prov.map(c => c.n).join('|'));

@@ -1,0 +1,1128 @@
+{
+ "world": [
+  {
+   "id": "everest",
+   "es": "Everest",
+   "en": "Mount Everest",
+   "m": 8849,
+   "kind": "peak",
+   "lon": 86.93,
+   "lat": 27.99,
+   "where": {
+    "es": "Nepal y China (Himalaya)",
+    "en": "Nepal and China (Himalayas)"
+   },
+   "fact": {
+    "es": "Es la montaña más alta del mundo sobre el nivel del mar.",
+    "en": "It is the highest mountain in the world above sea level."
+   }
+  },
+  {
+   "id": "k2",
+   "es": "K2",
+   "en": "K2",
+   "m": 8611,
+   "kind": "peak",
+   "lon": 76.51,
+   "lat": 35.88,
+   "where": {
+    "es": "Pakistán y China (Karakórum)",
+    "en": "Pakistan and China (Karakoram)"
+   },
+   "fact": {
+    "es": "Es la segunda montaña más alta del mundo y una de las más difíciles de escalar.",
+    "en": "It is the second highest mountain in the world and one of the hardest to climb."
+   }
+  },
+  {
+   "id": "kangchenjunga",
+   "es": "Kangchenjunga",
+   "en": "Kangchenjunga",
+   "m": 8586,
+   "kind": "peak",
+   "lon": 88.15,
+   "lat": 27.7,
+   "where": {
+    "es": "Nepal e India (Himalaya)",
+    "en": "Nepal and India (Himalayas)"
+   },
+   "fact": {
+    "es": "Es la tercera montaña más alta del mundo, y su nombre significa \"los cinco tesoros de la gran nieve\".",
+    "en": "It is the third highest mountain in the world, and its name means \"the five treasures of the great snow\"."
+   }
+  },
+  {
+   "id": "kilimanjaro",
+   "es": "Kilimanjaro",
+   "en": "Mount Kilimanjaro",
+   "m": 5895,
+   "kind": "peak",
+   "lon": 37.36,
+   "lat": -3.07,
+   "where": {
+    "es": "Tanzania",
+    "en": "Tanzania"
+   },
+   "fact": {
+    "es": "Es la montaña más alta de África y un volcán con nieve junto al ecuador.",
+    "en": "It is the highest mountain in Africa, a volcano with snow near the equator."
+   }
+  },
+  {
+   "id": "aconcagua",
+   "es": "Aconcagua",
+   "en": "Aconcagua",
+   "m": 6961,
+   "kind": "peak",
+   "lon": -70.01,
+   "lat": -32.65,
+   "where": {
+    "es": "Mendoza (Argentina)",
+    "en": "Mendoza (Argentina)"
+   },
+   "fact": {
+    "es": "Es la montaña más alta de América y de todo el hemisferio sur.",
+    "en": "It is the highest mountain in the Americas and in the whole Southern Hemisphere."
+   }
+  },
+  {
+   "id": "denali",
+   "es": "Denali",
+   "en": "Denali",
+   "m": 6190,
+   "kind": "peak",
+   "lon": -151.01,
+   "lat": 63.07,
+   "where": {
+    "es": "Alaska (EE. UU.)",
+    "en": "Alaska (USA)"
+   },
+   "fact": {
+    "es": "Es la montaña más alta de América del Norte; su nombre indígena significa \"el grande\".",
+    "en": "It is the highest mountain in North America; its native name means \"the great one\"."
+   }
+  },
+  {
+   "id": "elbrus",
+   "es": "Elbrús",
+   "en": "Mount Elbrus",
+   "m": 5642,
+   "kind": "peak",
+   "lon": 42.44,
+   "lat": 43.35,
+   "where": {
+    "es": "Rusia (Cáucaso)",
+    "en": "Russia (Caucasus)"
+   },
+   "fact": {
+    "es": "Es un volcán dormido y la montaña más alta de Europa según el límite del Cáucaso.",
+    "en": "It is a dormant volcano and the highest mountain in Europe if the Caucasus is counted."
+   }
+  },
+  {
+   "id": "montblanc",
+   "es": "Mont Blanc",
+   "en": "Mont Blanc",
+   "m": 4806,
+   "kind": "peak",
+   "lon": 6.87,
+   "lat": 45.83,
+   "where": {
+    "es": "Francia e Italia (Alpes)",
+    "en": "France and Italy (Alps)"
+   },
+   "fact": {
+    "es": "Es la cima más alta de los Alpes y, según muchos, de Europa occidental.",
+    "en": "It is the highest peak in the Alps and in Western Europe."
+   }
+  },
+  {
+   "id": "vinson",
+   "es": "Macizo Vinson",
+   "en": "Vinson Massif",
+   "m": 4892,
+   "kind": "peak",
+   "lon": -85.62,
+   "lat": -78.53,
+   "where": {
+    "es": "Antártida",
+    "en": "Antarctica"
+   },
+   "fact": {
+    "es": "Es la montaña más alta de la Antártida y se descubrió en 1957.",
+    "en": "It is the highest mountain in Antarctica and was discovered in 1957."
+   }
+  },
+  {
+   "id": "puncakjaya",
+   "es": "Puncak Jaya",
+   "en": "Puncak Jaya",
+   "m": 4884,
+   "kind": "peak",
+   "lon": 137.19,
+   "lat": -4.08,
+   "where": {
+    "es": "Nueva Guinea (Indonesia)",
+    "en": "New Guinea (Indonesia)"
+   },
+   "fact": {
+    "es": "Es la montaña más alta de Oceanía y tiene glaciares muy cerca del ecuador.",
+    "en": "It is the highest mountain in Oceania and has glaciers very close to the equator."
+   }
+  },
+  {
+   "id": "kosciuszko",
+   "es": "Monte Kosciuszko",
+   "en": "Mount Kosciuszko",
+   "m": 2228,
+   "kind": "peak",
+   "lon": 148.26,
+   "lat": -36.46,
+   "where": {
+    "es": "Nueva Gales del Sur (Australia)",
+    "en": "New South Wales (Australia)"
+   },
+   "fact": {
+    "es": "Es la montaña más alta de Australia continental y se puede subir caminando.",
+    "en": "It is the highest mountain on mainland Australia and can be climbed on foot."
+   }
+  },
+  {
+   "id": "kenya",
+   "es": "Monte Kenia",
+   "en": "Mount Kenya",
+   "m": 5199,
+   "kind": "peak",
+   "lon": 37.31,
+   "lat": -0.15,
+   "where": {
+    "es": "Kenia",
+    "en": "Kenya"
+   },
+   "fact": {
+    "es": "Es la segunda montaña más alta de África y el país Kenia lleva su nombre.",
+    "en": "It is the second highest mountain in Africa, and the country Kenya is named after it."
+   }
+  },
+  {
+   "id": "fuji",
+   "es": "Monte Fuji",
+   "en": "Mount Fuji",
+   "m": 3776,
+   "kind": "peak",
+   "lon": 138.73,
+   "lat": 35.36,
+   "where": {
+    "es": "Japón",
+    "en": "Japan"
+   },
+   "fact": {
+    "es": "Es un volcán casi perfecto en forma de cono y el símbolo de Japón.",
+    "en": "It is a nearly perfect cone-shaped volcano and a symbol of Japan."
+   }
+  },
+  {
+   "id": "matterhorn",
+   "es": "Cervino",
+   "en": "Matterhorn",
+   "m": 4478,
+   "kind": "peak",
+   "lon": 7.66,
+   "lat": 45.98,
+   "where": {
+    "es": "Suiza e Italia (Alpes)",
+    "en": "Switzerland and Italy (Alps)"
+   },
+   "fact": {
+    "es": "Su forma de pirámide es tan famosa que aparece en las chocolatinas Toblerone.",
+    "en": "Its pyramid shape is so famous that it appears on Toblerone chocolate."
+   }
+  },
+  {
+   "id": "maunakea",
+   "es": "Mauna Kea",
+   "en": "Mauna Kea",
+   "m": 4207,
+   "kind": "peak",
+   "lon": -155.47,
+   "lat": 19.82,
+   "where": {
+    "es": "Hawái (EE. UU.)",
+    "en": "Hawaii (USA)"
+   },
+   "fact": {
+    "es": "Medida desde el fondo del mar es la montaña más alta del mundo, más que el Everest.",
+    "en": "Measured from the sea floor it is the tallest mountain in the world, taller than Everest."
+   }
+  },
+  {
+   "id": "cotopaxi",
+   "es": "Cotopaxi",
+   "en": "Cotopaxi",
+   "m": 5897,
+   "kind": "peak",
+   "lon": -78.44,
+   "lat": -0.68,
+   "where": {
+    "es": "Ecuador (Andes)",
+    "en": "Ecuador (Andes)"
+   },
+   "fact": {
+    "es": "Es uno de los volcanes activos más altos del mundo y tiene un casquete de nieve.",
+    "en": "It is one of the highest active volcanoes in the world and has a snow cap."
+   }
+  },
+  {
+   "id": "chimborazo",
+   "es": "Chimborazo",
+   "en": "Chimborazo",
+   "m": 6263,
+   "kind": "peak",
+   "lon": -78.82,
+   "lat": -1.47,
+   "where": {
+    "es": "Ecuador (Andes)",
+    "en": "Ecuador (Andes)"
+   },
+   "fact": {
+    "es": "Su cima es el punto de la Tierra más alejado del centro del planeta, por el abultamiento del ecuador.",
+    "en": "Its summit is the point on Earth farthest from the planet's center, because of the equatorial bulge."
+   }
+  },
+  {
+   "id": "ojosdelsalado",
+   "es": "Ojos del Salado",
+   "en": "Ojos del Salado",
+   "m": 6893,
+   "kind": "peak",
+   "lon": -68.54,
+   "lat": -27.11,
+   "where": {
+    "es": "Chile y Argentina (Andes)",
+    "en": "Chile and Argentina (Andes)"
+   },
+   "fact": {
+    "es": "Es el volcán más alto del mundo y el segundo pico más alto de América.",
+    "en": "It is the highest volcano in the world and the second highest peak in the Americas."
+   }
+  },
+  {
+   "id": "monterosa",
+   "es": "Monte Rosa",
+   "en": "Monte Rosa",
+   "m": 4634,
+   "kind": "peak",
+   "lon": 7.87,
+   "lat": 45.94,
+   "where": {
+    "es": "Suiza e Italia (Alpes)",
+    "en": "Switzerland and Italy (Alps)"
+   },
+   "fact": {
+    "es": "Es la segunda cima más alta de los Alpes, tras el Mont Blanc, y su pico principal es la Punta Dufour.",
+    "en": "It is the second highest peak in the Alps, after Mont Blanc; its main summit is the Dufourspitze."
+   }
+  },
+  {
+   "id": "kinabalu",
+   "es": "Monte Kinabalu",
+   "en": "Mount Kinabalu",
+   "m": 4095,
+   "kind": "peak",
+   "lon": 116.56,
+   "lat": 6.08,
+   "where": {
+    "es": "Borneo (Malasia)",
+    "en": "Borneo (Malaysia)"
+   },
+   "fact": {
+    "es": "Es la montaña más alta de Borneo y rodea un parque con miles de especies de plantas.",
+    "en": "It is the highest mountain on Borneo and sits in a park with thousands of plant species."
+   }
+  },
+  {
+   "id": "ararat",
+   "es": "Monte Ararat",
+   "en": "Mount Ararat",
+   "m": 5137,
+   "kind": "peak",
+   "lon": 44.3,
+   "lat": 39.7,
+   "where": {
+    "es": "Turquía",
+    "en": "Turkey"
+   },
+   "fact": {
+    "es": "Según la tradición, el Arca de Noé se posó en esta montaña tras el diluvio.",
+    "en": "According to tradition, Noah's Ark came to rest on this mountain after the flood."
+   }
+  },
+  {
+   "id": "olympus",
+   "es": "Monte Olimpo",
+   "en": "Mount Olympus",
+   "m": 2917,
+   "kind": "peak",
+   "lon": 22.35,
+   "lat": 40.09,
+   "where": {
+    "es": "Grecia",
+    "en": "Greece"
+   },
+   "fact": {
+    "es": "En la mitología griega era la casa de los dioses, como Zeus y Atenea.",
+    "en": "In Greek mythology it was the home of the gods, such as Zeus and Athena."
+   }
+  },
+  {
+   "id": "logan",
+   "es": "Monte Logan",
+   "en": "Mount Logan",
+   "m": 5959,
+   "kind": "peak",
+   "lon": -140.4,
+   "lat": 60.57,
+   "where": {
+    "es": "Yukón (Canadá)",
+    "en": "Yukon (Canada)"
+   },
+   "fact": {
+    "es": "Es la montaña más alta de Canadá y una de las de base más ancha del mundo.",
+    "en": "It is the highest mountain in Canada and one of the widest at its base in the world."
+   }
+  },
+  {
+   "id": "alps",
+   "es": "Alpes",
+   "en": "Alps",
+   "m": 4806,
+   "kind": "range",
+   "lon": 7.5,
+   "lat": 46,
+   "where": {
+    "es": "Francia, Italia, Suiza, Austria y otros países",
+    "en": "France, Italy, Switzerland, Austria and other countries"
+   },
+   "fact": {
+    "es": "Es la cordillera más famosa de Europa, con estaciones de esquí y su cima más alta, el Mont Blanc.",
+    "en": "It is Europe's most famous range, with ski resorts and its highest peak, Mont Blanc."
+   }
+  },
+  {
+   "id": "pyrenees",
+   "es": "Pirineos",
+   "en": "Pyrenees",
+   "m": 3404,
+   "kind": "range",
+   "lon": 0.65,
+   "lat": 42.65,
+   "where": {
+    "es": "España, Francia y Andorra",
+    "en": "Spain, France and Andorra"
+   },
+   "fact": {
+    "es": "Separan España de Francia y su cima más alta es el Aneto.",
+    "en": "They separate Spain from France and their highest peak is Aneto."
+   }
+  },
+  {
+   "id": "andes",
+   "es": "Andes",
+   "en": "Andes",
+   "m": 6961,
+   "kind": "range",
+   "lon": -70,
+   "lat": -32.65,
+   "where": {
+    "es": "Sudamérica, de Venezuela a Chile y Argentina",
+    "en": "South America, from Venezuela to Chile and Argentina"
+   },
+   "fact": {
+    "es": "Es la cordillera más larga del mundo, con unos 7000 km a lo largo de Sudamérica.",
+    "en": "It is the longest mountain range in the world, about 7,000 km along South America."
+   }
+  },
+  {
+   "id": "himalayas",
+   "es": "Himalaya",
+   "en": "Himalayas",
+   "m": 8849,
+   "kind": "range",
+   "lon": 86.93,
+   "lat": 27.99,
+   "where": {
+    "es": "Nepal, India, Bután, China y Pakistán",
+    "en": "Nepal, India, Bhutan, China and Pakistan"
+   },
+   "fact": {
+    "es": "Su nombre significa \"morada de la nieve\" y tiene las montañas más altas del mundo.",
+    "en": "Its name means \"home of snow\" and it has the highest mountains in the world."
+   }
+  },
+  {
+   "id": "rockies",
+   "es": "Montañas Rocosas",
+   "en": "Rocky Mountains",
+   "m": 4401,
+   "kind": "range",
+   "lon": -106.4,
+   "lat": 39.1,
+   "where": {
+    "es": "Canadá y EE. UU.",
+    "en": "Canada and USA"
+   },
+   "fact": {
+    "es": "Recorren Norteamérica de norte a sur y su cima más alta es el monte Elbert.",
+    "en": "They run north to south across North America and their highest peak is Mount Elbert."
+   }
+  },
+  {
+   "id": "urals",
+   "es": "Urales",
+   "en": "Ural Mountains",
+   "m": 1895,
+   "kind": "range",
+   "lon": 60.2,
+   "lat": 65,
+   "where": {
+    "es": "Rusia y Kazajistán",
+    "en": "Russia and Kazakhstan"
+   },
+   "fact": {
+    "es": "Marcan el límite tradicional entre Europa y Asia.",
+    "en": "They mark the traditional border between Europe and Asia."
+   }
+  },
+  {
+   "id": "atlas",
+   "es": "Atlas",
+   "en": "Atlas Mountains",
+   "m": 4167,
+   "kind": "range",
+   "lon": -7.92,
+   "lat": 31.06,
+   "where": {
+    "es": "Marruecos, Argelia y Túnez",
+    "en": "Morocco, Algeria and Tunisia"
+   },
+   "fact": {
+    "es": "Separan la costa mediterránea del desierto del Sáhara; su pico más alto es el Toubkal.",
+    "en": "They separate the Mediterranean coast from the Sahara desert; their highest peak is Toubkal."
+   }
+  },
+  {
+   "id": "carpathians",
+   "es": "Cárpatos",
+   "en": "Carpathians",
+   "m": 2655,
+   "kind": "range",
+   "lon": 20.13,
+   "lat": 49.17,
+   "where": {
+    "es": "Rumanía, Eslovaquia, Polonia, Ucrania y otros países",
+    "en": "Romania, Slovakia, Poland, Ukraine and other countries"
+   },
+   "fact": {
+    "es": "Forman un gran arco por Europa central y oriental y son famosos por la leyenda de Drácula en Transilvania.",
+    "en": "They form a great arc across central and eastern Europe and are famous for the Dracula legend in Transylvania."
+   }
+  },
+  {
+   "id": "apennines",
+   "es": "Apeninos",
+   "en": "Apennines",
+   "m": 2912,
+   "kind": "range",
+   "lon": 13.56,
+   "lat": 42.47,
+   "where": {
+    "es": "Italia",
+    "en": "Italy"
+   },
+   "fact": {
+    "es": "Recorren Italia como una columna vertebral, de norte a sur.",
+    "en": "They run along Italy like a backbone, from north to south."
+   }
+  },
+  {
+   "id": "scandinavian",
+   "es": "Montañas Escandinavas",
+   "en": "Scandinavian Mountains",
+   "m": 2469,
+   "kind": "range",
+   "lon": 8.31,
+   "lat": 61.64,
+   "where": {
+    "es": "Noruega y Suecia",
+    "en": "Norway and Sweden"
+   },
+   "fact": {
+    "es": "Recorren Noruega y Suecia y su cima más alta es el Galdhøpiggen.",
+    "en": "They run through Norway and Sweden and their highest peak is Galdhøpiggen."
+   }
+  },
+  {
+   "id": "appalachians",
+   "es": "Apalaches",
+   "en": "Appalachian Mountains",
+   "m": 2037,
+   "kind": "range",
+   "lon": -82.27,
+   "lat": 35.77,
+   "where": {
+    "es": "Este de EE. UU. y Canadá",
+    "en": "Eastern USA and Canada"
+   },
+   "fact": {
+    "es": "Son montañas muy antiguas y desgastadas, mucho más redondeadas que las Rocosas.",
+    "en": "They are very old, worn-down mountains, much more rounded than the Rockies."
+   }
+  },
+  {
+   "id": "greatdividing",
+   "es": "Gran Cordillera Divisoria",
+   "en": "Great Dividing Range",
+   "m": 2228,
+   "kind": "range",
+   "lon": 148.26,
+   "lat": -36.46,
+   "where": {
+    "es": "Este de Australia",
+    "en": "Eastern Australia"
+   },
+   "fact": {
+    "es": "Es la cordillera más larga de Australia y recorre toda su costa este.",
+    "en": "It is Australia's longest mountain range and runs along its whole east coast."
+   }
+  },
+  {
+   "id": "caucasus",
+   "es": "Cáucaso",
+   "en": "Caucasus Mountains",
+   "m": 5642,
+   "kind": "range",
+   "lon": 43,
+   "lat": 42.9,
+   "where": {
+    "es": "Rusia, Georgia, Armenia y Azerbaiyán",
+    "en": "Russia, Georgia, Armenia and Azerbaijan"
+   },
+   "fact": {
+    "es": "Se extienden entre el mar Negro y el mar Caspio, y tienen el Elbrús, el pico más alto de Europa.",
+    "en": "They stretch between the Black Sea and the Caspian Sea and include Elbrus, Europe's highest peak."
+   }
+  }
+ ],
+ "spain": [
+  {
+   "id": "teide",
+   "es": "Teide",
+   "en": "Teide",
+   "m": 3715,
+   "kind": "peak",
+   "lon": -16.64,
+   "lat": 28.27,
+   "where": {
+    "es": "Tenerife (Canarias)",
+    "en": "Tenerife (Canary Islands)"
+   },
+   "fact": {
+    "es": "Es un volcán y la montaña más alta de España.",
+    "en": "It is a volcano and the highest mountain in Spain."
+   }
+  },
+  {
+   "id": "mulhacen",
+   "es": "Mulhacén",
+   "en": "Mulhacén",
+   "m": 3479,
+   "kind": "peak",
+   "lon": -3.31,
+   "lat": 37.05,
+   "where": {
+    "es": "Sierra Nevada (Granada)",
+    "en": "Sierra Nevada (Granada)"
+   },
+   "fact": {
+    "es": "Es la montaña más alta de la península ibérica.",
+    "en": "It is the highest mountain on the Iberian Peninsula."
+   }
+  },
+  {
+   "id": "aneto",
+   "es": "Aneto",
+   "en": "Aneto",
+   "m": 3404,
+   "kind": "peak",
+   "lon": 0.66,
+   "lat": 42.63,
+   "where": {
+    "es": "Macizo de la Maladeta (Huesca, Pirineos)",
+    "en": "Maladeta massif (Huesca, Pyrenees)"
+   },
+   "fact": {
+    "es": "Es la cima más alta de los Pirineos y tiene un glaciar en su ladera.",
+    "en": "It is the highest peak in the Pyrenees and has a glacier on its slope."
+   }
+  },
+  {
+   "id": "cerredo",
+   "es": "Torre de Cerredo",
+   "en": "Torre de Cerredo",
+   "m": 2650,
+   "kind": "peak",
+   "lon": -4.85,
+   "lat": 43.2,
+   "where": {
+    "es": "Picos de Europa (Asturias y Cantabria)",
+    "en": "Picos de Europa (Asturias and Cantabria)"
+   },
+   "fact": {
+    "es": "Es la cima más alta de la Cordillera Cantábrica y de los Picos de Europa.",
+    "en": "It is the highest peak of the Cantabrian Mountains and of the Picos de Europa."
+   }
+  },
+  {
+   "id": "veleta",
+   "es": "Pico Veleta",
+   "en": "Veleta Peak",
+   "m": 3396,
+   "kind": "peak",
+   "lon": -3.37,
+   "lat": 37.06,
+   "where": {
+    "es": "Sierra Nevada (Granada)",
+    "en": "Sierra Nevada (Granada)"
+   },
+   "fact": {
+    "es": "Es la segunda cima de Sierra Nevada y una de las carreteras más altas de Europa llega cerca.",
+    "en": "It is the second highest peak in Sierra Nevada, and one of Europe's highest roads goes near it."
+   }
+  },
+  {
+   "id": "almanzor",
+   "es": "Pico Almanzor",
+   "en": "Almanzor Peak",
+   "m": 2592,
+   "kind": "peak",
+   "lon": -5.3,
+   "lat": 40.24,
+   "where": {
+    "es": "Sierra de Gredos (Ávila)",
+    "en": "Sierra de Gredos (Ávila)"
+   },
+   "fact": {
+    "es": "Es la cima más alta del Sistema Central, en la Sierra de Gredos.",
+    "en": "It is the highest peak of the Central System, in the Sierra de Gredos."
+   }
+  },
+  {
+   "id": "moncayo",
+   "es": "Moncayo",
+   "en": "Moncayo",
+   "m": 2314,
+   "kind": "peak",
+   "lon": -1.84,
+   "lat": 41.79,
+   "where": {
+    "es": "Zaragoza y Soria",
+    "en": "Zaragoza and Soria"
+   },
+   "fact": {
+    "es": "Es la cima más alta del Sistema Ibérico y se ve desde muy lejos, a menudo con nieve.",
+    "en": "It is the highest peak of the Iberian System and is visible from far away, often with snow."
+   }
+  },
+  {
+   "id": "montperdido",
+   "es": "Monte Perdido",
+   "en": "Monte Perdido",
+   "m": 3355,
+   "kind": "peak",
+   "lon": 0.03,
+   "lat": 42.68,
+   "where": {
+    "es": "Parque Nacional de Ordesa (Huesca)",
+    "en": "Ordesa National Park (Huesca)"
+   },
+   "fact": {
+    "es": "Es el macizo calcáreo más alto de Europa y forma parte de un Patrimonio de la Humanidad.",
+    "en": "It is the highest limestone massif in Europe and is part of a World Heritage Site."
+   }
+  },
+  {
+   "id": "penalara",
+   "es": "Peñalara",
+   "en": "Peñalara",
+   "m": 2428,
+   "kind": "peak",
+   "lon": -3.95,
+   "lat": 40.85,
+   "where": {
+    "es": "Sierra de Guadarrama (Madrid y Segovia)",
+    "en": "Sierra de Guadarrama (Madrid and Segovia)"
+   },
+   "fact": {
+    "es": "Es la cima más alta de la Sierra de Guadarrama, a una hora de Madrid.",
+    "en": "It is the highest peak of the Sierra de Guadarrama, close to Madrid."
+   }
+  },
+  {
+   "id": "urriellu",
+   "es": "Naranjo de Bulnes (Picu Urriellu)",
+   "en": "Naranjo de Bulnes (Picu Urriellu)",
+   "m": 2519,
+   "kind": "peak",
+   "lon": -4.82,
+   "lat": 43.2,
+   "where": {
+    "es": "Picos de Europa (Asturias)",
+    "en": "Picos de Europa (Asturias)"
+   },
+   "fact": {
+    "es": "Su pared de roca vertical atrae a escaladores de todo el mundo y es un símbolo de Asturias.",
+    "en": "Its vertical rock wall attracts climbers from all over the world and it is a symbol of Asturias."
+   }
+  },
+  {
+   "id": "espadan",
+   "es": "Pico Espadán",
+   "en": "Espadán Peak",
+   "m": 1106,
+   "kind": "peak",
+   "lon": -0.33,
+   "lat": 39.88,
+   "where": {
+    "es": "Sierra de Espadán (Castellón)",
+    "en": "Sierra de Espadán (Castellón)"
+   },
+   "fact": {
+    "es": "Es la cima de la Sierra de Espadán, un parque natural cubierto de alcornoques.",
+    "en": "It is the top of the Sierra de Espadán, a nature park covered in cork oaks."
+   }
+  },
+  {
+   "id": "aitxuri",
+   "es": "Aitxuri",
+   "en": "Aitxuri",
+   "m": 1551,
+   "kind": "peak",
+   "lon": -2.3,
+   "lat": 42.97,
+   "where": {
+    "es": "Sierra de Aizkorri (Gipuzkoa)",
+    "en": "Aizkorri range (Gipuzkoa)"
+   },
+   "fact": {
+    "es": "Es la cima más alta de Gipuzkoa, en el País Vasco.",
+    "en": "It is the highest peak in Gipuzkoa, in the Basque Country."
+   }
+  },
+  {
+   "id": "gorbeia",
+   "es": "Gorbeia",
+   "en": "Gorbeia",
+   "m": 1481,
+   "kind": "peak",
+   "lon": -2.78,
+   "lat": 43,
+   "where": {
+    "es": "Álava y Vizcaya (País Vasco)",
+    "en": "Álava and Biscay (Basque Country)"
+   },
+   "fact": {
+    "es": "Es la cima más alta de Vizcaya y de Álava, con una gran cruz metálica en la cumbre.",
+    "en": "It is the highest peak of Biscay and Álava, with a big metal cross on its summit."
+   }
+  },
+  {
+   "id": "roquemuchachos",
+   "es": "Roque de los Muchachos",
+   "en": "Roque de los Muchachos",
+   "m": 2426,
+   "kind": "peak",
+   "lon": -17.88,
+   "lat": 28.76,
+   "where": {
+    "es": "La Palma (Canarias)",
+    "en": "La Palma (Canary Islands)"
+   },
+   "fact": {
+    "es": "Tiene uno de los mejores observatorios astronómicos del mundo, por su cielo muy limpio.",
+    "en": "It has one of the best astronomical observatories in the world, thanks to its very clear sky."
+   }
+  },
+  {
+   "id": "trevinca",
+   "es": "Pena Trevinca",
+   "en": "Pena Trevinca",
+   "m": 2127,
+   "kind": "peak",
+   "lon": -6.77,
+   "lat": 42.25,
+   "where": {
+    "es": "Ourense (Galicia) y León",
+    "en": "Ourense (Galicia) and León"
+   },
+   "fact": {
+    "es": "Es la cima más alta de Galicia, en el límite con Castilla y León.",
+    "en": "It is the highest peak in Galicia, on the border with Castilla y León."
+   }
+  },
+  {
+   "id": "pirineos",
+   "es": "Pirineos",
+   "en": "Pyrenees",
+   "m": 3404,
+   "kind": "range",
+   "lon": 0.65,
+   "lat": 42.65,
+   "where": {
+    "es": "Huesca, Lleida, Navarra y otras provincias",
+    "en": "Huesca, Lleida, Navarre and other provinces"
+   },
+   "fact": {
+    "es": "Es la gran cordillera del norte de España, entre el Atlántico y el Mediterráneo.",
+    "en": "It is the great mountain range of northern Spain, between the Atlantic and the Mediterranean."
+   }
+  },
+  {
+   "id": "cantabrica",
+   "es": "Cordillera Cantábrica",
+   "en": "Cantabrian Mountains",
+   "m": 2650,
+   "kind": "range",
+   "lon": -5,
+   "lat": 43.1,
+   "where": {
+    "es": "Galicia, Asturias, Cantabria, León y País Vasco",
+    "en": "Galicia, Asturias, Cantabria, León and Basque Country"
+   },
+   "fact": {
+    "es": "Recorre el norte de España junto al mar y su zona más alta son los Picos de Europa.",
+    "en": "It runs along the north coast of Spain and its highest part is the Picos de Europa."
+   }
+  },
+  {
+   "id": "sistemacentral",
+   "es": "Sistema Central",
+   "en": "Central System",
+   "m": 2592,
+   "kind": "range",
+   "lon": -5,
+   "lat": 40.4,
+   "where": {
+    "es": "Castilla y León, Madrid y Extremadura",
+    "en": "Castilla y León, Madrid and Extremadura"
+   },
+   "fact": {
+    "es": "Divide la Meseta en dos partes, norte y sur, y llega hasta Portugal.",
+    "en": "It divides the Meseta plateau into north and south and reaches into Portugal."
+   }
+  },
+  {
+   "id": "sistemaiberico",
+   "es": "Sistema Ibérico",
+   "en": "Iberian System",
+   "m": 2314,
+   "kind": "range",
+   "lon": -2.5,
+   "lat": 41.6,
+   "where": {
+    "es": "La Rioja, Soria, Teruel, Cuenca y otras provincias",
+    "en": "La Rioja, Soria, Teruel, Cuenca and other provinces"
+   },
+   "fact": {
+    "es": "Es una gran cordillera del interior donde nacen ríos como el Duero y el Tajo.",
+    "en": "It is a large inland range where rivers such as the Duero and the Tagus rise."
+   }
+  },
+  {
+   "id": "sierranevada",
+   "es": "Sierra Nevada",
+   "en": "Sierra Nevada",
+   "m": 3479,
+   "kind": "range",
+   "lon": -3.31,
+   "lat": 37.05,
+   "where": {
+    "es": "Granada y Almería (Andalucía)",
+    "en": "Granada and Almería (Andalusia)"
+   },
+   "fact": {
+    "es": "Tiene las cimas más altas de la península y una estación de esquí, junto al mar y el desierto.",
+    "en": "It has the highest peaks on the peninsula and a ski resort, close to the sea and the desert."
+   }
+  },
+  {
+   "id": "sierramorena",
+   "es": "Sierra Morena",
+   "en": "Sierra Morena",
+   "m": 1323,
+   "kind": "range",
+   "lon": -4,
+   "lat": 38.4,
+   "where": {
+    "es": "Andalucía, Castilla-La Mancha y Extremadura",
+    "en": "Andalusia, Castilla-La Mancha and Extremadura"
+   },
+   "fact": {
+    "es": "Separa la Meseta del valle del Guadalquivir y está cubierta de dehesas y encinares.",
+    "en": "It separates the Meseta from the Guadalquivir valley and is covered in oak pastures and woods."
+   }
+  },
+  {
+   "id": "montesdetoledo",
+   "es": "Montes de Toledo",
+   "en": "Montes de Toledo",
+   "m": 1447,
+   "kind": "range",
+   "lon": -4.5,
+   "lat": 39.4,
+   "where": {
+    "es": "Toledo y Ciudad Real (Castilla-La Mancha)",
+    "en": "Toledo and Ciudad Real (Castilla-La Mancha)"
+   },
+   "fact": {
+    "es": "Separan las cuencas del Tajo y del Guadiana, y su cima más alta es el Rocigalgo.",
+    "en": "They separate the Tagus and Guadiana basins, and their highest peak is Rocigalgo."
+   }
+  },
+  {
+   "id": "picosdeeuropa",
+   "es": "Picos de Europa",
+   "en": "Picos de Europa",
+   "m": 2650,
+   "kind": "range",
+   "lon": -4.85,
+   "lat": 43.2,
+   "where": {
+    "es": "Asturias, Cantabria y León",
+    "en": "Asturias, Cantabria and León"
+   },
+   "fact": {
+    "es": "Es el primer Parque Nacional de España, con picos de roca caliza que se ven desde el mar.",
+    "en": "It is Spain's first National Park, with limestone peaks that can be seen from the sea."
+   }
+  },
+  {
+   "id": "beticas",
+   "es": "Sistema Bético",
+   "en": "Baetic System",
+   "m": 3479,
+   "kind": "range",
+   "lon": -4,
+   "lat": 37,
+   "where": {
+    "es": "Andalucía y Región de Murcia",
+    "en": "Andalusia and Region of Murcia"
+   },
+   "fact": {
+    "es": "Es el gran conjunto de montañas del sur de España y su cima es el Mulhacén.",
+    "en": "It is the great group of mountains in southern Spain and its top is Mulhacén."
+   }
+  },
+  {
+   "id": "montesleon",
+   "es": "Montes de León",
+   "en": "Montes de León",
+   "m": 2188,
+   "kind": "range",
+   "lon": -6.37,
+   "lat": 42.35,
+   "where": {
+    "es": "León y Zamora (Castilla y León)",
+    "en": "León and Zamora (Castilla y León)"
+   },
+   "fact": {
+    "es": "En ellos está la comarca de Las Médulas y su cima más alta es el Teleno.",
+    "en": "They are home to the Las Médulas area and their highest peak is Teleno."
+   }
+  },
+  {
+   "id": "guadarrama",
+   "es": "Sierra de Guadarrama",
+   "en": "Sierra de Guadarrama",
+   "m": 2428,
+   "kind": "range",
+   "lon": -3.95,
+   "lat": 40.85,
+   "where": {
+    "es": "Madrid, Segovia y Ávila",
+    "en": "Madrid, Segovia and Ávila"
+   },
+   "fact": {
+    "es": "Es la montaña de los madrileños y tiene un Parque Nacional con el pico Peñalara.",
+    "en": "It is the mountain of the people of Madrid and has a National Park with Peñalara peak."
+   }
+  },
+  {
+   "id": "gredos",
+   "es": "Sierra de Gredos",
+   "en": "Sierra de Gredos",
+   "m": 2592,
+   "kind": "range",
+   "lon": -5.3,
+   "lat": 40.25,
+   "where": {
+    "es": "Ávila, Salamanca, Cáceres y Toledo",
+    "en": "Ávila, Salamanca, Cáceres and Toledo"
+   },
+   "fact": {
+    "es": "Es famosa por sus lagunas glaciares y por ser el hogar de la cabra montés de Gredos.",
+    "en": "It is famous for its glacial lakes and as home to the Gredos ibex."
+   }
+  },
+  {
+   "id": "galaico",
+   "es": "Macizo Galaico",
+   "en": "Galician Massif",
+   "m": 2127,
+   "kind": "range",
+   "lon": -7.3,
+   "lat": 42.3,
+   "where": {
+    "es": "Galicia y norte de Portugal",
+    "en": "Galicia and northern Portugal"
+   },
+   "fact": {
+    "es": "Es un conjunto de montañas muy antiguas en el noroeste de la península, con Pena Trevinca como cima.",
+    "en": "It is a group of very old mountains in the northwest of the peninsula, with Pena Trevinca as its top."
+   }
+  },
+  {
+   "id": "tramuntana",
+   "es": "Serra de Tramuntana",
+   "en": "Serra de Tramuntana",
+   "m": 1445,
+   "kind": "range",
+   "lon": 2.8,
+   "lat": 39.8,
+   "where": {
+    "es": "Mallorca (Islas Baleares)",
+    "en": "Mallorca (Balearic Islands)"
+   },
+   "fact": {
+    "es": "Es la cordillera de Mallorca, Patrimonio de la Humanidad, y su cima es el Puig Major.",
+    "en": "It is Mallorca's mountain range, a World Heritage Site, and its top is Puig Major."
+   }
+  },
+  {
+   "id": "aizkorri",
+   "es": "Aizkorri y Montes Vascos",
+   "en": "Aizkorri and Basque Mountains",
+   "m": 1551,
+   "kind": "range",
+   "lon": -2.3,
+   "lat": 42.93,
+   "where": {
+    "es": "País Vasco y Navarra",
+    "en": "Basque Country and Navarre"
+   },
+   "fact": {
+    "es": "Es el tramo vasco de la Cordillera Cantábrica y tiene el Aitxuri como cima más alta.",
+    "en": "It is the Basque part of the Cantabrian Mountains and has Aitxuri as its highest peak."
+   }
+  }
+ ]
+}

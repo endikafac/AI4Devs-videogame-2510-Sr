@@ -34,7 +34,7 @@ async function open({ width = 390, height = 800 } = {}) {
   page.on('console', m => { if (m.type() === 'error' && !IGNORE.test(m.text())) errors.push(m.text()); });
   await page.addInitScript(() => Object.defineProperty(navigator, 'doNotTrack', { get: () => '1' }));
   await page.goto(base + '/mapas-EFC/index.html', { waitUntil: 'load' });
-  await page.waitForFunction(() => document.querySelectorAll('.mp-mapcard').length === 11, null, { timeout: 8000 });
+  await page.waitForFunction(() => document.querySelectorAll('.mp-mapcard').length === 13, null, { timeout: 8000 });
   return { ctx, page, errors };
 }
 const shot = (page, name) => SHOTS ? page.screenshot({ path: path.join(SHOTS, name + '.png') }) : null;
@@ -54,8 +54,22 @@ async function targetPoint(page, id) {
     return { x: p.x, y: p.y, ok: hid === id, other: !!hid && hid !== id };
   }, id);
 }
+// rivers are thin: look for a point along the line that is really on top
+async function riverPoint(page, id) {
+  return page.evaluate(id => {
+    const path = document.querySelector('path.mp-river[data-id="' + id + '"]'); if (!path) return null;
+    const svg = document.getElementById('mp-svg'), ctm = svg.getScreenCTM(), len = path.getTotalLength(), box = svg.getBoundingClientRect();
+    for (const f of [0.5, 0.4, 0.6, 0.3, 0.7, 0.2, 0.8, 0.1, 0.9]) {
+      const q = path.getPointAtLength(len * f), pt = svg.createSVGPoint(); pt.x = q.x; pt.y = q.y; const p = pt.matrixTransform(ctm);
+      if (p.x < box.x + 60 || p.y < box.y + 10 || p.x > box.right - 60 || p.y > box.bottom - 10) continue;
+      const h = document.elementFromPoint(p.x, p.y); if (h && h.dataset && h.dataset.id === id) return { x: p.x, y: p.y };
+    }
+    return null;
+  }, id);
+}
 async function tapItem(page, id) {
   await page.waitForFunction(() => !Mapas._S.raf, null, { timeout: 5000 });
+  const rp = await riverPoint(page, id); if (rp) { await page.mouse.click(rp.x, rp.y); return true; }
   let p = await targetPoint(page, id); // wait until the item stops moving on screen
   for (let n = 0; n < 40; n++) { await page.waitForTimeout(60); const q = await targetPoint(page, id); const still = Math.abs(q.x - p.x) < 0.5 && Math.abs(q.y - p.y) < 0.5; p = q; if (still) break; }
   if (!p.other) { await page.mouse.click(p.x, p.y); return p.ok; } // micro-states are dots without hit testing: the game snaps to the nearest dot
@@ -65,12 +79,14 @@ async function tapItem(page, id) {
   return false;
 }
 const runState = page => page.evaluate(() => { const r = Mapas._S.run; return r && { id: r.id, i: r.i, right: r.right, wrong: r.wrong, type: r.type, locked: r.locked }; });
-const advanced = (page, k) => page.waitForFunction(i => { const r = Mapas._S.run; return !r || r.i > i; }, k, { timeout: 5000 });
+const advanced = async (page, k) => {
+  // a first miss on a tiny shape (Ceuta, Melilla...) is allowed: the second tap, or the second miss, concludes the question
+  await page.waitForSelector('#mp-nextrow:not([hidden])', { timeout: 2500 }).catch(async () => { const r = await runState(page); if (r && !r.locked) await tapItem(page, r.id); await page.waitForSelector('#mp-nextrow:not([hidden])', { timeout: 6000 }); }); await page.waitForSelector('#mp-learn:not([hidden])'); await page.click('#mp-next'); await page.waitForFunction(i => { const r = Mapas._S.run; return !r || r.i > i; }, k, { timeout: 5000 }); };
 
-test('F-MAPAS home lists 11 maps, no console errors', async () => {
+test('F-MAPAS home lists 13 maps, no console errors', async () => {
   const { ctx, page, errors } = await open();
   try {
-    assert.equal(await page.locator('.mp-mapcard').count(), 11);
+    assert.equal(await page.locator('.mp-mapcard').count(), 13);
     await shot(page, 'home');
     assert.deepEqual(errors, []);
   } finally { await ctx.close(); }
@@ -136,7 +152,7 @@ test('F-MAPAS name mode: options and correct answer; capitals mode both directio
       const r = await runState(page);
       if (r.type === 'capName') await page.click('.mp-opt[data-opt="' + r.id + '"]');
       else await tapItem(page, r.id);
-      await advanced(page, k).catch(async () => { if (await page.locator('#mp-nextrow:not([hidden])').count()) await page.click('#mp-next'); });
+      await advanced(page, k);
     }
     await shot(page, 'es-cap');
     assert.deepEqual(errors, []);
@@ -216,6 +232,40 @@ test('F-MAPAS data: every shape can be tapped at its label point (at least 92%)'
       assert.ok(r.miss.length <= Math.ceil(r.n * 0.08), map + ' misses: ' + r.miss.join(','));
       await page.click('#mp-quit');
     }
+    assert.deepEqual(errors, []);
+  } finally { await ctx.close(); }
+});
+
+test('F-MAPAS mountains and rich cards: height, river length, province facts, learn card after an answer', async () => {
+  const { ctx, page, errors } = await open({ width: 1000, height: 800 });
+  try {
+    await start(page, 'mont', 'explore');
+    await page.waitForTimeout(300);
+    await page.evaluate(() => { const S = Mapas._S; const id = S.map.items.find(i => /everest/.test(i.id)).id; window.__id = id; });
+    await page.evaluate(() => Mapas._focus(window.__id, 8)); await page.waitForTimeout(800);
+    await tapItem(page, await page.evaluate(() => window.__id));
+    await page.waitForSelector('#mp-info:not([hidden])');
+    const m = await page.textContent('#mp-info');
+    assert.match(m, /Everest/); assert.match(m, /8\.8\d\d m|8,8\d\d m/); assert.match(m, /Sabías que/);
+    await page.waitForTimeout(900); await shot(page, 'mountains-world');
+    await page.click('#mp-quit');
+    await start(page, 'rivw', 'explore');
+    await page.evaluate(() => Mapas._focus('nile', 1.5)); await page.waitForTimeout(900);
+    await tapItem(page, 'nile');
+    const r = await page.textContent('#mp-info');
+    assert.match(r, /Longitud/); assert.match(r, /km/); assert.match(r, /Egipto/);
+    await page.waitForTimeout(900); await shot(page, 'river-nile');
+    await page.click('#mp-quit');
+    await start(page, 'prov', 'explore'); await tapItem(page, 'Sevilla');
+    const p = await page.textContent('#mp-info');
+    assert.match(p, /Andaluc/); assert.match(p, /Población/);
+    await page.click('#mp-quit');
+    await start(page, 'montes', 'find');
+    await shot(page, 'mountains-spain-find');
+    const q = await runState(page); await tapItem(page, q.id);
+    await page.waitForSelector('#mp-learn:not([hidden])');
+    assert.ok((await page.textContent('#mp-learn')).length > 30, 'learn card has content');
+    await shot(page, 'learn-card');
     assert.deepEqual(errors, []);
   } finally { await ctx.close(); }
 });

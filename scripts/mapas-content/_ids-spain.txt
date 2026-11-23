@@ -1,0 +1,73 @@
+CCAA:
+Castilla-La Mancha
+Comunitat Valenciana
+Andalucía
+Castilla y León
+Extremadura
+Illes Balears
+Cataluña/Catalunya
+Galicia
+País Vasco/Euskadi
+Aragón
+La Rioja
+Comunidad de Madrid
+Región de Murcia
+Comunidad Foral de Navarra
+Principado de Asturias
+Cantabria
+Ciudad Autónoma de Ceuta
+Ciudad Autónoma de Melilla
+Canarias
+PROVINCES:
+Albacete
+Alacant/Alicante
+Almería
+Ávila
+Badajoz
+Illes Balears
+Barcelona
+Burgos
+Cáceres
+Cádiz
+Castelló/Castellón
+Ciudad Real
+Córdoba
+A Coruña
+Cuenca
+Girona
+Granada
+Guadalajara
+Gipuzkoa
+Huelva
+Huesca
+Jaén
+León
+Lleida
+La Rioja
+Lugo
+Madrid
+Málaga
+Murcia
+Navarra
+Ourense
+Asturias
+Palencia
+Pontevedra
+Salamanca
+Cantabria
+Segovia
+Sevilla
+Soria
+Tarragona
+Teruel
+Toledo
+València/Valencia
+Valladolid
+Bizkaia
+Zamora
+Zaragoza
+Ceuta
+Melilla
+Araba/Álava
+Las Palmas
+Santa Cruz de Tenerife
