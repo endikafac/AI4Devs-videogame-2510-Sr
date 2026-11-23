@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
+import vm from 'node:vm';
 
 const root = path.resolve(import.meta.dirname, '../..');
 const require = createRequire(import.meta.url);
@@ -180,4 +181,45 @@ test('U-REPASO: decks are consistent and sessions prefer due cards', () => {
   assert.equal(R.checkTyped('  Árbol ', 'arbol', 'es'), true);
   const s = R.makeSession([{ id: 'x', cards: [{ id: 'a' }, { id: 'b' }, { id: 'c' }] }], { x: { b: { box: 1, due: 1 } } }, { limit: 2, newPerDeck: 1, rnd: () => 0.5 }, 5);
   assert.equal(s[0].cardId, 'b');
+});
+
+test('U-MAPAS: pure helpers, UI strings and map data are consistent', () => {
+  const root = path.resolve(import.meta.dirname, '../..');
+  const M = createRequire(import.meta.url)(path.join(root, 'mapas-EFC/game.js'));
+  // UI: six non-empty strings per key, same placeholders in every language
+  for (const [k, row] of Object.entries(M.UI)) {
+    assert.equal(row.length, 6, k);
+    const ph = s => (s.match(/\{[a-z]\}/g) || []).sort().join();
+    row.forEach((s, i) => { assert.ok(s && s.trim(), `${k}[${i}] empty`); assert.equal(ph(s), ph(row[0]), `${k}[${i}] placeholders`); });
+  }
+  M.MAPS.forEach(m => assert.ok(M.UI['m' + m.id], 'name for map ' + m.id));
+  assert.equal(M.txt('qFind', 'en', { n: 'Peru' }), 'Tap: Peru');
+  // question picking: weak first, then new, then known; no repeats
+  const ids = ['a', 'b', 'c', 'd', 'e', 'f'];
+  const prog = { a: { o: 3, f: 0, s: 3 }, b: { o: 0, f: 2, s: 0 }, c: { o: 1, f: 0, s: 1 } };
+  const q = M.pickQuestions(ids, prog, 4, () => 0.3);
+  assert.equal(q.length, 4); assert.equal(new Set(q).size, 4);
+  assert.deepEqual(q.slice(0, 2).sort(), ['b', 'c']);
+  assert.ok(!q.includes('a'));
+  const o = M.pickOptions('c', ids, 4, () => 0.5);
+  assert.equal(o.length, 4); assert.ok(o.includes('c')); assert.equal(new Set(o).size, 4);
+  // mastery: two right answers in a row, a miss resets the streak
+  let p = M.recordAnswer(undefined, true); assert.equal(M.masteryOf(p), 'weak');
+  p = M.recordAnswer(p, true); assert.equal(M.masteryOf(p), 'ok');
+  p = M.recordAnswer(p, false); assert.equal(M.masteryOf(p), 'weak'); assert.equal(p.f, 1);
+  const b = M.fitBox({ x: 0, y: 0, w: 1000, h: 500 }, 400, 600);
+  assert.ok(Math.abs(b.h / b.w - 1.5) < 1e-9 && b.w >= 1000);
+  // data files
+  const load = f => { const ctx = {}; ctx.window = ctx; vm.runInNewContext(fs.readFileSync(path.join(root, 'mapas-EFC/data', f), 'utf8'), ctx); return ctx.MapData; };
+  const W = load('world.js').world, SP = load('spain.js').spain;
+  const live = W.countries.filter(c => c.i && W.facts[c.i] && W.facts[c.i][3]);
+  assert.ok(live.length >= 190 && live.length <= 205, 'sovereign countries: ' + live.length);
+  assert.equal(new Set(live.map(c => c.i)).size, live.length, 'unique country ids');
+  live.forEach(c => { assert.ok(c.d && c.d.startsWith('M'), c.i + ' path'); assert.ok(W.facts[c.i][1], c.i + ' continent'); assert.ok(W.facts[c.i][0], c.i + ' capital'); assert.ok(c.b && c.b.length === 4); });
+  ['EU', 'AF', 'AS', 'NA', 'SA', 'OC'].forEach(k => { assert.ok(W.views[k], 'view ' + k); assert.ok(live.some(c => W.facts[c.i][1] === k), 'countries in ' + k); });
+  assert.ok(W.rivers.length >= 40); W.rivers.forEach(r => { assert.ok(r.d && r.es && r.en && r.c.length, r.id); });
+  const regions = SP.ccaa.filter(r => !/^Gibraltar/.test(r.n));
+  assert.equal(regions.length, 19); regions.forEach(r => assert.ok(M.CCAA[r.n] && M.CCAA[r.n][0], 'table for ' + r.n));
+  assert.equal(SP.prov.filter(r => !/^Gibraltar/.test(r.n)).length, 52);
+  assert.equal(SP.rivers.length, 8); SP.rivers.forEach(r => assert.ok(r.c.length >= 1, 'region crossed by ' + r.id));
 });

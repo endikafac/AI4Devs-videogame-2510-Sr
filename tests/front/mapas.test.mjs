@@ -1,0 +1,221 @@
+import test, { before, after } from 'node:test';
+import assert from 'node:assert/strict';
+import http from 'node:http';
+import fs from 'node:fs';
+import path from 'node:path';
+import { chromium } from 'playwright-core';
+
+const root = path.resolve(import.meta.dirname, '../..');
+const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png', '.woff2': 'font/woff2' };
+const SHOTS = process.env.MAPAS_SHOTS || '';
+let server, base, browser;
+
+before(async () => {
+  server = http.createServer((req, res) => {
+    let p = decodeURIComponent(req.url.split('?')[0]);
+    if (p.endsWith('/')) p += 'index.html';
+    const f = path.join(root, p);
+    if (!f.startsWith(root) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { res.writeHead(404); return res.end('nf'); }
+    res.writeHead(200, { 'content-type': TYPES[path.extname(f)] || 'application/octet-stream' });
+    fs.createReadStream(f).pipe(res);
+  });
+  await new Promise(r => server.listen(0, r));
+  base = 'http://localhost:' + server.address().port;
+  browser = await chromium.launch({ channel: 'chrome', headless: true });
+});
+after(async () => { await browser?.close(); server?.close(); });
+
+const IGNORE = /favicon|Missing or insufficient permissions|unauthorized-domain|net::ERR|Failed to load resource|firestore\.googleapis|identitytoolkit|offline|WebChannel|manifest/i;
+async function open({ width = 390, height = 800 } = {}) {
+  const ctx = await browser.newContext({ viewport: { width, height }, serviceWorkers: 'block' });
+  const page = await ctx.newPage();
+  const errors = [];
+  page.on('pageerror', e => errors.push('pageerror: ' + e.message));
+  page.on('console', m => { if (m.type() === 'error' && !IGNORE.test(m.text())) errors.push(m.text()); });
+  await page.addInitScript(() => Object.defineProperty(navigator, 'doNotTrack', { get: () => '1' }));
+  await page.goto(base + '/mapas-EFC/index.html', { waitUntil: 'load' });
+  await page.waitForFunction(() => document.querySelectorAll('.mp-mapcard').length === 11, null, { timeout: 8000 });
+  return { ctx, page, errors };
+}
+const shot = (page, name) => SHOTS ? page.screenshot({ path: path.join(SHOTS, name + '.png') }) : null;
+async function start(page, map, mode) {
+  await page.click('.mp-mapcard[data-map="' + map + '"]');
+  await page.click('.mp-modecard[data-mode="' + mode + '"]');
+  await page.waitForSelector('#mp-svg path', { timeout: 8000 });
+  await page.waitForTimeout(500);
+}
+// client point of an item (centre in svg coords) and whether it is really the top element there
+async function targetPoint(page, id) {
+  return page.evaluate(id => {
+    const S = Mapas._S, it = S.map.items.find(i => i.id === id), svg = document.getElementById('mp-svg');
+    const pt = svg.createSVGPoint(); pt.x = it.x; pt.y = it.y; const p = pt.matrixTransform(svg.getScreenCTM());
+    const hit = document.elementFromPoint(p.x, p.y);
+    const hid = hit && hit.dataset && hit.dataset.id;
+    return { x: p.x, y: p.y, ok: hid === id, other: !!hid && hid !== id };
+  }, id);
+}
+async function tapItem(page, id) {
+  await page.waitForFunction(() => !Mapas._S.raf, null, { timeout: 5000 });
+  let p = await targetPoint(page, id); // wait until the item stops moving on screen
+  for (let n = 0; n < 40; n++) { await page.waitForTimeout(60); const q = await targetPoint(page, id); const still = Math.abs(q.x - p.x) < 0.5 && Math.abs(q.y - p.y) < 0.5; p = q; if (still) break; }
+  if (!p.other) { await page.mouse.click(p.x, p.y); return p.ok; } // micro-states are dots without hit testing: the game snaps to the nearest dot
+  // centroid fell outside the shape or under a neighbour: click the middle of its bounding box
+  const b = await page.evaluate(id => { const r = document.querySelector('[data-id="' + id + '"]').getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 }; }, id);
+  await page.mouse.click(b.x, b.y);
+  return false;
+}
+const runState = page => page.evaluate(() => { const r = Mapas._S.run; return r && { id: r.id, i: r.i, right: r.right, wrong: r.wrong, type: r.type, locked: r.locked }; });
+const advanced = (page, k) => page.waitForFunction(i => { const r = Mapas._S.run; return !r || r.i > i; }, k, { timeout: 5000 });
+
+test('F-MAPAS home lists 11 maps, no console errors', async () => {
+  const { ctx, page, errors } = await open();
+  try {
+    assert.equal(await page.locator('.mp-mapcard').count(), 11);
+    await shot(page, 'home');
+    assert.deepEqual(errors, []);
+  } finally { await ctx.close(); }
+});
+
+test('F-MAPAS world find mode: 10 questions reach the end screen and progress is stored', async () => {
+  const { ctx, page, errors } = await open({ width: 1000, height: 800 });
+  try {
+    await start(page, 'world', 'find');
+    await shot(page, 'world-find');
+    for (let k = 0; k < 10; k++) {
+      const r = await runState(page); assert.ok(r && r.id, 'question ' + k);
+      assert.equal(r.type, 'find');
+      await page.evaluate(id => Mapas._focus(id, 5), r.id); // neighbours overlap at world scale: zoom onto the target like a player would
+      await tapItem(page, r.id);
+      await advanced(page, k);
+    }
+    await page.waitForSelector('#mp-end:not([hidden])', { timeout: 5000 });
+    const stored = await page.evaluate(() => Object.keys(JSON.parse(localStorage.getItem('mapas_world_guest') || '{}')).length);
+    assert.equal(stored, 10);
+    await shot(page, 'world-end');
+    assert.deepEqual(errors, []);
+  } finally { await ctx.close(); }
+});
+
+test('F-MAPAS wrong taps: two misses reveal the answer and record a failure', async () => {
+  const { ctx, page, errors } = await open({ width: 1100, height: 800 });
+  try {
+    await start(page, 'EU', 'find');
+    await shot(page, 'europe-find-desktop');
+    const r = await runState(page);
+    const other = await page.evaluate(id => { const S = Mapas._S, svg = document.getElementById('mp-svg'); return S.map.items.find(i => { if (i.id === id || i.a < 500) return false; const pt = svg.createSVGPoint(); pt.x = i.x; pt.y = i.y; const p = pt.matrixTransform(svg.getScreenCTM()); const h = document.elementFromPoint(p.x, p.y); return h && h.dataset && h.dataset.id === i.id; }).id; }, r.id);
+    await tapItem(page, other);
+    await page.waitForTimeout(200);
+    assert.equal((await runState(page)).locked, false, 'first miss keeps trying');
+    await tapItem(page, other);
+    await page.waitForFunction(() => Mapas._S.run.locked, null, { timeout: 3000 });
+    await page.waitForSelector('#mp-nextrow:not([hidden])');
+    assert.equal((await runState(page)).wrong, 1);
+    await page.waitForTimeout(600);
+    await shot(page, 'europe-find-reveal');
+    await page.click('#mp-next');
+    assert.equal((await runState(page)).i, 1);
+    assert.deepEqual(errors, []);
+  } finally { await ctx.close(); }
+});
+
+test('F-MAPAS name mode: options and correct answer; capitals mode both directions', async () => {
+  const { ctx, page, errors } = await open();
+  try {
+    await start(page, 'SA', 'name');
+    await page.waitForSelector('.mp-opt');
+    assert.equal(await page.locator('.mp-opt').count(), 4);
+    assert.equal(await page.locator('.mp-it.tgt').count(), 1);
+    await page.waitForTimeout(600);
+    await shot(page, 'sa-name');
+    const id = (await runState(page)).id;
+    await page.click('.mp-opt[data-opt="' + id + '"]');
+    await page.waitForFunction(() => Mapas._S.run.right === 1);
+    await page.click('#mp-quit');
+    await start(page, 'es', 'cap');
+    for (let k = 0; k < 4; k++) {
+      const r = await runState(page);
+      if (r.type === 'capName') await page.click('.mp-opt[data-opt="' + r.id + '"]');
+      else await tapItem(page, r.id);
+      await advanced(page, k).catch(async () => { if (await page.locator('#mp-nextrow:not([hidden])').count()) await page.click('#mp-next'); });
+    }
+    await shot(page, 'es-cap');
+    assert.deepEqual(errors, []);
+  } finally { await ctx.close(); }
+});
+
+test('F-MAPAS explore: country card, region card, river card, other maps render', async () => {
+  const { ctx, page, errors } = await open({ width: 800, height: 800 });
+  try {
+    await start(page, 'EU', 'explore');
+    await tapItem(page, 'FR');
+    await page.waitForSelector('#mp-info:not([hidden])');
+    const info = await page.textContent('#mp-info');
+    assert.match(info, /Francia/);
+    assert.match(info, /Par[ií]s/);
+    await page.waitForTimeout(900);
+    await shot(page, 'europe-explore-fr');
+    await page.click('#mp-quit');
+    await start(page, 'es', 'explore'); await tapItem(page, 'Andalucía');
+    assert.match(await page.textContent('#mp-info'), /Sevilla/);
+    await page.waitForTimeout(900);
+    await shot(page, 'spain-explore');
+    await page.click('#mp-quit');
+    await start(page, 'rives', 'explore'); await tapItem(page, 'tajo');
+    assert.match(await page.textContent('#mp-info'), /Castilla-La Mancha|Extremadura|Madrid/);
+    await page.waitForTimeout(900);
+    await shot(page, 'rivers-spain');
+    await page.click('#mp-quit');
+    await start(page, 'rivw', 'name');
+    await page.waitForTimeout(900);
+    await shot(page, 'rivers-world-name');
+    await page.click('#mp-quit');
+    await start(page, 'prov', 'find'); await shot(page, 'prov-find');
+    assert.deepEqual(errors, []);
+  } finally { await ctx.close(); }
+});
+
+test('F-MAPAS gestures: wheel zooms, dragging pans, home resets', async () => {
+  const { ctx, page, errors } = await open({ width: 1000, height: 800 });
+  try {
+    await start(page, 'world', 'explore');
+    const box = await page.locator('#mp-svg').boundingBox();
+    const cx = box.x + box.width / 2, cy = box.y + box.height / 2;
+    const w0 = await page.evaluate(() => Mapas._S.cam.w);
+    await page.mouse.move(cx, cy); await page.mouse.wheel(0, -300); await page.waitForTimeout(200);
+    const w1 = await page.evaluate(() => Mapas._S.cam.w);
+    assert.ok(w1 < w0, 'wheel zooms in: ' + w0 + ' -> ' + w1);
+    const x0 = await page.evaluate(() => Mapas._S.cam.x);
+    await page.mouse.move(cx, cy); await page.mouse.down(); await page.mouse.move(cx + 120, cy + 10, { steps: 6 }); await page.mouse.up();
+    const x1 = await page.evaluate(() => Mapas._S.cam.x);
+    assert.ok(x1 < x0, 'drag pans');
+    await page.click('#mp-zhome'); await page.waitForTimeout(900);
+    const w2 = await page.evaluate(() => Mapas._S.cam.w);
+    assert.ok(w2 > w1, 'home resets zoom');
+    assert.deepEqual(errors, []);
+  } finally { await ctx.close(); }
+});
+
+test('F-MAPAS data: every shape can be tapped at its label point (at least 92%)', async () => {
+  const { ctx, page, errors } = await open({ width: 1000, height: 800 });
+  try {
+    for (const map of ['world', 'EU', 'AF', 'AS', 'NA', 'SA', 'OC', 'es', 'prov']) {
+      await start(page, map, 'explore');
+      const r = await page.evaluate(() => {
+        const S = Mapas._S, svg = document.getElementById('mp-svg'), sc = svg.getBoundingClientRect().width / S.cam.w;
+        const miss = []; let n = 0;
+        S.map.items.forEach(i => {
+          if (i.a * sc * sc < 14) return; n++;
+          const pt = svg.createSVGPoint(); pt.x = i.x; pt.y = i.y; const p = pt.matrixTransform(svg.getScreenCTM());
+          const b = svg.getBoundingClientRect(); if (p.x < b.x || p.y < b.y || p.x > b.right || p.y > b.bottom) { n--; return; }
+          const h = document.elementFromPoint(p.x, p.y);
+          if (!(h && h.dataset && h.dataset.id === i.id)) miss.push(i.id);
+        });
+        return { n, miss };
+      });
+      assert.ok(r.n > 5, map + ' has tappable shapes');
+      assert.ok(r.miss.length <= Math.ceil(r.n * 0.08), map + ' misses: ' + r.miss.join(','));
+      await page.click('#mp-quit');
+    }
+    assert.deepEqual(errors, []);
+  } finally { await ctx.close(); }
+});

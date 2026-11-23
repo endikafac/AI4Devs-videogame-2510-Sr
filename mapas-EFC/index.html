@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <link rel="manifest" href="../manifest.json">
+    <meta name="theme-color" content="#0ea5e9">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Mapas">
+    <link rel="apple-touch-icon" href="../icons/icon-192.png">
+    <meta name="description" content="Mapas: explora el mundo, España, ríos y capitales tocando sobre mapas reales y aprende dónde está todo.">
+    <title>Mapas – Games Hub</title>
+    <link rel="stylesheet" href="../platform/platform.css">
+    <link rel="stylesheet" href="styles.css">
+    <link href="../fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<main id="main-content" class="mp-main">
+    <section id="mp-home" class="mp-screen">
+        <div class="mp-head">
+            <h1 id="mp-h1">Mapas</h1>
+        </div>
+        <p class="mp-sub" id="mp-sub"></p>
+        <div class="mp-maps" id="mp-maps"></div>
+        <p class="mp-credit">Natural Earth (public domain) · IGN España (CC BY 4.0) · world-atlas, es-atlas</p>
+    </section>
+
+    <section id="mp-setup" class="mp-screen" hidden>
+        <div class="mp-top">
+            <button class="mp-quit" id="mp-setupback" type="button" aria-label="Volver">←</button>
+            <h2 id="mp-setuptitle"></h2>
+        </div>
+        <div class="mp-chips" id="mp-diff" hidden></div>
+        <div class="mp-modes" id="mp-modes"></div>
+    </section>
+
+    <section id="mp-game" class="mp-screen" hidden>
+        <div class="mp-top">
+            <button class="mp-quit" id="mp-quit" type="button" aria-label="Salir">✕</button>
+            <div class="mp-prompt" id="mp-prompt" aria-live="polite"></div>
+            <span class="mp-count" id="mp-count"></span>
+        </div>
+        <div class="mp-stage" id="mp-stage">
+            <svg id="mp-svg" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mapa"></svg>
+            <div class="mp-loading" id="mp-loading" hidden></div>
+            <div class="mp-ctl">
+                <button type="button" id="mp-zin" aria-label="Zoom +">+</button>
+                <button type="button" id="mp-zout" aria-label="Zoom -">−</button>
+                <button type="button" id="mp-zhome" aria-label="⌂">⌂</button>
+                <button type="button" id="mp-hint" class="mp-hintbtn" hidden>💡</button>
+            </div>
+            <div class="mp-legend" id="mp-legend" hidden></div>
+            <div class="mp-info" id="mp-info" hidden></div>
+            <div class="mp-toast" id="mp-toast" hidden aria-live="assertive"></div>
+        </div>
+        <div class="mp-options" id="mp-options" hidden></div>
+        <div class="mp-nextrow" id="mp-nextrow" hidden><button class="mp-btn" id="mp-next" type="button"></button></div>
+    </section>
+
+    <section id="mp-end" class="mp-screen" hidden>
+        <div class="mp-endbox">
+            <div class="mp-trophy" id="mp-trophy" aria-hidden="true"></div>
+            <h2 id="mp-endtitle"></h2>
+            <div class="mp-endstats" id="mp-endstats"></div>
+            <div class="mp-mistakes" id="mp-mistakes"></div>
+            <div class="mp-endbtns">
+                <button class="mp-btn" id="mp-again" type="button"></button>
+                <button class="mp-btn ghost" id="mp-home-btn" type="button"></button>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore-compat.js"></script>
+<script src="../platform/firebase-config.js"></script>
+<script src="../platform/i18n-platform.js"></script>
+<script src="../platform/auth.js"></script>
+<script src="../platform/firestore.js"></script>
+<script src="../platform/identity.js"></script>
+<script src="../platform/platform-header.js"></script>
+<script src="game.js"></script>
+<script>
+    PlatformHeader.init({ gameName: 'Mapas', gameIcon: '🗺️', rootPath: '../' });
+    Mapas.init();
+</script>
+<script src="../platform/register-sw.js"></script>
+</body>
+</html>
