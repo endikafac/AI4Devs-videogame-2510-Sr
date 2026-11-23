@@ -207,6 +207,11 @@ test('U-MAPAS: pure helpers, UI strings and map data are consistent', () => {
   let p = M.recordAnswer(undefined, true); assert.equal(M.masteryOf(p), 'weak');
   p = M.recordAnswer(p, true); assert.equal(M.masteryOf(p), 'ok');
   p = M.recordAnswer(p, false); assert.equal(M.masteryOf(p), 'weak'); assert.equal(p.f, 1);
+  const day = 864e5, now = Date.now();
+  assert.equal(M.needsReview(undefined, now), false);
+  assert.equal(M.needsReview({ s: 1, t: now }, now), true, 'weak items are always due');
+  assert.equal(M.needsReview({ s: 2, t: now - 0.5 * day }, now), false, 'mastered, not yet due');
+  assert.equal(M.needsReview({ s: 2, t: now - 2 * day }, now), true, 'mastered but overdue');
   const b = M.fitBox({ x: 0, y: 0, w: 1000, h: 500 }, 400, 600);
   assert.ok(Math.abs(b.h / b.w - 1.5) < 1e-9 && b.w >= 1000);
   // data files

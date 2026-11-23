@@ -85,6 +85,11 @@ const Mapas = (function () {
         rangeK: ['Cordillera', 'Mountain range', 'Mendilerroa', 'Cordilleira', 'Serralada', 'Chaîne'],
         endMastered: ['nuevos dominados', 'newly mastered', 'berri menderatuak', 'novos dominados', 'nous dominats', 'nouveaux maîtrisés'],
         finish: ['Terminar', 'Finish', 'Amaitu', 'Rematar', 'Acabar', 'Terminer'],
+        mdReview: ['Repasar', 'Review', 'Errepasatu', 'Repasar', 'Repassar', 'Réviser'],
+        mdReviewD: ['Lo que te cuesta y lo que toca volver a ver', 'What is hard for you and what is due again', 'Zailtasuna duena eta berriz ikusi beharrekoa', 'O que che custa e o que toca volver ver', 'El que et costa i el que toca tornar a veure', 'Ce qui est difficile et ce qui est à revoir'],
+        noReview: ['Nada que repasar por ahora. ¡Buen trabajo!', 'Nothing to review right now. Good job!', 'Oraingoz ez dago errepasatzeko ezer. Lan ona!', 'Nada que repasar por agora. Bo traballo!', 'Res per repassar ara. Bona feina!', 'Rien à réviser pour l’instant. Bravo !'],
+        toReview: ['{n} por repasar', '{n} to review', '{n} errepasatzeko', '{n} por repasar', '{n} per repassar', '{n} à réviser'],
+        summary: ['{a} lugares dominados · {b} por repasar', '{a} places mastered · {b} to review', '{a} leku menderatuta · {b} errepasatzeko', '{a} lugares dominados · {b} por repasar', '{a} llocs dominats · {b} per repassar', '{a} lieux maîtrisés · {b} à réviser'],
         zoomTip: ['Pellizca o usa la rueda para acercar', 'Pinch or use the wheel to zoom', 'Atximurtu edo erabili gurpila zoom egiteko', 'Pellizca ou usa a roda para achegar', 'Pessiga o usa la roda per apropar', 'Pince ou utilise la molette pour zoomer']
     };
 
@@ -161,6 +166,12 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         const out = others.slice(0, Math.max(0, n - 1)).concat([targetId]);
         for (let i = out.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [out[i], out[j]] = [out[j], out[i]]; }
         return out;
+    }
+    // weak (not 2 right in a row) or mastered but overdue for its spaced interval
+    function needsReview(p, now) {
+        if (!p) return false; now = now || Date.now();
+        if ((p.s || 0) < 2) return true;
+        return !!(p.t && now - p.t > DAYS[Math.min(DAYS.length - 1, p.s)] * 864e5);
     }
     function masteryOf(p) { if (!p) return 'new'; return (p.s || 0) >= 2 ? 'ok' : 'weak'; }
     function recordAnswer(p, correct) {
@@ -271,6 +282,7 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         let its = S.map.items;
         if (S.map.kind === 'country' && S.diff === 'easy') its = its.filter(i => i.level <= 2);
         if (S.mode === 'cap') its = its.filter(i => capOf(i));
+        if (S.mode === 'review') { const pg = S.progs[S.def.store] || {}; its = its.filter(i => needsReview(pg[i.id])); }
         return its.map(i => i.id);
     }
     const itemById = id => S.map.items.find(i => i.id === id);
@@ -292,20 +304,25 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         $('mp-h1').textContent = t('title'); $('mp-sub').textContent = t('sub');
         const box = $('mp-maps'); box.textContent = '';
         const cache = {};
+        let sumM = 0, sumD = 0;
         MAPS.forEach(def => {
             const prog = cache[def.store] || (cache[def.store] = loadProg(def.store));
             const ids = Object.keys(prog);
             const tot = W_FACTS ? (def.cont ? W_FACTS[def.cont] : def.id === 'world' ? W_FACTS.world : totalFor(def)) : totalFor(def);
-            const mastered = ids.filter(id => (prog[id].s || 0) >= 2 && (!def.cont || !W_FACTS || W_CONT[id] === def.cont)).length;
+            const inMap = id => !def.cont || !W_FACTS || W_CONT[id] === def.cont;
+            const mastered = ids.filter(id => (prog[id].s || 0) >= 2 && inMap(id)).length;
+            const due = ids.filter(id => needsReview(prog[id]) && inMap(id)).length;
+            if (!def.cont) { sumM += ids.filter(id => (prog[id].s || 0) >= 2).length; sumD += ids.filter(id => needsReview(prog[id])).length; }
             const b = el('button', 'mp-mapcard'); b.type = 'button'; b.dataset.map = def.id;
             b.appendChild(el('span', 'ic', def.icon));
             const tx = el('span', 'tx'); tx.appendChild(el('b', '', t('m' + def.id)));
-            tx.appendChild(el('small', '', t('mastered', { a: Math.min(mastered, tot), b: tot })));
+            tx.appendChild(el('small', '', t('mastered', { a: Math.min(mastered, tot), b: tot }) + (due ? ' · ' + t('toReview', { n: due }) : '')));
             const bar = el('i', 'bar'); const fill = el('u'); fill.style.width = Math.min(100, Math.round(100 * mastered / Math.max(1, tot))) + '%'; bar.appendChild(fill); tx.appendChild(bar);
             b.appendChild(tx);
             b.onclick = () => openSetup(def);
             box.appendChild(b);
         });
+        const sm = $('mp-sum'); if (sm) { sm.hidden = !(sumM || sumD); sm.textContent = '🧭 ' + t('summary', { a: sumM, b: sumD }); }
     }
     let W_FACTS = null, W_CONT = {};
     function indexWorld(W) {
@@ -321,10 +338,14 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         const modes = $('mp-modes'); modes.textContent = '';
         const list = [['explore', 'mdExplore', 'mdExploreD', '🔍'], ['find', 'mdFind', 'mdFindD', '🎯'], ['name', 'mdName', 'mdNameD', '🏷️']];
         if (def.kind === 'country' || def.src === 'ccaa') list.push(['cap', 'mdCap', 'mdCapD', '⭐']);
+        const pg = loadProg(def.store);
+        const dueN = Object.keys(pg).filter(id => needsReview(pg[id]) && (!def.cont || !W_FACTS || W_CONT[id] === def.cont)).length;
+        list.push(['review', 'mdReview', 'mdReviewD', '🔁']);
         list.forEach(([m, k, kd, ic]) => {
             const b = el('button', 'mp-modecard'); b.type = 'button'; b.dataset.mode = m;
+            if (m === 'review' && !dueN) { b.disabled = true; b.classList.add('off'); }
             b.appendChild(el('span', 'ic', ic));
-            const tx = el('span', 'tx'); tx.appendChild(el('b', '', t(k))); tx.appendChild(el('small', '', t(kd))); b.appendChild(tx);
+            const tx = el('span', 'tx'); tx.appendChild(el('b', '', t(k) + (m === 'review' && dueN ? ' (' + dueN + ')' : ''))); tx.appendChild(el('small', '', m === 'review' && !dueN ? t('noReview') : t(kd))); b.appendChild(tx);
             b.onclick = () => startMap(def, m);
             modes.appendChild(b);
         });
@@ -544,9 +565,10 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
     }
     const pickL = o => { if (!o) return ''; if (typeof o === 'string') return o; const l = lang(); return (l === 'en' || l === 'fr') ? (o.en || o.es || '') : (o.es || o.en || ''); };
     const nf = n => { try { return new Intl.NumberFormat(lang(), { useGrouping: 'always' }).format(n); } catch (e) { return String(n); } };
+    const nfd = n => { try { return new Intl.NumberFormat(lang(), { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(n); } catch (e) { return String(Math.round(n * 10) / 10); } };
     function popText(it) {
-        if (it.info && it.info.pop != null) { const v = it.info.pop; return v >= 1 ? nf(Math.round(v * 10) / 10) + ' ' + t('million') : nf(Math.round(v * 1000)) + ' ' + t('thousand'); }
-        if (it.inf && it.inf.pop != null) { const v = it.inf.pop; return v >= 1000 ? nf(Math.round(v / 100) / 10) + ' ' + t('million') : nf(v) + ' ' + t('thousand'); }
+        if (it.info && it.info.pop != null) { const v = it.info.pop; return v >= 1 ? nfd(v) + ' ' + t('million') : nf(Math.round(v * 1000)) + ' ' + t('thousand'); }
+        if (it.inf && it.inf.pop != null) { const v = it.inf.pop; return v >= 1000 ? nfd(v / 1000) + ' ' + t('million') : nf(v) + ' ' + t('thousand'); }
         return '';
     }
     function dispName(type, code, fb) { try { return new Intl.DisplayNames([lang()], { type: type }).of(code) || fb; } catch (e) { return fb; } }
@@ -628,7 +650,7 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         S.labels = S.labels.filter(l => { if (l.ctx) return true; l.node.remove(); return false; });
         nextQ();
     }
-    function qType() { return S.mode === 'cap' ? (Math.random() < 0.5 ? 'capFind' : 'capName') : S.mode; }
+    function qType() { return S.mode === 'review' ? 'find' : S.mode === 'cap' ? (Math.random() < 0.5 ? 'capFind' : 'capName') : S.mode; }
     function resetClasses() { Object.keys(S.els).forEach(id => S.els[id].classList.remove('good', 'bad', 'tgt', 'sel', 'flow')); }
     function nextQ() {
         const r = S.run; if (!r) return;
@@ -758,7 +780,7 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         window.addEventListener('platformLanguageChanged', render);
     }
 
-    const api = { _S: S, _focus: (id, z) => focusItem(itemById(id), z), init, txt, pickQuestions, pickOptions, masteryOf, recordAnswer, fitBox, UI, MAPS, CCAA, LANGS };
+    const api = { needsReview, _S: S, _focus: (id, z) => focusItem(itemById(id), z), init, txt, pickQuestions, pickOptions, masteryOf, recordAnswer, fitBox, UI, MAPS, CCAA, LANGS };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     return api;
 })();

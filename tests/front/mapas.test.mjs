@@ -269,3 +269,22 @@ test('F-MAPAS mountains and rich cards: height, river length, province facts, le
     assert.deepEqual(errors, []);
   } finally { await ctx.close(); }
 });
+
+test('F-MAPAS review mode: disabled when nothing is due, then lists weak items after a mistake', async () => {
+  const { ctx, page, errors } = await open({ width: 390, height: 844 });
+  try {
+    await page.click('.mp-mapcard[data-map="es"]');
+    assert.equal(await page.locator('.mp-modecard[data-mode="review"]').isDisabled(), true);
+    await page.click('#mp-setupback');
+    await page.evaluate(() => localStorage.setItem('mapas_es_guest', JSON.stringify({ 'Galicia': { o: 0, f: 1, s: 0, t: Date.now() }, 'Aragón': { o: 1, f: 0, s: 1, t: Date.now() } })));
+    await page.reload(); await page.waitForSelector('.mp-mapcard');
+    assert.match(await page.textContent('#mp-sum'), /2 por repasar/);
+    await page.click('.mp-mapcard[data-map="es"]');
+    assert.equal(await page.locator('.mp-modecard[data-mode="review"]').isDisabled(), false);
+    await page.click('.mp-modecard[data-mode="review"]'); await page.waitForSelector('#mp-svg path'); await page.waitForTimeout(500);
+    const qs = await page.evaluate(() => Mapas._S.run.qs.slice().sort());
+    assert.deepEqual(qs, ['Aragón', 'Galicia']);
+    await shot(page, 'review-mobile');
+    assert.deepEqual(errors, []);
+  } finally { await ctx.close(); }
+});
