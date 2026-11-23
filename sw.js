@@ -4,7 +4,7 @@
  * Version: bump CACHE_VERSION to force cache refresh after deploys
  */
 
-const CACHE_VERSION = 'v1.20.0';
+const CACHE_VERSION = 'v1.20.1';
 const STATIC_CACHE  = `games-hub-static-${CACHE_VERSION}`;
 const PAGE_CACHE    = `games-hub-pages-${CACHE_VERSION}`;
 
@@ -68,8 +68,10 @@ self.addEventListener('fetch', event => {
         // Network-first for HTML pages so content stays fresh
         event.respondWith(networkFirstHTML(request));
     } else {
-        // Cache-first for everything else (JS, CSS, fonts, images)
-        event.respondWith(cacheFirstStatic(request));
+        // Code and data (JS, CSS, JSON): network-first with revalidation, so a deploy is never masked by an old copy
+        if (/.(js|css|json)$/.test(url.pathname)) event.respondWith(networkFirstCode(request));
+        // Cache-first for fonts and images
+        else event.respondWith(cacheFirstStatic(request));
     }
 });
 
@@ -92,6 +94,20 @@ async function networkFirstHTML(request) {
         return fallback || new Response('<h1>Offline</h1><p>Conéctate a Internet para jugar.</p>', {
             headers: { 'Content-Type': 'text/html; charset=utf-8' }
         });
+    }
+}
+
+async function networkFirstCode(request) {
+    try {
+        const response = await fetch(request, { cache: 'no-cache' });
+        if (response.ok) {
+            const cache = await caches.open(STATIC_CACHE);
+            cache.put(request, response.clone());
+        }
+        return response;
+    } catch {
+        const cached = await caches.match(request);
+        return cached || new Response('', { status: 503 });
     }
 }
 
