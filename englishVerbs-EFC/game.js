@@ -486,6 +486,7 @@ const EnglishVerbsGame = (() => {
         $('ev-streak-val').textContent = state.streak;
 
         if (ex.type === 'type') { renderTypeQuestion(ex, current, total); return; }
+        if (ex.type === 'order' && typeof EVDyn !== 'undefined') { EVDyn.renderOrder(ex, current, total); return; }
 
         const optionsHtml = ex.options.map((opt, i) =>
             `<button class="ev-option-btn" onclick="EnglishVerbsGame.handleGroupPracticeQ('${encodeURIComponent(opt)}')"><kbd class="ev-key" aria-hidden="true">${i + 1}</kbd><span>${opt}</span></button>`
@@ -538,6 +539,27 @@ const EnglishVerbsGame = (() => {
 
         $('ev-score-val').textContent = state.score;
         $('ev-streak-val').textContent = state.streak;
+    }
+
+    /** "Put the three forms in order": same scoring as a multiple choice answer (10 points, streak). */
+    function handleOrder(values) {
+        if (state.answered) return false;
+        state.answered = true;
+        const ex = state.groupPracticeExercises[state.groupPracticeIndex];
+        const isCorrect = !!ex && Array.isArray(values) && values.length === ex.answer.length && values.every((v, i) => v === ex.answer[i]);
+        state.totalAnswered++;
+        if (isCorrect) {
+            state.correct++; state.streak++;
+            if (state.streak > state.bestStreak) state.bestStreak = state.streak;
+            state.score += 10;
+        } else {
+            state.streak = 0;
+        }
+        showFeedback(isCorrect, ex ? ex.explanation : '');
+        show($('ev-next-btn'));
+        $('ev-score-val').textContent = state.score;
+        $('ev-streak-val').textContent = state.streak;
+        return isCorrect;
     }
 
     // ── HUD ────────────────────────────────────────────────────────────
@@ -638,6 +660,7 @@ const EnglishVerbsGame = (() => {
             if (state.streak > state.bestStreak) state.bestStreak = state.streak;
             state.totalAnswered++;
             state.matchedPairs++;
+            if (typeof EVDyn !== 'undefined') EVDyn.onPair(true, rightBtn);
 
             if (leftBtn) {
                 leftBtn.classList.add('matched');
@@ -664,6 +687,7 @@ const EnglishVerbsGame = (() => {
             state.streak = 0;
             state.score = Math.max(0, state.score - 2);
             state.totalAnswered++;
+            if (typeof EVDyn !== 'undefined') EVDyn.onPair(false, rightBtn);
 
             if (leftBtn) {
                 leftBtn.classList.add('wrong-shake');
@@ -821,15 +845,16 @@ const EnglishVerbsGame = (() => {
     }
 
     // ── Practice modes generated from the verb table ──────────────────
-    const MODE_KINDS = ['past', 'part', 'meaning', 'type', 'listen'];
-    const MODE_ICONS = { past: '⏪', part: '✅', meaning: '🔤', type: '⌨️', listen: '🎧' };
+    const MODE_KINDS = ['past', 'part', 'meaning', 'type', 'listen', 'order', 'odd'];
+    const MODE_ICONS = { past: '⏪', part: '✅', meaning: '🔤', type: '⌨️', listen: '🎧', order: '🔀', odd: '🕵️' };
+    const REGULAR_VERBS = ['walk', 'play', 'jump', 'work', 'clean', 'open', 'watch', 'help', 'talk', 'cook', 'want', 'listen', 'dance', 'paint', 'visit', 'start', 'like', 'love', 'call', 'wash', 'learn', 'climb'];
     const shuffle = arr => arr.slice().sort(() => Math.random() - 0.5);
 
     function regularForm(inf) { return inf.endsWith('e') ? inf + 'd' : inf + 'ed'; }
 
     function buildModeQuestions(kind, group) {
         const all = IRREGULAR_VERBS;
-        const pool = shuffle(all.filter(v => group === 'all' || v.group === group)).slice(0, 10);
+        const pool = shuffle(all.filter(v => (group === 'all' || v.group === group) && (kind !== 'order' || new Set([v.infinitive, v.past_simple, v.past_participle]).size > 1))).slice(0, 10);
         return pool.map(v => {
             const explanation = t('ex_form', { v: v.infinitive, p: v.past_simple, pp: v.past_participle }) + ' ' + t('ex_group', { g: v.group });
             if (kind === 'past' || kind === 'part') {
@@ -854,6 +879,16 @@ const EnglishVerbsGame = (() => {
                     ex.audio = Math.random() < 0.5 ? v.past_simple : v.past_participle;
                 }
                 return ex;
+            }
+            if (kind === 'order') {
+                return {
+                    type: 'order', sentence: t('q_order', { v: v.infinitive, m: meaningOf(v) || v.meaning_es }),
+                    forms: shuffle([v.infinitive, v.past_simple, v.past_participle]), answer: [v.infinitive, v.past_simple, v.past_participle], explanation,
+                };
+            }
+            if (kind === 'odd') {
+                const reg = shuffle(REGULAR_VERBS).slice(0, 3);
+                return { sentence: t('q_odd'), options: shuffle([v.infinitive, ...reg]), answer: v.infinitive, explanation: explanation + ' ' + t('ex_odd') };
             }
             // type
             return {
@@ -956,6 +991,7 @@ const EnglishVerbsGame = (() => {
             ? `\u2713 ${t('correctFb')}. ${explanation}`
             : `\u2717 ${t('wrongFb')}. ${explanation}`;
         el.style.display = 'block';
+        if (typeof EVDyn !== 'undefined') EVDyn.onFeedback(isCorrect);
     }
 
     // ── Next question ──────────────────────────────────────────────────
@@ -1013,6 +1049,7 @@ const EnglishVerbsGame = (() => {
         $('ev-result-stars').innerHTML = [1, 2, 3].map(n =>
             `<span style="opacity:${stars >= n ? 1 : 0.25}">⭐</span>`
         ).join('');
+        if (typeof EVDyn !== 'undefined') EVDyn.onResults(stars);
 
         const nextLvlBtn = $('ev-next-level-btn');
         if (state.groupPracticeMode || state.level >= ENGLISH_LEVELS.length) {
@@ -1141,6 +1178,8 @@ const EnglishVerbsGame = (() => {
         handleAudioQ,
         handleGroupPracticeQ,
         handleGenType,
+        handleOrder,
+        _state: state,
         startMode,
         listenStory,
         speakVerb,

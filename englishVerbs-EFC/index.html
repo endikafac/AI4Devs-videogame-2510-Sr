@@ -118,6 +118,9 @@
             </div>
         </div>
 
+        <div class="evd-zonebar"><span class="evd-qn" id="evd-qn"></span><span class="evd-streak" id="evd-streak" aria-hidden="true"></span><button class="evd-helpbtn" id="evd-help" type="button"></button><span id="evd-snd"></span></div>
+        <p class="evd-hint" id="evd-hint" role="note" hidden></p>
+
         <!-- Progress bar -->
         <div class="ev-progress-wrap" role="progressbar" aria-valuemin="0" aria-valuemax="100" id="ev-progress-bar-wrap">
             <div class="ev-progress-fill" id="ev-progress-fill" style="width:0%"></div>
@@ -210,11 +213,13 @@
 <script src="../platform/identity.js"></script>
 <script src="../platform/achievements.js"></script>
 <script src="../platform/platform-header.js"></script>
+<script src="../platform/juice.js"></script>
 <script src="data.js"></script>
 <script src="data-extra.js"></script>
 <script src="i18n.js"></script>
 <script src="learn.js"></script>
 <script src="game.js"></script>
+<script src="dyn.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     PlatformHeader.init({ gameName: 'Irregular Verbs', gameIcon: '🇬🇧', rootPath: '../' });

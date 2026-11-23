@@ -177,3 +177,14 @@ body.mp-full { overflow: hidden; }
 .mp-learn .mp-btn.ghost { color: #0f172a; border-color: #94a3b8; }
 .mp-modecard.start { border-color: #22c55e; box-shadow: 0 0 0 2px rgba(34,197,94,.35); }
 .mp-start { display: inline-block; margin-left: 8px; padding: 2px 9px; border-radius: 999px; background: #22c55e; color: #052e16; font-size: .72rem; font-style: normal; font-weight: 800; vertical-align: middle; }
+
+/* dynamic options: Kahoot-style colours and shapes, staggered entry */
+.mp-opt { position: relative; padding-left: 38px; animation: mp-opt-in .28s both; animation-delay: calc(var(--i,0) * 60ms); transition: transform .12s; }
+.mp-opt::before { content: attr(data-shape); position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 1.1rem; opacity: .9; }
+.mp-opt:active:not(:disabled) { transform: scale(.95); }
+.mp-opt[data-shape="B2"] { border-left: 6px solid #ef4444; }
+.mp-opt[data-shape="C6"] { border-left: 6px solid #3b82f6; }
+.mp-opt[data-shape="CF"] { border-left: 6px solid #f59e0b; }
+.mp-opt[data-shape="A0"] { border-left: 6px solid #22c55e; }
+@keyframes mp-opt-in { from { opacity: 0; transform: translateY(14px) scale(.96); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .mp-opt { animation: none; } }

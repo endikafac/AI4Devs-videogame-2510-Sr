@@ -678,3 +678,15 @@
 @keyframes ws-hint-pulse { 50% { transform: scale(1.25); } }
 .ws-btn:focus-visible, .ws-level-btn:focus-visible, .ws-category-select:focus-visible { outline: 3px solid var(--hub-brand-color); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { .ws-cell.hint { animation: none; } }
+
+/* dynamic layer */
+.ws-hud { align-items: center; }
+.ws-ringbox { display: flex; align-items: center; justify-content: center; }
+.ws-ringbox .dy-ring { color: var(--text-primary); }
+#ws-zone-words, #ws-zone-grid { display: block; width: fit-content; margin: 8px auto 4px; }
+.ws-hintnote { margin: 0 0 10px; text-align: center; }
+.ws-hintnote, .dy-tools { max-width: 560px; margin-left: auto; margin-right: auto; }
+.ws-word-chip.found { animation: wsFound .5s ease-out; }
+@keyframes wsFound { 40% { transform: scale(1.18); } }
+@media (prefers-reduced-motion: reduce) { .ws-word-chip.found { animation: none; } }
+@media (min-width: 900px) { .ws-page { max-width: 860px; } }

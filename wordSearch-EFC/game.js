@@ -739,6 +739,7 @@ const WordSearchGame = {
         this._timerInterval = setInterval(() => this._tick(), 1000);
 
         this._showScreen('game');
+        this._dynInit();
     },
 
     /* ── Grid Rendering ─────────────────────────────────── */
@@ -816,6 +817,35 @@ const WordSearchGame = {
     },
 
     /* ── HUD update ─────────────────────────────────────── */
+    /* ── Dynamic layer: zones, progress ring, streak, visible hint, sound ── */
+    _dynInit() {
+        this._wstreak = 0;
+        const page = document.querySelector('#ws-screen-game .ws-page'); if (!page) return;
+        if (!this._dyBuilt) {
+            this._dyBuilt = true;
+            const hud = page.querySelector('.ws-hud');
+            const box = document.createElement('div'); box.className = 'ws-stat ws-ringbox';
+            this._ring = Dyn.ring(54, 7, '#22c55e'); box.appendChild(this._ring.el); hud.appendChild(box);
+            this._hud = Dyn.hud(hud, { noPoints: true });
+            const tools = document.createElement('div'); tools.className = 'dy-tools';
+            const hb = document.createElement('button'); hb.type = 'button'; hb.id = 'ws-hint-top'; hb.className = 'dy-help';
+            hb.addEventListener('click', () => this._hint()); tools.appendChild(hb); this._hintBtn = hb;
+            Dyn.sound(tools); this._hud.root.parentNode.insertBefore(tools, this._hud.root.nextSibling);
+            const note = document.createElement('p'); note.id = 'ws-hint-note'; note.className = 'dy-why ws-hintnote'; note.hidden = true; note.setAttribute('aria-live', 'polite');
+            tools.parentNode.insertBefore(note, tools.nextSibling);
+            const list = document.getElementById('ws-word-list'), z1 = Dyn.zone('wsFind'); z1.id = 'ws-zone-words'; list.parentNode.insertBefore(z1, list);
+            const gc = document.getElementById('ws-grid-container'), z2 = Dyn.zone('wsDragLetters'); z2.id = 'ws-zone-grid'; gc.parentNode.insertBefore(z2, gc);
+            document.addEventListener('platformLanguageChanged', () => this._dynLabels());
+        }
+        this._hud.setStreak(0); document.getElementById('ws-hint-note').hidden = true;
+        this._dynLabels(); this._updateWordsHud();
+    },
+    _dynLabels() {
+        if (this._hintBtn) { this._hintBtn.textContent = '💡 ' + Dyn.t('hintLabel'); this._hintBtn.setAttribute('aria-label', Dyn.t('wsHint')); this._hintBtn.title = Dyn.t('wsHint'); }
+        const a = document.getElementById('ws-zone-words'); if (a) a.textContent = Dyn.t('wsFind');
+        const b = document.getElementById('ws-zone-grid'); if (b) b.textContent = Dyn.t('wsDragLetters');
+    },
+
     _updateGameTexts() {
         const levelBadge = document.getElementById('ws-level-badge');
         if (levelBadge) levelBadge.textContent = `${this._t('level')} ${this._level}`;
@@ -845,6 +875,7 @@ const WordSearchGame = {
     _updateWordsHud() {
         const wordsVal = document.getElementById('ws-words-val');
         if (wordsVal) wordsVal.textContent = `${this._found}/${this._placed.length}`;
+        if (this._ring) this._ring.set(this._placed.length ? this._found / this._placed.length : 0, `${this._found}/${this._placed.length}`, `${this._found}/${this._placed.length}`);
     },
 
     /* ── Timer ──────────────────────────────────────────── */
@@ -922,7 +953,10 @@ const WordSearchGame = {
         const el = document.querySelector('.ws-cell[data-r="' + p.row + '"][data-c="' + p.col + '"]');
         if (!el) return;
         el.classList.add('hint');
-        setTimeout(() => el.classList.remove('hint'), 2200);
+        setTimeout(() => el.classList.remove('hint'), 4000);
+        try { Juice.sfx('pop'); } catch (e) { /* ignore */ }
+        const note = document.getElementById('ws-hint-note');
+        if (note) { note.hidden = false; note.textContent = Dyn.t('wsHintNote', { w: p.entry.display, n: p.len, r: p.row + 1, c: p.col + 1 }); }
         const announce = document.getElementById('ws-sr-announce');
         if (announce) announce.textContent = p.entry.display + ': ' + this._t('row') + ' ' + (p.row + 1) + ', ' + this._t('col') + ' ' + (p.col + 1);
     },
@@ -1048,6 +1082,9 @@ const WordSearchGame = {
             if (chip) chip.className = `ws-word-chip found found-${colorIndex}`;
 
             this._updateWordsHud();
+            this._wstreak = (this._wstreak || 0) + 1; if (this._hud) this._hud.setStreak(this._wstreak);
+            const hn = document.getElementById('ws-hint-note'); if (hn) hn.hidden = true;
+            Dyn.good(chip || document.getElementById('ws-grid'), this._wstreak);
 
             // Announce to screen readers
             const announce = document.getElementById('ws-sr-announce');
@@ -1061,6 +1098,9 @@ const WordSearchGame = {
             // Show popup after delay
             this._popupTimeout = setTimeout(() => this._showWordPopup(matched), 320);
 
+        } else if (cells.length >= 2) {
+            this._wstreak = 0; if (this._hud) this._hud.setStreak(0);
+            Dyn.bad(document.getElementById('ws-grid-container'), true);
         }
     },
 
@@ -1216,7 +1256,7 @@ const WordSearchGame = {
     _renderResults({ found, total, elapsed, score, stars, newRecord, newAchievements }) {
         const starsEl = document.getElementById('ws-stars');
         if (starsEl) {
-            starsEl.textContent = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+            Dyn.stars(starsEl, stars, 3, '⭐'); if (stars >= 2) Dyn.big(starsEl);
             const msgs = [this._t('stars1'), this._t('stars1'), this._t('stars2'), this._t('stars3')];
             starsEl.setAttribute('aria-label', msgs[Math.min(stars, 3)]);
         }

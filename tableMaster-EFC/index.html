@@ -912,6 +912,8 @@
                 </div>
             </div>
 
+            <div class="tmd-zonebar"><span class="tmd-qn" id="tmp-qn"></span><button class="tmd-helpbtn" id="tmp-help" type="button"></button><span id="tmp-snd"></span></div>
+
             <!-- Área del ejercicio: se rellena por JS -->
             <div id="practice-exercise-area" class="tm-exercise-area" aria-live="polite">
                 <!-- Ejercicios paso a paso inyectados aquí -->
@@ -1014,10 +1016,15 @@
                 </div>
             </div>
             <div class="tm-drill-bar" aria-hidden="true"><div class="tm-drill-bar-fill" id="drill-bar-fill"></div></div>
+            <div class="tmd-zonebar"><span class="tmd-qn" id="tmd-qn"></span><button class="tmd-helpbtn" id="tmd-help" type="button"></button><span id="tmd-snd"></span></div>
+            <p class="tmd-hint" id="tmd-hint" role="note" hidden></p>
 
+            <div class="tmd-zone q" id="tmd-zq"></div>
             <div class="tm-drill-card-q" id="drill-qcard" aria-live="polite">
                 <div class="tm-drill-q" id="drill-question"></div>
             </div>
+            <div class="tmd-zone a" id="tmd-za"></div>
+            <div class="tmd-stage" id="tmd-stage"></div>
             <div class="tm-drill-answer" id="drill-answer" role="status">&nbsp;</div>
             <div class="tm-drill-feedback" id="drill-feedback" aria-live="assertive"></div>
 
@@ -1094,12 +1101,14 @@
 <script src="../platform/firestore.js"></script>
 <script src="../platform/identity.js"></script>
 <script src="../platform/platform-header.js"></script>
+<script src="../platform/juice.js"></script>
 
 <!-- Game modules -->
 <script src="i18n.js"></script>
 <script src="i18n-learn.js"></script>
 <script src="learn.js"></script>
 <script src="game.js"></script>
+<script src="dyn.js"></script>
 
 <script>
     PlatformHeader.init({ gameName: 'TableMaster', gameIcon: '✖️', rootPath: '../' });

@@ -22,6 +22,7 @@
         <h1 class="vm-title" id="vm-h1">VocabMaster</h1>
         <p class="vm-sub" id="vm-sub"></p>
         <div class="vm-langs" id="vm-langs" role="group"></div>
+        <div class="vm-langs vm-modes" id="vm-modes" role="group"></div>
         <div class="vm-packs" id="vm-packs"></div>
         <p class="vm-note" id="vm-note"></p>
     </section>
@@ -32,14 +33,21 @@
             <div class="vm-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i id="vm-barfill"></i></div>
             <span class="vm-count" id="vm-count"></span>
         </div>
+        <div class="vm-tools" id="vm-tools">
+            <span class="vm-streak" id="vm-streak" aria-live="polite"></span>
+            <button class="vm-help" id="vm-help" type="button" aria-expanded="false" aria-controls="vm-helpbox"></button>
+        </div>
+        <p class="vm-helpbox" id="vm-helpbox" role="status" hidden></p>
         <div class="vm-card" id="vm-card" aria-live="polite"></div>
     </section>
 
     <section id="vm-end" class="vm-screen" hidden>
         <div class="vm-endbox">
             <div class="vm-trophy" id="vm-trophy" aria-hidden="true"></div>
+            <div class="vm-stars" id="vm-stars" aria-hidden="true"></div>
             <h2 id="vm-endtitle"></h2>
             <p id="vm-endtext"></p>
+            <p class="vm-note" id="vm-endnote" hidden></p>
             <div class="vm-endlist" id="vm-endlist"></div>
             <div class="vm-endbtns">
                 <button class="vm-btn" id="vm-again" type="button"></button>
@@ -58,6 +66,7 @@
 <script src="../platform/firestore.js"></script>
 <script src="../platform/identity.js"></script>
 <script src="../platform/platform-header.js"></script>
+<script src="../platform/juice.js"></script>
 <script src="learn.js"></script>
 <script src="game.js"></script>
 <script>

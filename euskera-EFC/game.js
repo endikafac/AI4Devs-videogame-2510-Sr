@@ -287,6 +287,7 @@ const EuskeraGame = (() => {
 
         const topic = EUSKERA_MODULE.vocabulary_topics.find(t => t.id === topicId);
 
+        state.caseMode       = false;
         state.vocabMode      = true;
         state.vocabTopicId   = topicId;
         state.vocabQuestions = questions;
@@ -309,7 +310,7 @@ const EuskeraGame = (() => {
 
     function updateVocabHUD() {
         $('eu-score-val').textContent    = state.vocabScore;
-        $('eu-streak-val').textContent   = state.streak;
+        $('eu-streak-val').textContent   = streakText();
         const total   = state.vocabQuestions.length;
         const current = state.vocabQIndex;
         $('eu-progress-val').textContent = `${Math.min(current + 1, total)}/${total}`;
@@ -341,6 +342,7 @@ const EuskeraGame = (() => {
             </div>
             <div class="eu-options">${optionsHtml}</div>`;
         updateVocabHUD();
+        decorate('vocab');
     }
 
     function handleVocabMCQ(encodedOpt) {
@@ -368,14 +370,8 @@ const EuskeraGame = (() => {
             if (btn.textContent === chosen && !isCorrect) btn.classList.add('wrong');
         });
 
-        const feedbackEl = $('eu-feedback');
-        if (feedbackEl) {
-            feedbackEl.className = 'eu-feedback ' + (isCorrect ? 'correct' : 'wrong');
-            feedbackEl.textContent = isCorrect
-                ? `Correcto! ${q.eu} = ${q.answer}`
-                : `Incorrecto. ${q.eu} = ${q.answer}`;
-            feedbackEl.style.display = 'block';
-        }
+        fxAnswer(isCorrect, chosen);
+        showFeedback(isCorrect, `${q.eu} = ${q.answer}`);
         show($('eu-next-btn'));
     }
 
@@ -398,7 +394,7 @@ const EuskeraGame = (() => {
         $('eu-result-correct').textContent = `${state.vocabCorrect}/${total}`;
         $('eu-result-time').textContent    = formatTime(elapsed);
         $('eu-result-level').textContent   = 'Vocab';
-        $('eu-result-stars').innerHTML     = [1, 2, 3].map(n => `<span style="opacity:${stars >= n ? 1 : 0.25}">⭐</span>`).join('');
+        Dyn.stars($('eu-result-stars'), stars, 3, '⭐'); if (stars >= 2) Dyn.big($('eu-result-stars'));
 
         hide($('eu-next-level-btn'));
         showScreen('results');
@@ -406,7 +402,7 @@ const EuskeraGame = (() => {
 
     // ── Game start (grammar levels) ────────────────────────────────────
     function startLevel(levelId) {
-        state.vocabMode = false;
+        state.vocabMode = false; state.caseMode = false;
         const lvl = EUSKERA_LEVELS.find(l => l.id === levelId);
         if (!lvl) return;
         state.level = levelId;
@@ -444,7 +440,7 @@ const EuskeraGame = (() => {
         const lvl = EUSKERA_LEVELS.find(l => l.id === state.level);
         if (!lvl) return;
         $('eu-score-val').textContent  = state.score;
-        $('eu-streak-val').textContent = state.streak;
+        $('eu-streak-val').textContent = streakText();
 
         let total, current;
         if (lvl.type === 'listening') {
@@ -461,6 +457,105 @@ const EuskeraGame = (() => {
     }
 
     // ── Question rendering ─────────────────────────────────────────────
+    // ── Dynamic layer: zone labels, coloured answers, drag into the blank, help, case round ──
+    const streakText = () => (state.streak >= 3 ? '🔥 ' : '') + state.streak;
+    function progressNumbers() {
+        if (state.caseMode) return { n: Math.min(state.caseIdx + 1, state.caseQs.length), m: state.caseQs.length };
+        if (state.vocabMode) return { n: Math.min(state.vocabQIndex + 1, state.vocabQuestions.length), m: state.vocabQuestions.length };
+        const lvl = EUSKERA_LEVELS.find(l => l.id === state.level); if (!lvl) return { n: 1, m: 1 };
+        if (lvl.type === 'listening') { const m = lvl.passages.reduce((s, p) => s + p.questions.length, 0); return { n: Math.min(state.totalAnswered + 1, m), m }; }
+        return { n: Math.min(state.exerciseIndex + 1, lvl.exercises.length), m: lvl.exercises.length };
+    }
+    function decorate(kind) {
+        const area = $('eu-question-area'); if (!area || !area.firstChild) return;
+        area.classList.remove('dy-done'); Dyn.slide(area);
+        const pn = progressNumbers();
+        area.insertBefore(Dyn.zone(Dyn.t('q', { n: pn.n, m: pn.m }), 'q'), area.firstChild);
+        const opts = area.querySelector('.eu-options');
+        if (opts) { opts.parentNode.insertBefore(Dyn.zone(kind === 'mcq' ? 'dragFill' : 'choose'), opts); Dyn.style(opts, { sel: '.eu-option-btn' }); }
+        const row = area.querySelector('.eu-fill-row'); if (row) row.parentNode.insertBefore(Dyn.zone('write'), row);
+        if (kind === 'mcq') {
+            area.querySelectorAll('.eu-option-btn').forEach(btn => Dyn.drag(btn, { targets: '.eu-blank, .eu-sentence', onDrop: (tg, node) => {
+                const bl = area.querySelector('.eu-blank'); if (bl) bl.textContent = node.textContent; handleMCQ(encodeURIComponent(node.textContent));
+            } }));
+        }
+    }
+    function fillBlank(ans, ok) {
+        const bl = document.querySelector('#eu-question-area .eu-blank'); if (!bl) return;
+        bl.textContent = ans; bl.classList.add(ok ? 'filled-ok' : 'filled-bad');
+    }
+    function fxAnswer(ok, chosen) {
+        const btns = Array.from(document.querySelectorAll('.eu-option-btn'));
+        const node = (chosen != null && btns.find(b => b.textContent === chosen)) || $('eu-fill-input') || $('eu-question-area');
+        $('eu-question-area').classList.add('dy-done');
+        if (ok) Dyn.good(node, state.streak); else Dyn.bad(node);
+        if (state.vocabMode) updateVocabHUD(); else if (state.caseMode) updateCaseHUD(); else updateHUD();
+    }
+    function helpSheet() {
+        let body = null;
+        if (state.caseMode) body = Dyn.t('caseHelp');
+        else if (state.vocabMode) { const q = state.vocabQuestions[state.vocabQIndex]; if (q) { speakWord(q.eu); body = Dyn.t('hintStarts', { c: q.answer.charAt(0).toUpperCase(), n: q.answer.length }); } }
+        else {
+            const lvl = EUSKERA_LEVELS.find(l => l.id === state.level);
+            if (lvl && lvl.type === 'mcq') { const ex = lvl.exercises[state.exerciseIndex]; if (ex) body = Dyn.t('euHelp') + ' NORK = ' + ex.analysis.nork + ', NORI = ' + ex.analysis.nori + ', NOR = ' + ex.analysis.nor + '.'; }
+            else if (lvl && lvl.type === 'fill-blank') { const ex = lvl.exercises[state.exerciseIndex]; if (ex) body = ex.hint; }
+            else if (lvl) body = Dyn.t('euListen');
+        }
+        Dyn.sheet(Dyn.t('help'), body || Dyn.t('caseHelp'));
+    }
+
+    // Case round: tap the piece that answers "who / to whom / what" (not saved, not scored in the levels)
+    const CASE_ROLES = [['nork', 'NORK'], ['nori', 'NORI'], ['nor', 'NOR']], CASE_ROUNDS = 6;
+    const shuffleArr = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+    function startCaseRound() {
+        const pool = [].concat(EUSKERA_LEVELS[0].exercises, EUSKERA_LEVELS[1] ? EUSKERA_LEVELS[1].exercises : []).filter(e => e.analysis && e.analysis.nork && e.analysis.nori && e.analysis.nor);
+        const picked = shuffleArr(pool.slice()).slice(0, CASE_ROUNDS), roles = shuffleArr(CASE_ROLES.concat(CASE_ROLES).slice());
+        Object.assign(state, { vocabMode: false, caseMode: true, caseQs: picked.map((ex, i) => ({ ex, role: roles[i % roles.length] })), caseIdx: 0, score: 0, correct: 0, totalAnswered: 0, streak: 0, bestStreak: 0, startTime: Date.now(), answered: false });
+        $('eu-level-badge').textContent = '🎯 ' + Dyn.t('caseTitle');
+        renderCase(); showScreen('game');
+    }
+    function updateCaseHUD() {
+        const total = state.caseQs.length, cur = state.caseIdx;
+        $('eu-score-val').textContent = state.score; $('eu-streak-val').textContent = streakText();
+        $('eu-progress-val').textContent = Math.min(cur + 1, total) + '/' + total;
+        const pct = Math.round(cur / total * 100); $('eu-progress-fill').style.width = pct + '%'; $('eu-progress-bar-wrap').setAttribute('aria-valuenow', pct);
+    }
+    function renderCase() {
+        const q = state.caseQs[state.caseIdx]; if (!q) { showCaseResults(); return; }
+        state.answered = false;
+        const fb = $('eu-feedback'); if (fb) { fb.style.display = 'none'; fb.className = 'eu-feedback'; }
+        hide($('eu-next-btn'));
+        const ex = q.ex, piece = (EUSKERA_MODULE.theory.analogy.pieces || []).find(p => p.name === q.role[1]) || { question: q.role[1], color: '' };
+        const area = $('eu-question-area'); area.textContent = '';
+        const card = document.createElement('div'); card.className = 'eu-question-card';
+        const lab = document.createElement('p'); lab.className = 'eu-question-label'; lab.textContent = piece.color + ' ' + q.role[1] + ': ' + piece.question;
+        const sen = document.createElement('p'); sen.className = 'eu-sentence'; sen.textContent = ex.sentence.replace('___', ex.answer);
+        const tr = document.createElement('p'); tr.className = 'eu-translation'; tr.textContent = ex.translation;
+        card.append(lab, sen, tr);
+        const opts = document.createElement('div'); opts.className = 'eu-options'; opts.id = 'eu-case-options';
+        shuffleArr(CASE_ROLES.map(r => ex.analysis[r[0]])).forEach(val => {
+            const b = document.createElement('button'); b.type = 'button'; b.className = 'eu-option-btn'; b.textContent = val; b.onclick = () => handleCase(val); opts.appendChild(b);
+        });
+        area.append(card, opts);
+        updateCaseHUD(); decorate('case');
+    }
+    function handleCase(val) {
+        if (state.answered) return; state.answered = true;
+        const q = state.caseQs[state.caseIdx], right = q.ex.analysis[q.role[0]], ok = val === right;
+        state.totalAnswered++;
+        if (ok) { state.correct++; state.streak++; state.bestStreak = Math.max(state.bestStreak, state.streak); state.score += 10; } else state.streak = 0;
+        document.querySelectorAll('.eu-option-btn').forEach(btn => { btn.disabled = true; if (btn.textContent === right) btn.classList.add('correct'); if (btn.textContent === val && !ok) btn.classList.add('wrong'); });
+        fxAnswer(ok, val); showFeedback(ok, q.role[1] + ' = ' + right + '  ·  ' + q.ex.explanation); show($('eu-next-btn'));
+    }
+    function showCaseResults() {
+        const elapsed = Math.round((Date.now() - state.startTime) / 1000), total = state.caseQs.length, pct = total ? state.correct / total * 100 : 0;
+        const stars = pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 50 ? 1 : 0;
+        $('eu-result-score').textContent = state.score; $('eu-result-correct').textContent = state.correct + '/' + total;
+        $('eu-result-time').textContent = formatTime(elapsed); $('eu-result-level').textContent = '🎯';
+        Dyn.stars($('eu-result-stars'), stars, 3, '⭐'); if (stars >= 2) Dyn.big($('eu-result-stars'));
+        hide($('eu-next-level-btn')); showScreen('results');
+    }
+
     function renderQuestion() {
         const lvl = EUSKERA_LEVELS.find(l => l.id === state.level);
         if (!lvl) return;
@@ -478,6 +573,7 @@ const EuskeraGame = (() => {
         else if (lvl.type === 'listening')  renderListening(lvl);
 
         updateHUD();
+        decorate(lvl.type === 'mcq' ? 'mcq' : lvl.type === 'fill-blank' ? 'fill' : 'listen');
     }
 
     // ── MCQ (Level 1 & 2) ──────────────────────────────────────────────
@@ -515,6 +611,7 @@ const EuskeraGame = (() => {
             if (btn.textContent.toLowerCase() === ex.answer.toLowerCase()) btn.classList.add('correct');
             if (btn.textContent === chosen && !isCorrect)                   btn.classList.add('wrong');
         });
+        fillBlank(ex.answer, isCorrect); fxAnswer(isCorrect, chosen);
         showFeedback(isCorrect, ex.explanation);
         show($('eu-next-btn'));
     }
@@ -560,6 +657,7 @@ const EuskeraGame = (() => {
         const submitBtn = $('eu-submit-btn');
         if (submitBtn) submitBtn.disabled = true;
         if (!isCorrect) inp.value = ex.answer;
+        fxAnswer(isCorrect, null);
         showFeedback(isCorrect, `Respuesta correcta: ${ex.answer}`);
         show($('eu-next-btn'));
     }
@@ -621,6 +719,7 @@ const EuskeraGame = (() => {
             if (btn.textContent === q.answer)            btn.classList.add('correct');
             if (btn.textContent === opt && !isCorrect)   btn.classList.add('wrong');
         });
+        fxAnswer(isCorrect, opt);
         showFeedback(isCorrect, q.explanation);
         show($('eu-next-btn'));
     }
@@ -644,12 +743,17 @@ const EuskeraGame = (() => {
         const el = $('eu-feedback');
         if (!el) return;
         el.className   = 'eu-feedback ' + (isCorrect ? 'correct' : 'wrong');
-        el.textContent = isCorrect ? `Correcto! ${explanation}` : `Incorrecto. ${explanation}`;
+        el.textContent = '';
+        const lead = document.createElement('strong'); lead.textContent = isCorrect ? 'Correcto! ' : 'Incorrecto. ';
+        const why = document.createElement('small'); why.className = 'eu-whylbl'; why.textContent = '💡 ' + Dyn.t('why');
+        const body = document.createElement('span'); body.className = 'eu-whytx'; body.textContent = explanation;
+        el.append(lead, why, body);
         el.style.display = 'block';
     }
 
     // ── Next question ──────────────────────────────────────────────────
     function nextQuestion() {
+        if (state.caseMode) { state.caseIdx++; renderCase(); return; }
         if (state.vocabMode) {
             nextVocabQuestion();
             return;
@@ -684,7 +788,7 @@ const EuskeraGame = (() => {
         $('eu-result-correct').textContent = `${state.correct}/${total}`;
         $('eu-result-time').textContent    = formatTime(elapsed);
         $('eu-result-level').textContent   = state.level;
-        $('eu-result-stars').innerHTML     = [1, 2, 3].map(n => `<span style="opacity:${stars >= n ? 1 : 0.25}">⭐</span>`).join('');
+        Dyn.stars($('eu-result-stars'), stars, 3, '⭐'); if (stars >= 2) Dyn.big($('eu-result-stars'));
 
         const nextLvlBtn = $('eu-next-level-btn');
         if (state.level >= EUSKERA_LEVELS.length) hide(nextLvlBtn);
@@ -724,6 +828,15 @@ const EuskeraGame = (() => {
     // ── Init ───────────────────────────────────────────────────────────
     function init() {
         renderHome();
+        // tools row under the HUD: help (always visible) and sound
+        const hud = document.querySelector('.eu-hud');
+        if (hud) {
+            const tools = Dyn.el('div', 'dy-tools'), hb = Dyn.el('button', 'dy-help', '💡'); hb.type = 'button'; hb.id = 'eu-help'; hb.onclick = helpSheet;
+            tools.appendChild(hb); Dyn.sound(tools); hud.parentNode.insertBefore(tools, hud.nextSibling);
+            const labels = () => { hb.textContent = '💡 ' + Dyn.t('help'); hb.setAttribute('aria-label', Dyn.t('help')); const cb = $('eu-case-btn'); if (cb) cb.textContent = '🎯 ' + Dyn.t('caseTitle'); };
+            labels(); document.addEventListener('platformLanguageChanged', labels);
+        }
+        $('eu-case-btn')?.addEventListener('click', startCaseRound);
 
         // Theory toggle
         $('eu-theory-toggle')?.addEventListener('click', () => {
@@ -745,7 +858,8 @@ const EuskeraGame = (() => {
 
         // Results buttons
         $('eu-retry-btn')?.addEventListener('click', () => {
-            if (state.vocabMode) startVocabQuiz(state.vocabTopicId);
+            if (state.caseMode) startCaseRound();
+            else if (state.vocabMode) startVocabQuiz(state.vocabTopicId);
             else startLevel(state.level);
         });
         $('eu-next-level-btn')?.addEventListener('click', () => {
@@ -779,5 +893,7 @@ const EuskeraGame = (() => {
         showTopicWords,
         startVocabQuiz,
         handleVocabMCQ,
+        startCaseRound,
+        _state: state,
     };
 })();

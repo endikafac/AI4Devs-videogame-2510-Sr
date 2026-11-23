@@ -743,6 +743,10 @@ const ClockLab = (() => {
             if (open) { const lb = el('button', 'ck-lbtn', '📖'); lb.type = 'button'; lb.dataset.learn = u.id; lb.setAttribute('aria-label', `${t.learnBtn}: ${unitName(u)}`); lb.onclick = () => { prepare(i); openLearn('start'); }; li.appendChild(lb); }
             path.appendChild(li);
         });
+        let sb = $('ck-speedbtn');
+        if (!sb) { sb = el('button', 'ck-btn ck-speedbtn'); sb.type = 'button'; sb.id = 'ck-speedbtn'; sb.onclick = startSpeed; $('ck-home').appendChild(sb); }
+        let best = 0; try { best = Number(localStorage.getItem(speedKey())) || 0; } catch (e) {}
+        sb.textContent = '⚡ ' + Dyn.t('speed') + (best ? ' · ' + Dyn.t('best') + ': ' + best : '');
     }
 
     // ---- learn step ----
@@ -785,12 +789,15 @@ const ClockLab = (() => {
     function beginPlay() { show('ck-play'); next(); }
     function bar() {
         const g = S.phase === 'guided', p = g ? 0 : Math.round(S.qi / S.total * 100);
-        $('ck-barfill').style.width = p + '%'; $('ck-barfill').parentNode.setAttribute('aria-valuenow', p);
-        $('ck-count').textContent = g ? T().guided(S.gi + 1, S.guidedQ.length) : `${Math.min(S.qi + 1, S.total)} / ${S.total}`;
-        $('ck-learnbtn').textContent = '📖 ' + T().learnBtn;
+        if (!S.speed) { $('ck-barfill').style.width = p + '%'; $('ck-barfill').parentNode.setAttribute('aria-valuenow', p); }
+        $('ck-count').textContent = S.speed ? `⏱ ${Math.max(0, Math.ceil((S.speed.end - Date.now()) / 1000))}s` : g ? T().guided(S.gi + 1, S.guidedQ.length) : `${Math.min(S.qi + 1, S.total)} / ${S.total}`;
+        $('ck-learnbtn').textContent = '💡 ' + Dyn.t('help'); $('ck-learnbtn').setAttribute('aria-label', Dyn.t('help') + ': ' + T().learnBtn);
+        $('ck-learnbtn').hidden = !!S.speed;
+        if (S.hud) { S.hud.setStreak(S.run); S.hud.setPoints(S.correct); }
     }
 
     function next() {
+        if (S.speed) return nextSpeed();
         $('ck-feedback').hidden = true; S.locked = false;
         if (S.phase === 'guided' && S.gi >= S.guidedQ.length) { S.phase = 'practice'; S.qi = 0; }
         if (S.phase === 'practice' && S.qi >= S.total) return finish();
@@ -802,11 +809,14 @@ const ClockLab = (() => {
     function renderQuestion() {
         const t = T(), q = S.q, card = $('ck-card'), L = lang(); card.textContent = ''; card.classList.remove('ck-shake');
         const ts = formatTime(q.h, q.m), tp = q.type;
+        Dyn.slide(card);
+        card.appendChild(Dyn.zone(S.speed ? '⚡ ' + Dyn.t('speed') : S.phase === 'guided' ? t.guided(S.gi + 1, S.guidedQ.length) : Dyn.t('q', { n: Math.min(S.qi + 1, S.total), m: S.total }), 'q'));
         if (tp === 'read') {
             card.appendChild(el('p', 'ck-prompt', t.qRead)); card.appendChild(clockWrap(q.h, q.m));
             options(card, q.options.map(v => ({ label: v, v })));
         } else if (tp === 'type') {
             card.appendChild(el('p', 'ck-prompt', t.qType)); card.appendChild(clockWrap(q.h, q.m));
+            card.appendChild(Dyn.zone('write'));
             const row = el('div', 'ck-typed');
             const mkIn = (id, aria) => { const i = el('input', 'ck-input'); i.id = id; i.type = 'text'; i.inputMode = 'numeric'; i.maxLength = 2; i.autocomplete = 'off'; i.setAttribute('aria-label', aria); return i; };
             row.appendChild(mkIn('ck-th', t.hour)); row.appendChild(el('span', 'ck-colon', ':')); row.appendChild(mkIn('ck-tm', t.minute));
@@ -815,13 +825,14 @@ const ClockLab = (() => {
         } else if (tp === 'pick') {
             card.appendChild(el('p', 'ck-prompt', t.qPick(ts))); card.appendChild(el('div', 'ck-big', ts));
             const box = el('div', 'ck-opts ck-clocks'); box.setAttribute('role', 'group');
-            q.clocks.forEach((c, i) => { const b = el('button', 'ck-opt ck-clockbtn'); b.type = 'button'; b.appendChild(drawClock(c.h, c.m, true)); b.onclick = () => answer(i, b); box.appendChild(b); });
-            card.appendChild(box);
+            q.clocks.forEach((c, i) => { const b = el('button', 'ck-opt ck-clockbtn'); b.type = 'button'; b.setAttribute('aria-label', Dyn.t('tapClock') + ' ' + (i + 1)); b.appendChild(drawClock(c.h, c.m, true)); b.onclick = () => answer(i, b); box.appendChild(b); });
+            card.appendChild(Dyn.zone('tapClock')); card.appendChild(box); Dyn.style(box, { sel: '.ck-clockbtn', fill: false });
         } else if (tp === 'set') {
             card.appendChild(el('p', 'ck-prompt', setPrompt(q, L)));
             if (q.ask.kind === 'time') card.appendChild(el('div', 'ck-big', ts));
             if (q.guided) card.appendChild(el('p', 'ck-hintbox', `${t.hintL} ${explain(q, L).text}`));
             S.set = { h: q.start.h, m: q.start.m };
+            card.appendChild(Dyn.zone('dragHands'));
             const w = el('div', 'ck-clockwrap'); w.id = 'ck-setclock';
             S.widget = makeClock({ h: q.start.h, m: q.start.m, mode: q.step >= 60 ? 'hour' : 'both', snap: Math.min(q.step, 30), onChange: (h, m) => { S.set.h = h; S.set.m = m; refreshVals(); } });
             w.appendChild(S.widget.svg); card.appendChild(w);
@@ -832,7 +843,7 @@ const ClockLab = (() => {
             const ok = el('button', 'ck-btn', t.check); ok.type = 'button'; ok.id = 'ck-check'; ok.onclick = () => answer({ h: S.set.h, m: S.set.m }, ok); card.appendChild(ok);
             refreshVals();
         } else if (tp === 'match') {
-            card.appendChild(el('p', 'ck-prompt', t.qMatch));
+            card.appendChild(el('p', 'ck-prompt', t.qMatch)); card.appendChild(Dyn.zone('matchPairs'));
             renderMatch(card, q);
         } else if (tp === 'say') {
             card.appendChild(el('p', 'ck-prompt', t.qSay)); card.appendChild(clockWrap(q.h, q.m));
@@ -862,7 +873,7 @@ const ClockLab = (() => {
     function options(card, list, wide) {
         const box = el('div', 'ck-opts' + (wide ? ' wide' : '')); box.setAttribute('role', 'group');
         list.forEach(o => { const b = el('button', 'ck-opt', o.label); b.type = 'button'; b.dataset.v = o.v; b.onclick = () => answer(o.v, b); box.appendChild(b); });
-        card.appendChild(box);
+        card.appendChild(Dyn.zone('choose')); card.appendChild(box); Dyn.style(box, { sel: '.ck-opt' });
     }
 
     function renderMatch(card, q) {
@@ -924,6 +935,7 @@ const ClockLab = (() => {
         }
         if (!ok) {
             const ex = explain(q, L, v && typeof v === 'object' ? v : null);
+            col.appendChild(el('b', 'ck-whylbl', '💡 ' + Dyn.t('why')));
             const why = el('p', 'ck-why', ex.text); why.id = 'ck-why'; col.appendChild(why);
             if (!o.retry) {
                 const row = el('div', 'ck-figs');
@@ -932,7 +944,7 @@ const ClockLab = (() => {
             }
         }
         const go = el('button', 'ck-btn', o.retry ? t.retry : t.next); go.type = 'button'; go.id = o.retry ? 'ck-retry' : 'ck-continue';
-        go.onclick = o.retry ? () => { fb.hidden = true; } : () => { if (S.phase === 'guided') S.gi++; else S.qi++; next(); };
+        go.onclick = o.retry ? () => { fb.hidden = true; } : () => { if (S.speed) return nextSpeed(); if (S.phase === 'guided') S.gi++; else S.qi++; next(); };
         fb.appendChild(col); fb.appendChild(go); go.focus();
         try { fb.scrollIntoView({ block: 'nearest' }); } catch (e) {}
     }
@@ -940,14 +952,16 @@ const ClockLab = (() => {
     function answer(v, btn) {
         if (S.locked) return;
         const q = S.q, ok = isCorrect(q, v), guided = S.phase === 'guided';
-        if (guided && !ok && !q.tried) { q.tried = true; showFeedback(false, q, v, { retry: true }); return; }
-        S.locked = true;
+        if (guided && !ok && !q.tried) { q.tried = true; Dyn.bad(btn || $('ck-card')); showFeedback(false, q, v, { retry: true }); return; }
+        S.locked = true; $('ck-card').classList.add('dy-done');
         document.querySelectorAll('#ck-card .ck-opt, #ck-card .ck-key, #ck-check, #ck-card .ck-input').forEach(b => { b.disabled = true; });
         if (btn) btn.classList.add(ok ? 'ok' : 'bad');
         if (q.type === 'pick') { const rightIdx = q.clocks.findIndex(c => c.ok), bs = document.querySelectorAll('.ck-clockbtn'); if (bs[rightIdx]) bs[rightIdx].classList.add('ok'); }
         else if (q.options && !ok) document.querySelectorAll('#ck-card .ck-opt').forEach(b => { if (b.dataset.v === q.answer) b.classList.add('ok'); });
         if (!guided) { if (ok) { S.correct++; S.run++; S.bestRun = Math.max(S.bestRun, S.run); } else S.run = 0; }
-        showFeedback(ok, q, v);
+        if (ok) Dyn.good(btn || $('ck-card'), S.run); else Dyn.bad(btn || $('ck-card'));
+        if (S.hud) { S.hud.setStreak(S.run); S.hud.setPoints(S.correct); }
+        if (S.speed && ok) setTimeout(() => { if (S.speed) nextSpeed(); }, 650); else showFeedback(ok, q, v);
         if (!ok) { $('ck-card').classList.add('ck-shake'); if (navigator.vibrate) { try { navigator.vibrate(120); } catch (e) {} } }
     }
 
@@ -956,11 +970,12 @@ const ClockLab = (() => {
         $('ck-trophy').textContent = won ? (st === 3 ? '🏆' : '⭐') : '🔄';
         $('ck-endtitle').textContent = won ? t.done : t.fail;
         $('ck-endtext').textContent = t.score(S.correct, S.total);
-        $('ck-endstars').textContent = won ? '★'.repeat(st) + '☆'.repeat(3 - st) : '';
+        if (won) Dyn.stars($('ck-endstars'), st, 3); else $('ck-endstars').textContent = '';
         $('ck-next').textContent = won ? (S.idx < UNITS.length - 1 ? t.nextL : t.back) : t.again;
         $('ck-next').onclick = () => { if (won && S.idx < UNITS.length - 1) start(S.idx + 1); else if (won) { renderHome(); show('ck-home'); } else { prepare(S.idx); beginPlay(); } };
         $('ck-back').textContent = t.back; $('ck-back').onclick = () => { renderHome(); show('ck-home'); };
         show('ck-end');
+        if (won && st >= 2) Dyn.big($('ck-trophy'));
         if (!won) return;
         const prev = S.prog.units[S.u.id];
         S.prog.units[S.u.id] = { stars: Math.max(st, prev ? prev.stars : 0) };
@@ -977,9 +992,44 @@ const ClockLab = (() => {
         }
     }
 
-    function goHome() { renderHome(); show('ck-home'); }
+    // ---- lightning round: alternates "tap the clock" and "set the hands", gentle 60 s timer, never a game over ----
+    const SPEED_SECS = 60;
+    const speedKey = () => 'clock_speed_best_' + owner();
+    function startSpeed() {
+        const pool = UNITS.filter((u, i) => unlocked(i) && u.setKind === 'time'), u = pool[pool.length - 1] || UNITS[0];
+        S.u = u; S.idx = UNITS.indexOf(u); S.phase = 'speed'; S.run = 0; S.correct = 0; S.bestRun = 0; S.t0 = Date.now();
+        S.speed = { n: 0, end: Date.now() + SPEED_SECS * 1000, u };
+        clearInterval(S.speedTimer); S.speedTimer = setInterval(speedTick, 250);
+        show('ck-play'); nextSpeed();
+    }
+    function speedTick() {
+        if (!S.speed) { clearInterval(S.speedTimer); return; }
+        const left = S.speed.end - Date.now();
+        $('ck-barfill').style.width = Math.max(0, left / (SPEED_SECS * 10)) + '%';
+        $('ck-count').textContent = '⏱ ' + Math.max(0, Math.ceil(left / 1000)) + 's';
+        if (left <= 0) finishSpeed();
+    }
+    function nextSpeed() {
+        if (!S.speed) return;
+        $('ck-feedback').hidden = true; S.locked = false;
+        const type = S.speed.n % 2 === 0 ? 'pick' : 'set'; S.speed.n++;
+        S.q = makeQuestion(S.speed.u, type); bar(); renderQuestion();
+    }
+    function finishSpeed() {
+        clearInterval(S.speedTimer); const n = S.correct, st = n >= 8 ? 3 : n >= 4 ? 2 : 1;
+        S.speed = null; S.phase = 'practice'; $('ck-feedback').hidden = true;
+        let best = 0; try { best = Number(localStorage.getItem(speedKey())) || 0; if (n > best) { best = n; localStorage.setItem(speedKey(), String(n)); } } catch (e) {}
+        $('ck-trophy').textContent = '⚡'; $('ck-endtitle').textContent = Dyn.t('speed');
+        $('ck-endtext').textContent = `${Dyn.t('score')}: ${n} · ${Dyn.t('best')}: ${best}`;
+        Dyn.stars($('ck-endstars'), st, 3);
+        $('ck-next').textContent = Dyn.t('again'); $('ck-next').onclick = startSpeed;
+        $('ck-back').textContent = T().back; $('ck-back').onclick = goHome;
+        show('ck-end'); if (n >= 4) Dyn.big($('ck-trophy'));
+    }
+    function goHome() { clearInterval(S.speedTimer); S.speed = null; S.phase = 'practice'; renderHome(); show('ck-home'); }
     function init() {
         $('ck-quit').onclick = goHome; $('ck-l-quit').onclick = goHome;
+        const topBar = document.querySelector('#ck-play .ck-top'); Dyn.sound(topBar); S.hud = Dyn.hud(topBar);
         $('ck-skip').onclick = () => finishLearn(false);
         $('ck-learn-done').onclick = () => finishLearn(true);
         $('ck-ex-next').onclick = () => { S.learn.ex = Math.min(S.learn.ex + 1, S.u.ex.length - 1); renderExample(); };

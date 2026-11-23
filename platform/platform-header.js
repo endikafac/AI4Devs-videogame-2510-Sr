@@ -284,6 +284,7 @@ const PlatformHeader = {
             { href: `${root}wordSearch-EFC/index.html`,   icon: '🔍', label: 'WordSearch',  key: '/wordSearch-EFC/'   },
             { href: `${root}crossword-EFC/index.html`,    icon: '✏️', label: 'Crucigrama',  key: '/crossword-EFC/'    },
             { href: `${root}mapas-EFC/index.html`,         icon: '🗺️', label: 'Mapas',          key: '/mapas-EFC/'           },
+            { href: `${root}readingCoach-EFC/index.html`, icon: '📖', label: 'Lectura', key: '/readingCoach-EFC/' },
             { href: `${root}tablaPeriodica-EFC/index.html`, icon: '🧪', label: 'Tabla periódica', key: '/tablaPeriodica-EFC/' },
             { href: `${root}euskera-EFC/index.html`,      icon: IKURRINA,    label: 'Nor-Nori-Nork',  key: '/euskera-EFC/'      },
             { href: `${root}englishVerbs-EFC/index.html`, icon: UNION_JACK,  label: 'Irregular Verbs', key: '/englishVerbs-EFC/' },
@@ -376,7 +377,7 @@ const PlatformHeader = {
         if (typeof PlatformAuth !== 'undefined') await PlatformAuth.signOut();
         // If the current page is a game, redirect to hub
         const path = window.location.pathname;
-        if (path.includes('/mathMaster') || path.includes('/snake') || path.includes('/tableMaster') || path.includes('/typingMaster') || path.includes('/wordSearch') || path.includes('/crossword') || path.includes('/geoQuiz') || path.includes('/mapas') || path.includes('/tablaPeriodica')) {
+        if (path.includes('/mathMaster') || path.includes('/snake') || path.includes('/tableMaster') || path.includes('/typingMaster') || path.includes('/wordSearch') || path.includes('/crossword') || path.includes('/geoQuiz') || path.includes('/mapas') || path.includes('/readingCoach') || path.includes('/tablaPeriodica')) {
             window.location.href = this._opts.rootPath + 'index.html';
         }
     },

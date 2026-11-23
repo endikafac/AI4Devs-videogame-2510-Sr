@@ -752,6 +752,7 @@ const TableMasterGame = {
 
         document.getElementById('hud-progress').textContent =
             `${ps.exIndex + 1}/${ps.exercises.length}`;
+        if (typeof TMDyn !== 'undefined') TMDyn.onExercise(ps.exIndex + 1, ps.exercises.length);
 
         document.getElementById('practice-feedback')?.classList.add('hidden');
         document.getElementById('practice-controls')?.classList.add('hidden');
@@ -1162,6 +1163,7 @@ const TableMasterGame = {
     // ── Feedback inline ───────────────────────────────────────────────────────
 
     _showInlineFeedback(container, type, html, onContinue) {
+        if (typeof TMDyn !== 'undefined') TMDyn.onInline(type, container);
         const fb = document.createElement('div');
         fb.className = `tm-practice-feedback ${type === 'correct' ? 'correct-fb' : 'wrong-fb'}`;
         fb.style.marginTop = '8px';
@@ -1949,6 +1951,7 @@ const TableMasterGame = {
         document.getElementById('drill-learn')?.classList.add('hidden');
         this._renderDrillAnswer();
         this._renderDrillHud();
+        if (typeof TMDyn !== 'undefined') TMDyn.onQuestion(this);
     },
 
     _renderDrillAnswer() {
@@ -1977,6 +1980,7 @@ const TableMasterGame = {
         }
         document.getElementById('drill-hud-streak').textContent = `🔥 ${d.streak}`;
         document.getElementById('drill-hud-score').textContent = d.score;
+        if (typeof TMDyn !== 'undefined') TMDyn.refresh();
     },
 
     _drillKey(key) {
@@ -2017,6 +2021,7 @@ const TableMasterGame = {
             progress.facts[cur.key] = Math.max(0, (Number(progress.facts[cur.key]) || 0) - 1);
             if (!progress.facts[cur.key]) delete progress.facts[cur.key];
             card.classList.add('ok');
+            if (typeof TMDyn !== 'undefined') TMDyn.onResult(true);
             fb.className = 'tm-drill-feedback ok';
             fb.textContent = '✓ ' + (d.streak > 0 && d.streak % 5 === 0
                 ? t('drillStreakMsg', { n: d.streak })
@@ -2046,6 +2051,7 @@ const TableMasterGame = {
                 const lb = document.getElementById('drill-learn');
                 if (lb) { lb.textContent = t('learnBtnTable', { n: cur.tbl }); lb.classList.remove('hidden'); }
             }
+            if (typeof TMDyn !== 'undefined') TMDyn.onResult(false);
             this._renderDrillHud();
             if (d.timed) {
                 d.nextTimer = setTimeout(() => this._drillNext(), 2800);
@@ -2132,6 +2138,7 @@ const TableMasterGame = {
         const starsEl = document.getElementById('drill-stars');
         starsEl.innerHTML = [1, 2, 3].map(i =>
             `<span class="tm-big-star${i <= stars ? ' on' : ''}" style="animation-delay:${i * 0.18}s">★</span>`).join('');
+        if (typeof TMDyn !== 'undefined') TMDyn.onEnd(stars);
         document.getElementById('drill-result-title').textContent = d.timed ? t('drillTimeUp') : t('drillResultTitle');
         const msg = [];
         if (d.timed) msg.push(t('drillTimedSolved', { n: d.correct }));

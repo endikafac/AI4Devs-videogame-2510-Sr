@@ -673,6 +673,7 @@ const CrosswordGame = {
                 this._reapplyUserGrid();
             }
 
+            this._dynInit();
             this._updateWordsCount();
         }, 30);
     },
@@ -1207,6 +1208,10 @@ const CrosswordGame = {
 
         // Mark as correct
         this._markWordCorrect(p);
+        if (!p._cel) {
+            p._cel = true; this._wstreak = (this._wstreak || 0) + 1; if (this._hud) this._hud.setStreak(this._wstreak);
+            Dyn.good(document.querySelector('.cw-cell[data-r="' + p.r0 + '"][data-c="' + p.c0 + '"]') || document.getElementById('cw-grid-container'), this._wstreak);
+        }
 
         // Count unique correct words
         this._correctWords = this._placed.filter(pw => this._isWordComplete(pw)).length;
@@ -1271,6 +1276,7 @@ const CrosswordGame = {
             cell.classList.remove('correct', 'wrong');
             cell.classList.add(this._userGrid[r][c] === p.word[i] ? 'correct' : 'wrong');
         }
+        if (document.querySelector('.cw-cell.wrong')) { this._wstreak = 0; if (this._hud) this._hud.setStreak(0); Dyn.bad(document.getElementById('cw-grid-container'), true); }
     },
 
     /* ── Check all ──────────────────────────────────────── */
@@ -1285,6 +1291,7 @@ const CrosswordGame = {
                 cell.classList.add(this._userGrid[r][c] === this._grid[r][c] ? 'correct' : 'wrong');
             }
         }
+        if (document.querySelector('.cw-cell.wrong')) { this._wstreak = 0; if (this._hud) this._hud.setStreak(0); Dyn.bad(document.getElementById('cw-grid-container'), true); }
 
         // Recount correct words
         this._correctWords = this._placed.filter(p => this._isWordComplete(p)).length;
@@ -1355,6 +1362,32 @@ const CrosswordGame = {
     },
 
     /* ── HUD updates ────────────────────────────────────── */
+    /* ── Dynamic layer: zones, progress ring, streak, visible hint, sound ── */
+    _dynInit() {
+        this._wstreak = 0;
+        const page = document.querySelector('#cw-screen-game .cw-page'); if (!page) return;
+        if (!this._dyBuilt) {
+            this._dyBuilt = true;
+            const hud = page.querySelector('.cw-hud');
+            const box = document.createElement('div'); box.className = 'cw-stat cw-ringbox';
+            this._ring = Dyn.ring(54, 7, '#22c55e'); box.appendChild(this._ring.el); hud.appendChild(box);
+            this._hud = Dyn.hud(hud, { noPoints: true });
+            const tools = document.createElement('div'); tools.className = 'dy-tools';
+            const hb = document.createElement('button'); hb.type = 'button'; hb.id = 'cw-hint-top'; hb.className = 'dy-help';
+            hb.addEventListener('click', () => this._revealLetter()); tools.appendChild(hb); this._hintBtn = hb;
+            Dyn.sound(tools); this._hud.root.parentNode.insertBefore(tools, this._hud.root.nextSibling);
+            const gc = document.getElementById('cw-grid-container'), z1 = Dyn.zone('cwGrid'); z1.id = 'cw-zone-grid'; gc.parentNode.insertBefore(z1, gc);
+            const tabs = page.querySelector('.cw-clue-tabs'), z2 = Dyn.zone('cwClues'); z2.id = 'cw-zone-clues'; tabs.parentNode.insertBefore(z2, tabs);
+            document.addEventListener('platformLanguageChanged', () => this._dynLabels());
+        }
+        this._hud.setStreak(0); this._dynLabels();
+    },
+    _dynLabels() {
+        if (this._hintBtn) { this._hintBtn.textContent = '💡 ' + Dyn.t('cwHint'); this._hintBtn.setAttribute('aria-label', Dyn.t('cwHint')); }
+        const a = document.getElementById('cw-zone-grid'); if (a) a.textContent = Dyn.t('cwGrid');
+        const b = document.getElementById('cw-zone-clues'); if (b) b.textContent = Dyn.t('cwClues');
+    },
+
     _updateGameTexts() {
         const timeLbl = document.getElementById('cw-time-lbl');
         if (timeLbl) timeLbl.textContent = this._t('timeLbl');
@@ -1388,6 +1421,7 @@ const CrosswordGame = {
     _updateWordsCount() {
         const wordsVal = document.getElementById('cw-words-val');
         if (wordsVal) wordsVal.textContent = this._correctWords + '/' + this._placed.length;
+        if (this._ring) this._ring.set(this._placed.length ? this._correctWords / this._placed.length : 0, this._correctWords + '/' + this._placed.length, this._correctWords + '/' + this._placed.length);
         const scoreVal = document.getElementById('cw-score-val');
         if (scoreVal) scoreVal.textContent = this._calcScore();
     },
@@ -1515,7 +1549,7 @@ const CrosswordGame = {
         if (titleEl) titleEl.textContent = this._t('results');
 
         const starsEl = document.getElementById('cw-stars');
-        if (starsEl) starsEl.textContent = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+        if (starsEl) { Dyn.stars(starsEl, stars, 3, '⭐'); if (stars >= 2) Dyn.big(starsEl); }
 
         const wordsEl = document.getElementById('cw-result-words');
         if (wordsEl) wordsEl.textContent = found + ' / ' + total;

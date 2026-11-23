@@ -58,6 +58,16 @@
         <div class="fr-feedback" id="fr-feedback" hidden aria-live="assertive"></div>
     </section>
 
+    <section id="fr-mini" class="fr-screen" hidden>
+        <div class="fr-top">
+            <button class="fr-quit" id="fr-mini-quit" type="button" aria-label="Salir">✕</button>
+            <div class="fr-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i id="fr-mini-fill"></i></div>
+            <span class="fr-count" id="fr-mini-count" aria-live="polite"></span>
+        </div>
+        <div class="fr-card" id="fr-mini-card"></div>
+        <div class="fr-feedback" id="fr-mini-fb" hidden aria-live="assertive"></div>
+    </section>
+
     <section id="fr-end" class="fr-screen" hidden>
         <div class="fr-endbox">
             <div class="fr-trophy" id="fr-trophy" aria-hidden="true"></div>
@@ -81,6 +91,8 @@
 <script src="../platform/firestore.js"></script>
 <script src="../platform/identity.js"></script>
 <script src="../platform/platform-header.js"></script>
+<script src="../platform/juice.js"></script>
+<script src="dyn.js"></script>
 <script src="game.js"></script>
 <script>
     PlatformHeader.init({ gameName: 'Fracciones con Pizza', gameIcon: '🍕', rootPath: '../' });

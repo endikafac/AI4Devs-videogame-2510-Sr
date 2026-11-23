@@ -1126,3 +1126,23 @@
         animation: none;
     }
 }
+
+/* dynamic question screens */
+.dy-tools { display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-bottom: 8px; }
+.eu-case-btn { width: 100%; margin-top: 1rem; min-height: 52px; font-size: 1rem; }
+.eu-blank { min-width: 4.2rem; padding: 0 .4rem; border: 2px dashed var(--hub-brand-color); border-radius: 8px; background: rgba(255,255,255,.05); }
+.eu-blank.dy-over, .eu-sentence.dy-over { outline: 3px dashed #fbbf24; outline-offset: 3px; }
+.eu-blank.filled-ok { border-style: solid; border-color: #22c55e; color: #22c55e; font-style: normal; font-weight: 800; }
+.eu-blank.filled-bad { border-style: solid; border-color: #f97316; color: #f97316; font-style: normal; font-weight: 800; }
+.eu-option-btn.dy-k { min-height: 58px; touch-action: none; }
+.eu-feedback { font-size: 1.05rem; padding: .9rem 1rem; border-width: 2px; }
+.eu-feedback .eu-whylbl { display: block; margin-top: .35rem; text-transform: uppercase; letter-spacing: .05em; font-size: .72rem; opacity: .9; }
+.eu-feedback .eu-whytx { display: block; font-weight: 700; }
+.eu-progress-fill { background-image: linear-gradient(90deg, var(--hub-brand-color), #facc15); }
+.eu-progress-wrap { height: 10px; border-radius: 5px; }
+@media (min-width: 900px) {
+  .eu-page { max-width: 820px; }
+  .eu-sentence { font-size: 1.6rem; }
+  .eu-options { grid-template-columns: 1fr 1fr; }
+  .eu-option-btn.dy-k { min-height: 72px; font-size: 1.2rem; }
+}

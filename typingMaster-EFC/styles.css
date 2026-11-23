@@ -748,3 +748,93 @@
 .ty-lesson-kb .ty-key.dim { opacity: .3; }
 .ty-lesson-kb .ty-key.space { flex: 0 1 60%; max-width: none; }
 .ty-lesson-kb .ty-key.current-key { opacity: 1; }
+
+/* ---- dynamic layer: zones, mini modes (letter rain, missing letter), stars ---- */
+.tyd-zonebar { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+.tyd-qn { flex: 1; min-width: 0; font-weight: 900; font-size: 1.05rem; }
+.tyd-streak { display: inline-flex; align-items: center; min-height: 40px; padding: 0 12px; border-radius: 999px; background: var(--bg-surface); border: 1px solid var(--border-color, rgba(255,255,255,.12)); font-weight: 900; }
+.tyd-streak.hot { background: linear-gradient(135deg, #f59e0b, #ea580c); color: #fff; animation: tydHot 1s ease-in-out infinite alternate; }
+@keyframes tydHot { to { transform: scale(1.08); } }
+.tyd-helpbtn, .tyd-quit { min-height: 48px; padding: 0 16px; border-radius: 14px; border: 2px solid #f59e0b; background: rgba(245,158,11,.12); color: #f59e0b; font: inherit; font-weight: 800; cursor: pointer; }
+.tyd-quit { min-width: 48px; padding: 0; border-color: var(--border-color, rgba(255,255,255,.2)); background: transparent; color: var(--text-primary); }
+.tyd-zonebar .jx-sound { min-width: 48px; min-height: 48px; }
+.tyd-hint { margin: 0 0 10px; padding: 10px 14px; border-radius: 12px; border-left: 4px solid #f59e0b; background: rgba(245,158,11,.14); font-size: 1.1rem; font-weight: 700; }
+.tyd-zone { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 8px auto; padding: 4px 14px; width: fit-content; border-radius: 999px; font-size: .8rem; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; color: #c7d2fe; background: rgba(99,102,241,.16); border: 1px solid rgba(165,180,252,.3); }
+.tyd-zone.a { color: #fde68a; background: rgba(251,191,36,.12); border-color: rgba(251,191,36,.35); }
+.tyd-zi { font-size: 1.1rem; }
+.ty-progress-bar { transition: width .35s cubic-bezier(.2,.9,.3,1); }
+.ty-char.current { animation: tydCaret 1s ease-in-out infinite alternate; }
+@keyframes tydCaret { to { transform: translateY(-2px); } }
+
+/* mini mode buttons on the home screen */
+.tyd-minirow { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 0 16px; }
+.tyd-minibtn { display: flex; align-items: center; gap: 12px; min-height: 76px; padding: 12px 14px; text-align: left; border: 0; border-radius: 18px; color: #fff; font: inherit; cursor: pointer; }
+.tyd-minibtn.r { background: linear-gradient(135deg, #0ea5e9, #6366f1); box-shadow: 0 5px 0 #3730a3; }
+.tyd-minibtn.m { background: linear-gradient(135deg, #f97316, #e11d48); box-shadow: 0 5px 0 #9f1239; }
+.tyd-minibtn:active { transform: translateY(3px); box-shadow: none; }
+.tyd-minibtn b { display: block; font-size: 1.05rem; }
+.tyd-minibtn small { display: block; opacity: .9; font-size: .8rem; line-height: 1.25; }
+.tyd-mi { font-size: 2rem; flex: none; }
+@media (max-width: 420px) { .tyd-minirow { grid-template-columns: 1fr; } }
+
+/* mini screen */
+.tyd-bar { height: 12px; border-radius: 6px; background: var(--bg-raised); overflow: hidden; margin-bottom: 8px; }
+.tyd-bar i { display: block; height: 100%; width: 100%; background: linear-gradient(90deg, #22c55e, #a3e635); border-radius: 6px; }
+.tyd-minihud { display: flex; justify-content: space-between; font-weight: 900; font-size: 1.1rem; min-height: 1.4em; }
+.tyd-card { background: var(--bg-surface); border: 1px solid rgba(255,255,255,.08); border-radius: 22px; padding: 14px; text-align: center; min-height: 140px; overflow: hidden; }
+.tyd-card.tyd-enter { animation: tydEnter .28s ease-out; }
+@keyframes tydEnter { from { opacity: 0; transform: translateX(26px); } to { opacity: 1; transform: none; } }
+.tyd-sky { position: relative; height: clamp(260px, 46vh, 420px); overflow: hidden; border-radius: 16px; background: linear-gradient(180deg, #0c4a6e, #1e1b4b); }
+.tyd-drop { position: absolute; top: -56px; width: 56px; height: 56px; margin-left: -28px; border: 0; border-radius: 50%; color: #fff; font: 900 1.6rem/1 var(--font-display, system-ui); cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,.3); animation: tydFall var(--dur, 7s) linear forwards; touch-action: manipulation; }
+@keyframes tydFall { to { transform: translateY(var(--h, 400px)); } }
+.tyd-drop.popped { animation: tydPop .25s ease-out forwards; }
+@keyframes tydPop { to { transform: scale(1.8); opacity: 0; } }
+.tyd-drop.missed { opacity: 0; transition: opacity .3s; animation-play-state: paused; }
+.tyd-word { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin: 12px 0; }
+.tyd-wc { display: inline-flex; align-items: center; justify-content: center; width: 1.3em; height: 1.5em; border-radius: 10px; background: var(--bg-raised); font: 900 clamp(2rem, 11vw, 3.4rem)/1 var(--font-display, system-ui); text-transform: uppercase; }
+.tyd-wc.hole { border: 3px dashed #fbbf24; color: #fbbf24; background: rgba(251,191,36,.12); animation: tydHole 1.2s ease-in-out infinite alternate; }
+.tyd-wc.hole.ok { border: 3px solid #bbf7d0; background: #16a34a; color: #fff; animation: none; }
+.tyd-wc.hole.bad { border: 3px solid #fecaca; background: #7f1d1d; color: #fff; animation: none; }
+@keyframes tydHole { to { box-shadow: 0 0 0 6px rgba(251,191,36,.25); } }
+.tyd-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 420px; margin: 0 auto; }
+.tyd-opt { position: relative; display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 72px; border: 0; border-radius: 16px; color: #fff; font: 900 1.8rem/1 var(--font-display, system-ui); cursor: pointer; animation: tydRise .3s ease-out backwards; animation-delay: calc(var(--i, 0) * 70ms + 100ms); }
+@keyframes tydRise { from { opacity: 0; transform: translateY(12px) scale(.95); } to { opacity: 1; transform: none; } }
+.tyd-opt.c0 { background: #e21b3c; box-shadow: 0 5px 0 #a50f28; }
+.tyd-opt.c1 { background: #1368ce; box-shadow: 0 5px 0 #0c4a96; }
+.tyd-opt.c2 { background: #c78a00; box-shadow: 0 5px 0 #8f6200; }
+.tyd-opt.c3 { background: #26890c; box-shadow: 0 5px 0 #1a6007; }
+.tyd-opt:active:not(:disabled) { transform: translateY(4px); box-shadow: none; }
+.tyd-opt:focus-visible, .tyd-drop:focus-visible { outline: 4px solid #fbbf24; outline-offset: 3px; }
+.tyd-opt:disabled:not(.ok):not(.bad) { opacity: .4; }
+.tyd-opt.ok { background: #16a34a; box-shadow: 0 0 0 4px #bbf7d0; opacity: 1; }
+.tyd-opt.bad { background: #7f1d1d; box-shadow: 0 0 0 4px #fecaca; opacity: 1; }
+.tyd-sh { font-style: normal; font-size: 1rem; opacity: .85; }
+.tyd-feedback { display: flex; align-items: center; gap: 12px; margin-top: 14px; padding: 14px; border-radius: 16px; animation: tydEnter .25s ease-out; }
+.tyd-feedback.good { background: #14532d; color: #dcfce7; }
+.tyd-feedback.bad { background: #7f1d1d; color: #fee2e2; }
+.tyd-fbi { font-size: 2.2rem; }
+.tyd-fbt { flex: 1; min-width: 0; }
+.tyd-fbt b { display: block; font-size: 1.3rem; text-transform: none; }
+.tyd-why { display: block; margin-top: 6px; padding: 8px 10px; border-radius: 10px; background: rgba(255,255,255,.14); font-size: 1.05rem; }
+.tyd-end { text-align: center; padding: 18px 8px; }
+.tyd-endscore { font-size: 1.4rem; font-weight: 900; margin: 6px 0 14px; }
+.tyd-endbtns { display: flex; flex-direction: column; gap: 10px; max-width: 300px; margin: 0 auto; }
+.tyd-stars, #ty-stars { font-size: 3rem; letter-spacing: 6px; }
+.tyd-star { display: inline-block; color: #fbbf24; opacity: 0; transform: scale(.2) rotate(-40deg); animation: tydStar .5s cubic-bezier(.2,1.6,.4,1) forwards; animation-delay: var(--d, 0s); }
+.tyd-star:not(.on) { color: #6b7280; }
+@keyframes tydStar { to { opacity: 1; transform: none; } }
+.tm-page { overflow-x: clip; }
+@media (min-width: 760px) {
+  .tyd-opts { max-width: 560px; }
+  .tyd-opt { min-height: 84px; font-size: 2.1rem; }
+  .tyd-drop { width: 68px; height: 68px; margin-left: -34px; font-size: 2rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tyd-streak.hot, .ty-char.current, .tyd-card.tyd-enter, .tyd-drop, .tyd-drop.popped, .tyd-wc.hole, .tyd-opt, .tyd-feedback, .tyd-star { animation: none !important; }
+  .tyd-star { opacity: 1; transform: none; }
+  .tyd-drop { top: 20px; }
+  .ty-progress-bar { transition: none; }
+}
+
+.tyd-zone { color: #fff !important; background: #4f46e5 !important; border-color: transparent !important; }
+.tyd-zone.a { background: #b45309 !important; }

@@ -240,7 +240,10 @@
                 <div class="progress-bar" id="progress-bar"></div>
             </div>
 
+            <div class="mm-zonebar"><span class="mm-qn" id="mm-qn"></span><button class="mm-helpbtn" id="mm-help" type="button"></button><span id="mm-snd"></span></div>
+
             <main class="question-area" aria-live="polite" aria-atomic="false">
+                <div class="mm-zone q" id="mm-zq"></div>
                 <div class="question-box">
                     <span class="question-text" id="question-text" aria-label="Pregunta">5 + 3 = ?</span>
                     <button id="speak-question-btn" class="speak-btn hidden"
@@ -249,6 +252,8 @@
                     </button>
                 </div>
 
+                <div class="mm-zone a" id="mm-za"></div>
+                <div class="mm-stage" id="mm-stage"></div>
                 <div class="answer-area">
                     <label for="answer-input" class="sr-only" data-i18n="yourAnswer">Tu respuesta</label>
                     <input
@@ -621,6 +626,7 @@
     <script src="../platform/firestore.js"></script>
     <script src="../platform/identity.js"></script>
     <script src="../platform/platform-header.js"></script>
+    <script src="../platform/juice.js"></script>
 
     <!-- Game modules -->
     <script src="storage.js"></script>
@@ -628,6 +634,7 @@
     <script src="i18n.js"></script>
     <script src="achievements.js"></script>
     <script src="game.js"></script>
+    <script src="dyn.js"></script>
 
     <script>
     // Init platform header for this game page

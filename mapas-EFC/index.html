@@ -45,6 +45,7 @@
                 <div class="mp-prompt" id="mp-prompt" aria-live="polite"></div>
                 <input class="mp-search" id="mp-search" type="search" autocomplete="off" hidden>
                 <span class="mp-count" id="mp-count"></span>
+                <span id="mp-sound"></span>
             </div>
             <div class="mp-sugg" id="mp-sugg" hidden></div>
             <div class="mp-timer" id="mp-timer" hidden><i id="mp-timerfill"></i></div>
@@ -86,6 +87,7 @@
 <script src="../platform/firestore.js"></script>
 <script src="../platform/identity.js"></script>
 <script src="../platform/platform-header.js"></script>
+<script src="../platform/juice.js"></script>
 <script src="game.js"></script>
 <script>
     PlatformHeader.init({ gameName: 'Mapas', gameIcon: '🗺️', rootPath: '../' });

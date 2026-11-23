@@ -203,8 +203,8 @@ test('F-CALC: a full lesson can be played on a phone, progress and next lesson u
     assert.equal(await page.locator('.cp-dot:not(.locked)').count(), 1, 'only the first lesson is open');
     await page.click('.cp-dot:not(.locked)');
     const solve = () => page.evaluate(() => {
-      const q = CalcPath.state.q, click = t => [...document.querySelectorAll('.cp-opt,.cp-key')].find(b => b.textContent.trim() === String(t)).click();
-      const typeNum = n => { String(n).split('').forEach(d => click(d)); click('✓'); };
+      const q = CalcPath.state.q, click = t => { const bs = [...document.querySelectorAll('.cp-opt,.cp-key')]; const b = bs.find(x => ((x.querySelector('.cp-ol,.cp-bl') || x).textContent).trim() === String(t)); if (!b) throw new Error(JSON.stringify({ t, type: q.type, btns: bs.map(x => x.textContent) })); b.click(); };
+      const typeNum = n => { if (!document.querySelector('.cp-key')) { const o = [...document.querySelectorAll('.cp-opt')].find(x => x.dataset.v === String(n)); if (o) { o.click(); return; } } String(n).split('').forEach(d => click(d)); click('✓'); };
       switch (q.type) {
         case 'type': return typeNum(q.res);
         case 'missing': return typeNum(q.answer);
@@ -226,8 +226,8 @@ test('F-CALC: a full lesson can be played on a phone, progress and next lesson u
     for (let i = 0; i < 3; i++) {
       await page.evaluate(() => {
         const q = CalcPath.state.q; const wrong = v => { const c = [...document.querySelectorAll('.cp-opt,.cp-key')]; return c; };
-        if (q.type === 'type' || q.type === 'missing') { const n = (q.type === 'type' ? q.res : q.answer) + 1; String(n).split('').forEach(d => [...document.querySelectorAll('.cp-key')].find(b => b.textContent === d).click()); [...document.querySelectorAll('.cp-key')].find(b => b.textContent === '✓').click(); }
-        else { const opts = [...document.querySelectorAll('.cp-opt')]; const right = q.type === 'choice' || q.type === 'visual' ? String(q.res) : q.type === 'compare' ? q.answer : q.type === 'tf' ? (q.answer ? 'Verdadero' : 'Falso') : q.exprs.find(x => x.ok) && `${q.exprs.find(x => x.ok).a} ${({ '+': '+', '-': '−', '*': '×' })[q.exprs.find(x => x.ok).op]} ${q.exprs.find(x => x.ok).b}`; (opts.find(b => b.textContent.trim() !== right) || opts[0]).click(); }
+        if ((q.type === 'type' || q.type === 'missing') && document.querySelector('.cp-key')) { const n = (q.type === 'type' ? q.res : q.answer) + 1; String(n).split('').forEach(d => [...document.querySelectorAll('.cp-key')].find(b => b.textContent === d).click()); [...document.querySelectorAll('.cp-key')].find(b => b.textContent === '✓').click(); }
+        else { const opts = [...document.querySelectorAll('.cp-opt')]; const right = q.type === 'type' ? String(q.res) : q.type === 'missing' ? String(q.answer) : q.type === 'choice' || q.type === 'visual' ? String(q.res) : q.type === 'compare' ? q.answer : q.type === 'tf' ? (q.answer ? 'Verdadero' : 'Falso') : q.exprs.find(x => x.ok) && `${q.exprs.find(x => x.ok).a} ${({ '+': '+', '-': '−', '*': '×' })[q.exprs.find(x => x.ok).op]} ${q.exprs.find(x => x.ok).b}`; (opts.find(b => ((b.querySelector('.cp-ol,.cp-bl') || b).textContent).trim() !== right) || opts[0]).click(); }
       });
       await page.click('#cp-continue');
     }

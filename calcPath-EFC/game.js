@@ -285,7 +285,7 @@ const CalcPath = (() => {
 
     // ---- lesson ----
     function start(i) {
-        S.idx = i; S.u = UNITS[i]; S.queue = makeLesson(S.u); S.total = S.queue.length; S.hearts = HEARTS; S.misses = 0; S.done = 0; S.t0 = Date.now();
+        S.idx = i; S.u = UNITS[i]; S.queue = makeLesson(S.u); S.total = S.queue.length; S.hearts = HEARTS; S.misses = 0; S.done = 0; S.streak = 0; S.t0 = Date.now();
         show('cp-play'); next();
     }
     function hearts() { $('cp-hearts').textContent = '❤️'.repeat(S.hearts) + '🖤'.repeat(HEARTS - S.hearts); $('cp-hearts').setAttribute('aria-label', S.hearts + ' / ' + HEARTS); }
@@ -300,39 +300,72 @@ const CalcPath = (() => {
         return w;
     }
 
+    // ---- presentation: labelled zones, coloured answers, new formats (see dyn.js) ----
+    const D = () => (typeof CalcDyn !== 'undefined' ? CalcDyn : null);
+    const JX = () => (typeof Juice !== 'undefined' ? Juice : null);
+    const OPICON = { '+': '➕', '-': '➖', '*': '✖️' };
+    function lessonHow(q, full) {
+        const f = full ? ` ${q.a} ${sym(q.op)} ${q.b} = ${q.res}` : '';
+        if (q.op === '+') return { es: `Empieza en ${q.a} y avanza ${q.b}.${f}`, en: `Start at ${q.a} and move ${q.b} forward.${f}` };
+        if (q.op === '-') return { es: `Empieza en ${q.a} y retrocede ${q.b}.${f}`, en: `Start at ${q.a} and go back ${q.b}.${f}` };
+        return { es: `${q.a} × ${q.b} es sumar ${q.a}, ${q.b} veces.${f}`, en: `${q.a} × ${q.b} means adding ${q.a}, ${q.b} times.${f}` };
+    }
+
     function next() {
         $('cp-feedback').hidden = true; S.locked = false; S.typed = '';
         if (!S.queue.length) return finish(true);
         S.q = S.queue[0]; bar(); hearts();
-        const t = T(), q = S.q, card = $('cp-card'); card.textContent = '';
+        const t = T(), q = S.q, card = $('cp-card'), d = D(), dt = d.T(); card.textContent = '';
         card.classList.remove('cp-shake');
+        $('cp-qn').textContent = dt.qn(Math.min(S.done + 1, S.total), S.total);
+        d.setStreak($('cp-streak'), S.streak || 0); d.setHelp($('cp-help'));
+        $('cp-help').onclick = () => {
+            if (S.locked || $('cp-hint')) return;
+            const h = el('p', 'cp-hint', txt(lessonHow(q, false))); h.id = 'cp-hint';
+            const z = card.querySelector('.cp-zone.a'); card.insertBefore(h, z || null);
+        };
+        d.zone(card, OPICON[q.op] || '❓', dt.zQ, 'q');
         const prompt = { type: t.qType, choice: t.qChoice, missing: t.qMissing, compare: t.qCompare, tf: t.qTf, visual: t.qVisual }[q.type] || t.qBuild(q.res);
         card.appendChild(el('p', 'cp-prompt', q.type === 'build' ? t.qBuild(q.res) : prompt));
-        if (q.type === 'type') { card.appendChild(eqHTML(q)); answerPad(card); }
-        else if (q.type === 'choice') { card.appendChild(eqHTML(q)); options(card, q.options.map(v => ({ label: String(v), v }))); }
-        else if (q.type === 'missing') { card.appendChild(eqHTML(q, q.hole)); answerPad(card); }
+        const alt = S.done % 2 === 1, balloonOn = S.fmt ? S.fmt === 'balloon' : alt, dragOn = S.fmt ? S.fmt === 'drag' : !alt;
+        const listOf = vals => vals.map(v => ({ label: String(v), v }));
+        if (q.type === 'type') { card.appendChild(eqHTML(q)); d.zone(card, '✍️', dt.zType, 'a'); answerPad(card); }
+        else if (q.type === 'choice') { card.appendChild(eqHTML(q)); choose(card, listOf(q.options), balloonOn); }
+        else if (q.type === 'missing') {
+            const eq = eqHTML(q, q.hole); card.appendChild(eq);
+            if (dragOn) { const vals = shuffle([q.answer, ...distractors(q.answer)]); d.zone(card, '🧲', dt.zDrag, 'a'); d.dragFill(card, eq.querySelector('em'), listOf(vals), answer); }
+            else { d.zone(card, '✍️', dt.zType, 'a'); answerPad(card); }
+        }
         else if (q.type === 'visual') {
             const vis = el('div', 'cp-vis'), em = ['🍎', '🍌', '🍇', '🐟', '⭐', '🚗', '🐥'][(q.a + q.b) % 7];
             vis.appendChild(el('span', null, em.repeat(q.a)));
             vis.appendChild(el('i', null, q.op === '+' ? '+' : '−'));
             vis.appendChild(el('span', null, q.op === '+' ? em.repeat(q.b) : '❌'.repeat(q.b)));
             vis.setAttribute('role', 'img'); vis.setAttribute('aria-label', `${q.a} ${sym(q.op)} ${q.b}`);
-            card.appendChild(vis); card.appendChild(eqHTML(q)); options(card, q.options.map(v => ({ label: String(v), v })));
+            card.appendChild(vis); card.appendChild(eqHTML(q)); choose(card, listOf(q.options), balloonOn);
         }
         else if (q.type === 'compare') {
             const e = el('div', 'cp-eq'); e.textContent = `${q.a} ${sym(q.op)} ${q.b}   ?   ${q.other}`; card.appendChild(e);
-            options(card, ['<', '=', '>'].map(v => ({ label: v, v })));
+            d.zone(card, '👆', dt.zChoose, 'a'); options(card, ['<', '=', '>'].map(v => ({ label: v, v })));
         }
         else if (q.type === 'tf') {
             const e = el('div', 'cp-eq'); e.textContent = `${q.a} ${sym(q.op)} ${q.b} = ${q.shown}`; card.appendChild(e);
-            options(card, [{ label: t.tTrue, v: true }, { label: t.tFalse, v: false }], true);
+            d.zone(card, '👆', dt.zChoose, 'a'); options(card, [{ label: t.tTrue, v: true }, { label: t.tFalse, v: false }], true);
         }
-        else if (q.type === 'build') options(card, q.exprs.map((x, i) => ({ label: `${x.a} ${sym(x.op)} ${x.b}`, v: i })), true);
+        else if (q.type === 'build') { d.zone(card, '👆', dt.zChoose, 'a'); options(card, q.exprs.map((x, i) => ({ label: `${x.a} ${sym(x.op)} ${x.b}`, v: i })), true); }
+        d.enter(card);
+    }
+
+    /** choice-like question: coloured buttons or floating balloons (same options, same scoring). */
+    function choose(card, list, balloon) {
+        const d = D(), dt = d.T();
+        if (balloon) { d.zone(card, '🎈', dt.zPop, 'a'); d.balloons(card, list, answer); }
+        else { d.zone(card, '👆', dt.zChoose, 'a'); options(card, list); }
     }
 
     function options(card, list, wide) {
         const box = el('div', 'cp-opts' + (wide ? ' wide' : '')); box.setAttribute('role', 'group');
-        list.forEach(o => { const b = el('button', 'cp-opt', o.label); b.type = 'button'; b.onclick = () => answer(o.v, b); box.appendChild(b); });
+        list.forEach((o, i) => { const b = D().optButton(o.label, o.v, i); b.onclick = () => answer(o.v, b); box.appendChild(b); });
         card.appendChild(box);
     }
 
@@ -362,17 +395,30 @@ const CalcPath = (() => {
         return String(q.res);
     }
 
+    /** Find the option button that holds the right answer (lesson cards). */
+    function correctButton(q, card) {
+        const want = q.type === 'build' ? String(q.exprs.findIndex(e => e.ok)) : q.type === 'missing' ? String(q.answer) : q.type === 'compare' || q.type === 'tf' ? String(q.answer) : String(q.res);
+        return Array.prototype.find.call(card.querySelectorAll('button.cp-opt'), b => b.dataset.v === want) || null;
+    }
+
     function answer(v, btn) {
         if (S.locked) return; S.locked = true;
-        const q = S.q, ok = isCorrect(q, v), t = T(), fb = $('cp-feedback');
-        document.querySelectorAll('.cp-opt').forEach(b => { b.disabled = true; });
+        const q = S.q, ok = isCorrect(q, v), t = T(), fb = $('cp-feedback'), d = D(), j = JX(), card = $('cp-card'), dt = d.T();
+        card.querySelectorAll('.cp-opt').forEach(b => { b.disabled = true; });
+        card.querySelectorAll('.cp-sky').forEach(s => s.classList.add('done'));
+        const hole = card.querySelector('.cp-hole'); if (hole) hole.classList.add(ok ? 'ok' : 'bad');
         if (btn) btn.classList.add(ok ? 'ok' : 'bad');
+        if (!ok) { const c = correctButton(q, card); if (c) c.classList.add('ok'); }
+        S.streak = ok ? (S.streak || 0) + 1 : 0; d.setStreak($('cp-streak'), S.streak);
         fb.hidden = false; fb.textContent = ''; fb.className = 'cp-feedback ' + (ok ? 'good' : 'bad');
-        const txt = el('div'); const strong = el('b', null, ok ? pick(t.good) : t.bad); txt.appendChild(strong);
-        if (!ok) txt.appendChild(el('span', null, correctText(q)));
+        fb.appendChild(el('span', 'cp-fbi', ok ? '✅' : '💡'));
+        const box = el('div', 'cp-fbt'); box.appendChild(el('b', null, ok ? pick(t.good) : t.bad));
+        if (!ok) { box.appendChild(el('span', 'cp-fbans', correctText(q))); box.appendChild(el('span', 'cp-explain', `${dt.why}: ${txt(lessonHow(q, true))}`)); }
+        else if (S.streak >= 3) box.appendChild(el('span', 'cp-explain', `🔥 ${dt.streak}: ${S.streak}`));
         const go = el('button', 'cp-btn', t.next); go.type = 'button'; go.id = 'cp-continue'; go.onclick = () => { advance(ok); };
-        fb.appendChild(txt); fb.appendChild(go); go.focus();
-        if (!ok) { $('cp-card').classList.add('cp-shake'); if (navigator.vibrate) { try { navigator.vibrate(120); } catch (e) {} } }
+        fb.appendChild(box); fb.appendChild(go); go.focus();
+        if (j) { if (ok) j.correct(btn || card, { streak: S.streak }); else j.wrong(btn || card); }
+        if (!ok) card.classList.add('cp-shake');
         S.lastOk = ok;
     }
     function advance(ok) {
@@ -391,7 +437,7 @@ const CalcPath = (() => {
         $('cp-trophy').textContent = won ? (st === 3 ? '🏆' : '⭐') : '💔';
         $('cp-endtitle').textContent = won ? t.done : t.fail;
         $('cp-endtext').textContent = won ? t.score(S.misses) : '';
-        $('cp-endstars').textContent = won ? '★'.repeat(st) + '☆'.repeat(3 - st) : '';
+        if (won && D()) D().stars($('cp-endstars'), st, 3, () => { if (JX()) JX().levelUp($('cp-trophy')); }); else $('cp-endstars').textContent = '';
         $('cp-next').textContent = won ? (S.idx < UNITS.length - 1 ? t.nextL : t.back) : t.again;
         $('cp-next').onclick = () => { if (won && S.idx < UNITS.length - 1) start(S.idx + 1); else if (won) { renderHome(); show('cp-home'); } else start(S.idx); };
         $('cp-back').textContent = t.back; $('cp-back').onclick = () => { renderHome(); show('cp-home'); };
@@ -548,24 +594,42 @@ const CalcPath = (() => {
     function renderQ() {
         const run = P.run, q = run.q, t = T(), card = $('pp-card'); if (!q) return;
         card.textContent = ''; card.classList.remove('cp-shake');
+        const d = D(), dt = d.T(), plc = run.mode === 'placement';
+        $('pp-qn').textContent = dt.qn(Math.min(run.n + 1, run.len || run.n + 1), run.len);
+        d.setStreak($('pp-streak'), run.streak || 0); $('pp-streak').hidden = plc; $('pp-help').hidden = plc;
+        $('pp-help').onclick = showHint;
         $('pp-count').textContent = (run.mode === 'practice' && run.streak >= 3 ? '🔥 ' : '') + t.qOf(Math.min(run.n + 1, run.len || run.n + 1), run.len);
         const p = run.len ? Math.round(run.n / run.len * 100) : 0; $('pp-barfill').style.width = p + '%'; $('pp-barfill').parentNode.setAttribute('aria-valuenow', p);
         const prompt = q.label ? txt(q.label) : q.hole ? t.qMissing : q.kind === 'choice' ? t.qChoice : t.qType;
+        d.zone(card, SK_ICON[q.skill] || '❓', dt.zQ, 'q');
         card.appendChild(el('p', 'cp-prompt', prompt));
         const eq = el('div', 'cp-eq' + (q.text.length > 24 ? ' xl' : q.text.length > 14 ? ' long' : '')); eq.setAttribute('dir', 'ltr'); eq.id = 'pp-eq';
         fmtTxt(q.text).split('?').forEach((part, i) => { if (i) eq.appendChild(el('em', null, '?')); eq.appendChild(document.createTextNode(part)); });
         card.appendChild(eq);
         if (run.help && run.mode === 'practice') {
             const hb = el('button', 'cp-hintbtn', '💡 ' + t.hint); hb.type = 'button'; hb.id = 'pp-hintbtn';
-            hb.onclick = () => { run.hint = true; hb.remove(); const h = el('p', 'cp-hint', txt(q.hint)); h.id = 'pp-hint'; card.insertBefore(h, eq.nextSibling); };
+            hb.onclick = showHint;
             card.appendChild(hb);
         }
         if (q.kind === 'choice') {
-            const box = el('div', 'cp-opts'); box.setAttribute('role', 'group');
-            q.choices.forEach(v => { const b = el('button', 'cp-opt', fmtTxt(v)); b.type = 'button'; b.dataset.v = v; b.onclick = () => answerQ(v, b); box.appendChild(b); });
-            card.appendChild(box);
-        } else practicePad(card, q.kind === 'dec');
+            const list = q.choices.map(v => ({ label: fmtTxt(v), v })), holes = (q.text.match(/\?/g) || []).length;
+            const mode = S.fmt || (plc ? 'plain' : run.n % 3 === 1 ? 'balloon' : run.n % 3 === 2 && holes === 1 ? 'drag' : 'plain');
+            if (mode === 'balloon') { d.zone(card, '🎈', dt.zPop, 'a'); d.balloons(card, list, answerQ); }
+            else if (mode === 'drag' && holes === 1) { d.zone(card, '🧲', dt.zDrag, 'a'); d.dragFill(card, eq.querySelector('em'), list, answerQ); }
+            else {
+                d.zone(card, '👆', dt.zChoose, 'a');
+                const box = el('div', 'cp-opts'); box.setAttribute('role', 'group');
+                list.forEach((o, i) => { const b = d.optButton(o.label, o.v, i); b.onclick = () => answerQ(o.v, b); box.appendChild(b); });
+                card.appendChild(box);
+            }
+        } else { d.zone(card, '✍️', dt.zType, 'a'); practicePad(card, q.kind === 'dec'); }
+        d.enter(card);
         const tm = $('pp-time'); tm.className = ''; void tm.offsetWidth; tm.style.animationDuration = (E.targetSeconds(q.level, q.skill) * 2) + 's'; tm.className = 'run';
+    }
+    function showHint() {
+        const run = P.run; if (!run || run.mode !== 'practice' || run.locked || $('pp-hint')) return;
+        run.hint = true; const hb = $('pp-hintbtn'); if (hb) hb.remove();
+        const h = el('p', 'cp-hint', '💡 ' + txt(run.q.hint)); h.id = 'pp-hint'; const card = $('pp-card'); card.insertBefore(h, card.querySelector('.cp-zone.a'));
     }
     function practicePad(card, dec) {
         const disp = el('div', 'cp-ans'); disp.id = 'pp-ans'; disp.setAttribute('aria-live', 'polite'); card.appendChild(disp);
@@ -601,14 +665,21 @@ const CalcPath = (() => {
         run.n++; run.secs += secs;
         const per = run.per[q.skill] || (run.per[q.skill] = { n: 0, right: 0, secs: 0 }); per.n++; per.secs += secs;
         if (ok) { run.right++; per.right++; run.streak++; run.best = Math.max(run.best, run.streak); } else { run.wrong++; run.streak = 0; }
+        document.querySelectorAll('#pp-card .cp-sky').forEach(x => x.classList.add('done'));
+        const hole = document.querySelector('#pp-card .cp-hole'); if (hole) hole.classList.add(ok ? 'ok' : 'bad');
         if (btn) btn.classList.add(ok ? 'ok' : 'bad');
         if (!ok && q.kind === 'choice') document.querySelectorAll('#pp-card .cp-opt').forEach(b => { if (String(b.dataset.v) === String(q.answer)) b.classList.add('ok'); });
         const fb = $('pp-feedback'); fb.hidden = false; fb.textContent = ''; fb.className = 'cp-feedback ' + (ok ? 'good' : 'bad');
-        const box = el('div'); box.appendChild(el('b', null, ok ? pick(t.good) : `${t.bad} ${shownAnswer(q)}`));
-        if (!ok) { box.appendChild(el('span', 'cp-explain', fmtTxt(txt(q.explain)))); }
+        fb.appendChild(el('span', 'cp-fbi', ok ? '✅' : '💡'));
+        const box = el('div', 'cp-fbt'); box.appendChild(el('b', null, ok ? pick(t.good) : `${t.bad} ${shownAnswer(q)}`));
+        if (!ok) { box.appendChild(el('span', 'cp-explain', `${D().T().why}: ${fmtTxt(txt(q.explain))}`)); }
+        else if (run.streak >= 3) box.appendChild(el('span', 'cp-explain', `🔥 ${D().T().streak}: ${run.streak}`));
         const go = el('button', 'cp-btn', t.next); go.type = 'button'; go.id = 'pp-continue'; go.onclick = nextPractice;
         fb.appendChild(box); fb.appendChild(go); go.focus();
-        if (!ok) { $('pp-card').classList.add('cp-shake'); if (navigator.vibrate) { try { navigator.vibrate(120); } catch (e) { /* no vibration */ } } }
+        D().setStreak($('pp-streak'), run.streak);
+        const jx = JX(), target = btn || $('pp-card');
+        if (jx) { if (ok) jx.correct(target, { streak: run.streak }); else jx.wrong(target); }
+        if (!ok) $('pp-card').classList.add('cp-shake');
         saveSkills();
     }
     function quitPractice() {
@@ -625,6 +696,8 @@ const CalcPath = (() => {
         const box = $('cp-psum-body'); box.textContent = '';
         box.appendChild(el('div', 'cp-trophy', run.right >= run.n * 0.8 ? '🏆' : '⭐'));
         box.appendChild(el('h2', null, t.psTitle));
+        const sb = el('div', 'cp-endstars'); const pct = run.n ? run.right / run.n : 0, sn = pct >= 0.9 ? 3 : pct >= 0.7 ? 2 : 1;
+        D().stars(sb, sn, 3, () => { if (JX()) JX().levelUp(sb); }); box.appendChild(sb);
         box.appendChild(el('p', 'cp-big', t.psRight(run.right, run.n)));
         box.appendChild(el('p', 'cp-subtle', t.psAvg((run.secs / Math.max(1, run.n)).toFixed(1).replace('.', lang() === 'en' ? '.' : ','))));
         const rows = el('div', 'cp-rows'); rows.appendChild(el('h3', null, t.psLevel));
@@ -692,7 +765,7 @@ const CalcPath = (() => {
         const run = P.run; if (!run) return;
         const fb = $('pp-feedback');
         if (e.key === 'Enter') { const c = $('pp-continue'); if (!fb.hidden && c) c.click(); else pKey('✓'); }
-        else if (/^[0-9]$/.test(e.key)) pKey(e.key);
+        else if (/^[0-9]$/.test(e.key)) { if (!D().pickByDigit($('pp-card'), e.key)) pKey(e.key); }
         else if (e.key === 'Backspace') pKey('⌫');
         else if (e.key === ',' || e.key === '.') pKey(',');
     }
@@ -702,16 +775,17 @@ const CalcPath = (() => {
         document.addEventListener('keydown', e => {
             if (!$('cp-pplay').hidden) return practiceKey(e);
             if ($('cp-play').hidden) return;
-            if (/^[0-9]$/.test(e.key)) key_(e.key);
+            if (/^[0-9]$/.test(e.key)) { if (!D().pickByDigit($('cp-card'), e.key)) key_(e.key); }
             else if (e.key === 'Backspace') key_('⌫');
             else if (e.key === 'Enter') { const c = $('cp-continue'); if (!$('cp-feedback').hidden && c) c.click(); else key_('✓'); }
         });
+        D().mountSound('cp-snd'); D().mountSound('pp-snd'); D().setHelp($('cp-help')); D().setHelp($('pp-help'));
         load(); loadPractice(); initPractice(); renderHome(); show('cp-home');
         if (window.PlatformAuth && PlatformAuth.onAuthStateChanged) PlatformAuth.onAuthStateChanged(u => { S.user = u || null; load(); loadPractice(); renderHome(); });
         window.addEventListener('platformLanguageChanged', () => { if (!$('cp-home').hidden) renderHome(); else if (!$('cp-setup').hidden) renderSetup(); else if (!$('cp-pplay').hidden) renderQ(); });
     }
 
-    const api = { init, state: S, engine: E, practice: P, UNITS, gen, makeQuestion, makeLesson, isCorrect, stars, typesFor, distractors };
+    const api = { init, _next: next, _renderQ: renderQ, state: S, engine: E, practice: P, UNITS, gen, makeQuestion, makeLesson, isCorrect, stars, typesFor, distractors };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     return api;
 })();

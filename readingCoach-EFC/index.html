@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <link rel="manifest" href="../manifest.json">
+    <meta name="theme-color" content="#0ea5e9">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Lectura guiada">
+    <link rel="apple-touch-icon" href="../icons/icon-192.png">
+    <meta name="description" content="Lectura guiada: lee en voz alta con karaoke, aprende las pausas de comas y puntos, mide tus palabras por minuto y comprueba que entiendes lo que lees.">
+    <title>Lectura guiada – Games Hub</title>
+    <link rel="stylesheet" href="../platform/platform.css">
+    <link rel="stylesheet" href="styles.css">
+    <link href="../fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<main id="main-content" class="rd-main">
+
+    <section id="rd-age" class="rd-screen" hidden>
+        <div class="rd-card rd-agebox">
+            <h1 id="rd-age-title"></h1>
+            <label for="rd-age-in" id="rd-age-label" class="rd-label"></label>
+            <input id="rd-age-in" class="rd-input" type="number" inputmode="numeric" min="3" max="110" autocomplete="off">
+            <p class="rd-note" id="rd-age-note"></p>
+            <p class="rd-error" id="rd-age-err" role="alert" hidden></p>
+            <button class="rd-btn" id="rd-age-save" type="button"></button>
+        </div>
+    </section>
+
+    <section id="rd-home" class="rd-screen" hidden>
+        <div class="rd-head">
+            <h1 id="rd-h1"></h1>
+            <div class="rd-stats" id="rd-stats"></div>
+        </div>
+        <p class="rd-sub" id="rd-sub"></p>
+
+        <div class="rd-zonelabel" id="rd-z-set"></div>
+        <div class="rd-card rd-settings" id="rd-settings"></div>
+
+        <div class="rd-zonelabel" id="rd-z-zone"></div>
+        <div class="rd-card" id="rd-zone"></div>
+
+        <div class="rd-zonelabel" id="rd-z-list"></div>
+        <p class="rd-note" id="rd-fallback" hidden></p>
+        <ol class="rd-list" id="rd-list"></ol>
+
+        <div class="rd-zonelabel" id="rd-z-prog"></div>
+        <div class="rd-card" id="rd-prog"></div>
+    </section>
+
+    <section id="rd-text" class="rd-screen" hidden>
+        <div class="rd-top">
+            <button class="rd-quit" id="rd-quit" type="button" aria-label="Salir">✕</button>
+            <div class="rd-toptitle">
+                <h2 id="rd-title"></h2>
+                <span class="rd-phaselabel" id="rd-phaselabel" aria-live="polite"></span>
+            </div>
+            <button class="rd-btn ghost rd-helpbtn" id="rd-help" type="button" aria-expanded="false" aria-controls="rd-helpbox">💡 <span id="rd-help-l"></span></button>
+            <span id="rd-sound"></span>
+        </div>
+        <ol class="rd-steps" id="rd-steps"></ol>
+        <div class="rd-helpbox" id="rd-helpbox" hidden></div>
+
+        <div id="rd-readview">
+            <div class="rd-zonelabel" id="rd-z-text"></div>
+            <div class="rd-card rd-textcard">
+                <div class="rd-legend" id="rd-legend"></div>
+                <div class="rd-textbox" id="rd-textbox" lang="es"></div>
+                <p class="rd-credit" id="rd-credit"></p>
+            </div>
+            <div class="rd-zonelabel" id="rd-z-ctrl"></div>
+            <div class="rd-card rd-ctrl" id="rd-controls"></div>
+        </div>
+
+        <div id="rd-quizview" hidden>
+            <div class="rd-qtop">
+                <div class="rd-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i id="rd-qfill"></i></div>
+                <span class="rd-count" id="rd-qcount" aria-live="polite"></span>
+            </div>
+            <div class="rd-qstats" id="rd-qstats"></div>
+            <div class="rd-card rd-qcard" id="rd-qcard"></div>
+            <div class="rd-feedback" id="rd-feedback" hidden aria-live="assertive"></div>
+        </div>
+
+        <p class="rd-msg" id="rd-msg" role="status" aria-live="polite"></p>
+    </section>
+
+    <div class="rd-modal" id="rd-consent" role="dialog" aria-modal="true" aria-labelledby="rd-consent-title" hidden>
+        <div class="rd-card rd-modalbox">
+            <h2 id="rd-consent-title"></h2>
+            <p id="rd-consent-text"></p>
+            <label class="rd-check"><input type="checkbox" id="rd-consent-chk"> <span id="rd-consent-l"></span></label>
+            <div class="rd-row">
+                <button class="rd-btn" id="rd-consent-ok" type="button" disabled></button>
+                <button class="rd-btn ghost" id="rd-consent-no" type="button"></button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore-compat.js"></script>
+<script src="../platform/firebase-config.js"></script>
+<script src="../platform/i18n-platform.js"></script>
+<script src="../platform/auth.js"></script>
+<script src="../platform/firestore.js"></script>
+<script src="../platform/identity.js"></script>
+<script src="../platform/platform-header.js"></script>
+<script src="../platform/juice.js"></script>
+<script src="i18n.js"></script>
+<script src="game.js"></script>
+<script>
+    PlatformHeader.init({ gameName: 'Lectura guiada', gameIcon: '📖', rootPath: '../' });
+    ReadingCoach.init();
+</script>
+<script src="../platform/register-sw.js"></script>
+</body>
+</html>

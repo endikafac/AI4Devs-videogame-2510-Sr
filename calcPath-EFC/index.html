@@ -39,9 +39,10 @@
     <section id="cp-play" class="cp-screen" hidden>
         <div class="cp-top">
             <button class="cp-quit" id="cp-quit" type="button" aria-label="Salir">✕</button>
-            <div class="cp-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i id="cp-barfill"></i></div>
+            <div class="cp-topmid"><span class="cp-qn" id="cp-qn"></span><div class="cp-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i id="cp-barfill"></i></div></div>
             <span class="cp-hearts" id="cp-hearts" aria-live="polite"></span>
         </div>
+        <div class="cp-tools"><span class="cp-streak" id="cp-streak" aria-live="polite"></span><button class="cp-helpbtn" id="cp-help" type="button"></button><span id="cp-snd"></span></div>
         <div class="cp-card" id="cp-card"></div>
         <div class="cp-feedback" id="cp-feedback" hidden aria-live="assertive"></div>
     </section>
@@ -75,9 +76,10 @@
     <section id="cp-pplay" class="cp-screen" hidden>
         <div class="cp-top">
             <button class="cp-quit" id="pp-quit" type="button" aria-label="Salir">✕</button>
-            <div class="cp-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i id="pp-barfill"></i></div>
+            <div class="cp-topmid"><span class="cp-qn" id="pp-qn"></span><div class="cp-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i id="pp-barfill"></i></div></div>
             <span class="cp-count" id="pp-count" aria-live="polite"></span>
         </div>
+        <div class="cp-tools"><span class="cp-streak" id="pp-streak" aria-live="polite"></span><button class="cp-helpbtn" id="pp-help" type="button"></button><span id="pp-snd"></span></div>
         <div class="cp-soft" aria-hidden="true"><i id="pp-time"></i></div>
         <div class="cp-card" id="pp-card"></div>
         <div class="cp-feedback" id="pp-feedback" hidden aria-live="assertive"></div>
@@ -129,7 +131,9 @@
 <script src="../platform/firestore.js"></script>
 <script src="../platform/identity.js"></script>
 <script src="../platform/platform-header.js"></script>
+<script src="../platform/juice.js"></script>
 <script src="engine.js"></script>
+<script src="dyn.js"></script>
 <script src="game.js"></script>
 <script>
     PlatformHeader.init({ gameName: 'Camino del Cálculo', gameIcon: '🧮', rootPath: '../' });

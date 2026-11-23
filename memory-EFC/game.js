@@ -129,6 +129,9 @@ const MemoryPairs = (() => {
         const li = el('li', 'mm-setup');
         chips(li, t.theme, THEMES.map(x => ({ id: x.id, icon: x.icon, name: t.themes[x.id] })), S.theme, id => { S.theme = id; S.prog.theme = id; save(); renderHome(); });
         chips(li, t.size, SIZES.map(x => ({ id: x.id, icon: '▦', name: `${t.sizes[x.id]} (${x.pairs} ${t.pairs})` })), S.size, id => { S.size = id; S.prog.size = id; save(); renderHome(); });
+        const tb = el('button', 'mm-chip mm-timedchip' + (timedOn() ? ' on' : ''), '⏱ ' + Dyn.t('timedMode')); tb.type = 'button'; tb.id = 'mm-timed'; tb.setAttribute('role', 'switch'); tb.setAttribute('aria-checked', String(timedOn()));
+        tb.onclick = () => { try { localStorage.setItem('memory_timed', timedOn() ? '0' : '1'); } catch (e) {} renderHome(); };
+        li.appendChild(tb);
         const hint = S.theme === 'numbers' ? t.hintNumbers : S.theme === 'letters' ? t.hintLetters : '';
         if (hint) li.appendChild(el('p', 'mm-hint', hint));
         const b = S.prog.best[S.theme + '_' + S.size];
@@ -218,7 +221,7 @@ const MemoryPairs = (() => {
         const sz = S.guided ? { id: 'guided', pairs: 3, cols: 3 } : sizeById(S.size);
         const rot = S.prog.rot[S.theme] || 0; S.prog.rot[S.theme] = rot + 1; save();
         S.deck = makeDeck(S.theme, sz.pairs, Math.random, rot); S.flipped = []; S.matched = 0; S.moves = 0; S.misses = 0; S.run = 0; S.bestRun = 0; S.busy = false; S.t0 = Date.now(); S.cols = sz.cols;
-        show('mm-play'); renderBoard(sz); progress(); setGuide(null); setWhy('');
+        show('mm-play'); renderBoard(sz); startTimer(sz); progress(); setGuide(null); setWhy('');
         const first = document.querySelector('#mm-card .mm-tile'); if (first) first.focus();
     }
     function setWhy(txt, good) { const w = $('mm-why'); w.textContent = txt || ''; w.classList.toggle('good', !!good); w.hidden = !txt; }
@@ -233,14 +236,17 @@ const MemoryPairs = (() => {
         const t = T(), total = S.deck.length / 2, p = Math.round(S.matched / total * 100);
         $('mm-barfill').style.width = p + '%'; $('mm-barfill').parentNode.setAttribute('aria-valuenow', p);
         $('mm-count').textContent = `${t.moves}: ${S.moves}`;
+        const z = $('mm-zone'); if (z) z.textContent = Dyn.t('pairsFound', { n: S.matched, m: total });
+        if (S.hud) S.hud.setStreak(S.run);
     }
     function renderBoard(sz) {
         const card = $('mm-card'); card.textContent = ''; $('mm-feedback').hidden = true;
+        const zq = Dyn.zone(Dyn.t('pairsFound', { n: 0, m: S.deck.length / 2 }), 'q'); zq.id = 'mm-zone'; card.appendChild(zq); card.appendChild(Dyn.zone('flipTwo'));
         const grid = el('div', 'mm-grid'); grid.style.setProperty('--cols', sz.cols); grid.setAttribute('role', 'group');
         S.deck.forEach((c, i) => {
             const b = el('button', 'mm-tile'); b.type = 'button'; b.dataset.i = i; b.dataset.kind = c.kind;
             b.appendChild(el('span', 'mm-back', '?')); b.appendChild(el('span', 'mm-front', c.text));
-            b.setAttribute('aria-label', T().card + ' ' + (i + 1));
+            b.setAttribute('aria-label', T().card + ' ' + (i + 1)); b.classList.add('dy-in'); b.style.setProperty('--i', i);
             b.onclick = () => flip(i); grid.appendChild(b);
         });
         card.appendChild(grid);
@@ -270,10 +276,12 @@ const MemoryPairs = (() => {
             setWhy(T().matchedWhy.split('{a}').join(ML.cardName(S.theme, a, lang(), poolOf(S.theme))).split('{b}').join(ML.cardName(S.theme, d, lang(), poolOf(S.theme))), true);
             if (S.guided) setGuide(null);
             S.flipped.forEach(k => { const t = tileEl(k); t.classList.add('matched'); t.disabled = true; t.setAttribute('aria-label', S.deck[k].text + ', ' + T().matched); });
+            const tl = tileEl(S.flipped[1]);
             S.flipped = []; S.matched++; S.run++; S.bestRun = Math.max(S.bestRun, S.run); progress();
+            Dyn.good(tl, S.run); comboFlash();
             if (S.matched === S.deck.length / 2) setTimeout(finish, 450);
         } else {
-            S.run = 0; S.busy = true; S.misses++; progress();
+            S.run = 0; S.busy = true; S.misses++; progress(); Dyn.bad(tileEl(S.flipped[S.flipped.length - 1]), true);
             // Explain WHY: both card names (and a tip) stay on screen until the next flip
             setWhy(ML.whyNot(S.theme, a, d, lang(), poolOf(S.theme)));
             if (S.guided) setGuide(null);
@@ -283,11 +291,37 @@ const MemoryPairs = (() => {
         }
     }
 
+    // ---- combo flash and gentle timed mode (a calm bar, never a game over) ----
+    function comboFlash() {
+        if (S.run < 2) return; const g = document.querySelector('#mm-card .mm-grid'); if (!g) return;
+        g.classList.remove('combo'); void g.offsetWidth; g.classList.add('combo'); setTimeout(() => g.classList.remove('combo'), 800);
+    }
+    const timedOn = () => { try { return localStorage.getItem('memory_timed') === '1'; } catch (e) { return false; } };
+    function stopTimer() { clearInterval(S.tick); S.tick = null; }
+    function startTimer(sz) {
+        stopTimer(); S.timed = timedOn() && !S.guided; S.onTime = true;
+        if (!S.timed) return;
+        const total = sz.pairs * 12, t0 = Date.now(), wrap = el('div', 'mm-timer'); wrap.id = 'mm-timer';
+        const lbl = el('span', 'mm-timerl'), bar = el('div', 'dy-bar'), fill = el('i'); bar.appendChild(fill); wrap.append(lbl, bar);
+        const grid = document.querySelector('#mm-card .mm-grid'); grid.parentNode.insertBefore(wrap, grid);
+        lbl.textContent = '⏱ ' + total + 's';
+        S.tick = setInterval(() => {
+            const left = total - (Date.now() - t0) / 1000;
+            if (left > 0) { fill.style.transform = 'scaleX(' + (left / total) + ')'; lbl.textContent = '⏱ ' + Math.ceil(left) + 's'; }
+            else { S.onTime = false; fill.style.transform = 'scaleX(0)'; lbl.textContent = '⏱ ' + Dyn.t('noRush'); wrap.classList.add('calm'); stopTimer(); }
+        }, 250);
+    }
+    function showHelp() {
+        const t = T(), extra = S.theme === 'numbers' ? t.hintNumbers : S.theme === 'letters' ? t.hintLetters : '';
+        Dyn.sheet(Dyn.t('help'), Dyn.t('memHelp') + (extra ? ' ' + extra + '.' : ''));
+    }
+
     async function finish() {
+        stopTimer();
         const t = T(), pairs = S.deck.length / 2, st = stars(S.moves, pairs);
         $('mm-trophy').textContent = st === 3 ? '🏆' : '⭐';
-        $('mm-endtitle').textContent = t.done; $('mm-endtext').textContent = t.score(S.moves, pairs);
-        $('mm-endstars').textContent = '★'.repeat(st) + '☆'.repeat(3 - st);
+        $('mm-endtitle').textContent = t.done; $('mm-endtext').textContent = t.score(S.moves, pairs) + (S.timed && S.onTime ? ' ⏱ ' + Dyn.t('onTime') : '');
+        Dyn.stars($('mm-endstars'), st, 3); Dyn.big($('mm-trophy'));
         $('mm-next').textContent = t.again; $('mm-next').onclick = start;
         $('mm-back').textContent = t.back; $('mm-back').onclick = () => { renderHome(); show('mm-home'); };
         show('mm-end');
@@ -308,10 +342,14 @@ const MemoryPairs = (() => {
         }
     }
 
-    function leave() { clearTimeout(S.timer); stopDots(); S.busy = false; renderHome(); show('mm-home'); }
+    function leave() { stopTimer(); clearTimeout(S.timer); stopDots(); S.busy = false; renderHome(); show('mm-home'); }
 
     function init() {
         $('mm-quit').onclick = leave;
+        const topBar = document.querySelector('#mm-play .mm-top');
+        const hb = Dyn.el('button', 'dy-help', '💡'); hb.type = 'button'; hb.id = 'mm-help'; hb.onclick = showHelp; topBar.appendChild(hb);
+        const hl = () => { hb.textContent = '💡 ' + Dyn.t('help'); hb.setAttribute('aria-label', Dyn.t('help')); }; hl(); window.addEventListener('platformLanguageChanged', hl);
+        Dyn.sound(topBar); S.hud = Dyn.hud(topBar, { noPoints: true }); Dyn.sound(document.querySelector('#mm-learn .mm-top'));
         $('mm-learn-go').onclick = finishLearn; $('mm-learn-skip').onclick = finishLearn;
         $('mm-learn-back').onclick = leave;
         document.addEventListener('keydown', e => {

@@ -659,7 +659,7 @@ const FractionsLab = (() => {
     }
 
     // ---- home ----
-    function show(id) { ['fr-home', 'fr-learn', 'fr-play', 'fr-end'].forEach(s => { $(s).hidden = s !== id; }); window.scrollTo(0, 0); }
+    function show(id) { ['fr-home', 'fr-learn', 'fr-play', 'fr-mini', 'fr-end'].forEach(s => { $(s).hidden = s !== id; }); window.scrollTo(0, 0); }
     function renderHome() {
         const t = T();
         $('fr-h1').textContent = t.title; $('fr-sub').textContent = t.sub;
@@ -679,6 +679,7 @@ const FractionsLab = (() => {
             if (open) { const lb = el('button', 'fr-lbtn', '📖'); lb.type = 'button'; lb.dataset.learn = u.id; lb.setAttribute('aria-label', `${t.learnBtn}: ${t.k[u.id]}`); lb.onclick = () => { prepare(i); openLearn('start'); }; li.appendChild(lb); }
             path.appendChild(li);
         });
+        renderMinis();
     }
 
     // ---- learn step: interactive widgets ----
@@ -830,7 +831,8 @@ const FractionsLab = (() => {
         const g = S.phase === 'guided', p = g ? 0 : Math.round(S.qi / S.total * 100);
         $('fr-barfill').style.width = p + '%'; $('fr-barfill').parentNode.setAttribute('aria-valuenow', p);
         $('fr-count').textContent = g ? T().guided(S.gi + 1, S.guidedQ.length) : `${Math.min(S.qi + 1, S.total)} / ${S.total}`;
-        $('fr-learnbtn').textContent = '📖 ' + T().learnBtn;
+        $('fr-learnbtn').textContent = '💡 ' + Dyn.t('help'); $('fr-learnbtn').setAttribute('aria-label', Dyn.t('help') + ': ' + T().learnBtn);
+        if (S.hud) { S.hud.setStreak(S.run); S.hud.setPoints(S.correct); }
     }
 
     function next() {
@@ -843,13 +845,15 @@ const FractionsLab = (() => {
     }
     function checkBtn(card, fn) { const ok = el('button', 'fr-btn', T().check); ok.type = 'button'; ok.id = 'fr-check'; ok.onclick = fn; card.appendChild(ok); return ok; }
     function renderQuestion() {
-        const t = T(), q = S.q, card = $('fr-card'), L = lang(); card.textContent = ''; card.classList.remove('fr-shake');
+        const t = T(), q = S.q, card = $('fr-card'), L = lang(); card.textContent = ''; card.classList.remove('fr-shake', 'dy-done'); Dyn.slide(card);
+        card.appendChild(Dyn.zone(S.phase === 'guided' ? t.guided(S.gi + 1, S.guidedQ.length) : Dyn.t('q', { n: Math.min(S.qi + 1, S.total), m: S.total }), 'q'));
         card.appendChild(el('p', 'fr-prompt', promptOf(q, L)));
         if (q.guided) card.appendChild(el('p', 'fr-hintbox', `${t.hintL} ${explain(q, L).text}`));
         const wrap = node => { const w = el('div', 'fr-shapewrap'); w.appendChild(node); card.appendChild(w); };
         switch (q.type) {
             case 'id': wrap(drawShape(q.shape, q.f)); fracOptions(card, q.options.map(f => ({ node: fracEl(f), v: f }))); break;
             case 'build': {
+                card.appendChild(Dyn.zone('tapSlices'));
                 S.shaded = Array(q.f.d).fill(false);
                 const w = el('div', 'fr-shapewrap'); card.appendChild(w);
                 const upd = () => { w.textContent = ''; w.appendChild(drawShape(q.shape, { n: 0, d: q.f.d }, false, { shaded: S.shaded, tap: i => { if (S.locked) return; S.shaded = S.shaded.map((x, j) => (j === i ? !x : x)); upd(); } })); };
@@ -862,7 +866,7 @@ const FractionsLab = (() => {
                 card.appendChild(row);
                 const box = el('div', 'fr-opts three'); box.setAttribute('role', 'group');
                 [['L', t.left], ['E', t.equal], ['R', t.right]].forEach(([v, lbl]) => { const b = el('button', 'fr-opt small', lbl); b.type = 'button'; b.dataset.v = v; b.onclick = () => answer(v, b); box.appendChild(b); });
-                card.appendChild(box); break;
+                card.appendChild(Dyn.zone('choose')); card.appendChild(box); Dyn.style(box, { sel: '.fr-opt' }); break;
             }
             case 'eq': {
                 const rows = el('div', 'fr-eqrows');
@@ -872,7 +876,7 @@ const FractionsLab = (() => {
                 rows.appendChild(r1); rows.appendChild(r2); card.appendChild(rows);
                 const box = el('div', 'fr-opts'); box.setAttribute('role', 'group');
                 q.options.forEach(n => { const b = el('button', 'fr-opt', n); b.type = 'button'; b.dataset.v = n; b.onclick = () => answer(n, b); box.appendChild(b); });
-                card.appendChild(box); break;
+                card.appendChild(Dyn.zone('choose')); card.appendChild(box); Dyn.style(box, { sel: '.fr-opt' }); break;
             }
             case 'add': {
                 const row = el('div', 'fr-pair');
@@ -883,6 +887,7 @@ const FractionsLab = (() => {
             }
             case 'line': wrap(drawLine(q.f, false, { mark: q.f.n })); fracOptions(card, q.options.map(f => ({ node: fracEl(f), v: f }))); break;
             case 'place': {
+                card.appendChild(Dyn.zone('tapLine'));
                 S.place = null; const w = el('div', 'fr-shapewrap'); card.appendChild(w);
                 const upd = () => { w.textContent = ''; w.appendChild(drawLine({ n: q.f.n, d: q.f.d }, false, { mark: S.place, tap: n => { if (S.locked) return; S.place = n; upd(); } })); };
                 upd(); card.appendChild(el('p', 'fr-tiphint', t.tapHint));
@@ -898,7 +903,7 @@ const FractionsLab = (() => {
                 card.appendChild(el('div', 'fr-shapewrap')).appendChild(fracEl(q.f, true)); wrap(drawGrid(pctOf(q.f)));
                 const box = el('div', 'fr-opts'); box.setAttribute('role', 'group');
                 q.options.forEach(v => { const b = el('button', 'fr-opt', q.type === 'dec' ? fmtDec(v, t) : v + ' %'); b.type = 'button'; b.dataset.v = v; b.onclick = () => answer(v, b); box.appendChild(b); });
-                card.appendChild(box); break;
+                card.appendChild(Dyn.zone('choose')); card.appendChild(box); Dyn.style(box, { sel: '.fr-opt' }); break;
             }
             default: card.appendChild(el('div', 'fr-big', fmtDec(q.dec, t))); wrap(drawGrid(pctOf(q.f))); fracOptions(card, q.options.map(f => ({ node: fracEl(f), v: f })));
         }
@@ -906,12 +911,12 @@ const FractionsLab = (() => {
     function numOptions(card, list) {
         const box = el('div', 'fr-opts'); box.setAttribute('role', 'group');
         list.forEach(n => { const b = el('button', 'fr-opt', n); b.type = 'button'; b.dataset.v = n; b.onclick = () => answer(n, b); box.appendChild(b); });
-        card.appendChild(box);
+        card.appendChild(Dyn.zone('choose')); card.appendChild(box); Dyn.style(box, { sel: '.fr-opt' });
     }
     function fracOptions(card, list) {
         const box = el('div', 'fr-opts'); box.setAttribute('role', 'group');
         list.forEach(o => { const b = el('button', 'fr-opt'); b.type = 'button'; b.appendChild(o.node); b.dataset.v = o.id || fkey(o.v); b.onclick = () => answer(o.v, b); box.appendChild(b); });
-        card.appendChild(box);
+        card.appendChild(Dyn.zone('choose')); card.appendChild(box); Dyn.style(box, { sel: '.fr-opt', fill: false });
     }
 
     const answerKey = q => (q.type === 'mix' && q.dir === 'up' ? `${q.answer.w} ${q.answer.n}/${q.answer.d}` : q.answer && q.answer.n !== undefined ? fkey(q.answer) : String(q.answer));
@@ -924,6 +929,7 @@ const FractionsLab = (() => {
         else { col.appendChild(el('b', null, t.bad)); col.appendChild(el('span', 'fr-ans', answerLabel(q, L))); }
         if (!ok) {
             const ex = explain(q, L);
+            col.appendChild(el('b', 'fr-whylbl', '💡 ' + Dyn.t('why')));
             const why = el('p', 'fr-why', ex.text); why.id = 'fr-why'; col.appendChild(why);
             if (!o.retry) { const row = el('div', 'fr-figs'); ex.visuals.forEach(v2 => { const f = el('figure', 'fr-fig'); f.appendChild(drawVisual(v2)); row.appendChild(f); }); col.appendChild(row); }
         }
@@ -936,12 +942,14 @@ const FractionsLab = (() => {
     function answer(v, btn) {
         if (S.locked) return;
         const q = S.q, ok = isCorrect(q, v), guided = S.phase === 'guided';
-        if (guided && !ok && !q.tried) { q.tried = true; showFeedback(false, q, v, { retry: true }); return; }
-        S.locked = true;
+        if (guided && !ok && !q.tried) { q.tried = true; Dyn.bad(btn || $('fr-card')); showFeedback(false, q, v, { retry: true }); return; }
+        S.locked = true; $('fr-card').classList.add('dy-done');
         document.querySelectorAll('#fr-card .fr-opt, #fr-check').forEach(b => { b.disabled = true; });
         if (btn) btn.classList.add(ok ? 'ok' : 'bad');
         if (!ok) { const k = answerKey(q); document.querySelectorAll('#fr-card .fr-opt').forEach(b => { if (b.dataset.v === k) b.classList.add('ok'); }); }
         if (!guided) { if (ok) { S.correct++; S.run++; S.bestRun = Math.max(S.bestRun, S.run); } else S.run = 0; }
+        if (ok) Dyn.good(btn || $('fr-card'), S.run); else Dyn.bad(btn || $('fr-card'));
+        if (S.hud) { S.hud.setStreak(S.run); S.hud.setPoints(S.correct); }
         showFeedback(ok, q, v);
         if (!ok) { $('fr-card').classList.add('fr-shake'); if (navigator.vibrate) { try { navigator.vibrate(120); } catch (e) {} } }
     }
@@ -951,11 +959,12 @@ const FractionsLab = (() => {
         $('fr-trophy').textContent = won ? (st === 3 ? '🏆' : '⭐') : '🔄';
         $('fr-endtitle').textContent = won ? t.done : t.fail;
         $('fr-endtext').textContent = t.score(S.correct, S.total);
-        $('fr-endstars').textContent = won ? '★'.repeat(st) + '☆'.repeat(3 - st) : '';
+        if (won) Dyn.stars($('fr-endstars'), st, 3); else $('fr-endstars').textContent = '';
         $('fr-next').textContent = won ? (S.idx < UNITS.length - 1 ? t.nextL : t.back) : t.again;
         $('fr-next').onclick = () => { if (won && S.idx < UNITS.length - 1) start(S.idx + 1); else if (won) { renderHome(); show('fr-home'); } else { prepare(S.idx); beginPlay(); } };
         $('fr-back').textContent = t.back; $('fr-back').onclick = () => { renderHome(); show('fr-home'); };
         show('fr-end');
+        if (won && st >= 2) Dyn.big($('fr-trophy'));
         if (!won) return;
         const prev = S.prog.units[S.u.id];
         S.prog.units[S.u.id] = { stars: Math.max(st, prev ? prev.stars : 0) };
@@ -972,14 +981,119 @@ const FractionsLab = (() => {
         }
     }
 
+    // ---- minigames: drag slices into the pizza, match fraction cards with pictures. Own best score, no XP, no lesson progress ----
+    const M = { kind: null, i: 0, total: 5, ok: 0, run: 0, locked: false, r: null, hud: null };
+    const miniKey = kind => 'fractions_mini_best_' + kind + '_' + owner();
+    const roundTxt = () => Dyn.t('round', { n: Math.min(M.i + 1, M.total), m: M.total });
+    function sliceSvg(d) {
+        const svg = svgEl('svg', { viewBox: '0 0 100 100', class: 'fr-slice', 'aria-hidden': 'true' });
+        const a = 2 * Math.PI / d, R = Math.min(90, 46 / Math.sin(Math.min(a / 2, Math.PI / 2))), cx = 50, cy = 95;
+        const x0 = cx - R * Math.sin(a / 2), y0 = cy - R * Math.cos(a / 2), x1 = cx + R * Math.sin(a / 2), y1 = y0;
+        svgEl('path', { d: `M${cx} ${cy} L${x0.toFixed(1)} ${y0.toFixed(1)} A${R.toFixed(1)} ${R.toFixed(1)} 0 ${a > Math.PI ? 1 : 0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)} Z`, fill: '#ef4444', stroke: LINE, 'stroke-width': 3, 'stroke-linejoin': 'round' }, svg);
+        return svg;
+    }
+    function startMini(kind) { Object.assign(M, { kind, i: 0, ok: 0, run: 0, locked: false, total: kind === 'cards' ? 3 : 5 }); show('fr-mini'); miniNext(); }
+    function miniBar() {
+        $('fr-mini-fill').style.width = Math.round(M.i / M.total * 100) + '%'; $('fr-mini-count').textContent = roundTxt();
+        if (M.hud) { M.hud.setStreak(M.run); M.hud.setPoints(M.ok); }
+    }
+    function miniNext() {
+        $('fr-mini-fb').hidden = true; M.locked = false;
+        if (M.i >= M.total) return miniEnd();
+        miniBar(); const card = $('fr-mini-card'); card.textContent = ''; card.classList.remove('dy-done'); Dyn.slide(card);
+        card.appendChild(Dyn.zone(roundTxt(), 'q'));
+        if (M.kind === 'cards') renderMatchCards(card); else renderSlices(card);
+    }
+    function miniFeedback(ok, q, extra) {
+        const t = T(), fb = $('fr-mini-fb'), L = lang();
+        fb.hidden = false; fb.textContent = ''; fb.className = 'fr-feedback ' + (ok ? 'good' : 'bad');
+        const col = el('div', 'fr-fbcol'); col.appendChild(el('b', null, ok ? pick(t.good) : t.bad));
+        if (!ok) { const ex = explain(q, L); col.appendChild(el('b', 'fr-whylbl', '💡 ' + Dyn.t('why'))); const w = el('p', 'fr-why', ex.text); w.id = 'fr-mini-why'; col.appendChild(w); const row = el('div', 'fr-figs'); ex.visuals.forEach(v2 => { const f = el('figure', 'fr-fig'); f.appendChild(drawVisual(v2)); row.appendChild(f); }); col.appendChild(row); }
+        const go = el('button', 'fr-btn', t.next); go.type = 'button'; go.id = 'fr-mini-go'; go.onclick = () => { M.i++; miniNext(); };
+        fb.appendChild(col); fb.appendChild(go); go.focus(); try { fb.scrollIntoView({ block: 'nearest' }); } catch (e) {}
+    }
+    function renderSlices(card) {
+        const f = (() => { const d = ri(2, 8), n = ri(1, d - 1); return { n, d }; })(), q = { type: 'build', shape: 'pizza', f, answer: f.n };
+        const st = { placed: Array(f.d).fill(false) }; M.r = st;
+        const bigf = el('div', 'fr-shapewrap'); bigf.appendChild(fracEl(f, true)); card.appendChild(bigf);
+        card.appendChild(Dyn.zone('dragSlices'));
+        const pizza = el('div', 'fr-pizzadrop'); pizza.id = 'fr-pizza'; pizza.setAttribute('role', 'group'); pizza.setAttribute('aria-label', Dyn.t('yourPizza')); card.appendChild(pizza);
+        card.appendChild(el('p', 'fr-trayl', Dyn.t('tray')));
+        const tray = el('div', 'fr-tray'); tray.id = 'fr-tray'; tray.setAttribute('role', 'group'); card.appendChild(tray);
+        const chk = el('button', 'fr-btn', T().check); chk.type = 'button'; chk.id = 'fr-mini-check'; card.appendChild(chk);
+        const used = () => count(st.placed);
+        const place = () => { if (M.locked) return; const i = st.placed.indexOf(false); if (i >= 0) { st.placed[i] = true; paint(); } };
+        const unplace = i => { if (M.locked || !st.placed[i]) return; st.placed[i] = false; paint(); };
+        function paint() {
+            pizza.textContent = ''; pizza.appendChild(drawShape('pizza', { n: 0, d: f.d }, false, { shaded: st.placed, tap: unplace }));
+            tray.textContent = '';
+            for (let k = 0; k < f.d - used(); k++) {
+                const c = el('button', 'fr-chip'); c.type = 'button'; c.setAttribute('aria-label', Dyn.t('tray') + ' ' + (k + 1)); c.appendChild(sliceSvg(f.d)); c.onclick = place;
+                Dyn.drag(c, { targets: '#fr-pizza', onDrop: place }); tray.appendChild(c);
+            }
+            pizza.dataset.count = used();
+        }
+        paint();
+        chk.onclick = () => {
+            if (M.locked) return; M.locked = true; card.classList.add('dy-done'); const ok = used() === f.n;
+            chk.disabled = true;
+            if (ok) { M.ok++; M.run++; Dyn.good(pizza, M.run); } else { M.run = 0; Dyn.bad(pizza); }
+            miniBar(); miniFeedback(ok, q);
+        };
+    }
+    function renderMatchCards(card) {
+        const shape = pick(['pizza', 'bar']), fr = [], vals = new Set();
+        let g = 0;
+        while (fr.length < 4 && g++ < 300) { const d = ri(2, 8), n = ri(1, d - 1), v = n / d; if (!vals.has(v)) { vals.add(v); fr.push({ n, d }); } }
+        const order = shuffle([0, 1, 2, 3]), st = { sel: null, done: 0, bad: 0 }; M.r = st;
+        card.appendChild(Dyn.zone('matchCards'));
+        const grid = el('div', 'fr-mgrid'), left = el('div', 'fr-mcol'), right = el('div', 'fr-mcol'), cards = [], pics = [];
+        const choose = (side, i, b) => {
+            if (M.locked || b.disabled) return;
+            if (!st.sel) { st.sel = { side, i, b }; b.classList.add('sel'); return; }
+            if (st.sel.side === side) { st.sel.b.classList.remove('sel'); st.sel = { side, i, b }; b.classList.add('sel'); return; }
+            const first = st.sel; st.sel = null; first.b.classList.remove('sel');
+            if (first.i === i) {
+                [first.b, b].forEach(x => { x.classList.add('ok'); x.disabled = true; }); st.done++; Dyn.good(b, M.run + 1, true);
+                if (st.done === 4) { M.locked = true; card.classList.add('dy-done'); const clean = st.bad === 0; if (clean) { M.ok++; M.run++; } else M.run = 0; Dyn.good(grid, M.run, false); miniBar(); miniFeedback(true, { type: 'id', shape, f: fr[0] }); }
+            } else {
+                st.bad++; M.run = 0; first.b.classList.add('bad'); b.classList.add('bad'); Dyn.bad(b); setTimeout(() => { first.b.classList.remove('bad'); b.classList.remove('bad'); }, 600);
+                const cf = fr[side === 'card' ? i : first.i]; let old = card.querySelector('.dy-why'); if (old) old.remove();
+                Dyn.why(card, explain({ type: 'id', shape, f: cf }, lang()).text);
+            }
+        };
+        fr.forEach((f, i) => { const b = el('button', 'fr-opt fr-mcard'); b.type = 'button'; b.dataset.i = i; b.appendChild(fracEl(f, true)); b.onclick = () => choose('card', i, b); cards.push(b); left.appendChild(b); });
+        order.forEach(i => { const b = el('button', 'fr-opt fr-mpic'); b.type = 'button'; b.dataset.i = i; b.setAttribute('aria-label', T().piece(fr[i].n, fr[i].d)); b.appendChild(drawShape(shape, fr[i], true)); b.onclick = () => choose('pic', i, b); pics.push(b); right.appendChild(b); });
+        grid.appendChild(left); grid.appendChild(right); card.appendChild(grid);
+        Dyn.style(left, { sel: '.fr-mcard', fill: false });
+    }
+    function miniEnd() {
+        const kind = M.kind, st = M.ok >= M.total ? 3 : M.ok >= Math.ceil(M.total * .6) ? 2 : 1;
+        let best = 0; try { best = Number(localStorage.getItem(miniKey(kind))) || 0; if (M.ok > best) { best = M.ok; localStorage.setItem(miniKey(kind), String(M.ok)); } } catch (e) {}
+        $('fr-trophy').textContent = st === 3 ? '🏆' : '⭐'; $('fr-endtitle').textContent = kind === 'cards' ? Dyn.t('matchCards') : Dyn.t('dragSlices');
+        $('fr-endtext').textContent = `${Dyn.t('score')}: ${M.ok} / ${M.total} · ${Dyn.t('best')}: ${best}`;
+        Dyn.stars($('fr-endstars'), st, 3);
+        $('fr-next').textContent = Dyn.t('again'); $('fr-next').onclick = () => startMini(kind);
+        $('fr-back').textContent = T().back; $('fr-back').onclick = goHome;
+        show('fr-end'); if (st >= 2) Dyn.big($('fr-trophy'));
+    }
+    function renderMinis() {
+        let box = $('fr-minis');
+        if (!box) { box = el('div', 'fr-minis'); box.id = 'fr-minis'; $('fr-home').appendChild(box); }
+        box.textContent = ''; box.appendChild(Dyn.zone('minigames'));
+        [['slices', '🍕 ' + Dyn.t('dragSlices')], ['cards', '🃏 ' + Dyn.t('matchCards')]].forEach(([k, label]) => { const b = el('button', 'fr-btn fr-minibtn', label); b.type = 'button'; b.id = 'fr-mini-' + k; b.onclick = () => startMini(k); box.appendChild(b); });
+    }
     function goHome() { renderHome(); show('fr-home'); }
     function init() {
-        $('fr-quit').onclick = goHome; $('fr-l-quit').onclick = goHome;
+        $('fr-quit').onclick = goHome; $('fr-l-quit').onclick = goHome; $('fr-mini-quit').onclick = goHome;
+        const topBar = document.querySelector('#fr-play .fr-top'); Dyn.sound(topBar); S.hud = Dyn.hud(topBar);
+        const topMini = document.querySelector('#fr-mini .fr-top'); Dyn.sound(topMini); M.hud = Dyn.hud(topMini);
         $('fr-skip').onclick = () => finishLearn(false);
         $('fr-learn-done').onclick = () => finishLearn(true);
         $('fr-ex-next').onclick = () => { S.learn.ex = Math.min(S.learn.ex + 1, S.u.ex.length - 1); renderExample(); };
         $('fr-learnbtn').onclick = () => openLearn('play');
         document.addEventListener('keydown', e => {
+            if (!$('fr-mini').hidden) { const mg = $('fr-mini-fb').hidden ? null : $('fr-mini-go'); if (e.key === 'Enter' && mg) { e.preventDefault(); mg.click(); } return; }
             if ($('fr-play').hidden) return;
             const c = $('fr-continue') || $('fr-retry'), fbOpen = !$('fr-feedback').hidden;
             if (e.key === 'Enter' && fbOpen && c) { e.preventDefault(); c.click(); return; }

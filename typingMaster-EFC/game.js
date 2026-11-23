@@ -728,6 +728,7 @@ const TypeMasterGame = {
         if (level <= 3 && this.state.chars.length > 0) {
             this._renderKeyboard(this.state.chars[0].char);
         }
+        if (typeof TyDyn !== 'undefined') TyDyn.onBegin();
     },
 
     _pickText(level) {
@@ -817,6 +818,7 @@ const TypeMasterGame = {
         const pct = Math.round((this.state.pos / this.state.chars.length) * 100);
         const bar = document.getElementById('ty-progress');
         if (bar) bar.style.width = `${pct}%`;
+        if (typeof TyDyn !== 'undefined') TyDyn.onKey(current.state === 'correct', current.char);
 
         if (this.state.level <= 3 && this.state.pos < this.state.chars.length) {
             this._renderKeyboard(this.state.chars[this.state.pos].char);
@@ -1045,6 +1047,7 @@ const TypeMasterGame = {
     _showResults({ finalWpm, finalAcc, stars, score, elapsed, isNewRecord, unlocked }) {
         this._setText('ty-result-title', this._t('results'));
         this._setText('ty-stars', '⭐'.repeat(stars) + '☆'.repeat(3 - stars));
+        if (typeof TyDyn !== 'undefined') TyDyn.onResults(stars);
         this._setText('ty-final-wpm', String(finalWpm));
         this._setText('ty-final-wpm-lbl', this._t('wpm'));
         this._setText('ty-final-acc', `${finalAcc}%`);

@@ -542,6 +542,7 @@ function revealAnswer() {
     const t = (key, params) => MathMasterI18n.t(key, params);
     showFeedback(t('answerWas', { answer: formatAnswerText(gameState.currentAnswer) }), 'incorrect');
     DOM.hintText.textContent = '';
+    if (typeof MathDyn !== 'undefined') MathDyn.onReveal();
     setTimeout(() => {
         gameState.revealing = false;
         if (gameState.isPlaying && !gameState.isPaused) {
@@ -1326,6 +1327,7 @@ function startGame() {
     gameState.pausedTime = 0;
     gameState.startTime = Date.now();
 
+    if (typeof MathDyn !== 'undefined') MathDyn.onStart();
     showScreen('game');
     updateOperationIndicator();
     updateScore();
@@ -1576,6 +1578,8 @@ function generateQuestion() {
     DOM.feedbackText.textContent = '';
     DOM.feedbackText.className = 'feedback-text';
     DOM.hintText.textContent = '';
+
+    if (typeof MathDyn !== 'undefined') MathDyn.onQuestion();
 
     // Leer pregunta si TTS está activo
     if (MathMasterAudio.ttsEnabled) {
@@ -1922,8 +1926,7 @@ function handleCorrectAnswer() {
     gameState.bestStreak = Math.max(gameState.bestStreak, gameState.currentStreak);
     const t = (key, params) => MathMasterI18n.t(key, params);
 
-    MathMasterAudio.playCorrect();
-    MathMasterAudio.playStreak(gameState.currentStreak);
+    if (!window.Juice) { MathMasterAudio.playCorrect(); MathMasterAudio.playStreak(gameState.currentStreak); }
 
     updateScore();
     updateStreak();
@@ -1936,6 +1939,8 @@ function handleCorrectAnswer() {
         void qBox.offsetWidth;
         qBox.classList.add('pop');
     }
+
+    if (typeof MathDyn !== 'undefined') MathDyn.onCorrect();
 
     if (gameState.currentStreak >= 5) {
         showFeedback(t('excellentStreak', { streak: gameState.currentStreak }), 'correct');
@@ -1957,10 +1962,11 @@ function handleIncorrectAnswer() {
     gameState.hintsUsed++;
     const t = (key) => MathMasterI18n.t(key);
 
-    MathMasterAudio.playIncorrect();
+    if (!window.Juice) MathMasterAudio.playIncorrect();
 
     updateStreak();
     DOM.answerInput.classList.add('incorrect');
+    if (typeof MathDyn !== 'undefined') MathDyn.onWrong();
 
     if (gameState.questionAttempts >= 3) {
         revealAnswer();
@@ -2081,6 +2087,7 @@ function updateScore() {
 
 function updateStreak() {
     DOM.streak.textContent = `🔥 ${gameState.currentStreak}`;
+    if (typeof MathDyn !== 'undefined') MathDyn.refresh();
 }
 
 function updateProgress() {
@@ -2134,6 +2141,7 @@ function displayResults(isNewRecord, newAchievements = [], pointsResult = { poin
     }
 
     renderResultsExtras(accuracy);
+    if (typeof MathDyn !== 'undefined') MathDyn.onResults(accuracy);
     DOM.resultsTitle.textContent = title;
     DOM.resultsEmoji.textContent = emoji;
     DOM.finalScore.textContent = `${gameState.correctAnswers} / ${gameState.totalQuestions}`;

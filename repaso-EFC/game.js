@@ -175,6 +175,49 @@ const Repaso = (() => {
         return (S.meta.last === dayStr() || S.meta.last === y) ? S.meta.streak : 0;
     }
 
+    // ---- daily goal: cards reviewed today (own fields in the meta record) ----
+    const GOAL = 12;
+    const goalDone = () => (S.meta.goalDay === dayStr() ? (S.meta.goalN || 0) : 0);
+    function bumpGoal() {
+        const d = dayStr(); if (S.meta.goalDay !== d) { S.meta.goalDay = d; S.meta.goalN = 0; }
+        const before = S.meta.goalN || 0; S.meta.goalN = before + 1; saveMeta();
+        return before < GOAL && S.meta.goalN >= GOAL;
+    }
+    function goalBox(size) {
+        const box = el('div', 'rp-goal'), rg = Dyn.ring(size, Math.round(size / 8), '#22c55e'), n = Math.min(goalDone(), GOAL);
+        rg.set(n / GOAL, n + '/' + GOAL, Dyn.t('goal') + ': ' + n + '/' + GOAL); box.appendChild(rg.el);
+        const tx = el('div', 'rp-goaltx'); tx.appendChild(el('b', '', Dyn.t('goal'))); tx.appendChild(el('span', '', n >= GOAL ? Dyn.t('goalDone') : n + ' / ' + GOAL + ' ' + t('cardsWord')));
+        box.appendChild(tx); return box;
+    }
+    function showHelp() {
+        const cur = S.run && S.run.cur; let txt = Dyn.t('rpHelpFlash');
+        if (cur && cur.form !== 'flash') { const a = tx(cur.card.a).trim(); txt = Dyn.t('hintStarts', { c: a.charAt(0).toUpperCase(), n: a.replace(/\s+/g, '').length }); }
+        Dyn.sheet(Dyn.t('help'), txt);
+    }
+    /** Swipe a revealed flash card: right = knew it, left = not yet. The card tilts with the finger. */
+    function attachSwipe(card) {
+        card.classList.add('rp-swipe');
+        const yes = el('span', 'rp-stamp yes', t('knew')), no = el('span', 'rp-stamp no', t('didnt')); card.appendChild(yes); card.appendChild(no);
+        let sx = 0, id = null, dx = 0, drag = false;
+        card.onpointerdown = e => { if (e.target.closest && e.target.closest('button')) return; sx = e.clientX; id = e.pointerId; dx = 0; drag = true; card.style.transition = 'none'; try { card.setPointerCapture(id); } catch (x) { /* ignore */ } };
+        card.onpointermove = e => {
+            if (!drag || e.pointerId !== id) return; dx = e.clientX - sx;
+            card.style.transform = 'translateX(' + dx + 'px) rotate(' + (dx * .06).toFixed(1) + 'deg)';
+            yes.style.opacity = Math.max(0, Math.min(1, dx / 90)); no.style.opacity = Math.max(0, Math.min(1, -dx / 90));
+        };
+        const end = () => {
+            if (!drag) return; drag = false; try { card.releasePointerCapture(id); } catch (x) { /* ignore */ }
+            const cur = S.run && S.run.cur;
+            if (Math.abs(dx) > 90 && cur && !cur.locked) {
+                const ok = dx > 0;
+                if (Dyn.reduced()) { answer(ok); return; }
+                card.style.transition = 'transform .22s ease-in, opacity .22s'; card.style.transform = 'translateX(' + (ok ? 560 : -560) + 'px) rotate(' + (ok ? 24 : -24) + 'deg)'; card.style.opacity = '0';
+                setTimeout(() => answer(ok), 200);
+            } else { card.style.transition = 'transform .2s'; card.style.transform = ''; yes.style.opacity = 0; no.style.opacity = 0; }
+        };
+        card.onpointerup = end; card.onpointercancel = end;
+    }
+
     function show(id) {
         ['rp-home', 'rp-play', 'rp-study', 'rp-end'].forEach(s => { $(s).hidden = s !== id; });
         S.screen = id; window.scrollTo(0, 0);
@@ -185,7 +228,7 @@ const Repaso = (() => {
         document.documentElement.lang = lang();
         $('rp-h1').textContent = t('title');
         const st = $('rp-stats'); st.textContent = '';
-        st.appendChild(el('span', 'rp-pill', '🔥 ' + liveStreak() + ' ' + t('streak')));
+        st.appendChild(el('span', 'rp-pill', '🔥 ' + liveStreak() + ' ' + t('streak'))); Dyn.sound(st);
 
         const all = states(), now = Date.now();
         let due = 0, fresh = 0;
@@ -195,6 +238,7 @@ const Repaso = (() => {
         if (!S.decks.length) { plan.appendChild(el('p', '', t('noDecks'))); }
         else {
             const n = makeSession(S.decks, all, {}, now).length;
+            plan.appendChild(goalBox(76));
             plan.appendChild(el('div', 'rp-hint', t('todayDue')));
             plan.appendChild(el('div', 'big', String(due) + ' ' + t('cardsWord')));
             plan.appendChild(el('p', '', due > 0 ? t('dueHint') : t('allDone')));
@@ -242,6 +286,8 @@ const Repaso = (() => {
         const r = S.run, done = r.answered, left = r.queue.length;
         $('rp-barfill').style.width = Math.round(100 * done / Math.max(1, done + left + (r.cur ? 1 : 0))) + '%';
         $('rp-count').textContent = Math.min(done + 1, done + left + (r.cur ? 1 : 0)) + '/' + (done + left + (r.cur ? 1 : 0));
+        if (S.hud) { S.hud.setStreak(r.streak); S.hud.setPoints(r.right); }
+        if (S.goalRing) { const n = Math.min(goalDone(), GOAL); S.goalRing.set(n / GOAL, '', Dyn.t('goal') + ': ' + n + '/' + GOAL); }
     }
 
     function nextCard() {
@@ -260,10 +306,14 @@ const Repaso = (() => {
     function renderCard() {
         const r = S.run, cur = r.cur; if (!cur) return;
         const card = $('rp-card'); card.textContent = '';
+        card.style.transform = ''; card.style.opacity = ''; card.style.transition = ''; card.classList.remove('rp-swipe', 'dy-done'); card.onpointerdown = card.onpointermove = card.onpointerup = card.onpointercancel = null;
         $('rp-quit').setAttribute('aria-label', t('quit'));
         progress();
+        if (!cur.shown) { cur.shown = true; Dyn.slide(card); }
+        const tot = r.answered + r.queue.length + 1;
+        card.appendChild(Dyn.zone(Dyn.t('q', { n: Math.min(r.answered + 1, tot), m: tot }), 'q'));
         const kind = { flash: 'kindFlash', choice: 'kindChoice', type: 'kindType' }[cur.form];
-        card.appendChild(el('p', 'rp-kind', cur.deck.icon + ' ' + t(kind)));
+        card.appendChild(el('p', 'rp-kind dy-zone', cur.deck.icon + ' ' + t(kind)));
         card.appendChild(el('div', 'rp-q', tx(cur.card.q)));
         if (cur.card.tag) card.appendChild(el('div', 'rp-tag', cur.card.tag));
         const correct = tx(cur.card.a);
@@ -275,7 +325,7 @@ const Repaso = (() => {
                 const row = el('div', 'rp-row');
                 const no = el('button', 'rp-btn bad', '← ' + t('didnt')); no.type = 'button'; no.onclick = () => answer(false);
                 const yes = el('button', 'rp-btn good', t('knew') + ' →'); yes.type = 'button'; yes.onclick = () => answer(true);
-                row.appendChild(no); row.appendChild(yes); card.appendChild(row);
+                row.appendChild(no); row.appendChild(yes); card.appendChild(Dyn.zone('swipeHint')); card.appendChild(row); attachSwipe(card);
             }
         } else if (cur.form === 'choice') {
             const box = el('div', 'rp-opts');
@@ -284,17 +334,20 @@ const Repaso = (() => {
                 b.appendChild(el('kbd', '', String(i + 1))); b.appendChild(el('span', '', o));
                 b.onclick = () => pickOption(i); box.appendChild(b);
             });
-            card.appendChild(box);
+            card.appendChild(Dyn.zone('choose')); card.appendChild(box); Dyn.style(box, { sel: '.rp-opt', fill: false });
         } else {
             const inp = el('input', 'rp-input'); inp.type = 'text'; inp.id = 'rp-typed'; inp.placeholder = t('typePh');
             inp.autocomplete = 'off'; inp.autocapitalize = 'off'; inp.spellcheck = false; inp.setAttribute('aria-label', t('typePh'));
-            card.appendChild(inp);
+            card.appendChild(Dyn.zone('write')); card.appendChild(inp);
             const b = el('button', 'rp-btn main', t('check')); b.type = 'button'; b.id = 'rp-check'; b.onclick = submitTyped; card.appendChild(b);
             setTimeout(() => { try { inp.focus({ preventScroll: true }); } catch (e) { /* ignore */ } }, 0);
         }
     }
 
-    function flip() { const cur = S.run && S.run.cur; if (!cur || cur.form !== 'flash' || cur.revealed) return; cur.revealed = true; renderCard(); }
+    function flip() {
+        const cur = S.run && S.run.cur; if (!cur || cur.form !== 'flash' || cur.revealed) return; cur.revealed = true; renderCard();
+        const c = $('rp-card'); c.classList.remove('flipin'); void c.offsetWidth; c.classList.add('flipin'); setTimeout(() => c.classList.remove('flipin'), 450);
+    }
 
     function pickOption(i) {
         const cur = S.run.cur; if (!cur || cur.locked) return;
@@ -318,7 +371,9 @@ const Repaso = (() => {
     function answer(ok) {
         const r = S.run, cur = r.cur; if (!cur || cur.locked) return;
         cur.locked = true;
+        let goalHit = false;
         if (!cur.item.retry) {
+            goalHit = bumpGoal();
             const before = cur.state ? cur.state.box : -1;
             const after = S.stores[cur.deck.id].answer(cur.card.id, ok);
             if (ok && after.box > Math.max(before, 0)) r.boxesUp++;
@@ -330,6 +385,10 @@ const Repaso = (() => {
                 r.queue.push({ deckId: cur.deck.id, cardId: cur.card.id, retry: true });
             }
         } else r.answered++;
+        const tgt = document.querySelector('#rp-card .rp-opt.' + (ok ? 'right' : 'wrong')) || $('rp-typed') || $('rp-card');
+        $('rp-card').classList.add('dy-done');
+        if (ok) Dyn.good(tgt, r.streak, cur.form === 'flash'); else Dyn.bad(tgt, cur.form === 'flash');
+        if (goalHit) { Dyn.big($('rp-card')); try { Juice.floatText((window.innerWidth || 400) / 2, 140, Dyn.t('goalDone')); } catch (e) { /* ignore */ } }
         const fb = $('rp-feedback'); fb.textContent = '';
         fb.className = 'rp-feedback' + (ok ? ' ok' : '');
         if (ok) { fb.appendChild(el('span', '', '✓ ' + t('right'))); }
@@ -363,6 +422,9 @@ const Repaso = (() => {
     function renderEnd() {
         const r = S.run;
         $('rp-trophy').textContent = r.wrong === 0 ? '🏆' : r.right >= r.wrong ? '🌟' : '💪';
+        const ratio = r.right / Math.max(1, r.right + r.wrong), sc = r.wrong === 0 ? 3 : ratio >= .7 ? 2 : 1;
+        Dyn.stars($('rp-endstars'), sc, 3); if (r.right >= r.wrong) Dyn.big($('rp-trophy'));
+        const eg = $('rp-endgoal'); eg.textContent = ''; eg.appendChild(goalBox(64));
         $('rp-endtitle').textContent = t('endGreat');
         const st = $('rp-endstats'); st.textContent = '';
         [[r.right, 'endRight'], [r.wrong, 'endWrong'], [r.boxesUp, 'endBoxes']].forEach(([n, k]) => {
@@ -440,6 +502,11 @@ const Repaso = (() => {
 
     function init() {
         $('rp-quit').onclick = () => { S.run = null; renderHome(); show('rp-home'); };
+        const topBar = document.querySelector('#rp-play .rp-top');
+        const hb = Dyn.el('button', 'dy-help', '💡'); hb.type = 'button'; hb.id = 'rp-help'; hb.onclick = showHelp; topBar.appendChild(hb);
+        const hl = () => { hb.textContent = '💡 ' + Dyn.t('help'); hb.setAttribute('aria-label', Dyn.t('help')); }; hl(); window.addEventListener('platformLanguageChanged', hl);
+        S.goalRing = Dyn.ring(44, 6, '#22c55e'); S.goalRing.el.classList.add('rp-minigoal');
+        Dyn.sound(topBar); S.hud = Dyn.hud(topBar); S.hud.root.appendChild(S.goalRing.el);
         $('rp-studyquit').onclick = () => { S.study = null; renderHome(); show('rp-home'); };
         $('rp-prev').onclick = () => studyMove(-1);
         $('rp-nextcard').onclick = () => studyMove(1);

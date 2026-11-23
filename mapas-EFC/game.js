@@ -864,7 +864,7 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
             const opts = pickOptions(it.id, sameCont.length >= 4 ? sameCont : pool, 4);
             const box = $('mp-options'); box.hidden = false;
             opts.forEach(id => {
-                const o = itemById(id); const b = el('button', 'mp-opt', r.type === 'capName' ? capOf(o) : nameOf(o)); b.type = 'button'; b.dataset.opt = id;
+                const o = itemById(id); const b = el('button', 'mp-opt', r.type === 'capName' ? capOf(o) : nameOf(o)); b.type = 'button'; b.dataset.opt = id; b.dataset.shape = ['▲','◆','●','■'][box.children.length % 4]; b.style.setProperty('--i', box.children.length);
                 b.onclick = () => answerOpt(id, b); box.appendChild(b);
             });
         }
@@ -897,6 +897,7 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         addTempLabel(it);
         const c = S.map.caps && S.map.caps[it.iso]; if (c && (r.type === 'capFind' || r.type === 'capName')) { const cm = mark(c, 'cap'); cm.setAttribute('cx', c.x); cm.setAttribute('cy', c.y); }
         const before = r.before;
+        try { if (window.Juice) { const tg = $('mp-toast'); if (correct) window.Juice.correct(tg, { streak: r.streak }); else if (!r.timedOut) window.Juice.wrong(tg); } } catch (er) { /* ignore */ }
         if (correct) showToast(t('fbOk') + (r.type === 'capName' || r.type === 'capFind' ? ' ' + nameOf(it) + ' → ' + capOf(it) : ''), 0);
         else if (!r.timedOut) showToast(t('fbWrong', { n: nameOf(it) }) + (r.type === 'capFind' || r.type === 'capName' ? ' · ' + capOf(it) : ''), 0);
         if (masteryOf(prog[r.id]) === 'ok' && before !== 'ok') r.newMastered++;
@@ -969,6 +970,7 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
     function quitGame() { S.lessonNext = null; S.lesson = null; stopTimer(); $('mp-timer').hidden = true; S.run = null; renderHome(); show('mp-home'); }
 
     function init() {
+        try { if (window.Juice) window.Juice.mountSoundToggle($('mp-sound')); } catch (er) { /* ignore */ }
         $('mp-quit').onclick = quitGame;
         $('mp-setupback').onclick = () => { renderHome(); show('mp-home'); };
         $('mp-next').onclick = () => { if (S.lessonNext) { const f = S.lessonNext; f(); } else if (S.run) { S.run.i++; nextQ(); } };

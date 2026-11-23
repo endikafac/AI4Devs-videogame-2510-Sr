@@ -66,6 +66,12 @@
         <button class="ty-btn ty-btn-secondary ty-lesson-open" id="ty-lesson-btn" type="button">⌨️</button>
     </div>
 
+    <p class="ty-section-title" id="ty-mini-title"></p>
+    <div class="tyd-minirow">
+        <button class="tyd-minibtn r" id="ty-rain-btn" type="button"></button>
+        <button class="tyd-minibtn m" id="ty-miss-btn" type="button"></button>
+    </div>
+
     <div class="ty-quick-links">
         <button class="ty-quick-link-btn" id="ty-stats-btn">📊 Estadísticas</button>
         <button class="ty-quick-link-btn" id="ty-achievements-btn">🏆 Logros</button>
@@ -81,6 +87,9 @@
     <div class="ty-game-header">
         <span class="ty-level-badge" id="ty-level-badge">Nivel 1</span>
     </div>
+
+    <div class="tyd-zonebar"><span class="tyd-qn" id="tyd-qn"></span><span class="tyd-streak" id="tyd-streak" aria-live="off"></span><button class="tyd-helpbtn" id="tyd-help" type="button"></button><span id="tyd-snd"></span></div>
+    <p class="tyd-hint" id="tyd-hint" role="note" hidden></p>
 
     <!-- HUD -->
     <div class="ty-hud" aria-live="polite" aria-atomic="true">
@@ -108,6 +117,7 @@
         <div class="ty-progress-bar" id="ty-progress" style="width:0%"></div>
     </div>
 
+    <div class="tyd-zone q" id="tyd-zq"></div>
     <!-- Text display area -->
     <div class="ty-text-area"
          id="ty-text-display"
@@ -142,6 +152,36 @@
            tabindex="-1"
            style="position:fixed;left:-9999px;top:0;width:1px;height:1px;opacity:0;pointer-events:none;border:none;outline:none;">
 
+</div>
+</section>
+
+<!-- ══ SCREEN 2a: MINI MODES (letter rain, missing letter) ═══════════════════ -->
+<section id="ty-mini" class="ty-screen" aria-label="Mini">
+<div class="tm-page">
+    <div class="tyd-zonebar">
+        <button class="tyd-quit" id="tym-quit" type="button" aria-label="Salir">✕</button>
+        <span class="tyd-qn" id="tym-qn"></span>
+        <span class="tyd-streak" id="tym-streak"></span>
+        <button class="tyd-helpbtn" id="tym-help" type="button"></button>
+        <span id="tym-snd"></span>
+    </div>
+    <div class="tyd-bar"><i id="tym-bar"></i></div>
+    <div class="tyd-minihud"><span id="tym-time"></span><span id="tym-score"></span></div>
+    <p class="tyd-hint" id="tym-hint" role="note" hidden></p>
+    <div class="tyd-zone q" id="tym-zq"></div>
+    <div class="tyd-card" id="tym-card"></div>
+    <div class="tyd-zone a" id="tym-za"></div>
+    <div class="tyd-stage" id="tym-stage"></div>
+    <div class="tyd-feedback" id="tym-fb" hidden aria-live="assertive"></div>
+    <div class="tyd-end" id="tym-end" hidden>
+        <h2></h2>
+        <div class="tyd-stars" id="tym-end-stars" aria-hidden="true"></div>
+        <p class="tyd-endscore" id="tym-end-score"></p>
+        <div class="tyd-endbtns">
+            <button class="ty-btn ty-btn-primary" id="tym-again" type="button"></button>
+            <button class="ty-btn ty-btn-ghost" id="tym-menu" type="button"></button>
+        </div>
+    </div>
 </div>
 </section>
 
@@ -247,11 +287,13 @@
 <script src="../platform/identity.js"></script>
 <script src="../platform/achievements.js"></script>
 <script src="../platform/platform-header.js"></script>
+<script src="../platform/juice.js"></script>
 <script src="texts.js"></script>
 <script src="texts-extra.js"></script>
 <script src="i18n-extra.js"></script>
 <script src="lesson.js"></script>
 <script src="game.js"></script>
+<script src="dyn.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     PlatformHeader.init({ gameName: 'TypeMaster', gameIcon: '⌨️', rootPath: '../' });
