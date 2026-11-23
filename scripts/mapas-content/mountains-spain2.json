@@ -1,0 +1,616 @@
+{
+ "spain": [
+  {
+   "id": "montserrat",
+   "es": "Montserrat",
+   "en": "Montserrat",
+   "m": 1236,
+   "kind": "range",
+   "lon": 1.81,
+   "lat": 41.6,
+   "where": {
+    "es": "Barcelona (Cataluña)",
+    "en": "Barcelona (Catalonia)"
+   },
+   "fact": {
+    "es": "Sus rocas con forma de sierra dan nombre a la montaña, que alberga un monasterio.",
+    "en": "Its saw-shaped rocks gave the mountain its name, and it holds a monastery."
+   }
+  },
+  {
+   "id": "pedraforca",
+   "es": "Pedraforca",
+   "en": "Pedraforca",
+   "m": 2506,
+   "kind": "peak",
+   "lon": 1.7,
+   "lat": 42.24,
+   "where": {
+    "es": "Berguedà (Barcelona, Cataluña)",
+    "en": "Berguedà (Barcelona, Catalonia)"
+   },
+   "fact": {
+    "es": "Tiene dos picos separados y parece una horca de piedra.",
+    "en": "It has two separate peaks and looks like a stone pitchfork."
+   }
+  },
+  {
+   "id": "cadi",
+   "es": "Cadí-Moixeró",
+   "en": "Cadí-Moixeró",
+   "m": 2648,
+   "kind": "range",
+   "lon": 1.65,
+   "lat": 42.3,
+   "where": {
+    "es": "Pirineos (Lleida y Barcelona)",
+    "en": "Pyrenees (Lleida and Barcelona)"
+   },
+   "fact": {
+    "es": "Es una larga muralla de roca caliza con el Puig de la Canal Baridana.",
+    "en": "It is a long wall of limestone with Puig de la Canal Baridana."
+   }
+  },
+  {
+   "id": "puigmal",
+   "es": "Puigmal",
+   "en": "Puigmal",
+   "m": 2913,
+   "kind": "peak",
+   "lon": 2.12,
+   "lat": 42.38,
+   "where": {
+    "es": "Pirineos (Girona, Cataluña)",
+    "en": "Pyrenees (Girona, Catalonia)"
+   },
+   "fact": {
+    "es": "Es una de las cimas más altas del Pirineo oriental, junto a Francia.",
+    "en": "It is one of the highest summits of the eastern Pyrenees, next to France."
+   }
+  },
+  {
+   "id": "estats",
+   "es": "Pica d'Estats",
+   "en": "Pica d'Estats",
+   "m": 3143,
+   "kind": "peak",
+   "lon": 1.4,
+   "lat": 42.67,
+   "where": {
+    "es": "Pirineos (Lleida, Cataluña)",
+    "en": "Pyrenees (Lleida, Catalonia)"
+   },
+   "fact": {
+    "es": "Es el punto más alto de Cataluña y está en la frontera con Francia.",
+    "en": "It is the highest point of Catalonia, on the border with France."
+   }
+  },
+  {
+   "id": "posets",
+   "es": "Posets",
+   "en": "Posets",
+   "m": 3375,
+   "kind": "peak",
+   "lon": 0.44,
+   "lat": 42.66,
+   "where": {
+    "es": "Pirineos (Huesca, Aragón)",
+    "en": "Pyrenees (Huesca, Aragón)"
+   },
+   "fact": {
+    "es": "Es la segunda montaña más alta de los Pirineos, después del Aneto.",
+    "en": "It is the second highest mountain in the Pyrenees, after Aneto."
+   }
+  },
+  {
+   "id": "anayet",
+   "es": "Anayet",
+   "en": "Anayet",
+   "m": 2545,
+   "kind": "peak",
+   "lon": -0.43,
+   "lat": 42.78,
+   "where": {
+    "es": "Pirineos (Huesca, Aragón)",
+    "en": "Pyrenees (Huesca, Aragón)"
+   },
+   "fact": {
+    "es": "Su cima se refleja en un lago de montaña cerca de Formigal.",
+    "en": "Its summit is mirrored in a mountain lake near Formigal."
+   }
+  },
+  {
+   "id": "collarada",
+   "es": "Collarada",
+   "en": "Collarada",
+   "m": 2886,
+   "kind": "peak",
+   "lon": -0.5,
+   "lat": 42.69,
+   "where": {
+    "es": "Pirineos (Huesca, Aragón)",
+    "en": "Pyrenees (Huesca, Aragón)"
+   },
+   "fact": {
+    "es": "Domina el valle de Canfranc y se ve desde Jaca.",
+    "en": "It towers over the Canfranc valley and can be seen from Jaca."
+   }
+  },
+  {
+   "id": "oroel",
+   "es": "Peña Oroel",
+   "en": "Peña Oroel",
+   "m": 1769,
+   "kind": "peak",
+   "lon": -0.52,
+   "lat": 42.52,
+   "where": {
+    "es": "Jaca (Huesca, Aragón)",
+    "en": "Jaca (Huesca, Aragón)"
+   },
+   "fact": {
+    "es": "Es una gran roca plana sobre Jaca, muy ligada a la historia de Aragón.",
+    "en": "It is a large flat rock above Jaca, closely tied to the history of Aragón."
+   }
+  },
+  {
+   "id": "guara",
+   "es": "Sierra de Guara",
+   "en": "Sierra de Guara",
+   "m": 2077,
+   "kind": "range",
+   "lon": -0.25,
+   "lat": 42.31,
+   "where": {
+    "es": "Huesca (Aragón)",
+    "en": "Huesca (Aragón)"
+   },
+   "fact": {
+    "es": "Es un paraíso para el barranquismo, con cañones estrechos y pozas.",
+    "en": "It is a paradise for canyoning, with narrow gorges and pools."
+   }
+  },
+  {
+   "id": "torcal",
+   "es": "El Torcal",
+   "en": "El Torcal",
+   "m": 1369,
+   "kind": "range",
+   "lon": -4.54,
+   "lat": 36.95,
+   "where": {
+    "es": "Antequera (Málaga, Andalucía)",
+    "en": "Antequera (Málaga, Andalusia)"
+   },
+   "fact": {
+    "es": "Sus rocas calizas apiladas parecen platos y esculturas gigantes.",
+    "en": "Its stacked limestone rocks look like giant plates and sculptures."
+   }
+  },
+  {
+   "id": "torrecilla",
+   "es": "Torrecilla",
+   "en": "Torrecilla",
+   "m": 1919,
+   "kind": "peak",
+   "lon": -4.97,
+   "lat": 36.7,
+   "where": {
+    "es": "Sierra de las Nieves (Málaga, Andalucía)",
+    "en": "Sierra de las Nieves (Málaga, Andalusia)"
+   },
+   "fact": {
+    "es": "Es la cima más alta de la provincia de Málaga, en un parque con pinsapos.",
+    "en": "It is the highest peak in the province of Málaga, in a park of Spanish firs."
+   }
+  },
+  {
+   "id": "maliciosa",
+   "es": "La Maliciosa",
+   "en": "La Maliciosa",
+   "m": 2227,
+   "kind": "peak",
+   "lon": -3.98,
+   "lat": 40.75,
+   "where": {
+    "es": "Sierra de Guadarrama (Madrid)",
+    "en": "Sierra de Guadarrama (Madrid)"
+   },
+   "fact": {
+    "es": "Es una de las cumbres más conocidas por los madrileños.",
+    "en": "It is one of the summits best known to people from Madrid."
+   }
+  },
+  {
+   "id": "pedriza",
+   "es": "La Pedriza",
+   "en": "La Pedriza",
+   "m": 1717,
+   "kind": "range",
+   "lon": -3.87,
+   "lat": 40.76,
+   "where": {
+    "es": "Manzanares el Real (Madrid)",
+    "en": "Manzanares el Real (Madrid)"
+   },
+   "fact": {
+    "es": "Es un enorme campo de bloques de granito con el famoso Yelmo.",
+    "en": "It is a huge field of granite boulders with the famous Yelmo rock."
+   }
+  },
+  {
+   "id": "sietepicos",
+   "es": "Siete Picos",
+   "en": "Siete Picos",
+   "m": 2138,
+   "kind": "range",
+   "lon": -4.03,
+   "lat": 40.81,
+   "where": {
+    "es": "Sierra de Guadarrama (Madrid y Segovia)",
+    "en": "Sierra de Guadarrama (Madrid and Segovia)"
+   },
+   "fact": {
+    "es": "Su cresta tiene siete cumbres seguidas, de ahí su nombre.",
+    "en": "Its ridge has seven summits in a row, hence the name."
+   }
+  },
+  {
+   "id": "ocejon",
+   "es": "Ocejón",
+   "en": "Ocejón",
+   "m": 2048,
+   "kind": "peak",
+   "lon": -3.13,
+   "lat": 40.99,
+   "where": {
+    "es": "Guadalajara (Castilla-La Mancha)",
+    "en": "Guadalajara (Castilla-La Mancha)"
+   },
+   "fact": {
+    "es": "Su cima corona los pueblos negros de pizarra.",
+    "en": "Its summit crowns the black slate villages."
+   }
+  },
+  {
+   "id": "lobo",
+   "es": "Pico del Lobo",
+   "en": "Pico del Lobo",
+   "m": 2273,
+   "kind": "peak",
+   "lon": -3.45,
+   "lat": 41.17,
+   "where": {
+    "es": "Sierra de Ayllón (Segovia y Guadalajara)",
+    "en": "Sierra de Ayllón (Segovia and Guadalajara)"
+   },
+   "fact": {
+    "es": "Es la cima más alta de la sierra de Ayllón.",
+    "en": "It is the highest summit of the Ayllón mountains."
+   }
+  },
+  {
+   "id": "penafrancia",
+   "es": "Peña de Francia",
+   "en": "Peña de Francia",
+   "m": 1732,
+   "kind": "peak",
+   "lon": -6.17,
+   "lat": 40.52,
+   "where": {
+    "es": "Salamanca (Castilla y León)",
+    "en": "Salamanca (Castilla y León)"
+   },
+   "fact": {
+    "es": "En su cima hay un santuario y un mirador sobre media Castilla.",
+    "en": "On top there is a shrine and a viewpoint over half of Castile."
+   }
+  },
+  {
+   "id": "calvitero",
+   "es": "Calvitero",
+   "en": "Calvitero",
+   "m": 2401,
+   "kind": "peak",
+   "lon": -5.8,
+   "lat": 40.27,
+   "where": {
+    "es": "Sierra de Béjar (Salamanca y Cáceres)",
+    "en": "Sierra de Béjar (Salamanca and Cáceres)"
+   },
+   "fact": {
+    "es": "Su nieve alimenta una pequeña estación de esquí.",
+    "en": "Its snow feeds a small ski resort."
+   }
+  },
+  {
+   "id": "ubina",
+   "es": "Peña Ubiña",
+   "en": "Peña Ubiña",
+   "m": 2417,
+   "kind": "peak",
+   "lon": -5.97,
+   "lat": 43,
+   "where": {
+    "es": "Cordillera Cantábrica (Asturias y León)",
+    "en": "Cantabrian Mountains (Asturias and León)"
+   },
+   "fact": {
+    "es": "Es la cumbre más alta del macizo de Ubiña, con mucha nieve en invierno.",
+    "en": "It is the highest summit of the Ubiña massif, with lots of snow in winter."
+   }
+  },
+  {
+   "id": "penasanta",
+   "es": "Peña Santa de Castilla",
+   "en": "Peña Santa de Castilla",
+   "m": 2596,
+   "kind": "peak",
+   "lon": -4.98,
+   "lat": 43.2,
+   "where": {
+    "es": "Picos de Europa (León y Asturias)",
+    "en": "Picos de Europa (León and Asturias)"
+   },
+   "fact": {
+    "es": "Es una enorme pared de roca que se ve desde lejos.",
+    "en": "It is a huge wall of rock that can be seen from far away."
+   }
+  },
+  {
+   "id": "penavieja",
+   "es": "Peña Vieja",
+   "en": "Peña Vieja",
+   "m": 2617,
+   "kind": "peak",
+   "lon": -4.75,
+   "lat": 43.17,
+   "where": {
+    "es": "Picos de Europa (Cantabria)",
+    "en": "Picos de Europa (Cantabria)"
+   },
+   "fact": {
+    "es": "Es la cima más alta de la provincia de Cantabria en los Picos de Europa.",
+    "en": "It is the highest summit of Cantabria in the Picos de Europa."
+   }
+  },
+  {
+   "id": "naranco",
+   "es": "Monte Naranco",
+   "en": "Monte Naranco",
+   "m": 634,
+   "kind": "peak",
+   "lon": -5.87,
+   "lat": 43.38,
+   "where": {
+    "es": "Oviedo (Asturias)",
+    "en": "Oviedo (Asturias)"
+   },
+   "fact": {
+    "es": "Sobre Oviedo, guarda iglesias prerrománicas del siglo IX.",
+    "en": "Above Oviedo, it keeps pre-Romanesque churches from the 9th century."
+   }
+  },
+  {
+   "id": "tresreyes",
+   "es": "Mesa de los Tres Reyes",
+   "en": "Mesa de los Tres Reyes",
+   "m": 2438,
+   "kind": "peak",
+   "lon": -0.73,
+   "lat": 42.88,
+   "where": {
+    "es": "Pirineos (Navarra)",
+    "en": "Pyrenees (Navarre)"
+   },
+   "fact": {
+    "es": "Es el punto más alto de Navarra y toma su nombre de tres antiguos reinos.",
+    "en": "It is the highest point of Navarre and is named after three old kingdoms."
+   }
+  },
+  {
+   "id": "sanlorenzo",
+   "es": "San Lorenzo",
+   "en": "San Lorenzo",
+   "m": 2271,
+   "kind": "peak",
+   "lon": -2.86,
+   "lat": 42.25,
+   "where": {
+    "es": "Sierra de la Demanda (La Rioja)",
+    "en": "Sierra de la Demanda (La Rioja)"
+   },
+   "fact": {
+    "es": "Es la cima más alta de La Rioja.",
+    "en": "It is the highest summit of La Rioja."
+   }
+  },
+  {
+   "id": "revolcadores",
+   "es": "Revolcadores",
+   "en": "Revolcadores",
+   "m": 2015,
+   "kind": "peak",
+   "lon": -2.1,
+   "lat": 38.1,
+   "where": {
+    "es": "Sierra Seca (Murcia)",
+    "en": "Sierra Seca (Murcia)"
+   },
+   "fact": {
+    "es": "Es la cima más alta de la Región de Murcia.",
+    "en": "It is the highest peak of the Region of Murcia."
+   }
+  },
+  {
+   "id": "penyagolosa",
+   "es": "Penyagolosa",
+   "en": "Penyagolosa",
+   "m": 1813,
+   "kind": "peak",
+   "lon": -0.3,
+   "lat": 40.22,
+   "where": {
+    "es": "Castellón (Comunidad Valenciana)",
+    "en": "Castellón (Valencian Community)"
+   },
+   "fact": {
+    "es": "Es la montaña más alta de la provincia de Castellón.",
+    "en": "It is the highest mountain in the province of Castellón."
+   }
+  },
+  {
+   "id": "javalambre",
+   "es": "Javalambre",
+   "en": "Javalambre",
+   "m": 2020,
+   "kind": "range",
+   "lon": -1.02,
+   "lat": 40.1,
+   "where": {
+    "es": "Teruel (Aragón)",
+    "en": "Teruel (Aragón)"
+   },
+   "fact": {
+    "es": "Tiene un observatorio astronómico gracias a su cielo muy limpio.",
+    "en": "It has an astronomical observatory thanks to its very clear sky."
+   }
+  },
+  {
+   "id": "manzaneda",
+   "es": "Cabeza de Manzaneda",
+   "en": "Cabeza de Manzaneda",
+   "m": 1778,
+   "kind": "peak",
+   "lon": -7.22,
+   "lat": 42.3,
+   "where": {
+    "es": "Ourense (Galicia)",
+    "en": "Ourense (Galicia)"
+   },
+   "fact": {
+    "es": "Tiene una estación de esquí, algo poco común en Galicia.",
+    "en": "It has a ski resort, something uncommon in Galicia."
+   }
+  },
+  {
+   "id": "picodelasnieves",
+   "es": "Pico de las Nieves",
+   "en": "Pico de las Nieves",
+   "m": 1949,
+   "kind": "peak",
+   "lon": -15.57,
+   "lat": 27.96,
+   "where": {
+    "es": "Gran Canaria (Canarias)",
+    "en": "Gran Canaria (Canary Islands)"
+   },
+   "fact": {
+    "es": "Es el punto más alto de Gran Canaria.",
+    "en": "It is the highest point of Gran Canaria."
+   }
+  },
+  {
+   "id": "roquenublo",
+   "es": "Roque Nublo",
+   "en": "Roque Nublo",
+   "m": 1813,
+   "kind": "peak",
+   "lon": -15.6,
+   "lat": 27.96,
+   "where": {
+    "es": "Gran Canaria (Canarias)",
+    "en": "Gran Canaria (Canary Islands)"
+   },
+   "fact": {
+    "es": "Es una roca volcánica de unos 80 metros y símbolo de la isla.",
+    "en": "It is a volcanic rock about 80 meters tall and a symbol of the island."
+   }
+  },
+  {
+   "id": "garajonay",
+   "es": "Garajonay",
+   "en": "Garajonay",
+   "m": 1487,
+   "kind": "peak",
+   "lon": -17.24,
+   "lat": 28.12,
+   "where": {
+    "es": "La Gomera (Canarias)",
+    "en": "La Gomera (Canary Islands)"
+   },
+   "fact": {
+    "es": "Está rodeado de un bosque de laurisilva, Patrimonio de la Humanidad.",
+    "en": "It is surrounded by a laurel forest, a World Heritage Site."
+   }
+  },
+  {
+   "id": "zarza",
+   "es": "Pico de la Zarza",
+   "en": "Pico de la Zarza",
+   "m": 807,
+   "kind": "peak",
+   "lon": -14.19,
+   "lat": 28.05,
+   "where": {
+    "es": "Fuerteventura (Canarias)",
+    "en": "Fuerteventura (Canary Islands)"
+   },
+   "fact": {
+    "es": "Es la cima más alta de Fuerteventura, en la península de Jandía.",
+    "en": "It is the highest peak of Fuerteventura, on the Jandía peninsula."
+   }
+  },
+  {
+   "id": "chache",
+   "es": "Peñas del Chache",
+   "en": "Peñas del Chache",
+   "m": 671,
+   "kind": "peak",
+   "lon": -13.63,
+   "lat": 29.05,
+   "where": {
+    "es": "Lanzarote (Canarias)",
+    "en": "Lanzarote (Canary Islands)"
+   },
+   "fact": {
+    "es": "Es el punto más alto de Lanzarote, en el macizo de Famara.",
+    "en": "It is the highest point of Lanzarote, in the Famara massif."
+   }
+  },
+  {
+   "id": "puigmajor",
+   "es": "Puig Major",
+   "en": "Puig Major",
+   "m": 1445,
+   "kind": "peak",
+   "lon": 2.8,
+   "lat": 39.8,
+   "where": {
+    "es": "Sierra de Tramuntana (Mallorca)",
+    "en": "Tramuntana Mountains (Mallorca)"
+   },
+   "fact": {
+    "es": "Es la cima más alta de Mallorca y de las Baleares.",
+    "en": "It is the highest peak of Mallorca and the Balearic Islands."
+   }
+  },
+  {
+   "id": "montetoro",
+   "es": "Monte Toro",
+   "en": "Monte Toro",
+   "m": 358,
+   "kind": "peak",
+   "lon": 4.11,
+   "lat": 39.99,
+   "where": {
+    "es": "Menorca (Baleares)",
+    "en": "Menorca (Balearic Islands)"
+   },
+   "fact": {
+    "es": "Es el punto más alto de Menorca y tiene un santuario en la cima.",
+    "en": "It is the highest point of Menorca and has a sanctuary on top."
+   }
+  }
+ ]
+}

@@ -37,14 +37,17 @@
     </section>
 
     <section id="mp-game" class="mp-screen" hidden>
-        <div class="mp-top">
-            <button class="mp-quit" id="mp-quit" type="button" aria-label="Salir">✕</button>
-            <div class="mp-prompt" id="mp-prompt" aria-live="polite"></div>
-            <span class="mp-count" id="mp-count"></span>
-        </div>
         <div class="mp-stage" id="mp-stage">
             <svg id="mp-svg" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mapa"></svg>
             <div class="mp-loading" id="mp-loading" hidden></div>
+            <div class="mp-bar" id="mp-bar">
+                <button class="mp-quit" id="mp-quit" type="button" aria-label="Salir">✕</button>
+                <div class="mp-prompt" id="mp-prompt" aria-live="polite"></div>
+                <input class="mp-search" id="mp-search" type="search" autocomplete="off" hidden>
+                <span class="mp-count" id="mp-count"></span>
+            </div>
+            <div class="mp-sugg" id="mp-sugg" hidden></div>
+            <div class="mp-timer" id="mp-timer" hidden><i id="mp-timerfill"></i></div>
             <div class="mp-ctl">
                 <button type="button" id="mp-zin" aria-label="Zoom +">+</button>
                 <button type="button" id="mp-zout" aria-label="Zoom -">−</button>
@@ -54,10 +57,10 @@
             <div class="mp-legend" id="mp-legend" hidden></div>
             <div class="mp-info" id="mp-info" hidden></div>
             <div class="mp-toast" id="mp-toast" hidden aria-live="assertive"></div>
+            <div class="mp-options" id="mp-options" hidden></div>
+            <div class="mp-learn" id="mp-learn" hidden></div>
+            <div class="mp-nextrow" id="mp-nextrow" hidden><button class="mp-btn" id="mp-next" type="button"></button></div>
         </div>
-        <div class="mp-options" id="mp-options" hidden></div>
-        <div class="mp-learn" id="mp-learn" hidden></div>
-        <div class="mp-nextrow" id="mp-nextrow" hidden><button class="mp-btn" id="mp-next" type="button"></button></div>
     </section>
 
     <section id="mp-end" class="mp-screen" hidden>

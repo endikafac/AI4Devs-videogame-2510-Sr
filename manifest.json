@@ -53,9 +53,9 @@
       "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
     },
     {
-      "name": "GeoQuiz",
-      "short_name": "Geo",
-      "url": "/geoQuiz-EFC/index.html?source=pwa",
+      "name": "Mapas",
+      "short_name": "Mapas",
+      "url": "/mapas-EFC/index.html?source=pwa",
       "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
     }
   ]

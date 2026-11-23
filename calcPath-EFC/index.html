@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Camino del Cálculo">
     <link rel="apple-touch-icon" href="../icons/icon-192.png">
-    <meta name="description" content="Camino del Cálculo: aprende a sumar, restar y multiplicar poco a poco, con lecciones cortas, vidas y ejercicios variados.">
+    <meta name="description" content="Camino del Cálculo: aprende a sumar, restar, multiplicar y dividir a tu nivel: camino de lecciones, práctica libre sin repeticiones y examen de nivel opcional.">
     <title>Camino del Cálculo – Games Hub</title>
     <link rel="stylesheet" href="../platform/platform.css">
     <link rel="stylesheet" href="styles.css">
@@ -23,6 +23,16 @@
             <div class="cp-stats" id="cp-stats"></div>
         </div>
         <p class="cp-sub" id="cp-sub"></p>
+        <div class="cp-ask" id="cp-ask" hidden>
+            <h2 id="cp-ask-t"></h2>
+            <div class="cp-chips" id="cp-ask-chips"></div>
+        </div>
+        <p class="cp-gradeline" id="cp-grade-line" hidden></p>
+        <div class="cp-modes">
+            <button class="cp-mode" id="cp-m-practice" type="button"><span class="cp-mi" aria-hidden="true">🎯</span><span><b id="cp-m-practice-t"></b><small id="cp-m-practice-s"></small></span></button>
+            <button class="cp-mode alt" id="cp-m-place" type="button"><span class="cp-mi" aria-hidden="true">📝</span><span><b id="cp-m-place-t"></b><small id="cp-m-place-s"></small></span></button>
+        </div>
+        <h2 class="cp-h2" id="cp-path-h"></h2>
         <ol class="cp-path" id="cp-path"></ol>
     </section>
 
@@ -34,6 +44,66 @@
         </div>
         <div class="cp-card" id="cp-card"></div>
         <div class="cp-feedback" id="cp-feedback" hidden aria-live="assertive"></div>
+    </section>
+
+    <section id="cp-setup" class="cp-screen" hidden>
+        <div class="cp-top"><button class="cp-quit" id="cp-setup-back" type="button">&larr;</button><h2 class="cp-h2 flat" id="cp-setup-h"></h2></div>
+        <div class="cp-set">
+            <h3 id="cp-set-gh"></h3>
+            <div class="cp-chips" id="cp-set-grade" role="group"></div>
+            <h3 id="cp-set-sh"></h3>
+            <div class="cp-chips" id="cp-set-skills" role="group"></div>
+            <h3 id="cp-set-lh"></h3>
+            <div class="cp-chips" id="cp-set-len" role="group"></div>
+            <label class="cp-switch"><input type="checkbox" id="cp-set-help"><span class="cp-sw" aria-hidden="true"></span><span><b id="cp-help-t"></b><small id="cp-help-s"></small></span></label>
+            <button class="cp-btn cp-wide" id="cp-set-go" type="button"></button>
+        </div>
+    </section>
+
+    <section id="cp-pintro" class="cp-screen" hidden>
+        <div class="cp-endbox">
+            <div class="cp-trophy" aria-hidden="true">📝</div>
+            <h2 id="cp-pi-h"></h2>
+            <p id="cp-pi-p"></p>
+            <div class="cp-endbtns">
+                <button class="cp-btn" id="cp-pi-go" type="button"></button>
+                <button class="cp-btn ghost" id="cp-pi-no" type="button"></button>
+            </div>
+        </div>
+    </section>
+
+    <section id="cp-pplay" class="cp-screen" hidden>
+        <div class="cp-top">
+            <button class="cp-quit" id="pp-quit" type="button" aria-label="Salir">✕</button>
+            <div class="cp-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i id="pp-barfill"></i></div>
+            <span class="cp-count" id="pp-count" aria-live="polite"></span>
+        </div>
+        <div class="cp-soft" aria-hidden="true"><i id="pp-time"></i></div>
+        <div class="cp-card" id="pp-card"></div>
+        <div class="cp-feedback" id="pp-feedback" hidden aria-live="assertive"></div>
+    </section>
+
+    <section id="cp-psum" class="cp-screen" hidden>
+        <div class="cp-endbox">
+            <div id="cp-psum-body"></div>
+            <div class="cp-endbtns">
+                <button class="cp-btn" id="cp-p-again" type="button"></button>
+                <button class="cp-btn ghost" id="cp-p-home" type="button"></button>
+            </div>
+        </div>
+    </section>
+
+    <section id="cp-pres" class="cp-screen" hidden>
+        <div class="cp-endbox">
+            <div class="cp-trophy" aria-hidden="true">🎓</div>
+            <h2 id="cp-pr-h"></h2>
+            <div class="cp-rows" id="cp-pr-list"></div>
+            <p class="cp-reco" id="cp-pr-sum"></p>
+            <div class="cp-endbtns">
+                <button class="cp-btn" id="cp-pr-go" type="button"></button>
+                <button class="cp-btn ghost" id="cp-pr-home" type="button"></button>
+            </div>
+        </div>
     </section>
 
     <section id="cp-end" class="cp-screen" hidden>
@@ -59,6 +129,7 @@
 <script src="../platform/firestore.js"></script>
 <script src="../platform/identity.js"></script>
 <script src="../platform/platform-header.js"></script>
+<script src="engine.js"></script>
 <script src="game.js"></script>
 <script>
     PlatformHeader.init({ gameName: 'Camino del Cálculo', gameIcon: '🧮', rootPath: '../' });

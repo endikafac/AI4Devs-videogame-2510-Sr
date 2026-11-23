@@ -6,6 +6,9 @@
 const CalcPath = (() => {
     'use strict';
 
+    // question engine (pure): window.CalcEngine in the browser, engine.js under Node
+    const E = (typeof CalcEngine !== 'undefined') ? CalcEngine : (typeof require === 'function' ? require('./engine.js') : null);
+
     // ---- texts ----
     const UI = {
         es: { title: 'Camino del Cálculo', sub: 'Una lección corta cada día. Completa una para abrir la siguiente.', lesson: 'Lección', xp: 'XP', day: 'días',
@@ -51,6 +54,60 @@ const CalcPath = (() => {
               score: (m) => m === 0 ? 'Aucune erreur. Incroyable !' : `${m} ${m === 1 ? 'erreur' : 'erreurs'}. Chaque erreur apprend quelque chose.`, locked: 'Termine la précédente',
               k: { add: 'Additionner', sub: 'Soustraire', mix: 'Additionner et soustraire', miss: 'Trous', mul: 'Multiplier' }, upto: 'jusqu\'à', carry: 'avec retenue', tables: 'tables' }
     };
+
+    // ---- texts for free practice and the placement test (merged into UI, same keys in every language) ----
+    const UI_PRACTICE = {
+        es: { askGrade: '¿En qué curso estás?', dontKnow: 'No lo sé', gradeShort: n => `${n}º`, gradeLong: n => `${n}º de primaria`, yourGrade: 'Curso', change: 'Cambiar',
+              mPractice: 'Practicar', mPracticeSub: 'Elige qué practicar. Los ejercicios salen al azar y no se repiten.', mPlace: 'Examen de nivel', mPlaceSub: 'Opcional, unos 3 minutos. Decide por dónde empezar en cada tema.',
+              mPath: 'Camino de lecciones', setupTitle: 'Practicar', setGrade: 'Curso', setSkills: 'Qué quieres practicar', setAll: 'Todo', setLen: 'Cuántos ejercicios', lenInf: 'Sin fin',
+              helpT: 'Ayuda extra', helpS: 'Pistas y números más fáciles', start: 'Empezar', hint: 'Pista', finish: 'Terminar', qOf: (i, n) => n ? `${i} / ${n}` : `${i}`, how: 'Así se hace',
+              psTitle: 'Sesión terminada', psRight: (r, n) => `${r} de ${n} correctas`, psAvg: s => `Tiempo medio: ${s} s`, psLevel: 'Nivel por tema', psMore: s => `Practica más: ${s}`, psGreat: '¡Todo muy bien! Prueba a subir de curso.',
+              psAgain: 'Practicar otra vez', home: 'Inicio', plTitle: 'Examen de nivel', plIntro: 'Son unas 15 a 20 preguntas, unos 3 minutos. Es opcional: sirve para decidir por dónde empezar en cada tema. No hay pistas y no pasa nada si fallas.',
+              plStart: 'Empezar examen', plCancel: 'Ahora no', plResult: 'Tu nivel', plStartAt: 'Empezar a practicar ahí', plLine: (s, g) => `Empieza en ${g}º de ${s}`, cancel: 'Cancelar',
+              sk: { suma: 'Sumar', resta: 'Restar', multiplicar: 'Multiplicar', dividir: 'Dividir', mental: 'Cálculo mental', huecos: 'Huecos', fracciones: 'Fracciones', decimales: 'Decimales', porcentajes: 'Porcentajes' } },
+        en: { askGrade: 'Which school year are you in?', dontKnow: 'I do not know', gradeShort: n => `Y${n}`, gradeLong: n => `Primary year ${n}`, yourGrade: 'Year', change: 'Change',
+              mPractice: 'Practise', mPracticeSub: 'Pick what to practise. Exercises are random and never repeat.', mPlace: 'Level test', mPlaceSub: 'Optional, about 3 minutes. Decides where to start in each topic.',
+              mPath: 'Lesson path', setupTitle: 'Practise', setGrade: 'Year', setSkills: 'What do you want to practise', setAll: 'All', setLen: 'How many exercises', lenInf: 'Endless',
+              helpT: 'Extra help', helpS: 'Hints and easier numbers', start: 'Start', hint: 'Hint', finish: 'Finish', qOf: (i, n) => n ? `${i} / ${n}` : `${i}`, how: 'Here is how',
+              psTitle: 'Session finished', psRight: (r, n) => `${r} of ${n} correct`, psAvg: s => `Average time: ${s} s`, psLevel: 'Level by topic', psMore: s => `Practise more: ${s}`, psGreat: 'All great! Try moving up a year.',
+              psAgain: 'Practise again', home: 'Home', plTitle: 'Level test', plIntro: 'About 15 to 20 questions, around 3 minutes. It is optional: it decides where to start in each topic. No hints, and it is fine to get things wrong.',
+              plStart: 'Start the test', plCancel: 'Not now', plResult: 'Your level', plStartAt: 'Start practising there', plLine: (s, g) => `Starts at year ${g} of ${s}`, cancel: 'Cancel',
+              sk: { suma: 'Add', resta: 'Subtract', multiplicar: 'Multiply', dividir: 'Divide', mental: 'Mental maths', huecos: 'Missing numbers', fracciones: 'Fractions', decimales: 'Decimals', porcentajes: 'Percentages' } },
+        eu: { askGrade: 'Zein mailatan zaude?', dontKnow: 'Ez dakit', gradeShort: n => `${n}.`, gradeLong: n => `Lehen Hezkuntzako ${n}. maila`, yourGrade: 'Maila', change: 'Aldatu',
+              mPractice: 'Praktikatu', mPracticeSub: 'Aukeratu zer praktikatu. Ariketak ausaz ateratzen dira eta ez dira errepikatzen.', mPlace: 'Maila proba', mPlaceSub: 'Aukerakoa, 3 minutu inguru. Gai bakoitzean nondik hasi erabakitzen du.',
+              mPath: 'Ikasgaien bidea', setupTitle: 'Praktikatu', setGrade: 'Maila', setSkills: 'Zer praktikatu nahi duzu', setAll: 'Dena', setLen: 'Zenbat ariketa', lenInf: 'Amaigabea',
+              helpT: 'Laguntza gehigarria', helpS: 'Pistak eta zenbaki errazagoak', start: 'Hasi', hint: 'Pista', finish: 'Amaitu', qOf: (i, n) => n ? `${i} / ${n}` : `${i}`, how: 'Horrela egiten da',
+              psTitle: 'Saioa amaituta', psRight: (r, n) => `${n}tik ${r} zuzen`, psAvg: s => `Batez besteko denbora: ${s} s`, psLevel: 'Maila gaika', psMore: s => `Praktikatu gehiago: ${s}`, psGreat: 'Oso ondo! Saiatu maila igotzen.',
+              psAgain: 'Berriro praktikatu', home: 'Hasiera', plTitle: 'Maila proba', plIntro: '15-20 galdera inguru, 3 minutu gutxi gorabehera. Aukerakoa da: gai bakoitzean nondik hasi erabakitzeko balio du. Pistarik ez, eta ez da ezer gertatzen huts eginez gero.',
+              plStart: 'Hasi proba', plCancel: 'Orain ez', plResult: 'Zure maila', plStartAt: 'Hortik hasi praktikatzen', plLine: (s, g) => `${s}: ${g}. mailatik hasten da`, cancel: 'Utzi',
+              sk: { suma: 'Batu', resta: 'Kendu', multiplicar: 'Biderkatu', dividir: 'Zatitu', mental: 'Buruz kalkulatu', huecos: 'Hutsuneak', fracciones: 'Zatikiak', decimales: 'Hamartarrak', porcentajes: 'Ehunekoak' } },
+        gl: { askGrade: 'En que curso estás?', dontKnow: 'Non o sei', gradeShort: n => `${n}º`, gradeLong: n => `${n}º de primaria`, yourGrade: 'Curso', change: 'Cambiar',
+              mPractice: 'Practicar', mPracticeSub: 'Elixe que practicar. Os exercicios saen ao chou e non se repiten.', mPlace: 'Exame de nivel', mPlaceSub: 'Opcional, uns 3 minutos. Decide por onde empezar en cada tema.',
+              mPath: 'Camiño de leccións', setupTitle: 'Practicar', setGrade: 'Curso', setSkills: 'Que queres practicar', setAll: 'Todo', setLen: 'Cantos exercicios', lenInf: 'Sen fin',
+              helpT: 'Axuda extra', helpS: 'Pistas e números máis fáciles', start: 'Comezar', hint: 'Pista', finish: 'Rematar', qOf: (i, n) => n ? `${i} / ${n}` : `${i}`, how: 'Así se fai',
+              psTitle: 'Sesión rematada', psRight: (r, n) => `${r} de ${n} correctas`, psAvg: s => `Tempo medio: ${s} s`, psLevel: 'Nivel por tema', psMore: s => `Practica máis: ${s}`, psGreat: 'Todo moi ben! Proba a subir de curso.',
+              psAgain: 'Practicar outra vez', home: 'Inicio', plTitle: 'Exame de nivel', plIntro: 'Son unhas 15 a 20 preguntas, uns 3 minutos. É opcional: serve para decidir por onde empezar en cada tema. Non hai pistas e non pasa nada se fallas.',
+              plStart: 'Comezar o exame', plCancel: 'Agora non', plResult: 'O teu nivel', plStartAt: 'Comezar a practicar aí', plLine: (s, g) => `Empeza en ${g}º de ${s}`, cancel: 'Cancelar',
+              sk: { suma: 'Sumar', resta: 'Restar', multiplicar: 'Multiplicar', dividir: 'Dividir', mental: 'Cálculo mental', huecos: 'Ocos', fracciones: 'Fraccións', decimales: 'Decimais', porcentajes: 'Porcentaxes' } },
+        ca: { askGrade: 'En quin curs estàs?', dontKnow: 'No ho sé', gradeShort: n => `${n}r`, gradeLong: n => `${n}r de primària`, yourGrade: 'Curs', change: 'Canvia',
+              mPractice: 'Practicar', mPracticeSub: 'Tria què practicar. Els exercicis surten a l\'atzar i no es repeteixen.', mPlace: 'Examen de nivell', mPlaceSub: 'Opcional, uns 3 minuts. Decideix per on començar en cada tema.',
+              mPath: 'Camí de lliçons', setupTitle: 'Practicar', setGrade: 'Curs', setSkills: 'Què vols practicar', setAll: 'Tot', setLen: 'Quants exercicis', lenInf: 'Sense fi',
+              helpT: 'Ajuda extra', helpS: 'Pistes i nombres més fàcils', start: 'Comença', hint: 'Pista', finish: 'Acaba', qOf: (i, n) => n ? `${i} / ${n}` : `${i}`, how: 'Així es fa',
+              psTitle: 'Sessió acabada', psRight: (r, n) => `${r} de ${n} correctes`, psAvg: s => `Temps mitjà: ${s} s`, psLevel: 'Nivell per tema', psMore: s => `Practica més: ${s}`, psGreat: 'Tot molt bé! Prova de pujar de curs.',
+              psAgain: 'Practicar un altre cop', home: 'Inici', plTitle: 'Examen de nivell', plIntro: 'Són unes 15 a 20 preguntes, uns 3 minuts. És opcional: serveix per decidir per on començar en cada tema. No hi ha pistes i no passa res si falles.',
+              plStart: 'Comença l\'examen', plCancel: 'Ara no', plResult: 'El teu nivell', plStartAt: 'Comença a practicar allà', plLine: (s, g) => `Comença en ${g}r de ${s}`, cancel: 'Cancel·la',
+              sk: { suma: 'Sumar', resta: 'Restar', multiplicar: 'Multiplicar', dividir: 'Dividir', mental: 'Càlcul mental', huecos: 'Buits', fracciones: 'Fraccions', decimales: 'Decimals', porcentajes: 'Percentatges' } },
+        fr: { askGrade: 'Dans quelle classe es-tu ?', dontKnow: 'Je ne sais pas', gradeShort: n => `${n}º`, gradeLong: n => `${n}º de primaria`, yourGrade: 'Classe', change: 'Changer',
+              mPractice: 'S\'entraîner', mPracticeSub: 'Choisis quoi travailler. Les exercices sont au hasard et ne se répètent pas.', mPlace: 'Test de niveau', mPlaceSub: 'Facultatif, environ 3 minutes. Décide par où commencer dans chaque thème.',
+              mPath: 'Chemin des leçons', setupTitle: 'S\'entraîner', setGrade: 'Classe', setSkills: 'Que veux-tu travailler', setAll: 'Tout', setLen: 'Combien d\'exercices', lenInf: 'Sans fin',
+              helpT: 'Aide en plus', helpS: 'Indices et nombres plus faciles', start: 'Commencer', hint: 'Indice', finish: 'Terminer', qOf: (i, n) => n ? `${i} / ${n}` : `${i}`, how: 'Voici comment',
+              psTitle: 'Séance terminée', psRight: (r, n) => `${r} sur ${n} correctes`, psAvg: s => `Temps moyen : ${s} s`, psLevel: 'Niveau par thème', psMore: s => `Travaille plus : ${s}`, psGreat: 'Très bien ! Essaie de monter d\'une classe.',
+              psAgain: 'Recommencer', home: 'Accueil', plTitle: 'Test de niveau', plIntro: 'Environ 15 à 20 questions, 3 minutes. C\'est facultatif : cela décide par où commencer dans chaque thème. Pas d\'indices, et ce n\'est pas grave de se tromper.',
+              plStart: 'Commencer le test', plCancel: 'Pas maintenant', plResult: 'Ton niveau', plStartAt: 'Commencer à s\'entraîner là', plLine: (s, g) => `Commence en ${g}º : ${s}`, cancel: 'Annuler',
+              sk: { suma: 'Additionner', resta: 'Soustraire', multiplicar: 'Multiplier', dividir: 'Diviser', mental: 'Calcul mental', huecos: 'Trous', fracciones: 'Fractions', decimales: 'Décimaux', porcentajes: 'Pourcentages' } }
+    };
+    Object.keys(UI_PRACTICE).forEach(l => Object.assign(UI[l], UI_PRACTICE[l]));
+    const SK_ICON = { suma: '➕', resta: '➖', multiplicar: '✖️', dividir: '➗', mental: '🧠', huecos: '🧩', fracciones: '🍕', decimales: '🔢', porcentajes: '💯' };
 
     // ---- lessons (progressive) ----
     // kind: add | sub | mix | miss | mul ; max: numeric ceiling ; carry: tens with carrying ; step: 100s
@@ -181,7 +238,7 @@ const CalcPath = (() => {
     const stars = misses => misses === 0 ? 3 : misses <= 2 ? 2 : 1;
 
     // ---- state / storage ----
-    const S = { user: null, prog: { units: {}, xp: 0, streak: 0, last: '' }, u: null, queue: [], total: 0, hearts: HEARTS, misses: 0, q: null, typed: '', locked: false, t0: 0 };
+    const S = { user: null, prog: { units: {}, xp: 0, streak: 0, last: '' }, u: null, queue: [], total: 0, hearts: HEARTS, misses: 0, q: null, typed: '', locked: false, t0: 0, practice: null };
     const $ = id => document.getElementById(id);
     const lang = () => { const l = ((window.PlatformI18n && PlatformI18n.currentLanguage) || 'es').slice(0, 2); return UI[l] ? l : 'es'; };
     const T = () => UI[lang()];
@@ -206,10 +263,10 @@ const CalcPath = (() => {
     const unlocked = i => i === 0 || !!S.prog.units[UNITS[i - 1].id];
 
     // ---- home ----
-    function show(id) { ['cp-home', 'cp-play', 'cp-end'].forEach(s => { $(s).hidden = s !== id; }); window.scrollTo(0, 0); }
+    function show(id) { ['cp-home', 'cp-play', 'cp-end', 'cp-setup', 'cp-pintro', 'cp-pplay', 'cp-psum', 'cp-pres'].forEach(s => { $(s).hidden = s !== id; }); window.scrollTo(0, 0); }
     function renderHome() {
         const t = T();
-        $('cp-h1').textContent = t.title; $('cp-sub').textContent = t.sub;
+        $('cp-h1').textContent = t.title; $('cp-sub').textContent = t.sub; renderModes();
         const st = $('cp-stats'); st.textContent = '';
         st.appendChild(el('span', 'cp-pill', `🔥 ${S.prog.streak || 0}`)); st.appendChild(el('span', 'cp-pill', `⚡ ${S.prog.xp || 0} ${t.xp}`));
         const path = $('cp-path'); path.textContent = '';
@@ -355,20 +412,306 @@ const CalcPath = (() => {
         }
     }
 
+    // =====================================================================
+    // Free practice, adaptive level and placement test (uses CalcEngine)
+    // =====================================================================
+    const P = { cfg: {}, states: {}, seen: null, run: null };
+    const cfgKey = () => 'calc_cfg_' + owner();
+    const skKey = () => 'calc_skills_' + owner();
+    const readJSON = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k)); return v && typeof v === 'object' ? v : d; } catch (e) { return d; } };
+    const writeJSON = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* storage blocked */ } };
+    function loadPractice() {
+        P.cfg = readJSON(cfgKey(), {}); P.states = readJSON(skKey(), {});
+        P.seen = E ? E.SeenStore(localStorage, owner()) : null;
+    }
+    const saveCfg = () => writeJSON(cfgKey(), P.cfg);
+    const saveSkills = () => writeJSON(skKey(), P.states);
+    const gradeOk = g => Number.isInteger(g) && g >= 1 && g <= 6;
+    const txt = o => { if (!o) return ''; const l = lang(); return (l === 'en' || l === 'fr') ? o.en : o.es; };
+    /** Numbers for people: decimal comma (except English), thin spaces in long integers. */
+    function fmtTxt(s) {
+        const comma = lang() !== 'en';
+        return String(s).replace(/\d+(?:\.\d+)?/g, tok => {
+            if (tok.indexOf('.') >= 0) return comma ? tok.replace('.', ',') : tok;
+            return tok.length >= 5 ? tok.replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : tok;
+        });
+    }
+    function effectiveCfg() {
+        const c = P.cfg, grade = gradeOk(c.grade) ? c.grade : 3, avail = E.skillsForGrade(grade);
+        let skills = (c.skills || []).filter(id => avail.includes(id));
+        if (!skills.length) skills = avail.slice();
+        return { grade, skills, length: c.length === 0 || c.length === 10 || c.length === 20 ? c.length : 10, help: c.helpSet ? !!c.help : grade <= 2 };
+    }
+
+    // ---- grade question (inline card on the home screen, never a blocking modal) ----
+    function gradeChips(box, onPick, current) {
+        box.textContent = '';
+        const t = T();
+        for (let g = 1; g <= 6; g++) {
+            const b = el('button', 'cp-chip' + (current === g ? ' on' : ''), t.gradeShort(g)); b.type = 'button'; b.dataset.grade = g;
+            b.setAttribute('aria-pressed', current === g ? 'true' : 'false'); b.setAttribute('aria-label', t.gradeLong(g));
+            b.onclick = () => onPick(g); box.appendChild(b);
+        }
+    }
+    function setGrade(g, guessed) {
+        P.cfg.grade = g; if (guessed) P.cfg.guessed = true; else delete P.cfg.guessed;
+        saveCfg(); renderHome();
+    }
+    async function guessGrade() {
+        let age = Number(P.cfg.age) || 0;
+        try {
+            if (!age && S.user && PlatformFirestore.getActivePlayer) {
+                const p = await PlatformFirestore.getActivePlayer(S.user.uid);
+                if (p) age = Number(p.age) || (p.birthYear ? new Date().getFullYear() - Number(p.birthYear) : 0);
+            }
+        } catch (e) { /* no profile data: fall back */ }
+        setGrade(age >= 6 && age <= 12 ? Math.min(6, Math.max(1, age - 5)) : 3, true);
+    }
+    function renderModes() {
+        const t = T(), ok = gradeOk(P.cfg.grade);
+        $('cp-ask').hidden = ok;
+        if (!ok) { $('cp-ask-t').textContent = t.askGrade; gradeChips($('cp-ask-chips'), g => setGrade(g)); const dk = el('button', 'cp-chip dk', t.dontKnow); dk.type = 'button'; dk.id = 'cp-ask-dk'; dk.onclick = guessGrade; $('cp-ask-chips').appendChild(dk); }
+        $('cp-m-practice-t').textContent = t.mPractice; $('cp-m-practice-s').textContent = t.mPracticeSub;
+        $('cp-m-place-t').textContent = t.mPlace; $('cp-m-place-s').textContent = t.mPlaceSub;
+        $('cp-path-h').textContent = t.mPath;
+        const line = $('cp-grade-line'); line.hidden = !ok; line.textContent = '';
+        if (ok) { line.appendChild(el('span', null, `${t.yourGrade}: ${t.gradeLong(P.cfg.grade)}`)); const ch = el('button', 'cp-link', t.change); ch.type = 'button'; ch.id = 'cp-grade-change'; ch.onclick = openSetup; line.appendChild(ch); }
+    }
+    function needGrade() {
+        if (gradeOk(P.cfg.grade)) return false;
+        const a = $('cp-ask'); a.scrollIntoView({ block: 'center' }); a.classList.remove('cp-shake'); void a.offsetWidth; a.classList.add('cp-shake'); return true;
+    }
+
+    // ---- practice setup ----
+    function openSetup() { if (needGrade()) return; renderSetup(); show('cp-setup'); }
+    function renderSetup() {
+        const t = T(), c = effectiveCfg();
+        $('cp-setup-h').textContent = t.setupTitle; $('cp-set-gh').textContent = t.setGrade; $('cp-set-sh').textContent = t.setSkills; $('cp-set-lh').textContent = t.setLen;
+        $('cp-help-t').textContent = t.helpT; $('cp-help-s').textContent = t.helpS; $('cp-set-go').textContent = t.start;
+        gradeChips($('cp-set-grade'), g => {
+            P.cfg.grade = g; delete P.cfg.guessed; P.cfg.skills = E.skillsForGrade(g); saveCfg(); renderSetup();
+        }, c.grade);
+        const sk = $('cp-set-skills'); sk.textContent = '';
+        const avail = E.skillsForGrade(c.grade);
+        const all = el('button', 'cp-chip all' + (c.skills.length === avail.length ? ' on' : ''), t.setAll); all.type = 'button'; all.id = 'cp-set-all'; all.setAttribute('aria-pressed', c.skills.length === avail.length ? 'true' : 'false');
+        all.onclick = () => { P.cfg.grade = c.grade; P.cfg.skills = avail.slice(); saveCfg(); renderSetup(); };
+        sk.appendChild(all);
+        avail.forEach(id => {
+            const on = c.skills.includes(id), b = el('button', 'cp-chip skill' + (on ? ' on' : ''), `${SK_ICON[id]} ${t.sk[id]}`); b.type = 'button'; b.dataset.skill = id; b.setAttribute('aria-pressed', on ? 'true' : 'false');
+            b.onclick = () => {
+                const cur = c.skills.slice(), i = cur.indexOf(id);
+                if (i >= 0) { if (cur.length === 1) return; cur.splice(i, 1); } else cur.push(id);
+                P.cfg.grade = c.grade; P.cfg.skills = cur; saveCfg(); renderSetup();
+            };
+            sk.appendChild(b);
+        });
+        const ln = $('cp-set-len'); ln.textContent = '';
+        [[10, '10'], [20, '20'], [0, t.lenInf]].forEach(([v, label]) => {
+            const b = el('button', 'cp-chip' + (c.length === v ? ' on' : ''), label); b.type = 'button'; b.dataset.len = v; b.setAttribute('aria-pressed', c.length === v ? 'true' : 'false');
+            b.onclick = () => { P.cfg.length = v; saveCfg(); renderSetup(); }; ln.appendChild(b);
+        });
+        const hp = $('cp-set-help'); hp.checked = c.help;
+        hp.onchange = () => { P.cfg.help = hp.checked; P.cfg.helpSet = true; saveCfg(); };
+        $('cp-set-go').onclick = () => { const e = effectiveCfg(); Object.assign(P.cfg, { grade: e.grade, skills: e.skills, length: e.length, help: e.help }); saveCfg(); startPractice(); };
+        $('cp-setup-back').setAttribute('aria-label', t.home);
+    }
+
+    // ---- shared play view ----
+    const newRun = mode => ({ mode, n: 0, right: 0, wrong: 0, streak: 0, best: 0, q: null, typed: '', locked: true, qt0: 0, t0: Date.now(), hint: false, per: {}, secs: 0, len: 0 });
+    function startPractice() {
+        const c = effectiveCfg(), run = newRun('practice');
+        run.sel = c.skills; run.len = c.length; run.help = c.help; run.grade = c.grade;
+        c.skills.forEach(id => { const st = P.states[id]; if (!st || st.grade !== c.grade) P.states[id] = Object.assign(E.newSkillState(c.grade, id), { grade: c.grade }); });
+        P.run = S.practice = run; show('cp-pplay'); nextPractice();
+    }
+    function startPlacement() {
+        if (needGrade()) return;
+        const c = effectiveCfg(), run = newRun('placement');
+        run.grade = c.grade; run.pl = E.Placement.start({ grade: c.grade, rnd: Math.random, seen: P.seen }); run.len = run.pl.total; run.help = false;
+        P.run = S.practice = run; show('cp-pplay'); nextPractice();
+    }
+    function nextPractice() {
+        const run = P.run; $('pp-feedback').hidden = true;
+        if (run.mode === 'placement') {
+            if (run.pl.done) return endPlacement();
+            run.q = run.pl.next();
+        } else {
+            if (run.len && run.n >= run.len) return endPractice();
+            const id = E.pickSkill(run.sel, P.states, Math.random), st = P.states[id];
+            let lvl = E.nextLevel(st, Math.random);
+            if (run.help) lvl = Math.max(st.floor || 1, lvl - 1);
+            run.q = E.makeUniqueQuestion(id, lvl, Math.random, P.seen); if (P.seen) P.seen.add(run.q.key);
+        }
+        run.typed = ''; run.hint = false; run.locked = false; run.qt0 = Date.now();
+        renderQ();
+    }
+    function renderQ() {
+        const run = P.run, q = run.q, t = T(), card = $('pp-card'); if (!q) return;
+        card.textContent = ''; card.classList.remove('cp-shake');
+        $('pp-count').textContent = (run.mode === 'practice' && run.streak >= 3 ? '🔥 ' : '') + t.qOf(Math.min(run.n + 1, run.len || run.n + 1), run.len);
+        const p = run.len ? Math.round(run.n / run.len * 100) : 0; $('pp-barfill').style.width = p + '%'; $('pp-barfill').parentNode.setAttribute('aria-valuenow', p);
+        const prompt = q.label ? txt(q.label) : q.hole ? t.qMissing : q.kind === 'choice' ? t.qChoice : t.qType;
+        card.appendChild(el('p', 'cp-prompt', prompt));
+        const eq = el('div', 'cp-eq' + (q.text.length > 24 ? ' xl' : q.text.length > 14 ? ' long' : '')); eq.setAttribute('dir', 'ltr'); eq.id = 'pp-eq';
+        fmtTxt(q.text).split('?').forEach((part, i) => { if (i) eq.appendChild(el('em', null, '?')); eq.appendChild(document.createTextNode(part)); });
+        card.appendChild(eq);
+        if (run.help && run.mode === 'practice') {
+            const hb = el('button', 'cp-hintbtn', '💡 ' + t.hint); hb.type = 'button'; hb.id = 'pp-hintbtn';
+            hb.onclick = () => { run.hint = true; hb.remove(); const h = el('p', 'cp-hint', txt(q.hint)); h.id = 'pp-hint'; card.insertBefore(h, eq.nextSibling); };
+            card.appendChild(hb);
+        }
+        if (q.kind === 'choice') {
+            const box = el('div', 'cp-opts'); box.setAttribute('role', 'group');
+            q.choices.forEach(v => { const b = el('button', 'cp-opt', fmtTxt(v)); b.type = 'button'; b.dataset.v = v; b.onclick = () => answerQ(v, b); box.appendChild(b); });
+            card.appendChild(box);
+        } else practicePad(card, q.kind === 'dec');
+        const tm = $('pp-time'); tm.className = ''; void tm.offsetWidth; tm.style.animationDuration = (E.targetSeconds(q.level, q.skill) * 2) + 's'; tm.className = 'run';
+    }
+    function practicePad(card, dec) {
+        const disp = el('div', 'cp-ans'); disp.id = 'pp-ans'; disp.setAttribute('aria-live', 'polite'); card.appendChild(disp);
+        const pad = el('div', 'cp-pad');
+        const keys = dec ? ['1', '2', '3', '4', '5', '6', '7', '8', '9', ',', '0', '⌫'] : ['1', '2', '3', '4', '5', '6', '7', '8', '9', '⌫', '0', '✓'];
+        keys.forEach(k => {
+            const b = el('button', 'cp-key' + (k === '✓' ? ' go' : ''), k); b.type = 'button'; b.dataset.k = k;
+            b.setAttribute('aria-label', k === '⌫' ? 'Borrar' : k === '✓' ? T().check : k === ',' ? 'Coma' : k); b.onclick = () => pKey(k); pad.appendChild(b);
+        });
+        card.appendChild(pad);
+        if (dec) { const go = el('button', 'cp-key go cp-gowide', '✓'); go.type = 'button'; go.dataset.k = '✓'; go.setAttribute('aria-label', T().check); go.onclick = () => pKey('✓'); card.appendChild(go); }
+    }
+    function pKey(k) {
+        const run = P.run; if (!run || run.locked) return;
+        if (k === '⌫') run.typed = run.typed.slice(0, -1);
+        else if (k === '✓') { if (run.typed !== '') answerQ(run.typed); return; }
+        else if (k === ',' || k === '.') { if (run.q.kind === 'dec' && run.typed && run.typed.indexOf(',') < 0) run.typed += ','; }
+        else if (run.typed.length < 10) run.typed += k;
+        const d = $('pp-ans'); if (d) d.textContent = run.typed;
+    }
+    const shownAnswer = q => fmtTxt(q.answer);
+
+    function answerQ(v, btn) {
+        const run = P.run; if (!run || run.locked) return; run.locked = true;
+        const q = run.q, secs = (Date.now() - run.qt0) / 1000, ok = E.check(q, v), t = T();
+        $('pp-time').classList.add('stop');
+        document.querySelectorAll('#pp-card .cp-opt').forEach(b => { b.disabled = true; });
+        if (run.mode === 'placement') {
+            run.pl.answer({ correct: ok, seconds: secs }); run.n++; if (ok) run.right++; run.secs += secs;
+            return nextPractice();
+        }
+        P.states[q.skill] = Object.assign(E.update(P.states[q.skill], { correct: ok, seconds: secs, hintUsed: run.hint, level: q.level, skill: q.skill }), { grade: run.grade });
+        run.n++; run.secs += secs;
+        const per = run.per[q.skill] || (run.per[q.skill] = { n: 0, right: 0, secs: 0 }); per.n++; per.secs += secs;
+        if (ok) { run.right++; per.right++; run.streak++; run.best = Math.max(run.best, run.streak); } else { run.wrong++; run.streak = 0; }
+        if (btn) btn.classList.add(ok ? 'ok' : 'bad');
+        if (!ok && q.kind === 'choice') document.querySelectorAll('#pp-card .cp-opt').forEach(b => { if (String(b.dataset.v) === String(q.answer)) b.classList.add('ok'); });
+        const fb = $('pp-feedback'); fb.hidden = false; fb.textContent = ''; fb.className = 'cp-feedback ' + (ok ? 'good' : 'bad');
+        const box = el('div'); box.appendChild(el('b', null, ok ? pick(t.good) : `${t.bad} ${shownAnswer(q)}`));
+        if (!ok) { box.appendChild(el('span', 'cp-explain', fmtTxt(txt(q.explain)))); }
+        const go = el('button', 'cp-btn', t.next); go.type = 'button'; go.id = 'pp-continue'; go.onclick = nextPractice;
+        fb.appendChild(box); fb.appendChild(go); go.focus();
+        if (!ok) { $('pp-card').classList.add('cp-shake'); if (navigator.vibrate) { try { navigator.vibrate(120); } catch (e) { /* no vibration */ } } }
+        saveSkills();
+    }
+    function quitPractice() {
+        const run = P.run;
+        if (run && run.mode === 'practice' && run.n > 0) return endPractice();
+        goHome();
+    }
+    function goHome() { P.run = S.practice = null; renderHome(); show('cp-home'); }
+
+    // ---- practice summary ----
+    function levelGrade(id) { const st = P.states[id]; return st ? E.gradeOfLevel(Math.round(st.lvl)) : 1; }
+    async function endPractice() {
+        const run = P.run, t = T(); saveSkills(); saveCfg();
+        const box = $('cp-psum-body'); box.textContent = '';
+        box.appendChild(el('div', 'cp-trophy', run.right >= run.n * 0.8 ? '🏆' : '⭐'));
+        box.appendChild(el('h2', null, t.psTitle));
+        box.appendChild(el('p', 'cp-big', t.psRight(run.right, run.n)));
+        box.appendChild(el('p', 'cp-subtle', t.psAvg((run.secs / Math.max(1, run.n)).toFixed(1).replace('.', lang() === 'en' ? '.' : ','))));
+        const rows = el('div', 'cp-rows'); rows.appendChild(el('h3', null, t.psLevel));
+        const ids = Object.keys(run.per);
+        ids.forEach(id => {
+            const per = run.per[id], pct = Math.round(per.right / per.n * 100), row = el('div', 'cp-row');
+            row.appendChild(el('span', 'cp-rn', `${SK_ICON[id]} ${t.sk[id]}`));
+            const bar = el('div', 'cp-mini'); bar.setAttribute('role', 'img'); bar.setAttribute('aria-label', `${per.right}/${per.n}`); const f = el('i'); f.style.width = pct + '%'; bar.appendChild(f); row.appendChild(bar);
+            row.appendChild(el('span', 'cp-rl', t.gradeShort(levelGrade(id)))); rows.appendChild(row);
+        });
+        box.appendChild(rows);
+        const weak = ids.filter(id => run.per[id].n >= 2).map(id => ({ id, acc: run.per[id].right / run.per[id].n })).sort((a, b) => a.acc - b.acc)[0];
+        box.appendChild(el('p', 'cp-reco', weak && weak.acc < 0.75 ? '💪 ' + t.psMore(t.sk[weak.id]) : '🌟 ' + t.psGreat));
+        $('cp-p-again').textContent = t.psAgain; $('cp-p-home').textContent = t.home;
+        show('cp-psum');
+        // progress, streak and stats
+        S.prog.xp = (S.prog.xp || 0) + run.right * 2;
+        const today = dayStr(), y = dayStr(new Date(Date.now() - 864e5));
+        if (run.right > 0 && S.prog.last !== today) { S.prog.streak = S.prog.last === y ? (S.prog.streak || 0) + 1 : 1; S.prog.last = today; }
+        save();
+        if (S.user && typeof PlatformFirestore !== 'undefined' && run.n > 0) {
+            const lv = ids.length ? Math.round(ids.reduce((s, id) => s + P.states[id].lvl, 0) / ids.length) : 1;
+            try {
+                await PlatformFirestore.updateGameStats(S.user.uid, 'calcpath', { correctAnswers: run.right, totalQuestions: run.n, totalAttempts: run.n, bestStreak: run.best,
+                    elapsedSeconds: Math.round((Date.now() - run.t0) / 1000), level: lv, operation: 'practice' });
+            } catch (e) { console.warn('[CalcPath] stats not saved', e); }
+        }
+    }
+
+    // ---- placement ----
+    function openPlacementIntro() {
+        if (needGrade()) return; const t = T();
+        $('cp-pi-h').textContent = t.plTitle; $('cp-pi-p').textContent = t.plIntro; $('cp-pi-go').textContent = t.plStart; $('cp-pi-no').textContent = t.plCancel;
+        show('cp-pintro');
+    }
+    function endPlacement() {
+        const run = P.run, res = run.pl.result(), t = T(); run.result = res;
+        $('cp-pr-h').textContent = t.plResult;
+        const box = $('cp-pr-list'); box.textContent = '';
+        res.summary.slice().sort((a, b) => E.SKILL_IDS.indexOf(a.skill) - E.SKILL_IDS.indexOf(b.skill)).forEach(x => {
+            const row = el('div', 'cp-row res'); row.dataset.skill = x.skill;
+            row.appendChild(el('span', 'cp-rn', `${SK_ICON[x.skill]} ${t.sk[x.skill]}`)); row.appendChild(el('span', 'cp-rl big', t.gradeShort(x.grade)));
+            box.appendChild(row);
+        });
+        $('cp-pr-sum').textContent = res.summary.slice().sort((a, b) => a.level - b.level).slice(0, 2).map(x => t.plLine(t.sk[x.skill], x.grade)).join('. ');
+        $('cp-pr-go').textContent = t.plStartAt; $('cp-pr-home').textContent = t.home;
+        show('cp-pres');
+    }
+    function applyPlacement() {
+        const res = P.run && P.run.result; if (!res) return goHome();
+        const g = effectiveCfg().grade;
+        res.summary.forEach(x => { P.states[x.skill] = E.stateFromLevel(x.level, { grade: g, placed: true }); });
+        P.cfg.grade = g; P.cfg.skills = res.summary.map(x => x.skill); saveCfg(); saveSkills();
+        P.run = S.practice = null; renderSetup(); show('cp-setup');
+    }
+
+    function initPractice() {
+        $('cp-m-practice').onclick = openSetup; $('cp-m-place').onclick = openPlacementIntro;
+        $('cp-setup-back').onclick = goHome; $('pp-quit').onclick = quitPractice;
+        $('cp-pi-go').onclick = startPlacement; $('cp-pi-no').onclick = goHome;
+        $('cp-pr-go').onclick = applyPlacement; $('cp-pr-home').onclick = goHome;
+        $('cp-p-again').onclick = startPractice; $('cp-p-home').onclick = goHome;
+    }
+    function practiceKey(e) {
+        const run = P.run; if (!run) return;
+        const fb = $('pp-feedback');
+        if (e.key === 'Enter') { const c = $('pp-continue'); if (!fb.hidden && c) c.click(); else pKey('✓'); }
+        else if (/^[0-9]$/.test(e.key)) pKey(e.key);
+        else if (e.key === 'Backspace') pKey('⌫');
+        else if (e.key === ',' || e.key === '.') pKey(',');
+    }
+
     function init() {
         $('cp-quit').onclick = () => { renderHome(); show('cp-home'); };
         document.addEventListener('keydown', e => {
+            if (!$('cp-pplay').hidden) return practiceKey(e);
             if ($('cp-play').hidden) return;
             if (/^[0-9]$/.test(e.key)) key_(e.key);
             else if (e.key === 'Backspace') key_('⌫');
             else if (e.key === 'Enter') { const c = $('cp-continue'); if (!$('cp-feedback').hidden && c) c.click(); else key_('✓'); }
         });
-        load(); renderHome(); show('cp-home');
-        if (window.PlatformAuth && PlatformAuth.onAuthStateChanged) PlatformAuth.onAuthStateChanged(u => { S.user = u || null; load(); renderHome(); });
-        window.addEventListener('platformLanguageChanged', () => { if (!$('cp-home').hidden) renderHome(); });
+        load(); loadPractice(); initPractice(); renderHome(); show('cp-home');
+        if (window.PlatformAuth && PlatformAuth.onAuthStateChanged) PlatformAuth.onAuthStateChanged(u => { S.user = u || null; load(); loadPractice(); renderHome(); });
+        window.addEventListener('platformLanguageChanged', () => { if (!$('cp-home').hidden) renderHome(); else if (!$('cp-setup').hidden) renderSetup(); else if (!$('cp-pplay').hidden) renderQ(); });
     }
 
-    const api = { init, state: S, UNITS, gen, makeQuestion, makeLesson, isCorrect, stars, typesFor, distractors };
+    const api = { init, state: S, engine: E, practice: P, UNITS, gen, makeQuestion, makeLesson, isCorrect, stars, typesFor, distractors };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     return api;
 })();

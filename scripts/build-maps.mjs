@@ -172,6 +172,13 @@ console.log('facts', Object.keys(facts).length, 'missing:', countries.filter(c =
 const box = (l0, la0, l1, la1) => { const a = proj([l0, la1]), b = proj([l1, la0]); return [Math.round(a[0]), Math.round(a[1]), Math.round(b[0] - a[0]), Math.round(b[1] - a[1])]; };
 const views = {EU: box(-25, 34, 45, 72), AS: box(26, -11, 150, 78), AF: box(-20, -36, 52, 38), NA: box(-170, 6, -50, 84), SA: box(-84, -57, -33, 14), OC: box(110, -48, 180, -2)};
 const cc = CT('countries.json') || {}, rc = CT('rivers.json') || {}, mc = CT('mountains.json') || {};
+{ // extra Spanish rivers and mountains (second batch), ids must be unique
+  const r2 = CT('rivers-spain2.json') || {}, m2 = CT('mountains-spain2.json') || {};
+  const ids = new Set((rc.spain || []).map(x => x.id).concat(Object.keys(rc.spainExisting || {})));
+  rc.spain = (rc.spain || []).concat((r2.spain || []).filter(x => !ids.has(x.id)));
+  const mi = new Set((mc.spain || []).map(x => x.id));
+  mc.spain = (mc.spain || []).concat((m2.spain || []).filter(x => !mi.has(x.id)));
+}
 const a3 = {}; wc.forEach(c => { a3[c.cca3] = c.cca2; });
 const info = {};
 wc.forEach(c => {
@@ -207,7 +214,7 @@ const rsp = [
  ['segura','Segura','Segura',[[-2.6,38.0],[-2.1,38.2],[-1.42,38.24],[-1.13,37.98],[-0.94,38.08],[-0.65,38.09]]],
 ];
 const spc = CT('spain.json') || {};
-const smooth = (id, es, en, ls, extra) => {
+const smooth = (id, es, en, ls, extra, feats) => {
   const pts = [];
   for (let k = 0; k < ls.length - 1; k++) for (let t = 0; t < 1; t += 0.2) pts.push([ls[k][0] + (ls[k + 1][0] - ls[k][0]) * t, ls[k][1] + (ls[k + 1][1] - ls[k][1]) * t]);
   const pr = ls.map(p => sp(p));
@@ -219,15 +226,30 @@ const smooth = (id, es, en, ls, extra) => {
   if (out.length > 1) console.warn('RIVER POINTS OUTSIDE SPAIN', id, JSON.stringify(out));
   const m = pr[Math.floor(pr.length / 2)];
   const xs = pr.map(p => p[0]), ys = pr.map(p => p[1]);
-  const o = {id, es, en, d, c: crossed(pts, ccaa, f => f.properties.name), b: [Math.round(Math.min(...xs)), Math.round(Math.min(...ys)), Math.round(Math.max(...xs)), Math.round(Math.max(...ys))], x: +m[0].toFixed(1), y: +m[1].toFixed(1)};
+  const o = {id, es, en, d, c: crossed(pts, feats || ccaa, f => f.properties.name), b: [Math.round(Math.min(...xs)), Math.round(Math.min(...ys)), Math.round(Math.max(...xs)), Math.round(Math.max(...ys))], x: +m[0].toFixed(1), y: +m[1].toFixed(1)};
+  if (extra && extra.eu) o.eu = extra.eu;
   if (extra) { o.km = extra.km; o.kmNote = extra.kmNote; o.src = extra.source; o.mouth = extra.mouth; o.fact = extra.fact; }
   return o;
 };
 const sivers = rsp.map(([id, es, en, ls]) => smooth(id, es, en, ls, (rc.spainExisting || {})[id]));
 (rc.spain || []).forEach(r => { if (r.pts && r.pts.length > 2) sivers.push(smooth(r.id, r.es, r.en, r.pts, r)); });
 const smount = ((mc.spain) || []).map(m => { const p = sp([m.lon, m.lat]); return p && {id: m.id, es: m.es, en: m.en, m: m.m, kind: m.kind, where: m.where, fact: m.fact, x: +p[0].toFixed(1), y: +p[1].toFixed(1)}; }).filter(Boolean);
-const addInf = (arr, tbl) => arr.map(r => { const x = (tbl || {})[r.n]; if (x) r.inf = x; return r; });
-const spain = {w: W, h: H, ccaa: addInf(pack(ccaa), spc.ccaa), prov: addInf(pack(prov), spc.prov), rivers: sivers, mount: smount, border: sp.getCompositionBorders()};
+const addInf = (arr, tbl) => arr.map(r => { const x = (tbl || {})[r.n]; if (x) r.inf = x; if (eu && eu.territories && eu.territories[r.n]) r.inf = Object.assign({}, r.inf, eu.territories[r.n]); return r; });
+const bb2 = sg.bounds({type: 'FeatureCollection', features: ccaa}), vbS = [Math.round(bb2[0][0]) - 12, Math.round(bb2[0][1]) - 12, Math.round(bb2[1][0] - bb2[0][0]) + 24, Math.round(bb2[1][1] - bb2[0][1]) + 24];
+const eu = CT('euskadi.json');
+let eus = null;
+if (eu) {
+  const EUP = ['Araba/Álava', 'Bizkaia', 'Gipuzkoa'], euFeats = prov.filter(f => EUP.includes(f.properties.name));
+  const bb3 = sg.bounds({type: 'FeatureCollection', features: euFeats}), pw = (bb3[1][0] - bb3[0][0]) * 0.06, ph = (bb3[1][1] - bb3[0][1]) * 0.06;
+  const pt = (lon, lat) => { const p = sp([lon, lat]); return [+p[0].toFixed(1), +p[1].toFixed(1)]; };
+  eus = {
+    vb: [Math.round(bb3[0][0] - pw), Math.round(bb3[0][1] - ph), Math.round(bb3[1][0] - bb3[0][0] + 2 * pw), Math.round(bb3[1][1] - bb3[0][1] + 2 * ph)],
+    towns: (eu.towns || []).map(t => { const p = pt(t.lon, t.lat); return {id: t.id, es: t.es, en: t.es, eu: t.eu, territory: t.territory, pop: t.pop, known: t.known, fact: t.fact, x: p[0], y: p[1]}; }),
+    mount: (eu.mountains || []).map(m => { const p = pt(m.lon, m.lat); return {id: m.id, es: m.es, en: m.en || m.es, eu: m.eu, m: m.m, kind: m.kind, where: m.where, fact: m.fact, x: p[0], y: p[1]}; }),
+    rivers: (eu.rivers || []).filter(r => r.pts && r.pts.length > 2).map(r => smooth('eu-' + r.id, r.es, r.en || r.es, r.pts, Object.assign({eu: r.eu}, r), euFeats))
+  };
+}
+const spain = {eus, vb: vbS, w: W, h: H, ccaa: addInf(pack(ccaa), spc.ccaa), prov: addInf(pack(prov), spc.prov), rivers: sivers, mount: smount, border: sp.getCompositionBorders()};
 fs.writeFileSync(OUT + 'spain.js', 'window.MapData=window.MapData||{};MapData.spain=' + JSON.stringify(spain) + ';\n');
 console.log('spain', fs.statSync(OUT + 'spain.js').size, spain.ccaa.map(c => c.n).join('|'));
 console.log(spain.prov.map(c => c.n).join('|'));

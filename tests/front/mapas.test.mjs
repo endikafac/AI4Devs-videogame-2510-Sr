@@ -34,14 +34,14 @@ async function open({ width = 390, height = 800 } = {}) {
   page.on('console', m => { if (m.type() === 'error' && !IGNORE.test(m.text())) errors.push(m.text()); });
   await page.addInitScript(() => Object.defineProperty(navigator, 'doNotTrack', { get: () => '1' }));
   await page.goto(base + '/mapas-EFC/index.html', { waitUntil: 'load' });
-  await page.waitForFunction(() => document.querySelectorAll('.mp-mapcard').length === 13, null, { timeout: 8000 });
+  await page.waitForFunction(() => document.querySelectorAll('.mp-mapcard').length === 17, null, { timeout: 8000 });
   return { ctx, page, errors };
 }
 const shot = (page, name) => SHOTS ? page.screenshot({ path: path.join(SHOTS, name + '.png') }) : null;
 async function start(page, map, mode) {
   await page.click('.mp-mapcard[data-map="' + map + '"]');
   await page.click('.mp-modecard[data-mode="' + mode + '"]');
-  await page.waitForSelector('#mp-svg path', { timeout: 8000 });
+  await page.waitForFunction(m => Mapas._S.map && Mapas._S.map.def.id === m && document.getElementById('mp-loading').hidden && document.querySelectorAll('#mp-svg path').length > 3, map, { timeout: 8000 });
   await page.waitForTimeout(500);
 }
 // client point of an item (centre in svg coords) and whether it is really the top element there
@@ -83,10 +83,10 @@ const advanced = async (page, k) => {
   // a first miss on a tiny shape (Ceuta, Melilla...) is allowed: the second tap, or the second miss, concludes the question
   await page.waitForSelector('#mp-nextrow:not([hidden])', { timeout: 2500 }).catch(async () => { const r = await runState(page); if (r && !r.locked) await tapItem(page, r.id); await page.waitForSelector('#mp-nextrow:not([hidden])', { timeout: 6000 }); }); await page.waitForSelector('#mp-learn:not([hidden])'); await page.click('#mp-next'); await page.waitForFunction(i => { const r = Mapas._S.run; return !r || r.i > i; }, k, { timeout: 5000 }); };
 
-test('F-MAPAS home lists 13 maps, no console errors', async () => {
+test('F-MAPAS home lists 17 maps, no console errors', async () => {
   const { ctx, page, errors } = await open();
   try {
-    assert.equal(await page.locator('.mp-mapcard').count(), 13);
+    assert.equal(await page.locator('.mp-mapcard').count(), 17);
     await shot(page, 'home');
     assert.deepEqual(errors, []);
   } finally { await ctx.close(); }
@@ -228,7 +228,7 @@ test('F-MAPAS data: every shape can be tapped at its label point (at least 92%)'
         });
         return { n, miss };
       });
-      assert.ok(r.n > 5, map + ' has tappable shapes');
+      assert.ok(r.n >= 3, map + ' has tappable shapes');
       assert.ok(r.miss.length <= Math.ceil(r.n * 0.08), map + ' misses: ' + r.miss.join(','));
       await page.click('#mp-quit');
     }
@@ -262,7 +262,7 @@ test('F-MAPAS mountains and rich cards: height, river length, province facts, le
     await page.click('#mp-quit');
     await start(page, 'montes', 'find');
     await shot(page, 'mountains-spain-find');
-    const q = await runState(page); await tapItem(page, q.id);
+    const q = await runState(page); await page.evaluate(id => Mapas._focus(id, 6), q.id); await tapItem(page, q.id);
     await page.waitForSelector('#mp-learn:not([hidden])');
     assert.ok((await page.textContent('#mp-learn')).length > 30, 'learn card has content');
     await shot(page, 'learn-card');
@@ -285,6 +285,49 @@ test('F-MAPAS review mode: disabled when nothing is due, then lists weak items a
     const qs = await page.evaluate(() => Mapas._S.run.qs.slice().sort());
     assert.deepEqual(qs, ['Aragón', 'Galicia']);
     await shot(page, 'review-mobile');
+    assert.deepEqual(errors, []);
+  } finally { await ctx.close(); }
+});
+
+test('F-MAPAS flags, timer chip, search and Euskadi maps', async () => {
+  const { ctx, page, errors } = await open({ width: 390, height: 844 });
+  try {
+    // flags mode on a continent
+    await start(page, 'SA', 'flag');
+    const r = await runState(page);
+    assert.match(r.type, /^flag(Find|Name)$/);
+    assert.ok((await page.textContent('#mp-prompt')).length > 10);
+    await shot(page, 'flags-mobile');
+    if (r.type === 'flagName') await page.click('.mp-opt[data-opt="' + r.id + '"]'); else await tapItem(page, r.id);
+    await page.waitForSelector('#mp-learn:not([hidden])');
+    await page.click('#mp-quit');
+    // timed chip persists and shows the bar
+    await page.click('.mp-mapcard[data-map="EU"]');
+    await page.click('.mp-chip.timed');
+    await page.click('.mp-modecard[data-mode="find"]'); await page.waitForSelector('#mp-svg path');
+    await page.waitForSelector('#mp-timer:not([hidden])');
+    await shot(page, 'timed-mobile');
+    await page.click('#mp-quit');
+    await page.click('.mp-mapcard[data-map="EU"]'); await page.click('.mp-chip.timed'); await page.click('#mp-setupback');
+    // search in explore
+    await start(page, 'es', 'explore');
+    await page.fill('#mp-search', 'gali');
+    await page.waitForSelector('.mp-sugg .sg');
+    await page.click('.mp-sugg .sg');
+    await page.waitForSelector('#mp-info:not([hidden])');
+    assert.match(await page.textContent('#mp-info'), /Santiago de Compostela/);
+    await page.click('#mp-quit');
+    // Euskadi: territories with capital mode data, towns, rivers, mountains
+    await start(page, 'eus', 'explore'); await page.waitForTimeout(500); await shot(page, 'eus-territories');
+    await page.click('#mp-quit');
+    await start(page, 'eustown', 'explore'); await page.waitForTimeout(500);
+    const n = await page.evaluate(() => Mapas._S.map.items.length); assert.ok(n >= 20, 'towns ' + n);
+    await shot(page, 'eus-towns');
+    await page.click('#mp-quit');
+    await start(page, 'eusriv', 'find'); assert.ok((await page.evaluate(() => Mapas._S.map.items.length)) >= 8);
+    await page.click('#mp-quit');
+    await start(page, 'eusmont', 'name'); await page.waitForSelector('.mp-opt');
+    await shot(page, 'eus-mount-name');
     assert.deepEqual(errors, []);
   } finally { await ctx.close(); }
 });

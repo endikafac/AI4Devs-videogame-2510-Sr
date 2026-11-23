@@ -90,6 +90,23 @@ const Mapas = (function () {
         noReview: ['Nada que repasar por ahora. ¡Buen trabajo!', 'Nothing to review right now. Good job!', 'Oraingoz ez dago errepasatzeko ezer. Lan ona!', 'Nada que repasar por agora. Bo traballo!', 'Res per repassar ara. Bona feina!', 'Rien à réviser pour l’instant. Bravo !'],
         toReview: ['{n} por repasar', '{n} to review', '{n} errepasatzeko', '{n} por repasar', '{n} per repassar', '{n} à réviser'],
         summary: ['{a} lugares dominados · {b} por repasar', '{a} places mastered · {b} to review', '{a} leku menderatuta · {b} errepasatzeko', '{a} lugares dominados · {b} por repasar', '{a} llocs dominats · {b} per repassar', '{a} lieux maîtrisés · {b} à réviser'],
+        mdFlag: ['Banderas', 'Flags', 'Banderak', 'Bandeiras', 'Banderes', 'Drapeaux'],
+        mdFlagD: ['Reconoce cada país por su bandera', 'Recognise each country by its flag', 'Ezagutu herrialde bakoitza bere banderagatik', 'Recoñece cada país pola súa bandeira', 'Reconeix cada país per la seva bandera', 'Reconnais chaque pays à son drapeau'],
+        qFlagFind: ['¿De qué país es esta bandera? Tócalo en el mapa', 'Which country has this flag? Tap it on the map', 'Zein herrialderena da bandera hau? Ukitu mapan', 'De que país é esta bandeira? Tócao no mapa', 'De quin país és aquesta bandera? Toca’l al mapa', 'À quel pays est ce drapeau ? Touche-le sur la carte'],
+        qFlagName: ['¿De qué país es esta bandera?', 'Which country has this flag?', 'Zein herrialderena da bandera hau?', 'De que país é esta bandeira?', 'De quin país és aquesta bandera?', 'À quel pays est ce drapeau ?'],
+        timed: ['Contrarreloj', 'Against the clock', 'Denboraren aurka', 'Contrarreloxo', 'Contrarellotge', 'Contre la montre'],
+        timeUp: ['¡Se acabó el tiempo!', 'Time is up!', 'Denbora bukatu da!', 'Rematou o tempo!', 'S’ha acabat el temps!', 'Temps écoulé !'],
+        search: ['Buscar un lugar…', 'Search a place…', 'Bilatu leku bat…', 'Buscar un lugar…', 'Cerca un lloc…', 'Chercher un lieu…'],
+        gWorld: ['El mundo', 'The world', 'Mundua', 'O mundo', 'El món', 'Le monde'],
+        gSpain: ['España', 'Spain', 'Espainia', 'España', 'Espanya', 'Espagne'],
+        gEus: ['Euskadi', 'Euskadi', 'Euskadi', 'Euskadi', 'Euskadi', 'Euskadi'],
+        gNature: ['Ríos y montañas', 'Rivers and mountains', 'Ibaiak eta mendiak', 'Ríos e montañas', 'Rius i muntanyes', 'Fleuves et montagnes'],
+        meus: ['Euskadi: territorios', 'Euskadi: territories', 'Euskadi: lurraldeak', 'Euskadi: territorios', 'Euskadi: territoris', 'Euskadi : territoires'],
+        meustown: ['Euskadi: localidades', 'Euskadi: towns', 'Euskadi: herriak', 'Euskadi: localidades', 'Euskadi: localitats', 'Euskadi : villes'],
+        meusriv: ['Euskadi: ríos', 'Euskadi: rivers', 'Euskadi: ibaiak', 'Euskadi: ríos', 'Euskadi: rius', 'Euskadi : fleuves'],
+        meusmont: ['Euskadi: montañas', 'Euskadi: mountains', 'Euskadi: mendiak', 'Euskadi: montañas', 'Euskadi: muntanyes', 'Euskadi : montagnes'],
+        townK: ['Localidad', 'Town', 'Herria', 'Localidade', 'Localitat', 'Ville'],
+        terr: ['Territorio', 'Territory', 'Lurraldea', 'Territorio', 'Territori', 'Territoire'],
         zoomTip: ['Pellizca o usa la rueda para acercar', 'Pinch or use the wheel to zoom', 'Atximurtu edo erabili gurpila zoom egiteko', 'Pellizca ou usa a roda para achegar', 'Pessiga o usa la roda per apropar', 'Pince ou utilise la molette pour zoomer']
     };
 
@@ -129,11 +146,16 @@ const Mapas = (function () {
         { id: 'prov', icon: '📍', kind: 'region', store: 'prov', src: 'prov' },
         { id: 'rivw', icon: '🌊', kind: 'river', store: 'rivw', src: 'world' },
         { id: 'rives', icon: '🏞️', kind: 'river', store: 'rives', src: 'spain' },
+        { id: 'eus', icon: '🌿', kind: 'region', store: 'eus', src: 'eus' },
+        { id: 'eustown', icon: '🏘️', kind: 'peak', store: 'eustown', src: 'eustown' },
+        { id: 'eusriv', icon: '💧', kind: 'river', store: 'eusriv', src: 'eus' },
+        { id: 'eusmont', icon: '🗻', kind: 'peak', store: 'eusmont', src: 'eusmont' },
         { id: 'mont', icon: '🏔️', kind: 'peak', store: 'mont', src: 'world' },
         { id: 'montes', icon: '⛰️', kind: 'peak', store: 'montes', src: 'spain' }
     ];
     // hues avoid green/amber, which are reserved for the mastery colours
-const CONT_COLORS = { EU: 232, AF: 352, AS: 190, NA: 266, SA: 312, OC: 208 };
+    const GROUPS = [['gWorld', ['world', 'EU', 'AF', 'AS', 'NA', 'SA', 'OC']], ['gSpain', ['es', 'prov']], ['gEus', ['eus', 'eustown', 'eusriv', 'eusmont']], ['gNature', ['rivw', 'rives', 'mont', 'montes']]];
+    const CONT_COLORS = { EU: 232, AF: 352, AS: 190, NA: 266, SA: 312, OC: 208 };
 const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
 
     // ---- pure helpers (tested) ----
@@ -186,7 +208,7 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
     }
 
     // ---- state ----
-    const S = { user: null, screen: 'home', def: null, map: null, mode: null, diff: 'all', run: null, progs: {}, cam: null, target: null, els: {}, selected: null, dataP: {} };
+    const S = { timed: (function () { try { return localStorage.getItem('mapas_timed') === '1'; } catch (e) { return false; } })(), user: null, screen: 'home', def: null, map: null, mode: null, diff: 'all', run: null, progs: {}, cam: null, target: null, els: {}, selected: null, dataP: {} };
     const $ = id => document.getElementById(id);
     const lang = () => { const l = ((window.PlatformI18n && PlatformI18n.currentLanguage) || 'es').slice(0, 2); return LANGS.indexOf(l) >= 0 ? l : 'es'; };
     const t = (k, v) => txt(k, lang(), v);
@@ -227,8 +249,10 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         const items = [], ctx = [], out = { def, kind: def.kind, items, ctx, vb: [0, 0, 1000, 500], border: null, oceans: [], lakes: [], caps: {} };
         const worldCtx = lab => W.countries.forEach(c => { const f = c.i && W.facts[c.i]; ctx.push({ d: c.d, cont: f && f[1], lab: lab && c.i ? { iso: c.i, ne: c.n, x: c.x, y: c.y, a: c.a } : null }); });
         const spainCtx = () => SP.ccaa.forEach(r => ctx.push({ d: r.d, lab: /^Gibraltar/.test(r.n) ? null : { raw: r.n, x: r.x, y: r.y, a: r.a } }));
-        const rv = r => ({ id: r.id, d: r.d, x: r.x, y: r.y, a: Math.pow(maxDim(r.b), 2), b: r.b, es: r.es, en: r.en, c: r.c, km: r.km, kmNote: r.kmNote, src: r.src, mouth: r.mouth, fact: r.fact });
-        const pk = m => ({ id: m.id, x: m.x, y: m.y, a: 40, es: m.es, en: m.en, m: m.m, mk: m.kind, where: m.where, fact: m.fact });
+        const EUP = ['Araba/Álava', 'Bizkaia', 'Gipuzkoa'];
+        const rv = r => ({ eu: r.eu, id: r.id, d: r.d, x: r.x, y: r.y, a: Math.pow(maxDim(r.b), 2), b: r.b, es: r.es, en: r.en, c: r.c, km: r.km, kmNote: r.kmNote, src: r.src, mouth: r.mouth, fact: r.fact });
+        const pk = m => ({ id: m.id, x: m.x, y: m.y, a: 40, es: m.es, en: m.en, eu: m.eu, m: m.m, mk: m.kind || 'town', where: m.where, fact: m.fact, known: m.known, territory: m.territory, inf: m.pop != null ? { pop: m.pop } : undefined });
+        const euCtx = () => { SP.ccaa.forEach(r => { if (r.n !== 'País Vasco/Euskadi') ctx.push({ d: r.d, lab: /^Gibraltar/.test(r.n) ? null : { raw: r.n, x: r.x, y: r.y, a: r.a } }); }); SP.prov.forEach(r => { if (EUP.includes(r.n)) ctx.push({ d: r.d, lab: { raw: r.n, prov: true, x: r.x, y: r.y, a: r.a * 4 } }); }); };
         if (def.kind === 'country') {
             W.countries.forEach(c => {
                 const f = c.i && W.facts[c.i];
@@ -239,24 +263,30 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
             W.caps.forEach(c => { if (!out.caps[c.i]) out.caps[c.i] = c; });
             out.lakes = W.lakes; out.oceans = W.oceans; out.vb = def.cont ? W.views[def.cont] : [0, 0, W.w, W.h];
         } else if (def.kind === 'region') {
+            if (def.src === 'eus') { SP.ccaa.forEach(r => { if (r.n !== 'País Vasco/Euskadi') ctx.push({ d: r.d, lab: /^Gibraltar/.test(r.n) ? null : { raw: r.n, x: r.x, y: r.y, a: r.a } }); }); }
             (def.src === 'ccaa' ? SP.ccaa : SP.prov).forEach(r => {
-                if (/^Gibraltar/.test(r.n)) { ctx.push({ d: r.d }); return; }
-                items.push({ id: r.n, d: r.d, x: r.x, y: r.y, a: r.a, raw: r.n, cap: def.src === 'ccaa' ? (CCAA[r.n] || [])[2] : '', inf: r.inf });
+                if (/^Gibraltar/.test(r.n) || (def.src === 'eus' && !EUP.includes(r.n))) { if (def.src !== 'eus') ctx.push({ d: r.d }); return; }
+                items.push({ id: r.n, d: r.d, x: r.x, y: r.y, a: def.src === 'eus' ? r.a * 4 : r.a, raw: r.n, cap: def.src === 'ccaa' ? (CCAA[r.n] || [])[2] : (r.inf && r.inf.cap ? r.inf.cap.es : ''), inf: r.inf });
             });
-            out.border = SP.border; out.vb = [0, 0, SP.w, SP.h];
+            if (def.src === 'eus') { out.vb = SP.eus.vb; } else { out.border = SP.border; out.vb = SP.vb || [0, 0, SP.w, SP.h]; }
+        } else if (def.src === 'eus' || def.src === 'eustown' || def.src === 'eusmont') {
+            euCtx(); out.vb = SP.eus.vb;
+            (def.kind === 'river' ? SP.eus.rivers.map(rv) : def.src === 'eustown' ? SP.eus.towns.map(pk) : SP.eus.mount.map(pk)).forEach(i => items.push(i));
         } else if (def.src === 'world') {
             worldCtx(true); out.lakes = W.lakes; out.oceans = W.oceans; out.vb = [0, 0, W.w, W.h];
             (def.kind === 'river' ? W.rivers.map(rv) : (W.mount || []).map(pk)).forEach(i => items.push(i));
         } else {
-            spainCtx(); out.border = SP.border; out.vb = [0, 0, SP.w, SP.h];
+            spainCtx(); out.border = SP.border; out.vb = SP.vb || [0, 0, SP.w, SP.h];
             (def.kind === 'river' ? SP.rivers.map(rv) : (SP.mount || []).map(pk)).forEach(i => items.push(i));
         }
         return out;
     }
 
     // ---- display names ----
+    function provName(raw) { const l = lang(), p = PROV_ES[raw]; if (p) return (l === 'eu' || l === 'ca' || l === 'gl') ? p[1] : p[0]; return raw; }
     function nameOf(it) {
         const l = lang(), k = S.map.kind;
+        if (l === 'eu' && it.eu && (k === 'river' || k === 'peak')) return it.eu;
         if (k === 'country') return regionName(it.iso, it.neName);
         if (k === 'river' || k === 'peak') return (l === 'en' || l === 'fr') ? it.en : it.es;
         if (S.map.def.src === 'ccaa') {
@@ -265,9 +295,7 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
             if (l === 'eu' || l === 'ca' || l === 'gl') return r[1] || r[0];
             return r[0];
         }
-        const p = PROV_ES[it.raw];
-        if (p) return (l === 'eu' || l === 'ca' || l === 'gl') ? p[1] : p[0];
-        return it.raw;
+        return provName(it.raw);
     }
     function capOf(it) {
         if (S.map.kind === 'country') {
@@ -290,6 +318,7 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
     // ---- screens ----
     function show(id) {
         S.screen = id;
+        document.body.classList.toggle('mp-full', id === 'mp-game');
         ['mp-home', 'mp-setup', 'mp-game', 'mp-end'].forEach(s => { $(s).hidden = s !== id; });
         window.scrollTo(0, 0);
     }
@@ -305,7 +334,11 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         const box = $('mp-maps'); box.textContent = '';
         const cache = {};
         let sumM = 0, sumD = 0;
-        MAPS.forEach(def => {
+        let grid = box;
+        const gOf = {}; GROUPS.forEach(([gk, ids]) => ids.forEach(i => { gOf[i] = gk; }));
+        let lastG = null;
+        MAPS.slice().sort((x, y) => GROUPS.findIndex(g => g[1].includes(x.id)) - GROUPS.findIndex(g => g[1].includes(y.id)) || GROUPS.find(g => g[1].includes(x.id))[1].indexOf(x.id) - GROUPS.find(g => g[1].includes(y.id))[1].indexOf(y.id)).forEach(def => {
+            if (gOf[def.id] !== lastG) { lastG = gOf[def.id]; box.appendChild(el('h3', 'mp-gh', t(lastG))); grid = el('div', 'mp-grid'); box.appendChild(grid); }
             const prog = cache[def.store] || (cache[def.store] = loadProg(def.store));
             const ids = Object.keys(prog);
             const tot = W_FACTS ? (def.cont ? W_FACTS[def.cont] : def.id === 'world' ? W_FACTS.world : totalFor(def)) : totalFor(def);
@@ -320,7 +353,7 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
             const bar = el('i', 'bar'); const fill = el('u'); fill.style.width = Math.min(100, Math.round(100 * mastered / Math.max(1, tot))) + '%'; bar.appendChild(fill); tx.appendChild(bar);
             b.appendChild(tx);
             b.onclick = () => openSetup(def);
-            box.appendChild(b);
+            grid.appendChild(b);
         });
         const sm = $('mp-sum'); if (sm) { sm.hidden = !(sumM || sumD); sm.textContent = '🧭 ' + t('summary', { a: sumM, b: sumD }); }
     }
@@ -337,7 +370,8 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         $('mp-setuptitle').textContent = (def.icon || '') + ' ' + t('m' + def.id);
         const modes = $('mp-modes'); modes.textContent = '';
         const list = [['explore', 'mdExplore', 'mdExploreD', '🔍'], ['find', 'mdFind', 'mdFindD', '🎯'], ['name', 'mdName', 'mdNameD', '🏷️']];
-        if (def.kind === 'country' || def.src === 'ccaa') list.push(['cap', 'mdCap', 'mdCapD', '⭐']);
+        if (def.kind === 'country' || def.src === 'ccaa' || def.src === 'eus') list.push(['cap', 'mdCap', 'mdCapD', '⭐']);
+        if (def.kind === 'country') list.push(['flag', 'mdFlag', 'mdFlagD', '🚩']);
         const pg = loadProg(def.store);
         const dueN = Object.keys(pg).filter(id => needsReview(pg[id]) && (!def.cont || !W_FACTS || W_CONT[id] === def.cont)).length;
         list.push(['review', 'mdReview', 'mdReviewD', '🔁']);
@@ -349,14 +383,13 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
             b.onclick = () => startMap(def, m);
             modes.appendChild(b);
         });
-        const dr = $('mp-diff'); dr.textContent = '';
-        if (def.kind === 'country') {
-            dr.hidden = false;
-            [['all', 'all'], ['easy', 'easy']].forEach(([v, k]) => {
-                const c = el('button', 'mp-chip' + (S.diff === v ? ' on' : ''), t(k)); c.type = 'button';
-                c.onclick = () => { S.diff = v; openSetup(def); }; dr.appendChild(c);
-            });
-        } else dr.hidden = true;
+        const dr = $('mp-diff'); dr.textContent = ''; dr.hidden = false;
+        if (def.kind === 'country') [['all', 'all'], ['easy', 'easy']].forEach(([v, k]) => {
+            const c = el('button', 'mp-chip' + (S.diff === v ? ' on' : ''), t(k)); c.type = 'button';
+            c.onclick = () => { S.diff = v; openSetup(def); }; dr.appendChild(c);
+        });
+        const tc = el('button', 'mp-chip timed' + (S.timed ? ' on' : ''), '⏱️ ' + t('timed')); tc.type = 'button'; tc.setAttribute('aria-pressed', String(!!S.timed));
+        tc.onclick = () => { S.timed = !S.timed; try { localStorage.setItem('mapas_timed', S.timed ? '1' : '0'); } catch (e) { /* ignore */ } openSetup(def); }; dr.appendChild(tc);
         show('mp-setup');
     }
 
@@ -366,11 +399,12 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
 
     async function startMap(def, mode) {
         S.def = def; S.mode = mode; show('mp-game');
+        ['mp-info', 'mp-learn', 'mp-options', 'mp-nextrow', 'mp-toast', 'mp-sugg'].forEach(i => { $(i).hidden = true; }); $('mp-legend').style.visibility = '';
         $('mp-loading').hidden = false; $('mp-loading').textContent = t('loading');
         $('mp-prompt').textContent = ''; $('mp-count').textContent = '';
         try {
             const needWorld = def.kind === 'country' || def.src === 'world';
-            const needSpain = def.kind === 'region' || def.src === 'spain';
+            const needSpain = def.kind === 'region' || ['spain', 'eus', 'eustown', 'eusmont'].includes(def.src);
             const [W, SP] = await Promise.all([needWorld ? loadData('world') : null, needSpain ? loadData('spain') : null]);
             if (W) indexWorld(W);
             S.map = buildMap(def, W, SP);
@@ -383,7 +417,19 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
     }
 
     function stageSize() { const r = $('mp-stage').getBoundingClientRect(); return { w: Math.max(200, r.width), h: Math.max(200, r.height) }; }
-    function homeBox() { const v = S.map.vb; const s = stageSize(); return fitBox({ x: v[0], y: v[1], w: v[2], h: v[3] }, s.w, s.h); }
+    function homeBox() {
+        const v = S.map.vb, s = stageSize(), top = 66;
+        const f = fitBox({ x: v[0], y: v[1], w: v[2], h: v[3] }, s.w, s.h), u = f.w / s.w;
+        return fitBox({ x: f.x, y: f.y - top * u, w: f.w, h: f.h + top * u }, s.w, s.h); // leave room for the top bar
+    }
+    // Space taken by floating panels: the camera centres items in what is left
+    function bands() {
+        const st = stageSize(), vis = e => e && !e.hidden, wide = st.w >= 760; let bottom = 0, left = 0;
+        ['mp-info', 'mp-learn'].forEach(id => { const e = $(id); if (vis(e)) { if (wide) left = Math.max(left, e.offsetWidth + 10); else bottom = Math.max(bottom, e.offsetHeight + 74); } });
+        if (vis($('mp-options'))) bottom = Math.max(bottom, $('mp-options').offsetHeight + 10);
+        if (vis($('mp-nextrow')) && !wide && !vis($('mp-learn'))) bottom = Math.max(bottom, $('mp-nextrow').offsetHeight + 10);
+        return { top: 66, bottom: bottom, left: left };
+    }
     function applyCam() { const c = S.cam; $('mp-svg').setAttribute('viewBox', c.x.toFixed(2) + ' ' + c.y.toFixed(2) + ' ' + c.w.toFixed(2) + ' ' + c.h.toFixed(2)); S.dirty = true; }
     const scaleNow = () => stageSize().w / S.cam.w;
     function gotoBox(box, animate) {
@@ -434,11 +480,15 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         m.ctx.forEach(c => { if (c.lab) addCtxLabel(c.lab); });
         m.items.forEach(it => {
             if (m.kind === 'river') {
-                const p = sv('path', { d: it.d, 'data-id': it.id }, 'mp-river');
+                const w = it.km > 3500 ? 4.2 : it.km > 1500 ? 3.5 : it.km > 600 ? 2.9 : 2.3;
+                const halo = sv('path', { d: it.d }, 'mp-riverhalo'); halo.style.setProperty('--w', (w + 3.5) + 'px'); gRv.appendChild(halo);
+                const p = sv('path', { d: it.d, 'data-id': it.id }, 'mp-river'); p.style.setProperty('--w', w + 'px');
                 const hit = sv('path', { d: it.d, 'data-id': it.id }, 'mp-riverhit');
                 gRv.appendChild(p); gRv.appendChild(hit); S.els[it.id] = p;
             } else if (m.kind === 'peak') {
-                const p = sv('path', { d: 'M0,-1L0.95,0.75L-0.95,0.75Z', 'data-id': it.id }, 'mp-peak' + (it.mk === 'range' ? ' range' : ''));
+                const one = '<path class="b" d="M-1,.85L0,-1L1,.85Z"/><path class="sh" d="M0,-1L1,.85L.12,.85Z"/><path class="cap" d="M-.34,-.35L0,-1L.34,-.35L.12,-.22L0,-.4L-.14,-.22Z"/>';
+                const p = sv('g', { 'data-id': it.id }, 'mp-peak' + (it.mk === 'range' ? ' range' : it.mk === 'town' ? ' town' : ''));
+                p.innerHTML = it.mk === 'town' ? '<circle class="b" r="1"/>' : it.mk === 'range' ? '<g transform="translate(-1.15,.4) scale(.72)">' + one + '</g><g transform="translate(1.1,.5) scale(.62)">' + one + '</g><g transform="translate(0,-.1)">' + one + '</g>' : one;
                 gHit.appendChild(p); S.els[it.id] = p; S.tiny.push({ it, dot: p, peak: true });
             } else {
                 const p = sv('path', { d: it.d, 'data-id': it.id, fill: colorFor(it) }, 'mp-it');
@@ -457,17 +507,27 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         if (!S.map) return;
         const sc = scaleNow();
         S.tiny.forEach(o => {
-            if (o.peak) { o.dot.setAttribute('transform', 'translate(' + o.it.x + ' ' + o.it.y + ') scale(' + ((o.it.mk === 'range' ? 11 : 8) / sc).toFixed(3) + ')'); return; }
+            if (o.peak) { o.dot.setAttribute('transform', 'translate(' + o.it.x + ' ' + o.it.y + ') scale(' + ((o.it.mk === 'range' ? 11 : o.it.mk === 'town' ? 5 : 8) / sc).toFixed(3) + ')'); return; }
             const px = o.it.a * sc * sc;
             o.dot.style.display = px < 30 ? '' : 'none';
             o.dot.setAttribute('r', (3 / sc).toFixed(2));
         });
+        // labels: the bigger or more important ones win; any label that would overlap a placed one is hidden
+        const st = stageSize(), placed = [], list = [];
         (S.labels || []).forEach(l => {
-            const big = l.a * sc * sc > Math.pow(l.len * 4.4, 2) * 0.6 || l.force;
-            l.node.style.display = (big || l.force) && !l.hidden ? '' : 'none';
-            l.node.setAttribute('font-size', ((l.ctx ? 10.5 : 12.5) / sc).toFixed(2));
-            l.node.setAttribute('stroke-width', (3.2 / sc).toFixed(2));
+            const fs_ = l.ctx ? 10.5 : 12.5;
+            l.node.setAttribute('font-size', (fs_ / sc).toFixed(2)); l.node.setAttribute('stroke-width', (3.2 / sc).toFixed(2));
             if (l.peak) l.node.setAttribute('y', (l.y + 15 / sc).toFixed(2));
+            const big = l.a * sc * sc > Math.pow(l.len * 4.4, 2) * 0.6 || l.force;
+            if (!big || l.hidden) { l.node.style.display = 'none'; return; }
+            const px = (l.x - S.cam.x) / S.cam.w * st.w, py = (l.y - S.cam.y) / S.cam.h * st.h + (l.peak ? 15 : 0);
+            if (px < -60 || py < -20 || px > st.w + 60 || py > st.h + 20) { l.node.style.display = 'none'; return; }
+            list.push({ l, px, py, w: l.len * fs_ * 0.58 + 6, h: fs_ * 1.25, prio: l.force ? 1e12 : l.ctx ? l.a * 0.01 : ((l.it && ((l.it.inf && l.it.inf.pop) || l.it.m)) || 0) * 1e3 + l.a });
+        });
+        list.sort((p, q) => q.prio - p.prio).forEach(c => {
+            const hit = !c.l.force && placed.some(r => Math.abs(r.px - c.px) < (r.w + c.w) / 2 && Math.abs(r.py - c.py) < (r.h + c.h) / 2);
+            c.l.node.style.display = hit ? 'none' : '';
+            if (!hit) placed.push(c);
         });
         const marks = S.layers.gMk.querySelectorAll('[data-fix]');
         marks.forEach(n => { const r = parseFloat(n.dataset.fix); n.setAttribute('r', (r / sc).toFixed(2)); n.setAttribute('stroke-width', (1.6 / sc).toFixed(2)); });
@@ -479,7 +539,7 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         S.layers.gLb.appendChild(x); const l = { it, node: x, len: Math.max(3, n.length), a: it.a, x: it.x, y: it.y, peak: !!it.mk, force: !!force }; S.labels.push(l); return l;
     }
     function addCtxLabel(lab) {
-        const n = lab.iso ? regionName(lab.iso, lab.ne) : regionNameSpain(lab.raw);
+        const n = lab.iso ? regionName(lab.iso, lab.ne) : lab.prov ? provName(lab.raw) : regionNameSpain(lab.raw);
         const x = sv('text', { x: lab.x, y: lab.y, 'text-anchor': 'middle', 'dominant-baseline': 'middle', 'pointer-events': 'none' }, 'mp-lbl ctx'); x.textContent = n;
         S.layers.gLb.appendChild(x); S.labels.push({ node: x, len: Math.max(3, n.length), a: lab.a, x: lab.x, y: lab.y, ctx: true });
     }
@@ -496,10 +556,7 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         const b = bboxOf(it), pad = S.map.kind === 'river' ? 2 : zoom || 3.2;
         const w = Math.max(b.width, b.height * 2, 24) * pad, h = w / 2;
         let cx = b.x + b.width / 2, cy = b.y + b.height / 2;
-        if (panel && !$('mp-info').hidden) { // keep the item visible next to the open info card
-            const st = stageSize(), we = Math.max(w, h * st.w / st.h), u = we / st.w, inf = $('mp-info');
-            if (st.w >= 760) cx -= inf.offsetWidth / 2 * u; else cy += inf.offsetHeight / 2 * u;
-        }
+        { const st = stageSize(), we = Math.max(w, h * st.w / st.h), u = we / st.w, bd = bands(); cx -= bd.left / 2 * u; cy -= (bd.top - bd.bottom) / 2 * u; }
         gotoBox({ x: cx - w / 2, y: cy - h / 2, w: w, h: h }, true);
     }
 
@@ -578,7 +635,7 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         if (withClose) { const close = el('button', 'x', '✕'); close.type = 'button'; close.setAttribute('aria-label', t('close')); close.onclick = closeInfo; box.appendChild(close); }
         const k = S.map.kind, head = el('div', 'hd');
         if (k === 'country') head.appendChild(el('span', 'flag', flagOf(it.iso)));
-        if (k === 'peak') head.appendChild(el('span', 'flag', it.mk === 'range' ? '⛰️' : '🏔️'));
+        if (k === 'peak') head.appendChild(el('span', 'flag', it.mk === 'town' ? '🏘️' : it.mk === 'range' ? '⛰️' : '🏔️'));
         if (k === 'river') head.appendChild(el('span', 'flag', '🌊'));
         head.appendChild(el('b', '', nameOf(it))); box.appendChild(head);
         const rows = el('div', 'rows'); box.appendChild(rows);
@@ -605,6 +662,8 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
             add(t('source'), pickL(it.src)); add(t('mouth'), pickL(it.mouth));
             const names = (it.c || []).map(c => S.map.def.src === 'spain' ? regionNameSpain(c) : regionName(c, c)).slice(0, 12);
             add(t('flows'), names.join(', ')); fact = pickL(it.fact);
+        } else if (it.mk === 'town') {
+            add(t('terr'), provName(it.territory)); add(t('pop'), popText(it)); add(t('known'), pickL(it.known)); fact = pickL(it.fact);
         } else {
             add(t('height'), nf(it.m) + ' m'); add(t('where'), pickL(it.where)); fact = pickL(it.fact);
             add(t('kindL'), it.mk === 'range' ? t('rangeK') : t('peakK'));
@@ -612,7 +671,20 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         if (fact) { const f = el('div', 'fact'); f.appendChild(el('b', '', '💡 ' + t('didYou'))); f.appendChild(el('p', '', fact)); box.appendChild(f); }
     }
 
+    const fold = x => String(x || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    function setupSearch() {
+        const inp = $('mp-search'), sg = $('mp-sugg');
+        inp.addEventListener('input', () => {
+            const q = fold(inp.value.trim()); sg.textContent = '';
+            if (!q || !S.map) { sg.hidden = true; return; }
+            const hits = S.map.items.filter(i => fold(nameOf(i)).includes(q)).sort((a, b) => fold(nameOf(a)).indexOf(q) - fold(nameOf(b)).indexOf(q)).slice(0, 7);
+            hits.forEach(i => { const b = el('button', 'sg', nameOf(i)); b.type = 'button'; b.onclick = () => { inp.value = ''; sg.hidden = true; inp.blur(); exploreSelect(i.id); }; sg.appendChild(b); });
+            sg.hidden = !hits.length;
+        });
+        inp.addEventListener('keydown', e => { if (e.key === 'Enter') { const f = sg.querySelector('.sg'); if (f) f.click(); } });
+    }
     function startExplore() {
+        const sI = $('mp-search'); sI.hidden = false; sI.placeholder = t('search'); sI.value = ''; $('mp-sugg').hidden = true; $('mp-prompt').hidden = true;
         S.run = null; $('mp-options').hidden = true; $('mp-nextrow').hidden = true; $('mp-hint').hidden = true; $('mp-learn').hidden = true;
         $('mp-prompt').textContent = t('mdExplore'); $('mp-count').textContent = '';
         S.map.items.forEach(it => addLabel(it, false));
@@ -643,6 +715,7 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
 
     // ---- quiz ----
     function startRun() {
+        $('mp-search').hidden = true; $('mp-sugg').hidden = true; $('mp-prompt').hidden = false;
         const ids = poolIds(); const prog = S.progs[S.def.store] || {};
         const picked = pickQuestions(ids, prog, 10);
         S.run = { qs: picked, i: 0, right: 0, wrong: 0, streak: 0, best: 0, tries: 0, attempts: 0, mistakes: [], newMastered: 0, t0: Date.now(), locked: false, hinted: false };
@@ -650,7 +723,8 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         S.labels = S.labels.filter(l => { if (l.ctx) return true; l.node.remove(); return false; });
         nextQ();
     }
-    function qType() { return S.mode === 'review' ? 'find' : S.mode === 'cap' ? (Math.random() < 0.5 ? 'capFind' : 'capName') : S.mode; }
+    const TAP_TYPES = ['find', 'capFind', 'flagFind'];
+    function qType() { return S.mode === 'review' ? 'find' : S.mode === 'flag' ? (Math.random() < 0.5 ? 'flagFind' : 'flagName') : S.mode === 'cap' ? (Math.random() < 0.5 ? 'capFind' : 'capName') : S.mode; }
     function resetClasses() { Object.keys(S.els).forEach(id => S.els[id].classList.remove('good', 'bad', 'tgt', 'sel', 'flow')); }
     function nextQ() {
         const r = S.run; if (!r) return;
@@ -660,14 +734,20 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         r.id = r.qs[r.i]; r.it = itemById(r.id); r.type = qType();
         $('mp-count').textContent = (r.i + 1) + ' / ' + r.qs.length;
         const it = r.it, n = nameOf(it);
+        const pr = $('mp-prompt'); pr.textContent = '';
+        if (r.type === 'flagFind' || r.type === 'flagName') { pr.appendChild(el('span', 'fflag', flagOf(it.iso))); pr.appendChild(document.createTextNode(' ' + t(r.type === 'flagFind' ? 'qFlagFind' : 'qFlagName'))); }
         if (r.type === 'find') { $('mp-prompt').textContent = t('qFind', { n: n }); }
         else if (r.type === 'capFind') { $('mp-prompt').textContent = t('qCapFind', { n: capOf(it) }); }
+        else if (r.type === 'flagFind') { /* prompt already set */ }
         else {
-            $('mp-prompt').textContent = r.type === 'capName' ? t('qCapName') : t('qName');
-            if (S.map.kind !== 'river' && S.map.kind !== 'peak') S.els[it.id].parentNode.appendChild(S.els[it.id]);
-            S.els[it.id].classList.add('tgt'); if (S.map.kind === 'river') S.els[it.id].classList.add('flow');
-            const ping = mark(it, 'ping'); ping.classList.add('loop');
-            focusItem(it, 3.6);
+            if (r.type !== 'flagName') $('mp-prompt').textContent = r.type === 'capName' ? t('qCapName') : t('qName');
+            if (r.type === 'flagName') gotoBox(boxOf(homeBox()), true);
+            else {
+                if (S.map.kind !== 'river' && S.map.kind !== 'peak') S.els[it.id].parentNode.appendChild(S.els[it.id]);
+                S.els[it.id].classList.add('tgt'); if (S.map.kind === 'river') S.els[it.id].classList.add('flow');
+                const ping = mark(it, 'ping'); ping.classList.add('loop');
+                focusItem(it, 3.6);
+            }
             const pool = poolIds(); const sameCont = S.map.kind === 'country' && S.map.def.cont == null ? pool.filter(x => itemById(x).cont === it.cont) : pool;
             const opts = pickOptions(it.id, sameCont.length >= 4 ? sameCont : pool, 4);
             const box = $('mp-options'); box.hidden = false;
@@ -676,16 +756,27 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
                 b.onclick = () => answerOpt(id, b); box.appendChild(b);
             });
         }
-        $('mp-hint').hidden = !(r.type === 'find' || r.type === 'capFind'); $('mp-hint').textContent = '💡 ' + t('hint');
-        if (r.type === 'find' || r.type === 'capFind') gotoBox(boxOf(homeBox()), true);
+        $('mp-hint').hidden = !TAP_TYPES.includes(r.type); $('mp-hint').textContent = '💡 ' + t('hint');
+        if (TAP_TYPES.includes(r.type)) gotoBox(boxOf(homeBox()), true);
+        startTimer(r);
         setTimeout(refreshOverlays, 80);
     }
+    // against the clock: a soft bar, running out counts as a miss and shows the answer
+    function startTimer(r) {
+        clearTimeout(S.timerT); const tm = $('mp-timer'), fill = $('mp-timerfill');
+        if (!S.timed) { tm.hidden = true; return; }
+        const secs = TAP_TYPES.includes(r.type) ? 25 : 15;
+        tm.hidden = false; fill.style.transition = 'none'; fill.style.transform = 'scaleX(1)';
+        void fill.offsetWidth; fill.style.transition = 'transform ' + secs + 's linear'; fill.style.transform = 'scaleX(0)';
+        S.timerT = setTimeout(() => { if (S.run === r && !r.locked) { r.timedOut = true; showToast(t('timeUp'), 0); if (r.tries === 0) r.tries = 1; conclude(false); } }, secs * 1000);
+    }
+    function stopTimer() { clearTimeout(S.timerT); const f = $('mp-timerfill'); if (f) { const m = getComputedStyle(f).transform; f.style.transition = 'none'; f.style.transform = m; } }
     function showToast(msg, ms) {
         const tb = $('mp-toast'); tb.textContent = msg; tb.hidden = false; clearTimeout(S.toastT);
         if (ms) S.toastT = setTimeout(() => { tb.hidden = true; }, ms);
     }
     function conclude(correct) {
-        const r = S.run; r.locked = true; $('mp-hint').hidden = true;
+        const r = S.run; r.locked = true; $('mp-hint').hidden = true; stopTimer();
         r.attempts += r.tries;
         const prog = S.progs[S.def.store]; r.before = masteryOf(prog[r.id]); prog[r.id] = recordAnswer(prog[r.id], correct && r.tries === 0 && !r.hinted); saveProg(S.def.store, prog);
         if (correct) { r.right++; r.streak++; r.best = Math.max(r.best, r.streak); } else { r.wrong++; r.streak = 0; r.mistakes.push(r.id); }
@@ -695,8 +786,9 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         const c = S.map.caps && S.map.caps[it.iso]; if (c && (r.type === 'capFind' || r.type === 'capName')) { const cm = mark(c, 'cap'); cm.setAttribute('cx', c.x); cm.setAttribute('cy', c.y); }
         const before = r.before;
         if (correct) showToast(t('fbOk') + (r.type === 'capName' || r.type === 'capFind' ? ' ' + nameOf(it) + ' → ' + capOf(it) : ''), 0);
-        else showToast(t('fbWrong', { n: nameOf(it) }) + (r.type === 'capFind' || r.type === 'capName' ? ' · ' + capOf(it) : ''), 0);
+        else if (!r.timedOut) showToast(t('fbWrong', { n: nameOf(it) }) + (r.type === 'capFind' || r.type === 'capName' ? ' · ' + capOf(it) : ''), 0);
         if (masteryOf(prog[r.id]) === 'ok' && before !== 'ok') r.newMastered++;
+        $('mp-options').hidden = true;
         const lc = $('mp-learn'); fillCard(lc, it, false); lc.hidden = false;
         $('mp-nextrow').hidden = false; $('mp-next').textContent = r.i >= r.qs.length - 1 ? t('finish') : t('next'); try { $('mp-next').focus({ preventScroll: true }); } catch (er) { /* ignore */ }
         focusItem(it, 3.6); setTimeout(refreshOverlays, 80);
@@ -710,7 +802,7 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         conclude(ok);
     }
     function answerTap(id) {
-        const r = S.run; if (!r || r.locked || r.type === 'name' || r.type === 'capName') return;
+        const r = S.run; if (!r || r.locked || !TAP_TYPES.includes(r.type)) return;
         r.tries++;
         if (id === r.id) return conclude(true);
         const w = itemById(id); if (!w) return;
@@ -728,7 +820,8 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
     }
     async function endRun() {
         const r = S.run; show('mp-end');
-        $('mp-trophy').textContent = r.wrong === 0 ? '🏆' : r.right >= r.wrong ? '🌟' : '💪';
+        const stars = r.wrong === 0 ? 3 : r.right >= r.qs.length * 0.7 ? 2 : r.right >= r.qs.length * 0.4 ? 1 : 0;
+        $('mp-trophy').textContent = (r.wrong === 0 ? '🏆' : r.right >= r.wrong ? '🌟' : '💪') + (stars ? ' ' + '⭐'.repeat(stars) : '');
         $('mp-endtitle').textContent = t('endGreat');
         const st = $('mp-endstats'); st.textContent = '';
         [[r.right, 'endRight'], [r.wrong, 'endWrong'], [r.newMastered, 'endMastered'], [r.best, 'endStreak']].forEach(([n, k]) => { const d = el('div'); d.appendChild(el('b', '', String(n))); d.appendChild(document.createTextNode(t(k))); st.appendChild(d); });
@@ -760,7 +853,7 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         if (e.key === 'Escape' && S.screen === 'mp-game') quitGame();
         if ((e.key === 'Enter' || e.key === ' ') && S.screen === 'mp-game' && S.run && !$('mp-nextrow').hidden) { e.preventDefault(); S.run.i++; nextQ(); }
     }
-    function quitGame() { S.run = null; renderHome(); show('mp-home'); }
+    function quitGame() { stopTimer(); $('mp-timer').hidden = true; S.run = null; renderHome(); show('mp-home'); }
 
     function init() {
         $('mp-quit').onclick = quitGame;
@@ -769,7 +862,7 @@ const REGION_HUES = [205, 235, 265, 295, 325, 352, 185];
         $('mp-hint').onclick = useHint;
         $('mp-again').onclick = () => startMap(S.def, S.mode);
         $('mp-home-btn').onclick = () => { renderHome(); show('mp-home'); };
-        setupGestures();
+        setupGestures(); setupSearch();
         document.addEventListener('keydown', onKey);
         window.addEventListener('resize', () => { if (S.screen === 'mp-game' && S.map && S.cam) { const g = fitBox(S.cam, stageSize().w, stageSize().h); S.cam = g; S.target = Object.assign({}, g); applyCam(); } });
         // labels / dots depend on zoom: refresh when the camera changes

@@ -1,0 +1,1232 @@
+{
+ "spain": [
+  {
+   "id": "arga",
+   "es": "Arga",
+   "en": "Arga",
+   "km": 145,
+   "source": {
+    "es": "Quinto Real (Pirineos, Navarra)",
+    "en": "Quinto Real (Pyrenees, Navarre)"
+   },
+   "mouth": {
+    "es": "Río Aragón, cerca de Funes",
+    "en": "Aragón River, near Funes"
+   },
+   "fact": {
+    "es": "Pasa por Pamplona, la capital de Navarra.",
+    "en": "It flows through Pamplona, the capital of Navarre."
+   },
+   "pts": [
+    [
+     -1.45,
+     43.1
+    ],
+    [
+     -1.5,
+     43
+    ],
+    [
+     -1.58,
+     42.9
+    ],
+    [
+     -1.64,
+     42.82
+    ],
+    [
+     -1.75,
+     42.74
+    ],
+    [
+     -1.82,
+     42.67
+    ],
+    [
+     -1.85,
+     42.56
+    ],
+    [
+     -1.82,
+     42.45
+    ],
+    [
+     -1.8,
+     42.32
+    ],
+    [
+     -1.8,
+     42.22
+    ]
+   ]
+  },
+  {
+   "id": "jalon",
+   "es": "Jalón",
+   "en": "Jalón",
+   "km": 235,
+   "source": {
+    "es": "Sierra Ministra (Soria)",
+    "en": "Sierra Ministra (Soria)"
+   },
+   "mouth": {
+    "es": "Río Ebro, cerca de Alagón (Zaragoza)",
+    "en": "Ebro River, near Alagón (Zaragoza)"
+   },
+   "fact": {
+    "es": "Su valle es una gran huerta y pasa por Calatayud.",
+    "en": "Its valley is a big orchard area and it flows past Calatayud."
+   },
+   "pts": [
+    [
+     -2.55,
+     41.18
+    ],
+    [
+     -2.43,
+     41.17
+    ],
+    [
+     -2.27,
+     41.22
+    ],
+    [
+     -2.05,
+     41.27
+    ],
+    [
+     -1.8,
+     41.33
+    ],
+    [
+     -1.64,
+     41.35
+    ],
+    [
+     -1.5,
+     41.42
+    ],
+    [
+     -1.4,
+     41.5
+    ],
+    [
+     -1.28,
+     41.6
+    ],
+    [
+     -1.15,
+     41.75
+    ]
+   ]
+  },
+  {
+   "id": "matarranya",
+   "es": "Matarraña",
+   "en": "Matarraña",
+   "km": 100,
+   "source": {
+    "es": "Puertos de Beceite (Teruel)",
+    "en": "Puertos de Beceite (Teruel)"
+   },
+   "mouth": {
+    "es": "Río Ebro, en el embalse de Mequinenza",
+    "en": "Ebro River, in the Mequinenza reservoir"
+   },
+   "fact": {
+    "es": "Cruza una comarca de olivos con pueblos de piedra muy bonitos.",
+    "en": "It crosses an area of olive groves with very pretty stone villages."
+   },
+   "pts": [
+    [
+     0.05,
+     40.75
+    ],
+    [
+     0.15,
+     40.72
+    ],
+    [
+     0.22,
+     40.8
+    ],
+    [
+     0.2,
+     40.87
+    ],
+    [
+     0.17,
+     40.96
+    ],
+    [
+     0.2,
+     41.05
+    ],
+    [
+     0.25,
+     41.13
+    ],
+    [
+     0.3,
+     41.22
+    ]
+   ]
+  },
+  {
+   "id": "mijares",
+   "es": "Mijares",
+   "en": "Mijares",
+   "km": 156,
+   "source": {
+    "es": "Sierra de Gúdar (Teruel)",
+    "en": "Sierra de Gúdar (Teruel)"
+   },
+   "mouth": {
+    "es": "Mar Mediterráneo, cerca de Almassora",
+    "en": "Mediterranean Sea, near Almassora"
+   },
+   "fact": {
+    "es": "Sus aguas riegan los naranjos de Castellón.",
+    "en": "Its water irrigates the orange groves of Castellón."
+   },
+   "pts": [
+    [
+     -0.7,
+     40.2
+    ],
+    [
+     -0.62,
+     40.12
+    ],
+    [
+     -0.53,
+     40.05
+    ],
+    [
+     -0.4,
+     40.02
+    ],
+    [
+     -0.28,
+     40
+    ],
+    [
+     -0.15,
+     39.97
+    ],
+    [
+     -0.03,
+     39.93
+    ]
+   ]
+  },
+  {
+   "id": "vinalopo",
+   "es": "Vinalopó",
+   "en": "Vinalopó",
+   "km": 81,
+   "source": {
+    "es": "Sierra Mariola (Alicante)",
+    "en": "Sierra Mariola (Alicante)"
+   },
+   "mouth": {
+    "es": "Mar Mediterráneo, cerca de Santa Pola",
+    "en": "Mediterranean Sea, near Santa Pola"
+   },
+   "fact": {
+    "es": "Es un río corto y seco gran parte del año, pero cruza Elche.",
+    "en": "It is a short river, dry for much of the year, but it crosses Elche."
+   },
+   "pts": [
+    [
+     -0.67,
+     38.73
+    ],
+    [
+     -0.75,
+     38.68
+    ],
+    [
+     -0.87,
+     38.63
+    ],
+    [
+     -0.82,
+     38.55
+    ],
+    [
+     -0.79,
+     38.48
+    ],
+    [
+     -0.74,
+     38.36
+    ],
+    [
+     -0.7,
+     38.27
+    ],
+    [
+     -0.62,
+     38.2
+    ]
+   ]
+  },
+  {
+   "id": "francoli",
+   "es": "Francolí",
+   "en": "Francolí",
+   "km": 82,
+   "source": {
+    "es": "Sierra de Prades (Tarragona)",
+    "en": "Prades Mountains (Tarragona)"
+   },
+   "mouth": {
+    "es": "Mar Mediterráneo, en Tarragona",
+    "en": "Mediterranean Sea, at Tarragona"
+   },
+   "fact": {
+    "es": "Desemboca junto a la antigua ciudad romana de Tarraco.",
+    "en": "It reaches the sea next to the old Roman city of Tarraco."
+   },
+   "pts": [
+    [
+     0.98,
+     41.33
+    ],
+    [
+     1.05,
+     41.34
+    ],
+    [
+     1.16,
+     41.38
+    ],
+    [
+     1.2,
+     41.3
+    ],
+    [
+     1.25,
+     41.22
+    ],
+    [
+     1.25,
+     41.15
+    ],
+    [
+     1.24,
+     41.1
+    ]
+   ]
+  },
+  {
+   "id": "fluvia",
+   "es": "Fluvià",
+   "en": "Fluvià",
+   "km": 97,
+   "source": {
+    "es": "Garrotxa (Girona)",
+    "en": "Garrotxa (Girona)"
+   },
+   "mouth": {
+    "es": "Mar Mediterráneo, en Sant Pere Pescador",
+    "en": "Mediterranean Sea, at Sant Pere Pescador"
+   },
+   "fact": {
+    "es": "Atraviesa el parque volcánico de la Garrotxa.",
+    "en": "It crosses the Garrotxa volcanic park."
+   },
+   "pts": [
+    [
+     2.4,
+     42.18
+    ],
+    [
+     2.49,
+     42.18
+    ],
+    [
+     2.6,
+     42.19
+    ],
+    [
+     2.7,
+     42.2
+    ],
+    [
+     2.8,
+     42.19
+    ],
+    [
+     2.92,
+     42.19
+    ],
+    [
+     3.03,
+     42.2
+    ],
+    [
+     3.1,
+     42.19
+    ]
+   ]
+  },
+  {
+   "id": "noguerapallaresa",
+   "es": "Noguera Pallaresa",
+   "en": "Noguera Pallaresa",
+   "km": 150,
+   "source": {
+    "es": "Pla de Beret (Pirineos, Lleida)",
+    "en": "Pla de Beret (Pyrenees, Lleida)"
+   },
+   "mouth": {
+    "es": "Río Segre, cerca de Balaguer",
+    "en": "Segre River, near Balaguer"
+   },
+   "fact": {
+    "es": "Es famoso para hacer rafting en el Pirineo.",
+    "en": "It is famous for white-water rafting in the Pyrenees."
+   },
+   "pts": [
+    [
+     1,
+     42.7
+    ],
+    [
+     1.05,
+     42.6
+    ],
+    [
+     1.13,
+     42.41
+    ],
+    [
+     1,
+     42.3
+    ],
+    [
+     0.9,
+     42.17
+    ],
+    [
+     0.93,
+     42.05
+    ],
+    [
+     0.85,
+     41.9
+    ],
+    [
+     0.8,
+     41.8
+    ],
+    [
+     0.7,
+     41.7
+    ]
+   ]
+  },
+  {
+   "id": "alberche",
+   "es": "Alberche",
+   "en": "Alberche",
+   "km": 181,
+   "source": {
+    "es": "Sierra de Gredos (Ávila)",
+    "en": "Sierra de Gredos (Ávila)"
+   },
+   "mouth": {
+    "es": "Río Tajo, cerca de Talavera de la Reina",
+    "en": "Tajo River, near Talavera de la Reina"
+   },
+   "fact": {
+    "es": "Pasa por Ávila, Madrid y Toledo antes de unirse al Tajo.",
+    "en": "It runs through Ávila, Madrid and Toledo before joining the Tajo."
+   },
+   "pts": [
+    [
+     -5.05,
+     40.38
+    ],
+    [
+     -4.88,
+     40.38
+    ],
+    [
+     -4.7,
+     40.37
+    ],
+    [
+     -4.57,
+     40.37
+    ],
+    [
+     -4.5,
+     40.3
+    ],
+    [
+     -4.45,
+     40.22
+    ],
+    [
+     -4.5,
+     40.12
+    ],
+    [
+     -4.58,
+     40.02
+    ],
+    [
+     -4.68,
+     39.95
+    ]
+   ]
+  },
+  {
+   "id": "tietar",
+   "es": "Tiétar",
+   "en": "Tiétar",
+   "km": 150,
+   "source": {
+    "es": "Sierra de Gredos (Ávila)",
+    "en": "Sierra de Gredos (Ávila)"
+   },
+   "mouth": {
+    "es": "Río Tajo, cerca de Monfragüe",
+    "en": "Tajo River, near Monfragüe"
+   },
+   "fact": {
+    "es": "Su valle, al sur de Gredos, es muy verde y de clima suave.",
+    "en": "Its valley, south of Gredos, is very green with a mild climate."
+   },
+   "pts": [
+    [
+     -4.95,
+     40.3
+    ],
+    [
+     -5.1,
+     40.22
+    ],
+    [
+     -5.25,
+     40.16
+    ],
+    [
+     -5.45,
+     40.05
+    ],
+    [
+     -5.6,
+     39.97
+    ],
+    [
+     -5.8,
+     39.88
+    ],
+    [
+     -6,
+     39.82
+    ]
+   ]
+  },
+  {
+   "id": "alagon",
+   "es": "Alagón",
+   "en": "Alagón",
+   "km": 200,
+   "source": {
+    "es": "Sierra de Francia (Salamanca)",
+    "en": "Sierra de Francia (Salamanca)"
+   },
+   "mouth": {
+    "es": "Río Tajo, cerca de Alcántara",
+    "en": "Tajo River, near Alcántara"
+   },
+   "fact": {
+    "es": "Es el mayor afluente del Tajo en Extremadura.",
+    "en": "It is the largest tributary of the Tajo in Extremadura."
+   },
+   "pts": [
+    [
+     -5.82,
+     40.4
+    ],
+    [
+     -5.93,
+     40.25
+    ],
+    [
+     -6.05,
+     40.12
+    ],
+    [
+     -6.15,
+     40.03
+    ],
+    [
+     -6.3,
+     39.99
+    ],
+    [
+     -6.5,
+     39.98
+    ],
+    [
+     -6.7,
+     39.9
+    ],
+    [
+     -6.85,
+     39.8
+    ]
+   ]
+  },
+  {
+   "id": "zujar",
+   "es": "Zújar",
+   "en": "Zújar",
+   "km": 213,
+   "source": {
+    "es": "Sierra Morena (Córdoba)",
+    "en": "Sierra Morena (Córdoba)"
+   },
+   "mouth": {
+    "es": "Río Guadiana, cerca de Villanueva de la Serena",
+    "en": "Guadiana River, near Villanueva de la Serena"
+   },
+   "fact": {
+    "es": "Forma el embalse de La Serena, uno de los más grandes de España.",
+    "en": "It forms the La Serena reservoir, one of the biggest in Spain."
+   },
+   "pts": [
+    [
+     -5.05,
+     38.35
+    ],
+    [
+     -5.15,
+     38.5
+    ],
+    [
+     -5.28,
+     38.62
+    ],
+    [
+     -5.38,
+     38.75
+    ],
+    [
+     -5.4,
+     38.88
+    ],
+    [
+     -5.55,
+     38.95
+    ],
+    [
+     -5.7,
+     38.98
+    ],
+    [
+     -5.82,
+     38.99
+    ]
+   ]
+  },
+  {
+   "id": "tera",
+   "es": "Tera",
+   "en": "Tera",
+   "km": 140,
+   "source": {
+    "es": "Sierra Segundera (Zamora)",
+    "en": "Sierra Segundera (Zamora)"
+   },
+   "mouth": {
+    "es": "Río Esla, cerca de Benavente",
+    "en": "Esla River, near Benavente"
+   },
+   "fact": {
+    "es": "Pasa por el lago de Sanabria, el mayor lago glaciar de la península.",
+    "en": "It flows through Lake Sanabria, the largest glacial lake on the peninsula."
+   },
+   "pts": [
+    [
+     -6.75,
+     42.12
+    ],
+    [
+     -6.72,
+     42.12
+    ],
+    [
+     -6.62,
+     42.05
+    ],
+    [
+     -6.4,
+     42.03
+    ],
+    [
+     -6.15,
+     42.05
+    ],
+    [
+     -5.95,
+     42.02
+    ],
+    [
+     -5.8,
+     41.99
+    ],
+    [
+     -5.72,
+     41.98
+    ]
+   ]
+  },
+  {
+   "id": "guadalfeo",
+   "es": "Guadalfeo",
+   "en": "Guadalfeo",
+   "km": 72,
+   "source": {
+    "es": "Sierra Nevada (Granada)",
+    "en": "Sierra Nevada (Granada)"
+   },
+   "mouth": {
+    "es": "Mar Mediterráneo, cerca de Motril",
+    "en": "Mediterranean Sea, near Motril"
+   },
+   "fact": {
+    "es": "Baja desde la nieve de Sierra Nevada hasta la costa tropical.",
+    "en": "It runs from the snow of Sierra Nevada down to the subtropical coast."
+   },
+   "pts": [
+    [
+     -3.33,
+     37.05
+    ],
+    [
+     -3.35,
+     37
+    ],
+    [
+     -3.4,
+     36.92
+    ],
+    [
+     -3.43,
+     36.88
+    ],
+    [
+     -3.48,
+     36.82
+    ],
+    [
+     -3.52,
+     36.77
+    ],
+    [
+     -3.52,
+     36.72
+    ]
+   ]
+  },
+  {
+   "id": "guadiaro",
+   "es": "Guadiaro",
+   "en": "Guadiaro",
+   "km": 80,
+   "source": {
+    "es": "Serranía de Ronda (Málaga)",
+    "en": "Serranía de Ronda (Málaga)"
+   },
+   "mouth": {
+    "es": "Mar Mediterráneo, cerca de Sotogrande (Cádiz)",
+    "en": "Mediterranean Sea, near Sotogrande (Cádiz)"
+   },
+   "fact": {
+    "es": "Cruza serranías y alcornocales hasta el Estrecho.",
+    "en": "It crosses mountains and cork oak forests on its way to the Strait."
+   },
+   "pts": [
+    [
+     -5.1,
+     36.78
+    ],
+    [
+     -5.17,
+     36.7
+    ],
+    [
+     -5.25,
+     36.65
+    ],
+    [
+     -5.3,
+     36.58
+    ],
+    [
+     -5.32,
+     36.5
+    ],
+    [
+     -5.3,
+     36.4
+    ],
+    [
+     -5.27,
+     36.3
+    ]
+   ]
+  },
+  {
+   "id": "lerez",
+   "es": "Lérez",
+   "en": "Lérez",
+   "km": 55,
+   "source": {
+    "es": "Sierra del Candán (Pontevedra)",
+    "en": "Sierra del Candán (Pontevedra)"
+   },
+   "mouth": {
+    "es": "Ría de Pontevedra, en Pontevedra",
+    "en": "Pontevedra estuary, at Pontevedra"
+   },
+   "fact": {
+    "es": "Pasa por el centro de la ciudad de Pontevedra.",
+    "en": "It runs through the center of the city of Pontevedra."
+   },
+   "pts": [
+    [
+     -8.2,
+     42.65
+    ],
+    [
+     -8.3,
+     42.6
+    ],
+    [
+     -8.42,
+     42.55
+    ],
+    [
+     -8.5,
+     42.48
+    ],
+    [
+     -8.58,
+     42.44
+    ],
+    [
+     -8.65,
+     42.42
+    ]
+   ]
+  },
+  {
+   "id": "ulla",
+   "es": "Ulla",
+   "en": "Ulla",
+   "km": 132,
+   "source": {
+    "es": "Antas de Ulla (Lugo)",
+    "en": "Antas de Ulla (Lugo)"
+   },
+   "mouth": {
+    "es": "Ría de Arousa, cerca de Catoira",
+    "en": "Arousa estuary, near Catoira"
+   },
+   "fact": {
+    "es": "Pasa por Padrón, cuna de los famosos pimientos.",
+    "en": "It flows past Padrón, home of the famous peppers."
+   },
+   "pts": [
+    [
+     -7.75,
+     42.9
+    ],
+    [
+     -7.95,
+     42.85
+    ],
+    [
+     -8.1,
+     42.8
+    ],
+    [
+     -8.25,
+     42.78
+    ],
+    [
+     -8.4,
+     42.75
+    ],
+    [
+     -8.55,
+     42.75
+    ],
+    [
+     -8.66,
+     42.73
+    ],
+    [
+     -8.72,
+     42.66
+    ]
+   ]
+  },
+  {
+   "id": "navia",
+   "es": "Navia",
+   "en": "Navia",
+   "km": 159,
+   "source": {
+    "es": "Sierra de Ancares (Lugo)",
+    "en": "Ancares Mountains (Lugo)"
+   },
+   "mouth": {
+    "es": "Mar Cantábrico, en Navia (Asturias)",
+    "en": "Cantabrian Sea, at Navia (Asturias)"
+   },
+   "fact": {
+    "es": "Tiene varios embalses y desemboca en la ría de Navia.",
+    "en": "It has several reservoirs and ends in the Navia estuary."
+   },
+   "pts": [
+    [
+     -6.95,
+     42.85
+    ],
+    [
+     -6.85,
+     42.95
+    ],
+    [
+     -6.75,
+     43.05
+    ],
+    [
+     -6.65,
+     43.15
+    ],
+    [
+     -6.6,
+     43.3
+    ],
+    [
+     -6.65,
+     43.42
+    ],
+    [
+     -6.72,
+     43.52
+    ],
+    [
+     -6.73,
+     43.55
+    ]
+   ]
+  },
+  {
+   "id": "eo",
+   "es": "Eo",
+   "en": "Eo",
+   "km": 80,
+   "source": {
+    "es": "Sierra de Meira, cerca de A Fonsagrada (Lugo)",
+    "en": "Sierra de Meira, near A Fonsagrada (Lugo)"
+   },
+   "mouth": {
+    "es": "Ría de Ribadeo, mar Cantábrico",
+    "en": "Ribadeo estuary, Cantabrian Sea"
+   },
+   "fact": {
+    "es": "Marca el límite entre Galicia y Asturias.",
+    "en": "It marks the border between Galicia and Asturias."
+   },
+   "pts": [
+    [
+     -7.15,
+     43.2
+    ],
+    [
+     -7.12,
+     43.3
+    ],
+    [
+     -7.08,
+     43.38
+    ],
+    [
+     -7.05,
+     43.45
+    ],
+    [
+     -7.02,
+     43.55
+    ]
+   ]
+  },
+  {
+   "id": "sella",
+   "es": "Sella",
+   "en": "Sella",
+   "km": 66,
+   "source": {
+    "es": "Picos de Europa (Asturias)",
+    "en": "Picos de Europa (Asturias)"
+   },
+   "mouth": {
+    "es": "Mar Cantábrico, en Ribadesella",
+    "en": "Cantabrian Sea, at Ribadesella"
+   },
+   "fact": {
+    "es": "Cada agosto se celebra en él el famoso descenso en piraguas.",
+    "en": "Every August it hosts the famous canoe race."
+   },
+   "pts": [
+    [
+     -4.95,
+     43.18
+    ],
+    [
+     -5,
+     43.25
+    ],
+    [
+     -5.05,
+     43.3
+    ],
+    [
+     -5.1,
+     43.35
+    ],
+    [
+     -5.15,
+     43.38
+    ],
+    [
+     -5.12,
+     43.41
+    ],
+    [
+     -5.07,
+     43.46
+    ]
+   ]
+  },
+  {
+   "id": "deva",
+   "es": "Deva",
+   "en": "Deva",
+   "km": 65,
+   "source": {
+    "es": "Fuente Dé (Picos de Europa, Cantabria)",
+    "en": "Fuente Dé (Picos de Europa, Cantabria)"
+   },
+   "mouth": {
+    "es": "Mar Cantábrico, cerca de Unquera",
+    "en": "Cantabrian Sea, near Unquera"
+   },
+   "fact": {
+    "es": "Baja de los Picos de Europa por el desfiladero de La Hermida.",
+    "en": "It leaves the Picos de Europa through the La Hermida gorge."
+   },
+   "pts": [
+    [
+     -4.83,
+     43.13
+    ],
+    [
+     -4.75,
+     43.14
+    ],
+    [
+     -4.62,
+     43.15
+    ],
+    [
+     -4.55,
+     43.22
+    ],
+    [
+     -4.52,
+     43.3
+    ],
+    [
+     -4.55,
+     43.38
+    ]
+   ]
+  },
+  {
+   "id": "henares",
+   "es": "Henares",
+   "en": "Henares",
+   "km": 150,
+   "source": {
+    "es": "Sierra Ministra (Guadalajara)",
+    "en": "Sierra Ministra (Guadalajara)"
+   },
+   "mouth": {
+    "es": "Río Jarama, cerca de Mejorada del Campo (Madrid)",
+    "en": "Jarama River, near Mejorada del Campo (Madrid)"
+   },
+   "fact": {
+    "es": "Pasa por Sigüenza, Guadalajara y Alcalá de Henares.",
+    "en": "It flows by Sigüenza, Guadalajara and Alcalá de Henares."
+   },
+   "pts": [
+    [
+     -2.5,
+     41.15
+    ],
+    [
+     -2.64,
+     41.07
+    ],
+    [
+     -2.8,
+     40.95
+    ],
+    [
+     -3,
+     40.78
+    ],
+    [
+     -3.17,
+     40.63
+    ],
+    [
+     -3.3,
+     40.52
+    ],
+    [
+     -3.37,
+     40.48
+    ],
+    [
+     -3.45,
+     40.43
+    ],
+    [
+     -3.5,
+     40.38
+    ]
+   ]
+  },
+  {
+   "id": "orbigo",
+   "es": "Órbigo",
+   "en": "Órbigo",
+   "km": 162,
+   "source": {
+    "es": "Hospital de Órbigo (León)",
+    "en": "Hospital de Órbigo (León)"
+   },
+   "mouth": {
+    "es": "Río Esla, cerca de Benavente",
+    "en": "Esla River, near Benavente"
+   },
+   "fact": {
+    "es": "Se forma por la unión de los ríos Luna y Omaña y cruza el Camino de Santiago.",
+    "en": "It is formed where the Luna and Omaña rivers meet and crosses the Camino de Santiago."
+   },
+   "pts": [
+    [
+     -5.88,
+     42.5
+    ],
+    [
+     -5.9,
+     42.45
+    ],
+    [
+     -5.88,
+     42.35
+    ],
+    [
+     -5.85,
+     42.25
+    ],
+    [
+     -5.85,
+     42.15
+    ],
+    [
+     -5.8,
+     42.05
+    ],
+    [
+     -5.75,
+     41.99
+    ]
+   ]
+  },
+  {
+   "id": "cabriel",
+   "es": "Cabriel",
+   "en": "Cabriel",
+   "km": 220,
+   "source": {
+    "es": "Sierra de Albarracín (Teruel)",
+    "en": "Albarracín Mountains (Teruel)"
+   },
+   "mouth": {
+    "es": "Río Júcar, en el embalse de Cofrentes (Valencia)",
+    "en": "Júcar River, in the Cofrentes reservoir (Valencia)"
+   },
+   "fact": {
+    "es": "Es de los ríos más limpios de España y baja entre cañones.",
+    "en": "It is one of the cleanest rivers in Spain and runs through canyons."
+   },
+   "pts": [
+    [
+     -1.58,
+     40.35
+    ],
+    [
+     -1.6,
+     40.2
+    ],
+    [
+     -1.55,
+     40.05
+    ],
+    [
+     -1.5,
+     39.95
+    ],
+    [
+     -1.45,
+     39.8
+    ],
+    [
+     -1.35,
+     39.62
+    ],
+    [
+     -1.25,
+     39.5
+    ],
+    [
+     -1.2,
+     39.4
+    ],
+    [
+     -1.12,
+     39.3
+    ],
+    [
+     -1.08,
+     39.22
+    ]
+   ]
+  }
+ ]
+}
