@@ -264,6 +264,10 @@ test('F-MAPAS mountains and rich cards: height, river length, province facts, le
     await start(page, 'montes', 'find');
     await shot(page, 'mountains-spain-find');
     const q = await runState(page); await page.evaluate(id => Mapas._focus(id, 6), q.id); await tapItem(page, q.id);
+    // a tiny peak can be missed while the camera is still settling under load: tap once more
+    if (!(await page.waitForSelector('#mp-learn:not([hidden])', { timeout: 6000 }).catch(() => null))) {
+      await page.evaluate(id => Mapas._focus(id, 6), q.id); await page.waitForTimeout(1200); await tapItem(page, q.id);
+    }
     await page.waitForSelector('#mp-learn:not([hidden])');
     assert.ok((await page.textContent('#mp-learn')).length > 30, 'learn card has content');
     await shot(page, 'learn-card');

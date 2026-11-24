@@ -421,6 +421,42 @@ test('B-PRIV-PIN: the PIN hash is writable only by the owner and edit guardians,
   assert.equal(snap.data().xp, 5);
 });
 
+test('B-INTERESTS: only ids of the fixed list, at most 5, no repeats, written by the owner and edit guardians only', async () => {
+  await seedAdults();
+  const kid = 'users/own/players/kid123abc';
+  const ALL = ['dinosaurs', 'space', 'sports', 'animals', 'videogames', 'pirates', 'robots', 'magic', 'music', 'cooking', 'vehicles', 'nature', 'mystery', 'superheroes'];
+  await assertSucceeds(updateDoc(doc(as('own'), kid), { interests: ['dinosaurs'] }));
+  await assertSucceeds(updateDoc(doc(as('own'), kid), { interests: ALL.slice(0, 5) }));
+  await assertSucceeds(updateDoc(doc(as('gran'), kid), { interests: ['space', 'music'] }));
+  await assertSucceeds(updateDoc(doc(as('gran'), kid), { interests: [] }));
+  await assertSucceeds(updateDoc(doc(as('gran'), kid), { interests: deleteField() }));
+  for (const id of ALL) await assertSucceeds(updateDoc(doc(as('own'), kid), { interests: [id] }));
+  // not allowed values
+  const bad = [ALL.slice(0, 6), ALL, ['dinosaurs', 'dinosaurs'], ['football'], ['Dinosaurs'], ['dinosaurs', 'x'], [1], [null], ['dinosaurs', { a: 1 }],
+    'dinosaurs', 5, { 0: 'dinosaurs' }, true, ['<script>']];
+  for (const v of bad) {
+    await assertFails(updateDoc(doc(as('own'), kid), { interests: v }));
+    await assertFails(updateDoc(doc(as('gran'), kid), { interests: v }));
+  }
+  // nobody else writes them
+  await assertFails(updateDoc(doc(as('teacher'), kid), { interests: ['space'] }));
+  await assertFails(updateDoc(doc(as('teacher'), kid), { interests: deleteField() }));
+  await assertFails(updateDoc(doc(as('stranger'), kid), { interests: ['space'] }));
+  await assertFails(updateDoc(doc(anon(), kid), { interests: ['space'] }));
+  // creating a player with interests follows the same rule, and the PIN keeps working next to them
+  await assertSucceeds(setDoc(doc(as('own'), 'users/own/players/kid999abc'), { username: 'Sol', xp: 0, totalPoints: 0, interests: ['robots', 'music'] }));
+  await assertFails(setDoc(doc(as('own'), 'users/own/players/kid888abc'), { username: 'Sol', xp: 0, totalPoints: 0, interests: ['robots', 'robots'] }));
+  await assertSucceeds(updateDoc(doc(as('own'), kid), { interests: ['space'], pin: PIN() }));
+  await assertFails(updateDoc(doc(as('own'), kid), { interests: ['space', 'x'], pin: PIN() }));
+  // guardians (also view) read them, a stranger does not
+  await assertSucceeds(getDoc(doc(as('teacher'), kid)));
+  await assertFails(getDoc(doc(as('stranger'), kid)));
+  const snap = await assertSucceeds(getDoc(doc(as('own'), kid)));
+  assert.deepEqual(snap.data().interests, ['space']);
+  // the adult own profile has no interests field: the adult document is unchanged by this rule
+  await assertSucceeds(updateDoc(doc(as('own'), 'users/own'), { xp: 3 }));
+});
+
 test('B-PRIV-STRANGER: a signed in stranger and an anonymous visitor read nothing of a family', async () => {
   await seedAdults();
   await seedInvite();

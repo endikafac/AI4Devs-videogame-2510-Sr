@@ -2,7 +2,7 @@
   "lang": "ca",
   "books": [
     {
-      "id": "ca-qui", "title": "Don Quixot i els molins", "author": "Miguel de Cervantes (explicat)", "emoji": "🛡️", "color": "#b45309", "bands": ["b56", "b78"],
+      "id": "ca-qui", "title": "Don Quixot i els molins", "author": "Miguel de Cervantes (explicat)", "emoji": "🛡️", "color": "#b45309", "bands": ["b56", "b78"], "topics": ["general"],
       "source": "Miguel de Cervantes, Don Quijote de la Mancha (1605), domini públic; capítols curts escrits per a aquest joc",
       "license": "public-domain (original work); original-project retelling",
       "retelling": "Explicat amb paraules pròpies, sense copiar cap traducció moderna. Cal que ho revisi una persona catalanoparlant.",

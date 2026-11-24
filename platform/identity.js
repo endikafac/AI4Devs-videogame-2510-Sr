@@ -403,6 +403,7 @@ const PlatformIdentity = {
         }
 
         await this._pinSection(modal, uid, mems || [], st, err, render);
+        await this._interestsSection(modal, uid, mems || [], st, err, render);
 
         modal.appendChild(errNode);
         const actions = this._mk('div', 'pid-actions');
@@ -410,6 +411,60 @@ const PlatformIdentity = {
         backBtn.onclick = back;
         actions.appendChild(backBtn);
         modal.appendChild(actions);
+    },
+
+    /** platform/interests.js is loaded on demand on pages that do not include it (the Familia screen is reachable from every game). */
+    _loadInterests() {
+        if (typeof PlatformInterests !== 'undefined') return Promise.resolve(true);
+        return new Promise(res => {
+            const me = document.querySelector('script[src*="identity.js"]');
+            if (!me) return res(false);
+            const s = document.createElement('script');
+            s.src = me.src.replace('identity.js', 'interests.js');
+            s.onload = () => res(true); s.onerror = () => res(false);
+            document.head.appendChild(s);
+        });
+    },
+    /**
+     * "Mis gustos": the interests of each child (platform/interests.js), editable by the owner and by guardians with
+     * role edit (rules: validInterests + canEditKids). Role view only sees them.
+     */
+    async _interestsSection(modal, uid, mems, st, err, render) {
+        if (!(await this._loadInterests())) return;
+        const PI = PlatformInterests, P = PlatformFirestore, L = PI.lang();
+        modal.appendChild(this._mk('h3', 'pid-fam-h', PI.t('mine', L)));
+        modal.appendChild(this._mk('p', 'pid-help', PI.t('famHelp', L)));
+        if (st.likeMsg) { modal.appendChild(this._mk('p', 'pid-help', st.likeMsg, { role: 'status', id: 'pid-like-status' })); st.likeMsg = ''; }
+        const groups = [{ owner: uid, role: 'owner', name: '' }]
+            .concat(mems.map(m => ({ owner: m.ownerUid, role: m.role, name: m.ownerName || '?' })));
+        const lists = await Promise.all(groups.map(g => P.listPlayers(uid, g.owner).catch(() => [])));
+        groups.forEach((g, i) => {
+            if (!lists[i].length) return;
+            if (g.owner !== uid) modal.appendChild(this._mk('div', 'pid-fam-head', this._F('famOf', { name: g.name }) + (g.role === 'view' ? ' · ' + PlatformI18n.t('famRoleView') : '')));
+            lists[i].forEach(kid => {
+                const ints = PI.sanitize(kid.interests);
+                const row = this._mk('div', 'pid-fam-row pid-like-row', null, { 'data-pid': kid.pid });
+                const who = this._mk('div', 'pid-fam-who');
+                who.appendChild(this._mk('span', null, (kid.avatar || '🙂') + ' ' + (kid.username || '')));
+                who.appendChild(this._mk('small', 'pid-like-list', ints.length ? ints.map(id => PI.emoji(id) + ' ' + PI.label(id, L)).join(', ') : PI.t('none', L)));
+                row.appendChild(who);
+                if (g.role === 'owner' || g.role === 'edit') {
+                    const name = kid.username || '';
+                    const b = this._mk('button', 'pid-btn ghost pid-fam-btn', PI.t('change', L), { type: 'button', 'data-act': 'interests', 'aria-label': PI.t('change', L) + ' ' + name });
+                    b.onclick = () => {
+                        err('');
+                        row.replaceChildren(PI.buildPicker({ selected: ints, lang: L, headingTag: 'h4', canSkip: true,
+                            onSave: async list => {
+                                try { await P.setChildInterests(g.owner, kid.pid, list); PI.saveLocal(PI.localKey(uid, kid.pid), list); st.likeMsg = PI.t('saved', L); await render(); }
+                                catch (e) { err(this._famError(e)); }
+                            },
+                            onSkip: () => render() }));
+                    };
+                    row.appendChild(b);
+                }
+                modal.appendChild(row);
+            });
+        });
     },
 
     /**

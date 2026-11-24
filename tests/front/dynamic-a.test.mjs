@@ -321,7 +321,7 @@ test('F-DYN typingMaster mini mode: missing letter, 10 questions, keyboard and b
     const wrong = await page.evaluate(() => [...document.querySelectorAll('.tyd-opt')].find(b => b.dataset.ch !== TyDyn.S.run.ans).dataset.ch);
     await page.locator(`.tyd-opt[data-ch="${wrong}"]`).click();
     await page.waitForSelector('#tym-fb.bad'); assert.ok(await juice(page) > 0);
-    assert.match(await page.locator('#tym-fb').innerText(), /La palabra es \w+/);
+    assert.match(await page.locator('#tym-fb').innerText(), /La palabra es \p{L}+/u);
     await page.click('#tym-next');
     for (let i = 2; i <= 10; i++) {
       await page.waitForFunction(k => TyDyn.S.run.n === k - 1 && !TyDyn.S.run.locked, i);

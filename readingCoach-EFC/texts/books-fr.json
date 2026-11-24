@@ -2,7 +2,7 @@
   "lang": "fr",
   "books": [
     {
-      "id": "fr-80j", "title": "Le tour du monde en 80 jours", "author": "Jules Verne (raconté)", "emoji": "🎈", "color": "#be185d", "bands": ["b56", "b78"],
+      "id": "fr-80j", "title": "Le tour du monde en 80 jours", "author": "Jules Verne (raconté)", "emoji": "🎈", "color": "#be185d", "bands": ["b56", "b78"], "topics": ["vehicles"],
       "source": "Jules Verne, Le Tour du monde en quatre-vingts jours (1872), domaine public ; chapitres courts écrits pour ce jeu",
       "license": "public-domain (original work); original-project retelling",
       "retelling": "Raconté avec nos propres mots, sans copier aucune édition moderne.",

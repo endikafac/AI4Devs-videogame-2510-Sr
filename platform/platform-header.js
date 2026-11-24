@@ -614,3 +614,6 @@ const PlatformHeader = {
         if (returnEl) setTimeout(() => returnEl.focus(), 0);
     }
 };
+
+// Expose the top-level const so games can call PlatformHeader.showToast through window.
+if (typeof window !== 'undefined') window.PlatformHeader = PlatformHeader;

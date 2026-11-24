@@ -40,6 +40,11 @@
         <div class="chip-row" id="f-cat" role="group"></div>
     </section>
 
+    <section id="hub-likes" class="hub-foryou hub-likes" aria-labelledby="hub-likes-h" hidden>
+        <h2 id="hub-likes-h" class="hub-foryou-h"></h2>
+        <div class="foryou-row" id="hub-likes-row"></div>
+    </section>
+
     <section id="hub-foryou" class="hub-foryou" aria-labelledby="hub-foryou-h" hidden>
         <h2 id="hub-foryou-h" class="hub-foryou-h"></h2>
         <div class="foryou-row" id="hub-foryou-row"></div>
@@ -64,6 +69,7 @@
 <script src="platform/firestore.js"></script>
 <script src="platform/identity.js"></script>
 <script src="platform/profiles.js"></script>
+<script src="platform/interests.js"></script>
 <script src="platform/platform-header.js"></script>
 
 <script>
@@ -328,7 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     $('hub-today').addEventListener('click', e => { const a = e.target.closest('[data-id]'); if (a) { store.set('games_hub_last', a.dataset.id); markPlayed(a.dataset.id); } });
-    $('hub-q').addEventListener('input', e => { state.q = e.target.value; renderGrid(); renderForYou(); });
+    $('hub-q').addEventListener('input', e => { state.q = e.target.value; renderGrid(); renderForYou(); renderLikes(); });
 
     function renderForYou() {
         const sec = $('hub-foryou');
@@ -339,6 +345,24 @@ document.addEventListener('DOMContentLoaded', () => {
         $('hub-foryou-row').innerHTML = PP.forYou(GAMES).map(g =>
             `<a class="foryou-card c-${g.cat}" href="${esc(g.href)}" data-id="${esc(g.id)}"><span class="foryou-ico" aria-hidden="true">${g.icon}</span><span>${esc(g.title)}</span></a>`).join('');
     }
+    // "Segun tus gustos": child profile only. Games chosen from the child's interests with the table PlatformInterests.GAME_MAP.
+    function renderLikes() {
+        const PI = window.PlatformInterests, sec = $('hub-likes');
+        const show = state.mode === 'child' && !state.q.trim() && !!PI;
+        sec.hidden = !show;
+        if (!show) return;
+        const prof = state.profile || {}, L = PI.lang();
+        let ints = PI.sanitize(prof.interests);
+        if (!ints.length) ints = PI.loadLocal(PI.localKey(prof.uid, prof.pid));
+        $('hub-likes-h').textContent = '🎯 ' + PI.t('row', L);
+        const link = (id, text) => '<a class="foryou-card" id="' + id + '" href="readingCoach-EFC/index.html#gustos"><span class="foryou-ico" aria-hidden="true">🎨</span><span>' + esc(text) + '</span></a>';
+        if (!ints.length) { $('hub-likes-row').innerHTML = link('hub-likes-ask', PI.t('ask', L)); return; }
+        $('hub-likes-row').innerHTML = PI.gamesFor(ints, GAMES, 6, fitsMode).map(r =>
+            '<a class="foryou-card c-' + esc(r.game.cat) + '" href="' + esc(r.game.href) + '" data-id="' + esc(r.game.id) + '" title="' + esc(PI.t('why', L) + ': ' + r.via.map(v => PI.label(v, L)).join(', ')) + '">' +
+            '<span class="foryou-ico" aria-hidden="true">' + r.game.icon + '</span><span>' + esc(r.game.title) + '</span>' +
+            '<span class="foryou-via" aria-hidden="true">' + r.via.map(v => PI.emoji(v)).join('') + '</span></a>').join('') + link('hub-likes-change', PI.t('change', L));
+    }
+    $('hub-likes-row').addEventListener('click', e => { const a = e.target.closest('[data-id]'); if (a) { store.set('games_hub_last', a.dataset.id); markPlayed(a.dataset.id); } });
     $('hub-foryou-row').addEventListener('click', e => { const a = e.target.closest('[data-id]'); if (a) { store.set('games_hub_last', a.dataset.id); markPlayed(a.dataset.id); } });
     function applyMode() {
         state.mode = PP ? PP.modeOf(state.profile) : 'guest';
@@ -346,10 +370,10 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (state.mode === 'adult' && !sess.get('games_hub_aud_touched')) state.aud = 'adults';
         else state.aud = store.get('games_hub_f_aud') || 'all';
         $('f-aud').style.display = state.mode === 'child' ? 'none' : '';
-        renderChips(); renderGrid(); renderToday(); renderContinue(); renderForYou();
+        renderChips(); renderGrid(); renderToday(); renderContinue(); renderForYou(); renderLikes();
     }
 
-    function renderAll() { renderMe(); renderToday(); renderForYou(); renderChips(); $('hub-q').placeholder = tr().search; $('hub-q').setAttribute('aria-label', tr().search); renderGrid(); renderContinue(); }
+    function renderAll() { renderMe(); renderToday(); renderLikes(); renderForYou(); renderChips(); $('hub-q').placeholder = tr().search; $('hub-q').setAttribute('aria-label', tr().search); renderGrid(); renderContinue(); }
 
     document.querySelector('.hub-filters').addEventListener('click', e => {
         const b = e.target.closest('.chip');

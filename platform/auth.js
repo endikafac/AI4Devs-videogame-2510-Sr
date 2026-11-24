@@ -95,5 +95,8 @@ const PlatformAuth = {
     }
 };
 
+// A top-level const is not a window property: expose it so games can hook the session (window.PlatformAuth).
+if (typeof window !== 'undefined') window.PlatformAuth = PlatformAuth;
+
 // Auto-init when DOM is ready
 document.addEventListener('DOMContentLoaded', () => PlatformAuth.init());

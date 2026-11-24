@@ -2,7 +2,7 @@
   "lang": "en",
   "books": [
     {
-      "id": "en-tom", "title": "Tom Sawyer and the Fence", "author": "Mark Twain (retold)", "emoji": "🎨", "color": "#c2410c", "bands": ["b56", "b78"],
+      "id": "en-tom", "title": "Tom Sawyer and the Fence", "author": "Mark Twain (retold)", "emoji": "🎨", "color": "#c2410c", "bands": ["b56", "b78"], "topics": ["general"],
       "source": "Mark Twain, The Adventures of Tom Sawyer (1876), public domain; short chapters written for this game",
       "license": "public-domain (original work); original-project retelling",
       "retelling": "Retold in our own simple words; no modern edition was copied.",

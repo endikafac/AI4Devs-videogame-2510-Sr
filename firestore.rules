@@ -45,6 +45,17 @@ service cloud.firestore {
         && d.pin.salt is string && d.pin.salt.size() >= 16 && d.pin.salt.size() <= 32
         && d.pin.hash is string && d.pin.hash.size() >= 32 && d.pin.hash.size() <= 64);
     }
+    // Interests of a child ("Que te gusta?", platform/interests.js): a list of at
+    // most 5 ids taken from a FIXED list, no repeats, nothing free-form. Same
+    // writers as the rest of the player (canEditKids). Keep the ids in sync with
+    // PlatformInterests.IDS (checked by tests/unit/interests.test.mjs).
+    function validInterests(d) {
+      return !('interests' in d) || (d.interests is list
+        && d.interests.size() <= 5
+        && d.interests.hasOnly(['dinosaurs', 'space', 'sports', 'animals', 'videogames', 'pirates', 'robots',
+                                'magic', 'music', 'cooking', 'vehicles', 'nature', 'mystery', 'superheroes'])
+        && d.interests.toSet().size() == d.interests.size());
+    }
     // Verified Google e-mail of the caller, lowercased ('' when there is none).
     function verifiedEmail() {
       return signedIn() && request.auth.token.email_verified == true ? request.auth.token.email.lower() : '';
@@ -63,7 +74,7 @@ service cloud.firestore {
       // Deleting a player (or anything under it) is reserved to the owner.
       match /players/{pid} {
         allow read: if canReadKids(userId);
-        allow create, update: if canEditKids(userId) && validPin(request.resource.data);
+        allow create, update: if canEditKids(userId) && validPin(request.resource.data) && validInterests(request.resource.data);
         allow delete: if isOwner(userId);
 
         match /{sub}/{document=**} {

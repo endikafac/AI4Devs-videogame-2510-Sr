@@ -59,7 +59,21 @@
         retryQuiz: "Probar otra vez",
         quizRetryHint: "Para abrir el siguiente capítulo, acierta más preguntas. Con la ayuda puedes ver el texto.",
         retold: "Recontado con palabras propias",
-        bookPath: "Camino del libro"
+        bookPath: "Camino del libro",
+        zFy: "Para ti",
+        fyIntro: "Textos y libros que van con tus gustos y con tu nivel.",
+        fyAsk: "Cuéntanos qué te gusta y te proponemos textos y libros a tu medida.",
+        fyPick: "Elegir mis gustos",
+        fyChange: "Cambiar mis gustos",
+        fyTexts: "Textos",
+        fyBooks: "Libros",
+        fyTag: "Para ti",
+        simTitle: "Si te ha gustado, prueba otro parecido",
+        adaptUp: "Vas muy bien con estos textos. ¿Probamos uno un poco más difícil? Nivel {band}.",
+        adaptDown: "Para coger confianza, ¿repasamos uno un poco más fácil? Nivel {band}.",
+        adaptKeep: "Vas muy bien en tu zona. ¡Sigue leyendo!",
+        adaptGo: "Probar nivel {band}",
+        adaptStay: "Me quedo aquí"
     };
 
     const en = {
@@ -112,7 +126,21 @@
         retryQuiz: "Try again",
         quizRetryHint: "To open the next chapter, get more answers right. With the help button you can see the text.",
         retold: "Retold in our own words",
-        bookPath: "Book path"
+        bookPath: "Book path",
+        zFy: "For you",
+        fyIntro: "Texts and books that match what you like and your level.",
+        fyAsk: "Tell us what you like and we will suggest texts and books for you.",
+        fyPick: "Pick what I like",
+        fyChange: "Change my likes",
+        fyTexts: "Texts",
+        fyBooks: "Books",
+        fyTag: "For you",
+        simTitle: "Liked it? Try another one like it",
+        adaptUp: "You are doing very well with these texts. Shall we try a slightly harder one? Level {band}.",
+        adaptDown: "To build confidence, shall we go over a slightly easier one? Level {band}.",
+        adaptKeep: "You are doing well in your zone. Keep reading!",
+        adaptGo: "Try level {band}",
+        adaptStay: "I will stay here"
     };
 
     const eu = {
@@ -165,7 +193,21 @@
         retryQuiz: "Saiatu berriro",
         quizRetryHint: "Hurrengo kapitulua irekitzeko, asmatu galdera gehiago. Laguntzarekin testua ikus dezakezu.",
         retold: "Geure hitzetan berrekina",
-        bookPath: "Liburuaren bidea"
+        bookPath: "Liburuaren bidea",
+        zFy: "Zuretzat",
+        fyIntro: "Zure gustuei eta mailari egokitzen zaizkien testuak eta liburuak.",
+        fyAsk: "Esan zer gustatzen zaizun eta zuretzako testuak eta liburuak proposatuko ditugu.",
+        fyPick: "Aukeratu nire gustuak",
+        fyChange: "Aldatu nire gustuak",
+        fyTexts: "Testuak",
+        fyBooks: "Liburuak",
+        fyTag: "Zuretzat",
+        simTitle: "Gustatu zaizu? Probatu antzeko beste bat",
+        adaptUp: "Oso ondo zabiltza testu hauekin. Zerbait zailagoa probatuko dugu? {band} maila.",
+        adaptDown: "Konfiantza hartzeko, zerbait errazagoa berrikusiko dugu? {band} maila.",
+        adaptKeep: "Oso ondo zabiltza zure eremuan. Jarraitu irakurtzen!",
+        adaptGo: "Probatu {band} maila",
+        adaptStay: "Hemen geratzen naiz"
     };
 
     const gl = {
@@ -218,7 +260,21 @@
         retryQuiz: "Probar de novo",
         quizRetryHint: "Para abrir o seguinte capítulo, acerta máis preguntas. Coa axuda podes ver o texto.",
         retold: "Contado con palabras propias",
-        bookPath: "Camiño do libro"
+        bookPath: "Camiño do libro",
+        zFy: "Para ti",
+        fyIntro: "Textos e libros que van cos teus gustos e co teu nivel.",
+        fyAsk: "Cóntanos que che gusta e propoñémosche textos e libros á túa medida.",
+        fyPick: "Elixir os meus gustos",
+        fyChange: "Cambiar os meus gustos",
+        fyTexts: "Textos",
+        fyBooks: "Libros",
+        fyTag: "Para ti",
+        simTitle: "Gustouche? Proba outro parecido",
+        adaptUp: "Vaiche moi ben con estes textos. Probamos un un pouco máis difícil? Nivel {band}.",
+        adaptDown: "Para collerlle confianza, repasamos un un pouco máis doado? Nivel {band}.",
+        adaptKeep: "Vaiche moi ben na túa zona. Segue lendo!",
+        adaptGo: "Probar o nivel {band}",
+        adaptStay: "Quedo aquí"
     };
 
     const ca = {
@@ -271,7 +327,21 @@
         retryQuiz: "Torna-ho a provar",
         quizRetryHint: "Per obrir el capítol següent, encerta més preguntes. Amb l'ajuda pots veure el text.",
         retold: "Explicat amb paraules pròpies",
-        bookPath: "Camí del llibre"
+        bookPath: "Camí del llibre",
+        zFy: "Per a tu",
+        fyIntro: "Textos i llibres que van amb els teus gustos i el teu nivell.",
+        fyAsk: "Explica'ns què t'agrada i et proposem textos i llibres a la teva mida.",
+        fyPick: "Triar els meus gustos",
+        fyChange: "Canviar els meus gustos",
+        fyTexts: "Textos",
+        fyBooks: "Llibres",
+        fyTag: "Per a tu",
+        simTitle: "T'ha agradat? Prova'n un altre de semblant",
+        adaptUp: "Et va molt bé amb aquests textos. En provem un una mica més difícil? Nivell {band}.",
+        adaptDown: "Per agafar confiança, en repassem un una mica més fàcil? Nivell {band}.",
+        adaptKeep: "Et va molt bé a la teva zona. Segueix llegint!",
+        adaptGo: "Provar el nivell {band}",
+        adaptStay: "Em quedo aquí"
     };
 
     const fr = {
@@ -324,7 +394,21 @@
         retryQuiz: "Réessayer",
         quizRetryHint: "Pour ouvrir le chapitre suivant, réponds juste à plus de questions. Avec l'aide tu peux voir le texte.",
         retold: "Raconté avec nos propres mots",
-        bookPath: "Chemin du livre"
+        bookPath: "Chemin du livre",
+        zFy: "Pour toi",
+        fyIntro: "Des textes et des livres selon tes goûts et ton niveau.",
+        fyAsk: "Dis-nous ce que tu aimes et nous te proposons des textes et des livres à ta mesure.",
+        fyPick: "Choisir mes goûts",
+        fyChange: "Changer mes goûts",
+        fyTexts: "Textes",
+        fyBooks: "Livres",
+        fyTag: "Pour toi",
+        simTitle: "Tu as aimé ? Essaie-en un autre du même genre",
+        adaptUp: "Tu te débrouilles très bien avec ces textes. On essaie un texte un peu plus difficile ? Niveau {band}.",
+        adaptDown: "Pour reprendre confiance, on revoit un texte un peu plus facile ? Niveau {band}.",
+        adaptKeep: "Tu vas très bien dans ta zone. Continue à lire !",
+        adaptGo: "Essayer le niveau {band}",
+        adaptStay: "Je reste ici"
     };
 
     return { es, en, eu, gl, ca, fr, LANGS: ['es', 'en', 'eu', 'gl', 'ca', 'fr'] };

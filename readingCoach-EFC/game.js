@@ -11,6 +11,8 @@ const ReadingCoach = (() => {
     'use strict';
 
     const I18N = (typeof ReadingI18n !== 'undefined') ? ReadingI18n : require('./i18n.js');
+    // Interests of the child (platform/interests.js): the fixed list of ids, labels and the picker.
+    const PI = (typeof PlatformInterests !== 'undefined') ? PlatformInterests : ((typeof module !== 'undefined' && module.exports) ? require('../platform/interests.js') : null);
 
     // ---------------------------------------------------------------- age bands and target speed
     // zone = words per minute reading aloud (orientative), len = word count of the texts of that band
@@ -25,8 +27,8 @@ const ReadingCoach = (() => {
     const BAND_IDS = BANDS.map(b => b.id);
     const PHASES = ['listen', 'karaoke', 'solo', 'quiz'];
     const TTS_LANG = { es: 'es-ES', en: 'en-GB', eu: 'eu-ES', gl: 'gl-ES', ca: 'ca-ES', fr: 'fr-FR' };
-    const FILES = { es: ['es', 'es-2'], en: ['en'], eu: ['eu'], gl: ['gl'], ca: ['ca'], fr: ['fr'] };
-    const BOOK_FILES = { es: ['books-es'], en: ['books-en'], eu: ['books-eu'], gl: ['books-gl'], ca: ['books-ca'], fr: ['books-fr'] };
+    const FILES = { es: ['es', 'es-2', 'es-int'], en: ['en', 'en-int'], eu: ['eu'], gl: ['gl'], ca: ['ca'], fr: ['fr'] };
+    const BOOK_FILES = { es: ['books-es', 'books-es-int'], en: ['books-en'], eu: ['books-eu'], gl: ['books-gl'], ca: ['books-ca'], fr: ['books-fr'] };
     const FONT_SIZES = [1.15, 1.4, 1.7, 2.0, 2.4];
     const MAX_PPM = 400, MIN_SECS = 5;
 
@@ -194,6 +196,60 @@ const ReadingCoach = (() => {
             license: book.license, retelling: book.retelling, lang, book, chIdx: i };
     }
 
+    // ---------------------------------------------------------------- interests and adaptation (pure)
+    // Every text and book carries `topics` (ids of the fixed interest list, or 'general'). Nothing here grades the child:
+    // the only outputs are an order, a few picks and a proposal to try one level up or down (always optional).
+    const topicsOf = x => (x && Array.isArray(x.topics)) ? x.topics : [];
+    const cleanInterests = l => PI ? PI.sanitize(l) : [];
+    const sharedCount = (a, b) => a.filter(t => t !== 'general' && b.indexOf(t) >= 0).length;
+    /** How many of the child's interests an item (text or book) matches. */
+    const matchScore = (item, interests) => sharedCount(topicsOf(item), cleanInterests(interests));
+    const textDone = texts => x => !!(texts && x && texts[x.id] && texts[x.id].quiz);
+    const bookDone = texts => b => bookProgress(b, texts).finished;
+    /**
+     * Stable ordering: what matches more interests first (among those, the unfinished before the finished),
+     * then everything else in its original order. isDone(item) is optional.
+     */
+    function orderByInterests(items, interests, isDone) {
+        const ints = cleanInterests(interests);
+        return (items || []).map((x, i) => ({ x, i, s: sharedCount(topicsOf(x), ints), d: isDone && isDone(x) ? 1 : 0 }))
+            .sort((a, b) => (b.s - a.s) || ((a.s > 0 && b.s > 0) ? (a.d - b.d) : 0) || (a.i - b.i)).map(r => r.x);
+    }
+    /** The "Para ti" picks of the reading home: texts (of the level) and unfinished books that match the interests. */
+    function forYou(list, shelf, interests, progTexts, max) {
+        const ints = cleanInterests(interests);
+        if (!ints.length) return { texts: [], books: [] };
+        const mt = orderByInterests(list, ints, textDone(progTexts)).filter(x => matchScore(x, ints) > 0);
+        const mb = orderByInterests(shelf, ints, bookDone(progTexts)).filter(b => matchScore(b, ints) > 0 && !bookProgress(b, progTexts).finished);
+        return { texts: mt.slice(0, (max && max.texts) || 4), books: mb.slice(0, (max && max.books) || 2) };
+    }
+    /** After a text: n similar ones of the same pool (shared topics first, unfinished first, then the rest). Never the same text. */
+    function similarTexts(cur, pool, interests, progTexts, n) {
+        const ct = topicsOf(cur), ints = cleanInterests(interests), done = textDone(progTexts);
+        const rows = (pool || []).filter(x => x && cur && x.id !== cur.id && !x.chapterTitle).map((x, i) => ({
+            x, i, sim: sharedCount(topicsOf(x), ct), s: sharedCount(topicsOf(x), ct) * 2 + sharedCount(topicsOf(x), ints), d: done(x) ? 1 : 0 }));
+        rows.sort((a, b) => ((b.sim > 0 ? 1 : 0) - (a.sim > 0 ? 1 : 0)) || (a.d - b.d) || (b.s - a.s) || (a.i - b.i));
+        return rows.slice(0, n || 2).map(r => r.x);
+    }
+    /**
+     * A friendly proposal from the last readings and quiz results of the CURRENT level (zones, never marks).
+     * kind: 'none' (not enough data), 'keep', 'harder' (one level up) or 'easier' (one level down); band = the level proposed.
+     * Needs at least two readings and two quizzes. Children only go up to b13 (never to the adult level).
+     */
+    function proposeStep(prog, band) {
+        const bi = BAND_IDS.indexOf(band);
+        if (bi < 0 || !prog) return { kind: 'none', band };
+        const same = e => !e.b || e.b === band;
+        const rd = (prog.hist || []).filter(same).slice(-4), qz = (prog.qlog || []).filter(same).slice(-4);
+        if (rd.length < 2 || qz.length < 2) return { kind: 'none', band };
+        const ppm = rd.reduce((s, h) => s + h.ppm, 0) / rd.length;
+        const tot = qz.reduce((s, q) => s + q.n, 0), comp = tot ? qz.reduce((s, q) => s + q.c, 0) / tot : 0;
+        const z = zoneOf(band), top = BAND_IDS.indexOf('b13');
+        if (comp >= 0.8 && ppm >= z[0] && bi + 1 <= top) return { kind: 'harder', band: BAND_IDS[bi + 1] };
+        if (bi > 0 && (comp < 0.5 || (ppm < z[0] * 0.75 && comp < 0.7))) return { kind: 'easier', band: BAND_IDS[bi - 1] };
+        return { kind: 'keep', band };
+    }
+
     // ---------------------------------------------------------------- progress
     const dayStr = (d = new Date()) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
     const dayNum = s => { const [y, m, d] = String(s).split('-').map(Number); return Math.round(Date.UTC(y, m - 1, d) / 86400000); };
@@ -220,7 +276,7 @@ const ReadingCoach = (() => {
         if (totalMedals(prog) >= 10) out.push('medals');
         return out;
     }
-    const blank = () => ({ band: '', sel: '', rlang: '', font: 1, dys: false, consent: false, listen: false, texts: {}, hist: [], streak: 0, last: '', perfect: false });
+    const blank = () => ({ band: '', sel: '', rlang: '', font: 1, dys: false, consent: false, listen: false, texts: {}, hist: [], qlog: [], intDone: false, streak: 0, last: '', perfect: false });
     const stars = (correct, total) => total && correct >= total ? 3 : (total && correct * 2 >= total ? 2 : 1);
     const quizPassed = (correct, total) => total > 0 && correct >= Math.ceil(total * 0.6);
     const fmt = (s, o) => String(s).replace(/\{(\w+)\}/g, (m, k) => (o && o[k] != null) ? o[k] : m);
@@ -230,7 +286,7 @@ const ReadingCoach = (() => {
         user: null, prog: blank(), uiLang: 'es', texts: {}, loaded: {}, cur: null, list: [], phase: 'listen',
         kara: null, kppm: 0, timeScale: 1, now: () => (typeof performance !== 'undefined' ? performance.now() : Date.now()),
         solo: null, quiz: null, rec: null, heard: [], spans: [], voiceOk: true, pauseEx: null,
-        books: {}, booksLoaded: {}, shelf: [], book: null
+        books: {}, booksLoaded: {}, shelf: [], book: null, interests: [], adaptHide: {}, wantPicker: false
     };
     const $ = id => document.getElementById(id);
     const uiLang = () => { const l = ((typeof PlatformI18n !== 'undefined' && PlatformI18n.currentLanguage) || 'es').slice(0, 2); return I18N[l] ? l : 'es'; };
@@ -249,12 +305,45 @@ const ReadingCoach = (() => {
         try { S.prog = Object.assign(blank(), JSON.parse(localStorage.getItem(key()))); } catch (e) { S.prog = blank(); }
         if (!S.prog.texts || typeof S.prog.texts !== 'object') S.prog.texts = {};
         if (!Array.isArray(S.prog.hist)) S.prog.hist = [];
+        if (!Array.isArray(S.prog.qlog)) S.prog.qlog = [];
+        S.interests = PI ? PI.loadLocal(ikey()) : [];
+    }
+    // ---- interests: local copy per profile (guests, offline) and the player document when a child is signed in
+    function ikey() {
+        const u = S.user; let pid = '';
+        try { pid = u ? PlatformFirestore._pid(u.uid) : ''; } catch (e) { /* no player */ }
+        return PI.localKey(u ? u.uid : '', pid);
+    }
+    async function pushInterests() {
+        const u = S.user; if (!u || typeof PlatformFirestore === 'undefined') return;
+        try {
+            const pid = PlatformFirestore._pid(u.uid);
+            if (!pid || PlatformFirestore._viewOnly(u.uid)) return;
+            await PlatformFirestore.setChildInterests(PlatformFirestore._owner(u.uid), pid, S.interests);
+        } catch (e) { console.warn('[Reading] interests not saved online', e); }
+    }
+    function saveInterests(list) {
+        S.interests = cleanInterests(list); S.prog.intDone = true; save();
+        if (PI) PI.saveLocal(ikey(), S.interests);
+        pushInterests();
+    }
+    /** A signed in child: the interests of the player document win over the local copy; a local list is uploaded when there is none online. */
+    async function syncInterests() {
+        const u = S.user; if (!u || !PI || typeof PlatformFirestore === 'undefined' || !PlatformFirestore.getActivePlayer) return;
+        let kid = null; try { kid = await PlatformFirestore.getActivePlayer(u.uid); } catch (e) { return; }
+        if (!kid) return;
+        const online = cleanInterests(kid.interests);
+        if (online.length) {
+            S.interests = online; PI.saveLocal(ikey(), online);
+            if (!S.prog.intDone) { S.prog.intDone = true; save(); }
+        } else if (S.interests.length) pushInterests();
+        if (!$('rd-ints').hidden || !$('rd-home').hidden) renderHome();
     }
     function save() { try { localStorage.setItem(key(), JSON.stringify(S.prog)); } catch (e) { /* storage blocked */ } }
     const level = () => S.prog.sel || S.prog.band || 'b78';
     const readLang = () => S.prog.rlang || uiLang();
 
-    function show(id) { ['rd-age', 'rd-home', 'rd-book', 'rd-text'].forEach(s => { $(s).hidden = s !== id; }); window.scrollTo(0, 0); }
+    function show(id) { ['rd-age', 'rd-ints', 'rd-home', 'rd-book', 'rd-text'].forEach(s => { $(s).hidden = s !== id; }); window.scrollTo(0, 0); }
     function flash(msg) { const m = $('rd-msg'); m.textContent = msg || ''; }
 
     // ---- loading texts
@@ -367,13 +456,79 @@ const ReadingCoach = (() => {
         const b = bandForAge($('rd-age-in').value);
         const err = $('rd-age-err');
         if (!b) { err.textContent = T().ageBad; err.hidden = false; return; }
-        err.hidden = true; S.prog.band = b; S.prog.sel = b; save(); renderHome(); show('rd-home');
+        err.hidden = true; S.prog.band = b; S.prog.sel = b; save(); renderHome();
     }
+
+    // ---- interests picker ("Que te gusta?"), shown once and editable from the home
+    function openInterests() {
+        if (!PI) { S.prog.intDone = true; save(); return renderHome(); }
+        const host = $('rd-ints-host'); clear(host);
+        host.appendChild(PI.buildPicker({ selected: S.interests, lang: uiLang(), canSkip: true, headingTag: 'h1',
+            onSave: list => { saveInterests(list); renderHome(); },
+            onSkip: skipInterests }));
+        show('rd-ints');
+        const first = host.querySelector('.pi-tile'); if (first) first.focus();
+    }
+    function skipInterests() { S.prog.intDone = true; save(); renderHome(); }
+
+    // ---- "Para ti": picks by interest and level, plus the optional proposal of a level step
+    function renderForYou(t) {
+        const p = S.prog, zl = $('rd-z-fy'), box = $('rd-fy'); clear(box);
+        if (!PI) { zl.hidden = box.hidden = true; return; }
+        zl.hidden = box.hidden = false; zl.textContent = t.zFy;
+        const L = uiLang();
+        const head = el('div', 'rd-row wrap');
+        if (S.interests.length) {
+            const mine = el('div', 'rd-mine'); mine.id = 'rd-mine'; mine.setAttribute('aria-label', PI.t('mine', L));
+            S.interests.forEach(id => mine.appendChild(el('span', 'rd-pill', PI.emoji(id) + ' ' + PI.label(id, L))));
+            head.appendChild(mine);
+            head.appendChild(btn(t.fyChange, 'ghost small', openInterests, 'rd-intchange'));
+        } else {
+            head.appendChild(el('p', 'rd-note', t.fyAsk));
+            head.appendChild(btn(t.fyPick, 'small', openInterests, 'rd-intask'));
+        }
+        box.appendChild(head);
+        // proposal of a level step (never a mark): only when there is enough recent data, and it can be dismissed
+        const step = proposeStep(p, level());
+        if (step.kind === 'keep') { const k = el('p', 'rd-note', '✅ ' + t.adaptKeep); k.id = 'rd-adapt-keep'; box.appendChild(k); }
+        else if ((step.kind === 'harder' || step.kind === 'easier') && !S.adaptHide[level()]) {
+            const ad = el('div', 'rd-adapt'); ad.id = 'rd-adapt'; ad.dataset.kind = step.kind;
+            ad.appendChild(el('p', 'rd-note', (step.kind === 'harder' ? '🌱 ' : '🤝 ') + fmt(step.kind === 'harder' ? t.adaptUp : t.adaptDown, { band: t[step.band] })));
+            const r = el('div', 'rd-row wrap');
+            r.appendChild(btn(fmt(t.adaptGo, { band: t[step.band] }), 'small', () => { p.sel = step.band; save(); renderHome(); }, 'rd-adapt-go'));
+            r.appendChild(btn(t.adaptStay, 'ghost small', () => { S.adaptHide[level()] = true; renderHome(); }, 'rd-adapt-stay'));
+            ad.appendChild(r); box.appendChild(ad);
+        }
+        const picks = forYou(S.list, S.shelf, S.interests, p.texts);
+        if (picks.texts.length || picks.books.length) {
+            const ul = el('ul', 'rd-fylist'); ul.id = 'rd-fylist';
+            picks.books.forEach(bk => {
+                const li = el('li'); const b = el('button', 'rd-fyitem'); b.type = 'button'; b.dataset.id = bk.id; b.dataset.kind = 'book';
+                b.appendChild(coverNode(bk, false));
+                const info = el('span', 'rd-iteminfo'); info.appendChild(el('b', null, bk.title)); info.appendChild(el('span', null, '📚 ' + t.fyBooks + ' · ' + topicsLine(bk, L)));
+                b.appendChild(info); b.onclick = () => openBook(bk.id); li.appendChild(b); ul.appendChild(li);
+            });
+            picks.texts.forEach(x => {
+                const li = el('li'); const b = el('button', 'rd-fyitem'); b.type = 'button'; b.dataset.id = x.id; b.dataset.kind = 'text';
+                b.appendChild(el('span', 'rd-itemno', topicEmoji(x)));
+                const info = el('span', 'rd-iteminfo'); info.appendChild(el('b', null, x.title)); info.appendChild(el('span', null, countWords(x.text) + ' ' + t.words + ' · ' + topicsLine(x, L)));
+                b.appendChild(info); b.onclick = () => openText(x.id); li.appendChild(b); ul.appendChild(li);
+            });
+            box.appendChild(ul);
+        }
+    }
+    /** Emoji of the first matching interest of an item (or of its first topic). */
+    function topicEmoji(x) {
+        const m = topicsOf(x).find(tp => S.interests.indexOf(tp) >= 0) || topicsOf(x).find(tp => tp !== 'general');
+        return (m && PI && PI.emoji(m)) || '📖';
+    }
+    const topicsLine = (x, L) => topicsOf(x).filter(tp => tp !== 'general' && PI && PI.byId(tp)).map(tp => PI.emoji(tp) + ' ' + PI.label(tp, L)).join(', ');
 
     // ---- home
     async function renderHome() {
         applyStatic(); const t = T(), p = S.prog;
         if (!p.band) { show('rd-age'); return; }
+        if ((!p.intDone || S.wantPicker) && PI) { S.wantPicker = false; openInterests(); return; }
         // stats pills
         const st = $('rd-stats'); clear(st);
         st.appendChild(el('span', 'rd-pill', '🔥 ' + fmt(t.streakDays, { n: p.streak || 0 })));
@@ -425,15 +580,16 @@ const ReadingCoach = (() => {
         // texts
         await loadTexts(readLang()); if (readLang() !== 'es') await loadTexts('es');
         const sel2 = selectTexts(S.texts, level(), readLang());
-        S.list = sel2.texts.map(x => Object.assign({ lang: sel2.lang }, x));
+        S.list = orderByInterests(sel2.texts.map(x => Object.assign({ lang: sel2.lang }, x)), S.interests, textDone(p.texts));
         await renderShelf(t);
+        renderForYou(t);
         const fb = $('rd-fallback'); fb.hidden = !sel2.fallback; fb.textContent = sel2.fallback ? t.noBand : '';
         const ol = $('rd-list'); clear(ol);
         S.list.forEach((x, i) => {
             const li = el('li'); const b = el('button', 'rd-item'); b.type = 'button'; b.dataset.id = x.id;
             const e = p.texts[x.id] || {};
             b.appendChild(el('span', 'rd-itemno', String(i + 1)));
-            const info = el('span', 'rd-iteminfo'); info.appendChild(el('b', null, x.title));
+            const info = el('span', 'rd-iteminfo'); info.appendChild(el('b', null, (matchScore(x, S.interests) > 0 ? '⭐ ' : '') + x.title));
             info.appendChild(el('span', null, countWords(x.text) + ' ' + t.words + (e.bestPpm ? ' · ' + t.bestPpm + ' ' + e.bestPpm + ' ' + t.unit : '')));
             b.appendChild(info);
             const md = el('span', 'rd-medals'); md.setAttribute('aria-label', medalCount(e) + '/4');
@@ -462,7 +618,7 @@ const ReadingCoach = (() => {
     async function renderShelf(t) {
         await loadBooks(readLang()); if (readLang() !== 'es') await loadBooks('es');
         const sb = selectBooks(S.books, level(), readLang());
-        S.shelf = sb.books.map(b => Object.assign({}, b, { lang: sb.lang }));
+        S.shelf = orderByInterests(sb.books.map(b => Object.assign({}, b, { lang: sb.lang })), S.interests, bookDone(S.prog.texts));
         const nf = $('rd-books-fallback'); nf.hidden = !sb.fallback; nf.textContent = sb.fallback ? t.noBooks : '';
         const sh = $('rd-shelf'); clear(sh); sh.hidden = !S.shelf.length; $('rd-z-books').hidden = !S.shelf.length;
         S.shelf.forEach(bk => {
@@ -672,7 +828,7 @@ const ReadingCoach = (() => {
         const e = S.prog.texts[S.cur.id] || (S.prog.texts[S.cur.id] = {});
         e.lastPpm = r.ppm; e.bestPpm = Math.max(e.bestPpm || 0, r.ppm);
         const today = dayStr();
-        S.prog.hist.push({ d: today, ppm: r.ppm, id: S.cur.id, z: r.zone === 'in' ? 1 : 0 }); if (S.prog.hist.length > 300) S.prog.hist.splice(0, S.prog.hist.length - 300);
+        S.prog.hist.push({ d: today, ppm: r.ppm, id: S.cur.id, b: level(), z: r.zone === 'in' ? 1 : 0 }); if (S.prog.hist.length > 300) S.prog.hist.splice(0, S.prog.hist.length - 300);
         updateStreak(S.prog, today); save();
         flash('✓ ' + T().saved + ': ' + r.ppm + ' ' + T().unit);
         try { Juice.correct($('rd-good'), { streak: 0 }); } catch (x) { /* optional */ }
@@ -771,6 +927,8 @@ const ReadingCoach = (() => {
     async function finishQuiz() {
         const t = T(), Q = S.quiz; $('rd-feedback').hidden = true; $('rd-qfill').style.width = '100%';
         const n = Q.qs.length, ok = quizPassed(Q.correct, n), st = stars(Q.correct, n);
+        S.prog.qlog.push({ d: dayStr(), id: S.cur.id, b: level(), c: Q.correct, n }); if (S.prog.qlog.length > 60) S.prog.qlog.splice(0, S.prog.qlog.length - 60);
+        save();
         $('rd-qstats').textContent = ''; $('rd-qcount').textContent = '';
         const c = $('rd-qcard'); clear(c); c.classList.remove('slide');
         c.appendChild(el('div', 'rd-qemoji', '🎉')); c.appendChild(el('h3', 'rd-question', t.quizDone));
@@ -799,6 +957,13 @@ const ReadingCoach = (() => {
             }
             row.appendChild(btn(t.backBook, 'ghost', leaveText, 'rd-backbook'));
         } else {
+            const sim = similarTexts(S.cur, S.list, S.interests, S.prog.texts, 2);
+            if (sim.length) {
+                const sb2 = el('div', 'rd-similar'); sb2.id = 'rd-similar'; sb2.appendChild(el('b', null, '✨ ' + t.simTitle));
+                const sr2 = el('div', 'rd-row wrap');
+                sim.forEach(x => { const b = btn(topicEmoji(x) + ' ' + x.title, 'ghost rd-simbtn', () => openText(x.id)); b.dataset.id = x.id; sr2.appendChild(b); });
+                sb2.appendChild(sr2); c.appendChild(sb2);
+            }
             const idx = S.list.findIndex(x => x.id === S.cur.id), nxt = S.list[idx + 1];
             if (nxt) row.appendChild(btn(t.nextText + ' →', 'big', () => openText(nxt.id), 'rd-nexttext'));
             row.appendChild(btn(t.backList, 'ghost', leaveText, 'rd-backlist'));
@@ -819,6 +984,7 @@ const ReadingCoach = (() => {
         $('rd-age-in').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); submitAge(); } });
         $('rd-quit').onclick = leaveText;
         $('rd-bookback').onclick = () => renderHome();
+        S.wantPicker = /(^|[#&])gustos/.test(location.hash || '');
         $('rd-help').onclick = () => { const hb = $('rd-helpbox'); hb.hidden = !hb.hidden; $('rd-help').setAttribute('aria-expanded', String(!hb.hidden)); if (!hb.hidden) renderHelp(); };
         $('rd-consent-chk').onchange = () => { $('rd-consent-ok').disabled = !$('rd-consent-chk').checked; };
         $('rd-consent-no').onclick = closeConsent;
@@ -829,6 +995,7 @@ const ReadingCoach = (() => {
         });
         document.addEventListener('keydown', e => {
             if (!$('rd-consent').hidden) { if (e.key === 'Escape') closeConsent(); return; }
+            if (!$('rd-ints').hidden) { if (e.key === 'Escape') skipInterests(); return; }
             if (!$('rd-book').hidden) { if (e.key === 'Escape') renderHome(); return; }
             if ($('rd-text').hidden) return;
             if (e.target && /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
@@ -843,13 +1010,18 @@ const ReadingCoach = (() => {
         document.addEventListener('visibilitychange', () => { if (document.hidden) { stopRec(true); silence(); } });
         window.addEventListener('pagehide', () => { stopRec(true); silence(); });
         load(); renderHome();
-        if (window.PlatformAuth && PlatformAuth.onAuthStateChanged) PlatformAuth.onAuthStateChanged(u => { S.user = u || null; load(); if (!$('rd-home').hidden || !$('rd-age').hidden) renderHome(); });
-        document.addEventListener('platformLanguageChanged', () => { applyStatic(); if (!$('rd-home').hidden) renderHome(); else if (!$('rd-book').hidden) renderBook(); else if (!$('rd-text').hidden) { renderSteps(); if (S.phase === 'quiz') { if (S.quiz && !S.quiz.locked && S.quiz.i < S.quiz.qs.length) renderQuestion(); } else renderControls(); } });
+        // PlatformAuth is a top level const (not a property of window), so it is looked up by name. A guest changes nothing here.
+        if (typeof PlatformAuth !== 'undefined' && PlatformAuth.onAuthStateChanged) PlatformAuth.onAuthStateChanged(u => {
+            if (((u && u.uid) || '') === ((S.user && S.user.uid) || '')) return;
+            S.user = u || null; load(); if (!$('rd-home').hidden || !$('rd-age').hidden || !$('rd-ints').hidden) renderHome(); syncInterests();
+        });
+        document.addEventListener('platformLanguageChanged', () => { applyStatic(); if (!$('rd-ints').hidden) openInterests(); else if (!$('rd-home').hidden) renderHome(); else if (!$('rd-book').hidden) renderBook(); else if (!$('rd-text').hidden) { renderSteps(); if (S.phase === 'quiz') { if (S.quiz && !S.quiz.locked && S.quiz.i < S.quiz.qs.length) renderQuestion(); } else renderControls(); } });
     }
 
     const api = { init, _S: S, BANDS, BAND_IDS, PHASES, UI: I18N, FILES, TTS_LANG, MAX_PPM, MIN_SECS, bandForAge, zoneOf, targetPpm, zoneStatus, pauseOf, norm, tokenize, countWords, splitPunct,
         schedule, segments, computePpm, evaluateReading, alignWords, summarize, lev, pauseExercise, checkPauses, selectTexts, updateStreak, weeklyTrend, medalCount, totalMedals,
-        achievements, stars, quizPassed, fmt, dayStr, blank, BOOK_FILES, selectBooks, chapterDone, chapterUnlocked, bookProgress, chapterAsText };
+        achievements, stars, quizPassed, fmt, dayStr, blank, BOOK_FILES, selectBooks, chapterDone, chapterUnlocked, bookProgress, chapterAsText,
+        topicsOf, matchScore, orderByInterests, forYou, similarTexts, proposeStep };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     return api;
 })();

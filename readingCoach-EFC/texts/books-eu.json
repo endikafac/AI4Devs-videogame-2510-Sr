@@ -2,7 +2,7 @@
   "lang": "eu",
   "books": [
     {
-      "id": "eu-gul", "title": "Gulliver Liliputen", "author": "Jonathan Swift (berrekina)", "emoji": "⛵", "color": "#0f766e", "bands": ["b56", "b78"],
+      "id": "eu-gul", "title": "Gulliver Liliputen", "author": "Jonathan Swift (berrekina)", "emoji": "⛵", "color": "#0f766e", "bands": ["b56", "b78"], "topics": ["magic"],
       "source": "Jonathan Swift, Gulliver's Travels (1726), jabari publikoa; kapitulu laburrak joko honetarako idatziak",
       "license": "public-domain (original work); original-project retelling",
       "retelling": "Geure hitzetan berrekina, inongo itzulpen modernorik kopiatu gabe. Euskaldun batek berrikusi behar du.",

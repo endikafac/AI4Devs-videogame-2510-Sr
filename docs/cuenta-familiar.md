@@ -132,3 +132,15 @@ Reglas:
 **Auditoría de privacidad adulto/niño.** Los tutores solo alcanzan `users/{owner}/players/**`. No leen `users/{owner}` ni sus `games`, `memberships`, `guardians` (solo el suyo) ni nada de otro tutor; el titular tampoco lee la cuenta de un tutor. En el cliente, el selector y el cambio de perfil leen solo `players`, la `membership` propia y el `guardians/{miUid}` propio; el nombre de la familia viene de la `membership`. Dos puntos públicos por diseño, ya existentes: `leaderboard` (cualquier usuario con sesión ve apodo y puntos, también los del adulto si juega) y `nicknames/{key}` (se puede consultar un apodo por su id y devuelve el uid del autor).
 
 **Adultos y niños en el hub.** Perfil niño: solo juegos con `aud` que incluya `kids`, sin filtro de público ni fila "Para ti". Perfil adulto: filtro `adults` por defecto (se puede ampliar) y una fila "Para ti" con sopa de letras, crucigramas, lectura, memoria, MathMaster, TableMaster y mapas. MathMaster y TableMaster pasan a `aud: 'kids teens adults'`.
+
+## 12. Gustos del niño ("¿Qué te gusta?")
+
+Lista **fija** de 14 intereses (`platform/interests.js`, ids: dinosaurs, space, sports, animals, videogames, pirates, robots, magic, music, cooking, vehicles, nature, mystery, superheroes), con emoji y etiqueta en seis idiomas. Sin marcas registradas ni texto libre.
+
+**Dato.** `users/{owner}/players/{pid}.interests`: array de 1 a 5 ids de la lista, sin repetidos. Copia local en `games_hub_interests_{uid}_{pid}` (o `games_hub_interests_guest`) para invitados y sin conexión; con sesión de niño gana el documento, y si solo hay copia local se sube. Un perfil adulto solo usa la copia local.
+
+**Reglas.** `validInterests` en `firestore.rules` (solo ids de la lista, `size() <= 5`, sin repetidos, lista de strings), aplicada junto a `validPin` con el guardia `canEditKids`: escriben `owner` y tutores `edit`; `view` solo lee. Si se cambia la lista de ids, hay que cambiarla en `interests.js` y en las reglas (lo comprueba `tests/unit/interests.test.mjs`).
+
+**Dónde se elige.** Selector de baldosas grandes (1 a 5, se puede omitir) la primera vez que se entra en Lectura; se puede cambiar desde "Para ti" en Lectura, desde Familia ("Mis gustos", por niño) y abriendo `readingCoach-EFC/index.html#gustos`.
+
+**Qué hace con ellos.** Lectura: zona "Para ti" (textos del nivel y libros que coinciden), lista ordenada con los textos de sus gustos primero, dos textos parecidos al terminar uno y, con las últimas lecturas y comprensión del nivel, una propuesta opcional de "un poco más difícil" o "uno más fácil" (nunca notas). Hub, perfil niño: fila "Según tus gustos" con los juegos de la tabla `PlatformInterests.GAME_MAP`.

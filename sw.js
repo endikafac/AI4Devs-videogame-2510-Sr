@@ -5,7 +5,7 @@
  * Version: bump CACHE_VERSION to force cache refresh after deploys
  */
 
-const CACHE_VERSION = 'v1.25.0';
+const CACHE_VERSION = 'v1.26.0';
 const STATIC_CACHE  = `games-hub-static-${CACHE_VERSION}`;
 const PAGE_CACHE    = `games-hub-pages-${CACHE_VERSION}`;
 
@@ -18,6 +18,8 @@ const PRECACHE_ASSETS = [
     '/platform/i18n-platform.js',
     '/platform/platform-header.js',
     '/platform/nav.js',
+    '/platform/profiles.js',
+    '/platform/interests.js',
     '/platform/juice.js',
     '/platform/identity.js',
     '/platform/pwa.js',

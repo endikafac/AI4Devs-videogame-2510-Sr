@@ -33,14 +33,17 @@ const MOCK_SR = () => {
   window.SpeechRecognition = class { constructor() { window.__srCount++; window.__rec = this; this.started = 0; this.aborted = false; } start() { this.started++; } stop() { this.aborted = true; } abort() { this.aborted = true; } };
 };
 
-async function open({ width = 390, height = 844, band = 'b910', sr = false, nosr = false, lang = '' } = {}) {
+async function open({ width = 390, height = 844, band = 'b910', sr = false, nosr = false, lang = '', ints = false } = {}) {
   const ctx = await browser.newContext({ viewport: { width, height }, serviceWorkers: 'block', locale: 'es-ES' });
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', e => errors.push('pageerror: ' + e.message));
   page.on('console', m => { if (m.type() === 'error' && !IGNORE.test(m.text())) errors.push(m.text()); });
   await page.addInitScript(() => Object.defineProperty(navigator, 'doNotTrack', { get: () => '1' }));
-  if (band) await page.addInitScript(b => { if (!localStorage.getItem('reading_guest')) localStorage.setItem('reading_guest', JSON.stringify({ band: b, sel: b })); }, band);
+  // The interests picker is shown once per profile; these tests mark it as already seen (tests/front/interests.test.mjs covers it).
+  const seen = !ints;
+  if (band) await page.addInitScript(([b, s]) => { if (!localStorage.getItem('reading_guest')) localStorage.setItem('reading_guest', JSON.stringify({ band: b, sel: b, intDone: s })); }, [band, seen]);
+  else await page.addInitScript(s => { if (!localStorage.getItem('reading_guest')) localStorage.setItem('reading_guest', JSON.stringify({ intDone: s })); }, seen);
   if (lang) await page.addInitScript(l => localStorage.setItem('games_hub_language', l), lang);
   if (sr) await page.addInitScript(MOCK_SR);
   if (nosr) await page.addInitScript(() => { Object.defineProperty(window, 'SpeechRecognition', { value: undefined, configurable: true }); Object.defineProperty(window, 'webkitSpeechRecognition', { value: undefined, configurable: true }); });

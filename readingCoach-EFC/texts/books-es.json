@@ -2,7 +2,7 @@
   "lang": "es",
   "books": [
     {
-      "id": "es-rob", "title": "Robinsón en la isla", "author": "Daniel Defoe (recontado)", "emoji": "🏝️", "color": "#0e7490", "bands": ["b56"],
+      "id": "es-rob", "title": "Robinsón en la isla", "author": "Daniel Defoe (recontado)", "emoji": "🏝️", "color": "#0e7490", "bands": ["b56"], "topics": ["pirates","nature"],
       "source": "Daniel Defoe, Robinson Crusoe (1719), dominio público; resumen en capítulos escrito para este juego",
       "license": "public-domain (original work); original-project retelling",
       "retelling": "Recontado con palabras propias, sin copiar ninguna traducción moderna.",
@@ -28,7 +28,7 @@
       ]
     },
     {
-      "id": "es-ali", "title": "Alicia y el conejo blanco", "author": "Lewis Carroll (recontado)", "emoji": "🐇", "color": "#7c3aed", "bands": ["b56"],
+      "id": "es-ali", "title": "Alicia y el conejo blanco", "author": "Lewis Carroll (recontado)", "emoji": "🐇", "color": "#7c3aed", "bands": ["b56"], "topics": ["magic"],
       "source": "Lewis Carroll, Alice's Adventures in Wonderland (1865), dominio público; resumen en capítulos escrito para este juego",
       "license": "public-domain (original work); original-project retelling",
       "retelling": "Recontado con palabras propias, sin copiar ninguna traducción moderna.",
@@ -54,7 +54,7 @@
       ]
     },
     {
-      "id": "es-mow", "title": "Mowgli, el niño lobo", "author": "Rudyard Kipling (recontado)", "emoji": "🐺", "color": "#15803d", "bands": ["b78"],
+      "id": "es-mow", "title": "Mowgli, el niño lobo", "author": "Rudyard Kipling (recontado)", "emoji": "🐺", "color": "#15803d", "bands": ["b78"], "topics": ["animals","nature"],
       "source": "Rudyard Kipling, The Jungle Book (1894), dominio público; resumen en capítulos escrito para este juego",
       "license": "public-domain (original work); original-project retelling",
       "retelling": "Recontado con palabras propias, sin copiar ninguna traducción moderna.",
@@ -80,7 +80,7 @@
       ]
     },
     {
-      "id": "es-pan", "title": "Peter Pan", "author": "J. M. Barrie (recontado)", "emoji": "🧚", "color": "#1d4ed8", "bands": ["b78"],
+      "id": "es-pan", "title": "Peter Pan", "author": "J. M. Barrie (recontado)", "emoji": "🧚", "color": "#1d4ed8", "bands": ["b78"], "topics": ["magic"],
       "source": "J. M. Barrie, Peter and Wendy (1911), dominio público en la mayoría de países (en el Reino Unido rigen derechos especiales a favor de un hospital infantil); resumen en capítulos escrito para este juego",
       "license": "public-domain (original work); original-project retelling",
       "retelling": "Recontado con palabras propias, sin copiar ninguna traducción moderna.",
@@ -106,7 +106,7 @@
       ]
     },
     {
-      "id": "es-ver", "title": "Viaje al fondo del mar", "author": "Julio Verne (recontado)", "emoji": "🐙", "color": "#0369a1", "bands": ["b910", "b1112"],
+      "id": "es-ver", "title": "Viaje al fondo del mar", "author": "Julio Verne (recontado)", "emoji": "🐙", "color": "#0369a1", "bands": ["b910", "b1112"], "topics": ["nature","vehicles"],
       "source": "Jules Verne, Vingt mille lieues sous les mers (1870), dominio público; resumen en capítulos escrito para este juego",
       "license": "public-domain (original work); original-project retelling",
       "retelling": "Recontado con palabras propias, sin copiar ninguna traducción moderna.",
@@ -133,7 +133,7 @@
       ]
     },
     {
-      "id": "es-qui", "title": "Don Quijote y los gigantes", "author": "Miguel de Cervantes (recontado)", "emoji": "🛡️", "color": "#b45309", "bands": ["b910", "b1112"],
+      "id": "es-qui", "title": "Don Quijote y los gigantes", "author": "Miguel de Cervantes (recontado)", "emoji": "🛡️", "color": "#b45309", "bands": ["b910", "b1112"], "topics": ["general"],
       "source": "Miguel de Cervantes, Don Quijote de la Mancha (1605), dominio público; resumen en capítulos escrito para este juego",
       "license": "public-domain (original work); original-project retelling",
       "retelling": "Recontado con palabras propias, sin copiar ninguna edición moderna.",
@@ -159,7 +159,7 @@
       ]
     },
     {
-      "id": "es-teo", "title": "Teseo y el Minotauro", "author": "Mito griego (recontado)", "emoji": "🐂", "color": "#be123c", "bands": ["b910", "b1112"],
+      "id": "es-teo", "title": "Teseo y el Minotauro", "author": "Mito griego (recontado)", "emoji": "🐂", "color": "#be123c", "bands": ["b910", "b1112"], "topics": ["magic","mystery"],
       "source": "Mito griego tradicional de Teseo, el Minotauro y Ariadna, de dominio público; resumen en capítulos escrito para este juego",
       "license": "public-domain (original work); original-project retelling",
       "retelling": "Recontado con palabras propias, sin copiar ninguna traducción moderna.",
@@ -185,7 +185,7 @@
       ]
     },
     {
-      "id": "es-isl", "title": "La isla del tesoro", "author": "Robert Louis Stevenson (recontado)", "emoji": "🏴‍☠️", "color": "#334155", "bands": ["b13", "adult"],
+      "id": "es-isl", "title": "La isla del tesoro", "author": "Robert Louis Stevenson (recontado)", "emoji": "🏴‍☠️", "color": "#334155", "bands": ["b13", "adult"], "topics": ["pirates"],
       "source": "Robert Louis Stevenson, Treasure Island (1883), dominio público; resumen en capítulos escrito para este juego",
       "license": "public-domain (original work); original-project retelling",
       "retelling": "Recontado con palabras propias, sin copiar ninguna traducción moderna.",
@@ -213,7 +213,7 @@
       ]
     },
     {
-      "id": "es-laz", "title": "Lázaro y sus amos", "author": "Anónimo, Lazarillo de Tormes (recontado)", "emoji": "🍞", "color": "#a16207", "bands": ["b13", "adult"],
+      "id": "es-laz", "title": "Lázaro y sus amos", "author": "Anónimo, Lazarillo de Tormes (recontado)", "emoji": "🍞", "color": "#a16207", "bands": ["b13", "adult"], "topics": ["general"],
       "source": "La vida de Lazarillo de Tormes y de sus fortunas y adversidades (1554, anónimo), dominio público; resumen en capítulos escrito para este juego",
       "license": "public-domain (original work); original-project retelling",
       "retelling": "Recontado con palabras propias, sin copiar ninguna edición moderna.",

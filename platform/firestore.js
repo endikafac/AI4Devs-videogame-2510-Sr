@@ -417,6 +417,24 @@ const PlatformFirestore = {
         await GamesHubDB.collection('users').doc(ownerUid).collection('players').doc(pid).update({ pin: firebase.firestore.FieldValue.delete() });
     },
 
+    // ── Interests of a child ("Que te gusta?", platform/interests.js) ───────
+    // players/{pid}.interests: array of up to 5 ids of a fixed list (checked by firestore.rules validInterests).
+    // A local copy (games_hub_interests_*) serves guests and offline use. Owner and edit guardians can write.
+
+    /** Pure: the valid ids of a list (unknown ids dropped, no repeats, at most 5). Same list as platform/interests.js. */
+    cleanInterests(list) {
+        return (typeof PlatformInterests !== 'undefined') ? PlatformInterests.sanitize(list) : [];
+    },
+    /** Owner or edit guardian: saves the interests of a child. An empty list removes the field. Rules refuse view guardians. */
+    async setChildInterests(ownerUid, pid, list) {
+        this._needDB();
+        if (!ownerUid || !/^[a-z0-9]{6,20}$/.test(pid || '')) throw new Error('invalid');
+        const clean = this.cleanInterests(list);
+        await GamesHubDB.collection('users').doc(ownerUid).collection('players').doc(pid)
+            .update({ interests: clean.length ? clean : firebase.firestore.FieldValue.delete() });
+        return clean;
+    },
+
     // ── User profile ─────────────────────────────────────────────────────────
 
     async getOrCreateProfile(uid, authUser, opts) {

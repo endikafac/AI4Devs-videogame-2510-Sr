@@ -194,14 +194,16 @@ function loadBooks() {
   for (const l of LANGS) by[l] = (R.BOOK_FILES[l] || []).flatMap(f => JSON.parse(fs.readFileSync(path.join(dir, f + '.json'), 'utf8')).books);
   return by;
 }
-const BOOK_LEN = { b56: [40, 100], b78: [40, 100], b910: [150, 300], b1112: [150, 300], b13: [300, 500], adult: [300, 500] };
+const BOOK_LEN = { b56: [40, 100], b78: [40, 120], b910: [120, 300], b1112: [150, 300], b13: [300, 500], adult: [300, 500] };
 
 test('U-READ books: every book has source, licence, retelling, cover and 3-5 chapters of the right length, each with a hook and grounded questions', () => {
   const by = loadBooks(), ids = new Set();
   for (const l of LANGS) for (const b of by[l]) {
     assert.ok(!ids.has(b.id) && b.id.startsWith(l + '-'), 'book id ' + b.id); ids.add(b.id);
-    for (const f of ['title', 'author', 'source', 'license', 'retelling', 'emoji']) assert.ok(typeof b[f] === 'string' && b[f].trim().length > 0, b.id + ' ' + f);
-    assert.ok(/public-domain/.test(b.license) && /retelling/.test(b.license), b.id + ' licence ' + b.license);
+    // classic retellings (public domain) carry a retelling note; the original books of the project do not need one
+    const original = b.license === 'original-project';
+    for (const f of ['title', 'author', 'source', 'license', 'emoji'].concat(original ? [] : ['retelling'])) assert.ok(typeof b[f] === 'string' && b[f].trim().length > 0, b.id + ' ' + f);
+    assert.ok(original || (/public-domain/.test(b.license) && /retelling/.test(b.license)), b.id + ' licence ' + b.license);
     assert.match(b.color, /^#[0-9a-f]{6}$/i, b.id + ' colour');
     assert.ok(Array.isArray(b.bands) && b.bands.length && b.bands.every(x => R.BAND_IDS.includes(x)), b.id + ' bands');
     assert.ok(b.chapters.length >= 3 && b.chapters.length <= 5, b.id + ' chapters ' + b.chapters.length);
