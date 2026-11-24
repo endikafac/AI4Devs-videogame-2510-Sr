@@ -611,6 +611,18 @@ html[data-large-text]{font-size:125%}
 }
 .hub-footer a { display: inline-block; padding: 12px 8px; }
 
+/* ── Profile switch button in the header (picker: platform/profiles.js) ─────── */
+#platform-user-area { display: flex; align-items: center; gap: 6px; }
+.platform-switch-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 44px; min-height: 44px;
+  padding: 0 10px; border: 0; border-radius: var(--radius-lg); background: var(--bg-raised); color: var(--text-primary);
+  font: inherit; font-size: .875rem; cursor: pointer; }
+.platform-switch-btn:hover { background: var(--border-color); }
+@media (max-width: 640px) { .platform-switch-text { display: none; } }
+
+.pid-pin-row { flex-wrap: wrap; }
+.pid-pin-actions, .pid-pin-form { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.pid-pin-form .pid-fam-input { width: 9em; letter-spacing: .3em; text-align: center; }
+
 /* ── Player switcher ─────────────────────────────────────────────────────── */
 .pid-players { display: flex; flex-direction: column; gap: 8px; margin: 8px 0; }
 .pid-prow { display: flex; gap: 8px; align-items: stretch; }

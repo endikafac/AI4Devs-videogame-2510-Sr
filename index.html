@@ -40,6 +40,11 @@
         <div class="chip-row" id="f-cat" role="group"></div>
     </section>
 
+    <section id="hub-foryou" class="hub-foryou" aria-labelledby="hub-foryou-h" hidden>
+        <h2 id="hub-foryou-h" class="hub-foryou-h"></h2>
+        <div class="foryou-row" id="hub-foryou-row"></div>
+    </section>
+
     <a id="hub-continue" class="hub-continue" hidden></a>
     <section id="hub-grid" class="hub-grid" aria-live="polite"></section>
     <p class="hub-none" id="hub-none" hidden></p>
@@ -58,6 +63,7 @@
 <script src="platform/auth.js"></script>
 <script src="platform/firestore.js"></script>
 <script src="platform/identity.js"></script>
+<script src="platform/profiles.js"></script>
 <script src="platform/platform-header.js"></script>
 
 <script>
@@ -77,8 +83,8 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'reading',    href: 'readingCoach-EFC/index.html', cat: 'lang',    aud: 'kids teens adults', age: '5+',    icon: '📖', title: 'Lectura Guiada' },
         { id: 'fractions',   href: 'fractions-EFC/index.html',      cat: 'math',    aud: 'kids teens',        age: '7-11',  icon: '🍕', title: 'Fracciones con Pizza' },
         { id: 'memory',      href: 'memory-EFC/index.html',         cat: 'arcade',  aud: 'kids adults',       age: '4+',    icon: '🃏', title: 'Memoria de Parejas' },
-        { id: 'mathmaster',  href: 'mathMaster-EFC/index.html',     cat: 'math',    aud: 'kids teens',        age: '6-14',  icon: '🧮', title: 'MathMaster' },
-        { id: 'tablemaster', href: 'tableMaster-EFC/index.html',    cat: 'math',    aud: 'kids teens',        age: '7-14',  icon: '✖️', title: 'TableMaster' },
+        { id: 'mathmaster',  href: 'mathMaster-EFC/index.html',     cat: 'math',    aud: 'kids teens adults', age: '6-14',  icon: '🧮', title: 'MathMaster' },
+        { id: 'tablemaster', href: 'tableMaster-EFC/index.html',    cat: 'math',    aud: 'kids teens adults', age: '7-14',  icon: '✖️', title: 'TableMaster' },
         { id: 'wordsearch',  href: 'wordSearch-EFC/index.html',     cat: 'lang',    aud: 'kids teens adults', age: '8-14',  icon: '🔍', title: 'WordSearch' },
         { id: 'crossword',   href: 'crossword-EFC/index.html',      cat: 'lang',    aud: 'teens adults',      age: '9-16',  icon: '✏️', title: 'Crucigrama' },
         { id: 'typemaster',  href: 'typingMaster-EFC/index.html',   cat: 'lang',    aud: 'kids teens adults', age: '8-16',  icon: '⌨️', title: 'TypeMaster' },
@@ -203,9 +209,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (s.last !== t0) store.set('games_hub_streak', JSON.stringify({ last: t0, n: s.n + 1 }));
         if (id === dailyGame().id) store.set('games_hub_daily_done', t0);
     }
-    const pool = () => GAMES.filter(g => !g.lab);
+    // Profile mode (platform/profiles.js): 'child' sees kids games only, 'adult' starts on adult games plus a "Para ti" row.
+    const PP = window.PlatformProfiles;
+    const fitsMode = g => { const a = PP ? PP.audienceFor(PP.modeOf(state.profile)) : 'all'; return a === 'all' || g.aud.split(' ').includes(a); };
+    const pool = () => GAMES.filter(g => !g.lab && fitsMode(g));
     const dailyGame = () => pool()[dayNum(today()) % pool().length];
-    const state = { q: '', aud: store.get('games_hub_f_aud') || 'all', cat: store.get('games_hub_f_cat') || 'all', profile: null };
+    const state = { q: '', aud: store.get('games_hub_f_aud') || 'all', cat: store.get('games_hub_f_cat') || 'all', profile: null, mode: 'guest' };
+    const sess = { get: k => { try { return sessionStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { sessionStorage.setItem(k, v); } catch (e) {} } };
     const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     const $ = id => document.getElementById(id);
 
@@ -300,7 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderContinue() {
         const g = GAMES.find(x => x.id === store.get('games_hub_last'));
         const a = $('hub-continue');
-        if (!g || !g.href) { a.hidden = true; return; }
+        if (!g || !g.href || !fitsMode(g)) { a.hidden = true; return; }
         a.hidden = false; a.href = g.href;
         a.className = 'hub-btn hub-continue c-' + g.cat;
         a.textContent = '▶ ' + tr().cont + ' ' + g.title;
@@ -318,20 +328,40 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     $('hub-today').addEventListener('click', e => { const a = e.target.closest('[data-id]'); if (a) { store.set('games_hub_last', a.dataset.id); markPlayed(a.dataset.id); } });
-    $('hub-q').addEventListener('input', e => { state.q = e.target.value; renderGrid(); });
+    $('hub-q').addEventListener('input', e => { state.q = e.target.value; renderGrid(); renderForYou(); });
 
-    function renderAll() { renderMe(); renderToday(); renderChips(); $('hub-q').placeholder = tr().search; $('hub-q').setAttribute('aria-label', tr().search); renderGrid(); renderContinue(); }
+    function renderForYou() {
+        const sec = $('hub-foryou');
+        const show = state.mode === 'adult' && !state.q.trim() && !!PP;
+        sec.hidden = !show;
+        if (!show) return;
+        $('hub-foryou-h').textContent = '⭐ ' + PlatformI18n.t('pickForYou');
+        $('hub-foryou-row').innerHTML = PP.forYou(GAMES).map(g =>
+            `<a class="foryou-card c-${g.cat}" href="${esc(g.href)}" data-id="${esc(g.id)}"><span class="foryou-ico" aria-hidden="true">${g.icon}</span><span>${esc(g.title)}</span></a>`).join('');
+    }
+    $('hub-foryou-row').addEventListener('click', e => { const a = e.target.closest('[data-id]'); if (a) { store.set('games_hub_last', a.dataset.id); markPlayed(a.dataset.id); } });
+    function applyMode() {
+        state.mode = PP ? PP.modeOf(state.profile) : 'guest';
+        if (state.mode === 'child') state.aud = 'kids';
+        else if (state.mode === 'adult' && !sess.get('games_hub_aud_touched')) state.aud = 'adults';
+        else state.aud = store.get('games_hub_f_aud') || 'all';
+        $('f-aud').style.display = state.mode === 'child' ? 'none' : '';
+        renderChips(); renderGrid(); renderToday(); renderContinue(); renderForYou();
+    }
+
+    function renderAll() { renderMe(); renderToday(); renderForYou(); renderChips(); $('hub-q').placeholder = tr().search; $('hub-q').setAttribute('aria-label', tr().search); renderGrid(); renderContinue(); }
 
     document.querySelector('.hub-filters').addEventListener('click', e => {
         const b = e.target.closest('.chip');
         if (!b) return;
         state[b.dataset.g] = b.dataset.v;
         store.set('games_hub_f_' + b.dataset.g, b.dataset.v);
+        if (b.dataset.g === 'aud') sess.set('games_hub_aud_touched', '1');
         renderChips();
         renderGrid();
     });
     document.addEventListener('platformLanguageChanged', renderAll);
-    document.addEventListener('platformProfileReady', e => { state.profile = e.detail; renderMe(); });
+    document.addEventListener('platformProfileReady', e => { state.profile = e.detail; renderMe(); applyMode(); });
 
     renderAll();
 });

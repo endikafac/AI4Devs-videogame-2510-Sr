@@ -3,7 +3,7 @@ import test, { before, after, beforeEach } from 'node:test';
 import fs from 'node:fs';
 import path from 'node:path';
 import { initializeTestEnvironment, assertFails, assertSucceeds } from '@firebase/rules-unit-testing';
-import { doc, getDoc, setDoc, addDoc, collection, deleteDoc, updateDoc, getDocs, serverTimestamp, query, where, writeBatch, Timestamp } from 'firebase/firestore';
+import { doc, getDoc, setDoc, addDoc, collection, deleteDoc, updateDoc, getDocs, serverTimestamp, query, where, writeBatch, Timestamp, deleteField } from 'firebase/firestore';
 
 const rules = fs.readFileSync(path.resolve(import.meta.dirname, '../../firestore.rules'), 'utf8');
 let env;
@@ -313,4 +313,128 @@ test('B-FAM-REPLAY: accepting without consuming the invitation is refused (no re
   b.set(doc(g, 'users/gran/memberships/own'), memberDoc());
   await assertFails(b.commit());
   await assertSucceeds(accept(g, 'gran', 'abuela@example.com'));
+});
+
+// ---- privacy between adults and children, and the profile PIN (docs/cuenta-familiar.md) ----
+const PIN = (o = {}) => ({ v: 1, alg: 'PBKDF2-SHA256', iter: 100000, salt: 'c2FsdHNhbHRzYWx0c2FsdA==', hash: 'aGFzaGhhc2hoYXNoaGFzaGhhc2hoYXNoaGFzaGhhc2g=', ...o });
+async function seedAdults() {
+  await seedOwner();
+  await seedGuardian('gran', 'edit');
+  await seedGuardian('pal', 'edit');
+  await seedGuardian('teacher', 'view');
+  await env.withSecurityRulesDisabled(async ctx => {
+    const db = ctx.firestore();
+    // The adult data of the guardians themselves (own account, own game stats, own children)
+    await setDoc(doc(db, 'users/gran'), user({ username: 'Abuela' }));
+    await setDoc(doc(db, 'users/gran/games/mathmaster'), { totalGames: 7 });
+    await setDoc(doc(db, 'users/gran/players/grankid01'), { username: 'Nieto', xp: 0, totalPoints: 0 });
+    await setDoc(doc(db, 'users/pal'), user({ username: 'Papa' }));
+    await setDoc(doc(db, 'users/pal/games/mathmaster'), { totalGames: 9 });
+  });
+}
+
+test('B-PRIV-READ: guardians (edit and view) read the children players and their progress', async () => {
+  await seedAdults();
+  for (const uid of ['gran', 'teacher']) {
+    const g = as(uid);
+    const list = await assertSucceeds(getDocs(collection(g, 'users/own/players')));
+    assert.equal(list.size, 1);
+    await assertSucceeds(getDoc(doc(g, 'users/own/players/kid123abc')));
+    await assertSucceeds(getDocs(collection(g, 'users/own/players/kid123abc/games')));
+    await assertSucceeds(getDoc(doc(g, 'users/own/players/kid123abc/games/mathmaster')));
+  }
+});
+
+test('B-PRIV-OWNER: a guardian never reads the owner own adult data', async () => {
+  await seedAdults();
+  for (const uid of ['gran', 'teacher']) {
+    const g = as(uid);
+    await assertFails(getDoc(doc(g, 'users/own')));
+    await assertFails(getDoc(doc(g, 'users/own/games/mathmaster')));
+    await assertFails(getDocs(collection(g, 'users/own/games')));
+    await assertFails(getDocs(collection(g, 'users/own/memberships')));
+    await assertFails(getDocs(collection(g, 'users/own/settings')));
+    await assertFails(getDoc(doc(g, 'users/own/memberships/gran')));
+    await assertFails(getDocs(collection(g, 'users/own/guardians')));
+    await assertFails(getDocs(query(collection(g, 'users/own/guardians'), where('role', '==', 'edit'))));
+  }
+});
+
+test('B-PRIV-GUARDIAN: a guardian never reads another guardian (profile, stats, membership, guardian doc)', async () => {
+  await seedAdults();
+  const g = as('gran');
+  await assertFails(getDoc(doc(g, 'users/pal')));
+  await assertFails(getDoc(doc(g, 'users/pal/games/mathmaster')));
+  await assertFails(getDocs(collection(g, 'users/pal/games')));
+  await assertFails(getDoc(doc(g, 'users/pal/memberships/own')));
+  await assertFails(getDocs(collection(g, 'users/pal/memberships')));
+  await assertFails(getDoc(doc(g, 'users/own/guardians/pal')));
+  await assertFails(getDocs(query(collection(g, 'users/own/guardians'), where('uid', '==', 'pal'))));
+  await assertFails(getDoc(doc(g, 'users/teacher')));
+  // nobody writes into another guardian account
+  await assertFails(setDoc(doc(g, 'users/pal/games/mathmaster'), { totalGames: 1 }));
+  await assertFails(setDoc(doc(g, 'users/pal'), user()));
+  await assertFails(deleteDoc(doc(g, 'users/own/guardians/pal')));
+  // the owner does not read a guardian adult account either
+  await assertFails(getDoc(doc(as('own'), 'users/gran')));
+  await assertFails(getDoc(doc(as('own'), 'users/gran/games/mathmaster')));
+  await assertFails(getDoc(doc(as('own'), 'users/gran/memberships/own')));
+  // a guardian reads their own account and their own guardian doc
+  await assertSucceeds(getDoc(doc(g, 'users/gran')));
+  await assertSucceeds(getDoc(doc(g, 'users/gran/games/mathmaster')));
+  await assertSucceeds(getDoc(doc(g, 'users/own/guardians/gran')));
+});
+
+test('B-PRIV-VIEW: a view guardian cannot write anything, PIN included', async () => {
+  await seedAdults();
+  const g = as('teacher');
+  await assertFails(setDoc(doc(g, 'users/own/players/kid123abc/games/mathmaster'), { totalGames: 5 }));
+  await assertFails(updateDoc(doc(g, 'users/own/players/kid123abc'), { xp: 1 }));
+  await assertFails(updateDoc(doc(g, 'users/own/players/kid123abc'), { pin: PIN() }));
+  await assertFails(setDoc(doc(g, 'users/own/players/newkid123'), { username: 'X', xp: 0, totalPoints: 0 }));
+  await assertFails(deleteDoc(doc(g, 'users/own/players/kid123abc')));
+});
+
+test('B-PRIV-PIN: the PIN hash is writable only by the owner and edit guardians, and only as a well formed hash record', async () => {
+  await seedAdults();
+  const kid = 'users/own/players/kid123abc';
+  await assertSucceeds(updateDoc(doc(as('own'), kid), { pin: PIN() }));
+  await assertSucceeds(updateDoc(doc(as('gran'), kid), { pin: PIN({ salt: 'b3RoZXJzYWx0b3RoZXJzYWx0' }) }));
+  await assertSucceeds(updateDoc(doc(as('gran'), kid), { pin: deleteField() }));
+  await assertSucceeds(updateDoc(doc(as('own'), kid), { pin: PIN() }));
+  await assertFails(updateDoc(doc(as('teacher'), kid), { pin: PIN() }));
+  await assertFails(updateDoc(doc(as('teacher'), kid), { pin: deleteField() }));
+  await assertFails(updateDoc(doc(as('stranger'), kid), { pin: PIN() }));
+  await assertFails(updateDoc(doc(as('stranger'), kid), { pin: deleteField() }));
+  await assertFails(updateDoc(doc(anon(), kid), { pin: PIN() }));
+  // never a raw PIN or a malformed record
+  const bad = ['1234', 1234, { pin: '1234' }, PIN({ hash: 'short' }), PIN({ salt: 'x' }), PIN({ iter: 5 }), PIN({ iter: 10000000 }), PIN({ iter: 1.5 }),
+    PIN({ alg: 'plain' }), PIN({ v: 2 }), { ...PIN(), extra: 'x' }, { v: 1, alg: 'PBKDF2-SHA256', iter: 100000, salt: PIN().salt }, PIN({ hash: 'h'.repeat(65) })];
+  for (const p of bad) {
+    await assertFails(updateDoc(doc(as('own'), kid), { pin: p }));
+    await assertFails(updateDoc(doc(as('gran'), kid), { pin: p }));
+  }
+  // stats updates by a guardian keep the PIN untouched
+  await assertSucceeds(updateDoc(doc(as('gran'), kid), { xp: 5, totalPoints: 10 }));
+  const snap = await assertSucceeds(getDoc(doc(as('own'), kid)));
+  assert.equal(snap.data().pin.alg, 'PBKDF2-SHA256');
+  assert.equal(snap.data().xp, 5);
+});
+
+test('B-PRIV-STRANGER: a signed in stranger and an anonymous visitor read nothing of a family', async () => {
+  await seedAdults();
+  await seedInvite();
+  for (const db of [as('stranger'), anon(), asMail('other', 'otro@example.com')]) {
+    await assertFails(getDoc(doc(db, 'users/own')));
+    await assertFails(getDoc(doc(db, 'users/own/games/mathmaster')));
+    await assertFails(getDoc(doc(db, 'users/own/players/kid123abc')));
+    await assertFails(getDocs(collection(db, 'users/own/players')));
+    await assertFails(getDoc(doc(db, 'users/own/players/kid123abc/games/mathmaster')));
+    await assertFails(getDocs(collection(db, 'users/own/guardians')));
+    await assertFails(getDoc(doc(db, 'users/own/guardians/gran')));
+    await assertFails(getDoc(doc(db, 'users/gran/memberships/own')));
+    await assertFails(getDoc(doc(db, 'users/gran')));
+    await assertFails(getDoc(doc(db, 'invites/inv1')));
+    await assertFails(updateDoc(doc(db, 'users/own/players/kid123abc'), { pin: PIN() }));
+  }
 });

@@ -402,12 +402,91 @@ const PlatformIdentity = {
             });
         }
 
+        await this._pinSection(modal, uid, mems || [], st, err, render);
+
         modal.appendChild(errNode);
         const actions = this._mk('div', 'pid-actions');
         const backBtn = this._mk('button', 'pid-btn ghost', t('famBack'), { type: 'button', id: 'pid-fam-back' });
         backBtn.onclick = back;
         actions.appendChild(backBtn);
         modal.appendChild(actions);
+    },
+
+    /**
+     * "Clave para entrar como ellos": optional 4-digit PIN per child (convenience lock between
+     * profiles on a shared device, NOT account security; the text says so). The owner and
+     * guardians with role edit can set, change or remove it; role view only sees the state.
+     * Only a salted PBKDF2 hash is stored (PlatformFirestore.setChildPin), never the PIN.
+     */
+    async _pinSection(modal, uid, mems, st, err, render) {
+        const t = k => PlatformI18n.t(k);
+        const P = PlatformFirestore;
+        modal.appendChild(this._mk('h3', 'pid-fam-h', t('pinSection')));
+        modal.appendChild(this._mk('p', 'pid-help', t('pinIntro')));
+        if (st.pinMsg) { modal.appendChild(this._mk('p', 'pid-help', st.pinMsg, { role: 'status', id: 'pid-pin-status' })); st.pinMsg = ''; }
+        const groups = [{ owner: uid, role: 'owner', name: '' }]
+            .concat(mems.map(m => ({ owner: m.ownerUid, role: m.role, name: m.ownerName || '?' })));
+        const lists = await Promise.all(groups.map(g => P.listPlayers(uid, g.owner).catch(() => [])));
+        let any = false;
+        groups.forEach((g, i) => {
+            if (!lists[i].length) return;
+            any = true;
+            if (g.owner !== uid) {
+                modal.appendChild(this._mk('div', 'pid-fam-head', this._F('famOf', { name: g.name }) + (g.role === 'view' ? ' · ' + t('famRoleView') : '')));
+                if (g.role === 'view') modal.appendChild(this._mk('p', 'pid-help', t('pinViewOnly')));
+            }
+            lists[i].forEach(k => modal.appendChild(this._pinRow(g, k, st, err, render)));
+        });
+        if (!any) modal.appendChild(this._mk('p', 'pid-help', t('pinNoKids')));
+    },
+    _pinRow(g, kid, st, err, render) {
+        const t = k => PlatformI18n.t(k);
+        const P = PlatformFirestore;
+        const canEdit = g.role === 'owner' || g.role === 'edit';
+        const has = P.hasPin(kid);
+        const row = this._mk('div', 'pid-fam-row pid-pin-row', null, { 'data-pid': kid.pid });
+        const who = this._mk('div', 'pid-fam-who');
+        who.appendChild(this._mk('span', null, (kid.avatar || '🙂') + ' ' + (kid.username || '')));
+        who.appendChild(this._mk('small', null, (has ? '🔒 ' : '') + t(has ? 'pinOn' : 'pinOff')));
+        row.appendChild(who);
+        if (!canEdit) return row;
+        const acts = this._mk('div', 'pid-pin-actions');
+        const name = kid.username || '';
+        const setBtn = this._mk('button', 'pid-btn ghost pid-fam-btn', t(has ? 'pinChange' : 'pinSet'),
+            { type: 'button', 'aria-label': t(has ? 'pinChange' : 'pinSet') + ' ' + name, 'data-act': 'set' });
+        acts.appendChild(setBtn);
+        if (has) {
+            const rm = this._mk('button', 'pid-btn ghost pid-fam-btn', t('pinRemove'),
+                { type: 'button', 'aria-label': t('pinRemove') + ' ' + name, 'data-act': 'remove' });
+            rm.onclick = async () => {
+                if (!confirm(t('pinRemoveAsk'))) return;
+                rm.disabled = true;
+                try { await P.clearChildPin(g.owner, kid.pid); st.pinMsg = t('pinRemoved'); await render(); }
+                catch (e) { rm.disabled = false; err(this._famError(e)); }
+            };
+            acts.appendChild(rm);
+        }
+        setBtn.onclick = () => {
+            const form = this._mk('div', 'pid-pin-form');
+            const input = this._mk('input', 'pid-fam-input', null, { type: 'password', inputmode: 'numeric', pattern: '[0-9]*', maxlength: '4',
+                autocomplete: 'off', 'aria-label': t('pinNew') + ' ' + name, placeholder: t('pinNew'), 'data-pin-input': '1' });
+            const save = this._mk('button', 'pid-btn pid-fam-btn', t('pinSave'), { type: 'button', 'data-act': 'save' });
+            const cancel = this._mk('button', 'pid-btn ghost pid-fam-btn', t('pinCancel'), { type: 'button' });
+            input.addEventListener('input', () => { input.value = input.value.replace(/[^0-9]/g, '').slice(0, 4); });
+            cancel.onclick = () => render();
+            save.onclick = async () => {
+                err('');
+                if (!P.isValidPin(input.value)) { err(t('pinInvalid')); input.focus(); return; }
+                save.disabled = true;
+                try { await P.setChildPin(g.owner, kid.pid, input.value); st.pinMsg = t('pinSaved'); await render(); }
+                catch (e) { save.disabled = false; err(this._famError(e)); }
+            };
+            form.append(input, save, cancel);
+            acts.replaceChildren(form);
+            input.focus();
+        };
+        row.appendChild(acts);
+        return row;
     },
 
     /** Who is playing? Lists the adult, the children and the children of the families this user belongs to. Reloads the page on change. */

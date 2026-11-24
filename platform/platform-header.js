@@ -173,6 +173,7 @@ const PlatformHeader = {
                 if (!saved) { await this._signOut(); return; }
                 this._userProfile = { ...this._userProfile, ...saved, photoURL: null };
             }
+            this._adultProfile = this._userProfile; // the signed in adult, for the "Yo" tile of the profile picker
             // A child is playing under this account: use their nickname, avatar and progress
             const kid = await PlatformFirestore.getActivePlayer(user.uid).catch(() => null);
             if (kid) this._userProfile = { ...this._userProfile, ...kid, uid: user.uid, photoURL: null };
@@ -181,6 +182,40 @@ const PlatformHeader = {
         }
         this._renderUserArea();
         document.dispatchEvent(new CustomEvent('platformProfileReady', { detail: this._userProfile }));
+        if (user) this._startPicker(user); // not awaited: the picker never delays the page
+    },
+
+    // ─── Profile picker ("Quien juega?", platform/profiles.js, loaded on demand) ───
+
+    _loadProfiles() {
+        if (window.PlatformProfiles) return Promise.resolve();
+        if (this._profilesP) return this._profilesP;
+        this._profilesP = new Promise((resolve, reject) => {
+            const s = document.createElement('script');
+            s.src = this._opts.rootPath + 'platform/profiles.js';
+            s.onload = () => resolve();
+            s.onerror = () => { this._profilesP = null; reject(new Error('profiles')); };
+            document.body.appendChild(s);
+        });
+        return this._profilesP;
+    },
+    /** Once per session after sign in: shows the picker when there are children to choose from. */
+    async _startPicker(user) {
+        if (!window.GamesHubDB || !this._adultProfile) return;
+        try {
+            await this._loadProfiles();
+            await PlatformProfiles.maybeAuto({ uid: user.uid, profile: this._adultProfile, returnFocus: document.getElementById('platform-switch-btn') });
+        } catch (e) { /* the picker is optional */ }
+    },
+    async _openPicker() {
+        const user = typeof PlatformAuth !== 'undefined' && PlatformAuth.currentUser;
+        if (!user) return;
+        try {
+            await this._loadProfiles();
+            const base = this._adultProfile
+                || await PlatformFirestore.getOrCreateProfile(user.uid, user, { account: true }).catch(() => user);
+            await PlatformProfiles.open({ uid: user.uid, profile: base, returnFocus: document.getElementById('platform-switch-btn') });
+        } catch (e) { this.showToast(PlatformI18n.t('famError'), 'error'); }
     },
 
     _renderUserArea() {
@@ -198,7 +233,12 @@ const PlatformHeader = {
                 : `<span aria-hidden="true">${initials}</span>`;
 
             const pts = (u.totalPoints || 0).toLocaleString();
-            area.innerHTML = `
+            const switchBtn = window.GamesHubDB ? `
+                <button class="platform-switch-btn" id="platform-switch-btn" type="button"
+                        aria-label="${t('pickSwitch')}" title="${t('pickSwitch')}">
+                    <span aria-hidden="true">👥</span><span class="platform-switch-text">${t('pickSwitch')}</span>
+                </button>` : '';
+            area.innerHTML = switchBtn + `
                 <button class="platform-user-btn" id="platform-user-btn"
                         aria-haspopup="true" aria-expanded="false"
                         aria-label="${escHtml(u.username)}, ${t('level')} ${level}: ${lvlName}">
@@ -209,6 +249,8 @@ const PlatformHeader = {
             `;
             document.getElementById('platform-user-btn')
                 ?.addEventListener('click', e => { e.stopPropagation(); this._toggleDropdown(); });
+            document.getElementById('platform-switch-btn')
+                ?.addEventListener('click', e => { e.stopPropagation(); this._openPicker(); });
             this._buildDropdown(u, level, lvlName);
         } else {
             const here = location.pathname.replace(/^\//, '') + location.search;
@@ -374,6 +416,7 @@ const PlatformHeader = {
     },
 
     async _signOut() {
+        try { if (window.PlatformProfiles && PlatformAuth.currentUser) PlatformProfiles.forget(PlatformAuth.currentUser.uid); } catch (e) {}
         if (typeof PlatformAuth !== 'undefined') await PlatformAuth.signOut();
         // If the current page is a game, redirect to hub
         const path = window.location.pathname;

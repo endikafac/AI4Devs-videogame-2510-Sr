@@ -312,6 +312,111 @@ const PlatformFirestore = {
         if (this._storedOwner(me.uid) === ownerUid) this.setActivePlayer(me.uid, '');
     },
 
+    // ── Profile PIN (convenience lock between profiles) ─────────────────────
+    // A child profile can have an optional 4-digit PIN. It only asks "is this the
+    // right person at this device?" when switching profile. It is NOT account
+    // security: 4 digits can be brute forced offline by anyone who can read the
+    // player document, so the UI says so. Only a salted PBKDF2 hash is stored in
+    // users/{owner}/players/{pid}.pin, never the PIN itself.
+
+    PIN_ITER: 100000,
+    PIN_MAX_FAILS: 5,
+    PIN_LOCK_MS: 30000,
+
+    /** Pure: exactly four digits. */
+    isValidPin(p) { return typeof p === 'string' && /^[0-9]{4}$/.test(p); },
+    /** Pure: does this player document carry a well formed PIN record? */
+    hasPin(kid) {
+        const r = kid && kid.pin;
+        return !!(r && typeof r === 'object' && typeof r.salt === 'string' && typeof r.hash === 'string' && r.salt && r.hash);
+    },
+    _b64(bytes) { let s = ''; bytes.forEach(b => { s += String.fromCharCode(b); }); return btoa(s); },
+    _unb64(str) { const s = atob(str); const out = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) out[i] = s.charCodeAt(i); return out; },
+    async _derive(pin, salt, iter) {
+        const subtle = (typeof crypto !== 'undefined' && crypto.subtle) || null;
+        if (!subtle) throw new Error('no-crypto');
+        const key = await subtle.importKey('raw', new TextEncoder().encode(pin), 'PBKDF2', false, ['deriveBits']);
+        return new Uint8Array(await subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt, iterations: iter }, key, 256));
+    },
+    /** Salted hash record for a PIN (random 16 byte salt). Throws 'invalid' for a bad PIN. */
+    async hashPin(pin) {
+        if (!this.isValidPin(pin)) throw new Error('invalid');
+        const salt = crypto.getRandomValues(new Uint8Array(16));
+        const hash = await this._derive(pin, salt, this.PIN_ITER);
+        return { v: 1, alg: 'PBKDF2-SHA256', iter: this.PIN_ITER, salt: this._b64(salt), hash: this._b64(hash) };
+    },
+    /** True when pin matches the record. Malformed records and bad input never match. */
+    async verifyPin(pin, rec) {
+        if (!this.isValidPin(pin) || !this.hasPin({ pin: rec })) return false;
+        const iter = Number(rec.iter);
+        if (!Number.isInteger(iter) || iter < 1000 || iter > 1000000) return false;
+        try {
+            const got = await this._derive(pin, this._unb64(rec.salt), iter);
+            const want = this._unb64(rec.hash);
+            if (got.length !== want.length) return false;
+            let diff = 0;
+            for (let i = 0; i < got.length; i++) diff |= got[i] ^ want[i];
+            return diff === 0;
+        } catch (e) { return false; }
+    },
+
+    /** Pure: normalise a stored lock state. */
+    _lockNorm(s) {
+        const fails = s && Number.isFinite(Number(s.fails)) ? Math.max(0, Math.min(this.PIN_MAX_FAILS, Math.floor(Number(s.fails)))) : 0;
+        const until = s && Number.isFinite(Number(s.until)) ? Math.max(0, Number(s.until)) : 0;
+        return { fails, until };
+    },
+    /** Pure: is the profile locked right now? waitSec is rounded up. */
+    pinLockStatus(state, now) {
+        const s = this._lockNorm(state);
+        const t = now == null ? Date.now() : now;
+        const locked = s.until > t;
+        return { locked, waitSec: locked ? Math.ceil((s.until - t) / 1000) : 0, left: this.PIN_MAX_FAILS - s.fails };
+    },
+    /** Pure: next state after an attempt. The 5th wrong try locks for PIN_LOCK_MS and starts a fresh count. */
+    pinLockNext(state, ok, now) {
+        if (ok) return { fails: 0, until: 0 };
+        const s = this._lockNorm(state);
+        const t = now == null ? Date.now() : now;
+        if (s.until > t) return s;
+        const fails = s.fails + 1;
+        return fails >= this.PIN_MAX_FAILS ? { fails: 0, until: t + this.PIN_LOCK_MS } : { fails, until: 0 };
+    },
+    _lockKey(uid, owner, pid) { return 'games_hub_pinlock_' + [uid, owner || uid, pid].join('_'); },
+    _lockLoad(key) { try { return this._lockNorm(JSON.parse(localStorage.getItem(key) || 'null')); } catch (e) { return this._lockNorm(null); } },
+    _lockSave(key, st) { try { st.fails || st.until ? localStorage.setItem(key, JSON.stringify(st)) : localStorage.removeItem(key); } catch (e) {} },
+    /** Current lock status for a profile on this device. */
+    pinStatus(uid, owner, pid, now) { return this.pinLockStatus(this._lockLoad(this._lockKey(uid, owner, pid)), now); },
+    /**
+     * Check a PIN with the rate limit (5 wrong tries, then 30 s wait, kept on this device).
+     * Returns { ok, locked, waitSec, left }.
+     */
+    async tryPin(uid, owner, pid, pin, rec, now) {
+        const key = this._lockKey(uid, owner, pid);
+        const t = now == null ? Date.now() : now;
+        const before = this._lockLoad(key);
+        const st0 = this.pinLockStatus(before, t);
+        if (st0.locked) return { ok: false, locked: true, waitSec: st0.waitSec, left: 0 };
+        const ok = await this.verifyPin(pin, rec);
+        const next = this.pinLockNext(before, ok, t);
+        this._lockSave(key, next);
+        const st = this.pinLockStatus(next, t);
+        return { ok, locked: st.locked, waitSec: st.waitSec, left: st.locked ? 0 : st.left };
+    },
+    /** Owner or edit guardian: set or change the PIN of a child. Rules refuse it for view guardians. */
+    async setChildPin(ownerUid, pid, pin) {
+        this._needDB();
+        if (!ownerUid || !/^[a-z0-9]{6,20}$/.test(pid || '')) throw new Error('invalid');
+        const rec = await this.hashPin(pin);
+        await GamesHubDB.collection('users').doc(ownerUid).collection('players').doc(pid).update({ pin: rec });
+    },
+    /** Owner or edit guardian: remove (reset) the PIN of a child. */
+    async clearChildPin(ownerUid, pid) {
+        this._needDB();
+        if (!ownerUid || !/^[a-z0-9]{6,20}$/.test(pid || '')) throw new Error('invalid');
+        await GamesHubDB.collection('users').doc(ownerUid).collection('players').doc(pid).update({ pin: firebase.firestore.FieldValue.delete() });
+    },
+
     // ── User profile ─────────────────────────────────────────────────────────
 
     async getOrCreateProfile(uid, authUser, opts) {

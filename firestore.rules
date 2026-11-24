@@ -31,6 +31,20 @@ service cloud.firestore {
     function canReadKids(ownerId) {
       return isOwner(ownerId) || isGuardian(ownerId);
     }
+    // Optional profile PIN of a child (convenience lock between profiles, see
+    // docs/cuenta-familiar.md). Only a salted hash record is accepted, never a
+    // raw PIN: fixed keys, bounded sizes. Writing it needs canEditKids (owner or
+    // 'edit' guardian), so a 'view' guardian can never set or reset it.
+    function validPin(d) {
+      return !('pin' in d) || (d.pin is map
+        && d.pin.keys().hasOnly(['v', 'alg', 'iter', 'salt', 'hash'])
+        && d.pin.keys().hasAll(['v', 'alg', 'iter', 'salt', 'hash'])
+        && d.pin.v == 1
+        && d.pin.alg == 'PBKDF2-SHA256'
+        && d.pin.iter is int && d.pin.iter >= 1000 && d.pin.iter <= 1000000
+        && d.pin.salt is string && d.pin.salt.size() >= 16 && d.pin.salt.size() <= 32
+        && d.pin.hash is string && d.pin.hash.size() >= 32 && d.pin.hash.size() <= 64);
+    }
     // Verified Google e-mail of the caller, lowercased ('' when there is none).
     function verifiedEmail() {
       return signedIn() && request.auth.token.email_verified == true ? request.auth.token.email.lower() : '';
@@ -49,7 +63,7 @@ service cloud.firestore {
       // Deleting a player (or anything under it) is reserved to the owner.
       match /players/{pid} {
         allow read: if canReadKids(userId);
-        allow create, update: if canEditKids(userId);
+        allow create, update: if canEditKids(userId) && validPin(request.resource.data);
         allow delete: if isOwner(userId);
 
         match /{sub}/{document=**} {
