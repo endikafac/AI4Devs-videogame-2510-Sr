@@ -10,3 +10,11 @@
 
 # Claude Code
 .claude/
+# Open source backend (docs/backend-opensource.md): credentials and exports with children data, never committed
+.neon-db-url
+.env.neon*
+/migrate.sql
+/firestore.json
+/auth.json
+/firestore-export*.json
+/auth-export*.json

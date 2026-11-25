@@ -687,3 +687,7 @@ const PlatformFirestore = {
         try { localStorage.setItem(`games_hub_${key}`, JSON.stringify(data)); } catch {}
     }
 };
+
+// Optional open source backend (docs/backend-opensource.md). With GamesHubBackend.backend 'firebase' (the default) or when
+// backend-pg.js is not loaded, this does nothing and the Firestore code above is what runs.
+if (typeof PlatformBackendPg !== 'undefined' && PlatformBackendPg.isActive()) PlatformBackendPg.installFirestore(PlatformFirestore);

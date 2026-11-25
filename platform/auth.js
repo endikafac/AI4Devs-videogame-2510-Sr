@@ -98,5 +98,9 @@ const PlatformAuth = {
 // A top-level const is not a window property: expose it so games can hook the session (window.PlatformAuth).
 if (typeof window !== 'undefined') window.PlatformAuth = PlatformAuth;
 
+// Optional open source backend (docs/backend-opensource.md). With GamesHubBackend.backend 'firebase' (the default) or when
+// backend-pg.js is not loaded, this does nothing and the Firebase code above is what runs.
+if (typeof PlatformBackendPg !== 'undefined' && PlatformBackendPg.isActive()) PlatformBackendPg.installAuth(PlatformAuth);
+
 // Auto-init when DOM is ready
 document.addEventListener('DOMContentLoaded', () => PlatformAuth.init());

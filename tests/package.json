@@ -6,9 +6,11 @@
     "test:unit": "node --test \"unit/*.test.mjs\"",
     "test:back": "npx firebase emulators:exec --config ../firebase.json --only firestore --project demo-gameshub \"node --test back/rules.test.mjs\"",
     "test:front": "node --test --test-concurrency=1 \"front/*.test.mjs\"",
-    "test": "npm run test:unit && npm run test:back && npm run test:front"
+    "test": "npm run test:unit && npm run test:back && npm run test:backpg && npm run test:front",
+    "test:backpg": "node --test --test-concurrency=1 \"back-pg/*.test.mjs\""
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.6.0",
     "@firebase/rules-unit-testing": "^4.0.1",
     "firebase": "^11.9.1",
     "firebase-tools": "^13.35.1",

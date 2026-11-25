@@ -12,7 +12,8 @@
       ".claude/**",
       "scripts/**",
       "tests/**",
-      "docs/**"
+      "docs/**",
+      "db/**"
     ],
     "headers": [
       {
