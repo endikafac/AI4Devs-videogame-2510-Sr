@@ -26,6 +26,138 @@
            {"q": "Què eren de debò els gegants?", "o": ["Molins", "Arbres", "Torres"], "a": 0, "ev": "eren molins"},
            {"q": "Qui va ajudar Don Quixot a aixecar-se?", "o": ["Sancho", "El mag", "El ruc"], "a": 0, "ev": "Sancho va córrer a ajudar-lo"}]}
       ]
+    },
+    {
+      "id": "ca-rob",
+      "title": "Robinson Crusoe",
+      "author": "Daniel Defoe (explicat)",
+      "emoji": "🏝️",
+      "color": "#0891b2",
+      "bands": [
+        "b910"
+      ],
+      "topics": [
+        "nature",
+        "pirates"
+      ],
+      "source": "Daniel Defoe, Robinson Crusoe (1719), domini públic; resum en capítols escrit per a aquest joc",
+      "license": "public-domain (original work); original-project retelling",
+      "retelling": "Explicat amb paraules pròpies, sense copiar cap traducció moderna. Un parlant nadiu ho ha de revisar.",
+      "chapters": [
+        {
+          "id": "ca-rob-1",
+          "title": "La tempesta",
+          "text": "Robinson Crusoe era un jove anglès que somiava viatjar pel món. Els seus pares volien que es quedés a casa, però ell no els va fer cas i es va embarcar en un vaixell. Durant el viatge, va esclatar una tempesta terrible. Les ones eren altíssimes i el vent feia trontollar el vaixell. Els mariners cridaven, plorosos de por. Al final, el vaixell es va estavellar contra unes roques. Robinson va saltar a l'aigua i va nedar amb totes les seves forces. Quan va arribar a la platja, estava tan cansat que es va quedar adormit sobre la sorra. L'endemà, es va despertar sol. Va mirar a tot arreu, però no hi havia ningú més. Era l'únic que s'havia salvat. Davant seu només hi havia mar, i darrere seu un bosc espès.",
+          "hook": "Davant seu només hi havia mar, i darrere seu un bosc espès.",
+          "questions": [
+            {
+              "q": "Què volien els pares de Robinson?",
+              "o": [
+                "Que es quedés a casa",
+                "Que fos mariner",
+                "Que fos rei"
+              ],
+              "a": 0,
+              "ev": "volien que es quedés a casa"
+            },
+            {
+              "q": "Contra què es va estavellar el vaixell?",
+              "o": [
+                "Contra unes roques",
+                "Contra un altre vaixell",
+                "Contra un iceberg"
+              ],
+              "a": 0,
+              "ev": "contra unes roques"
+            },
+            {
+              "q": "On es va adormir Robinson?",
+              "o": [
+                "Sobre la sorra",
+                "Dins d'una cova",
+                "A dalt d'un arbre"
+              ],
+              "a": 0,
+              "ev": "sobre la sorra"
+            }
+          ]
+        },
+        {
+          "id": "ca-rob-2",
+          "title": "La cabana",
+          "text": "Robinson va tornar fins al vaixell enfonsat, ajudat per una petita bassa. De dins, va treure eines, cordes, fusta, pólvora, un fusell i bastant menjar. Amb tot això va construir una cabana al peu d'un turó, i la va protegir amb una gran tanca de pals. Cada dia feia una marca en un tronc per comptar els dies. Va aprendre a caçar cabres, a coure pa i a fer-se roba amb les pells dels animals. També va ensinistrar un lloro que repetia el seu nom. De vegades se sentia molt sol i plorava, però després pensava en tot el que tenia i s'animava. Al cap d'uns anys, un matí va descobrir a la sorra una cosa que el va deixar glaçat: l'empremta d'un peu humà. Algú més havia arribat a l'illa.",
+          "hook": "Algú més havia arribat a l'illa.",
+          "questions": [
+            {
+              "q": "Què va construir Robinson al peu del turó?",
+              "o": [
+                "Una cabana",
+                "Un castell",
+                "Un vaixell"
+              ],
+              "a": 0,
+              "ev": "va construir una cabana"
+            },
+            {
+              "q": "Per què feia marques en un tronc?",
+              "o": [
+                "Per comptar els dies",
+                "Per fer un joc",
+                "Per dibuixar"
+              ],
+              "a": 0,
+              "ev": "per comptar els dies"
+            },
+            {
+              "q": "Què va ensinistrar Robinson?",
+              "o": [
+                "Un lloro",
+                "Un gat",
+                "Un gos"
+              ],
+              "a": 0,
+              "ev": "un lloro"
+            }
+          ]
+        },
+        {
+          "id": "ca-rob-3",
+          "title": "Divendres",
+          "text": "Robinson va viure moltes setmanes amb por. Un dia, des del turó, va veure una canoa a la platja i uns homes que ballaven al voltant d'una foguera. Havien portat un presoner lligat. El presoner va aconseguir escapar, i corria cap a Robinson. Robinson va agafar el fusell i va fer fugir els perseguidors. El jove, agraït, es va agenollar davant seu. Com que Robinson el va trobar un divendres, el va anomenar Divendres. Va ensenyar-li anglès, a conrear i a viure a la cabana. Es van fer grans amics. Passats uns anys, va aparèixer un vaixell anglès. Robinson i Divendres van pujar-hi, i després de vint-i-vuit anys, Robinson va tornar per fi a casa seva. Durant els anys següents, Divendres va aprendre molt, i Robinson també va aprendre d'ell a mirar el món amb més alegria.",
+          "questions": [
+            {
+              "q": "Què va veure Robinson a la platja?",
+              "o": [
+                "Una canoa",
+                "Un tresor",
+                "Un elefant"
+              ],
+              "a": 0,
+              "ev": "una canoa a la platja"
+            },
+            {
+              "q": "Per què va anomenar Divendres el jove?",
+              "o": [
+                "Perquè el va trobar un divendres",
+                "Perquè era el seu cognom",
+                "Perquè li agradava"
+              ],
+              "a": 0,
+              "ev": "el va trobar un divendres"
+            },
+            {
+              "q": "Quants anys va passar Robinson a l'illa?",
+              "o": [
+                "Vint-i-vuit",
+                "Deu",
+                "Cent"
+              ],
+              "a": 0,
+              "ev": "vint-i-vuit anys"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

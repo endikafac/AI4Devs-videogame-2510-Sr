@@ -56,6 +56,13 @@ service cloud.firestore {
                                 'magic', 'music', 'cooking', 'vehicles', 'nature', 'mystery', 'superheroes'])
         && d.interests.toSet().size() == d.interests.size());
     }
+    // Daily summary of a game ("progress of the little ones", platform/progress-panel.js):
+    // stats docs under players/{pid}/games may carry `daily`, a map day -> {games, items,
+    // minutes, ok}. The client keeps the last 60 days; the rule caps the map at 62 entries so a
+    // document cannot grow without limit. Same writers as the rest of the player (canEditKids).
+    function validDaily(d) {
+      return !('daily' in d) || (d.daily is map && d.daily.size() <= 62);
+    }
     // Verified Google e-mail of the caller, lowercased ('' when there is none).
     function verifiedEmail() {
       return signedIn() && request.auth.token.email_verified == true ? request.auth.token.email.lower() : '';
@@ -79,7 +86,7 @@ service cloud.firestore {
 
         match /{sub}/{document=**} {
           allow read: if canReadKids(userId);
-          allow create, update: if canEditKids(userId);
+          allow create, update: if canEditKids(userId) && validDaily(request.resource.data);
           allow delete: if isOwner(userId);
         }
       }

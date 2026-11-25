@@ -474,3 +474,48 @@ test('B-PRIV-STRANGER: a signed in stranger and an anonymous visitor read nothin
     await assertFails(updateDoc(doc(db, 'users/own/players/kid123abc'), { pin: PIN() }));
   }
 });
+
+// ---- Daily summary of a game ("Progreso de los pequenos") ----
+const DAILY = n => { const o = {}; for (let i = 0; i < n; i++) o['2026-' + String(1 + Math.floor(i / 28)).padStart(2, '0') + '-' + String(1 + (i % 28)).padStart(2, '0')] = { games: 1, items: 10, minutes: 2.5, ok: 8 }; return o; };
+
+test('B-DAILY: owner and edit guardian save a daily map of at most 62 days, view guardian only reads it', async () => {
+  await seedAdults();
+  const path = 'users/own/players/kid123abc/games/reading';
+  const stats = (n, extra = {}) => ({ totalGames: 3, daily: DAILY(n), ...extra });
+  for (const uid of ['own', 'gran']) {
+    await assertSucceeds(setDoc(doc(as(uid), path), stats(60)));
+    await assertSucceeds(setDoc(doc(as(uid), path), stats(62)));
+    await assertFails(setDoc(doc(as(uid), path), stats(63)));
+    await assertFails(setDoc(doc(as(uid), path), { totalGames: 3, daily: 'oops' }));
+    await assertFails(setDoc(doc(as(uid), path), { totalGames: 3, daily: ['2026-01-01'] }));
+    await assertSucceeds(setDoc(doc(as(uid), path), { totalGames: 3 }));            // the field stays optional (old documents, other games)
+    await assertSucceeds(updateDoc(doc(as(uid), path), { daily: DAILY(5) }));
+    await assertFails(updateDoc(doc(as(uid), path), { daily: DAILY(70) }));
+  }
+  // the view guardian reads the days but cannot write or erase them
+  await assertSucceeds(getDoc(doc(as('teacher'), path)));
+  await assertFails(setDoc(doc(as('teacher'), path), stats(3)));
+  await assertFails(updateDoc(doc(as('teacher'), path), { daily: DAILY(1) }));
+  await assertFails(deleteDoc(doc(as('teacher'), path)));
+  // strangers and other families see nothing
+  await assertFails(getDoc(doc(as('stranger'), path)));
+  await assertFails(setDoc(doc(as('stranger'), path), stats(3)));
+});
+
+test('B-DAILY-PANEL: what the panel reads (children and their games) is open to guardians, the adults own data is not', async () => {
+  await seedAdults();
+  await env.withSecurityRulesDisabled(async ctx => {
+    await setDoc(doc(ctx.firestore(), 'users/own/players/kid123abc/games/reading'), { totalGames: 3, daily: DAILY(4) });
+    await setDoc(doc(ctx.firestore(), 'users/own/games/reading'), { totalGames: 500, daily: DAILY(4) });
+  });
+  for (const uid of ['gran', 'teacher']) {
+    const g = as(uid);
+    await assertSucceeds(getDocs(collection(g, 'users/own/players')));
+    const games = await assertSucceeds(getDocs(collection(g, 'users/own/players/kid123abc/games')));
+    assert.ok(games.docs.some(d => d.id === 'reading'));
+    await assertFails(getDocs(collection(g, 'users/own/games')));
+    await assertFails(getDoc(doc(g, 'users/own')));
+    await assertFails(getDocs(collection(g, 'users/pal/players')));        // another adult's children, not in this family
+    await assertFails(getDoc(doc(g, 'users/pal/games/mathmaster')));       // another adult's own stats
+  }
+});

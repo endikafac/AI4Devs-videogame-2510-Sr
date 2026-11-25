@@ -26,6 +26,137 @@
            {"q": "Pourquoi ont-ils gagné un jour?", "o": ["Ils voyageaient vers l'est", "Leur montre était rapide", "Le bateau volait"], "a": 0, "ev": "en voyageant vers l'est"},
            {"q": "Quand Fogg arriva-t-il au club?", "o": ["Juste à temps", "Trop tard", "Le lendemain"], "a": 0, "ev": "juste à temps"}]}
       ]
+    },
+    {
+      "id": "fr-cha",
+      "title": "Le Chat botté",
+      "author": "Charles Perrault (raconté)",
+      "emoji": "🐱",
+      "color": "#b45309",
+      "bands": [
+        "b910"
+      ],
+      "topics": [
+        "animals"
+      ],
+      "source": "Charles Perrault, Le Maître chat ou le Chat botté (1697), domaine public; résumé en chapitres écrit pour ce jeu",
+      "license": "public-domain (original work); original-project retelling",
+      "retelling": "Raconté avec nos propres mots, sans copier aucune édition moderne. Un locuteur natif doit relire ce texte.",
+      "chapters": [
+        {
+          "id": "fr-cha-1",
+          "title": "Le sac et les bottes",
+          "text": "Un vieux meunier mourut et laissa à ses trois fils un moulin, un âne et un chat. Le plus jeune n'eut que le chat, et il était très triste. « Que vais-je faire d'un chat ? » soupira-t-il. Mais le chat, qui l'avait entendu, lui répondit calmement : « Ne vous inquiétez pas, mon maître. Donnez-moi seulement un sac et une paire de bottes, et vous verrez que vous n'êtes pas si mal partagé. » Le jeune homme, très surpris, accepta. Le chat enfila les bottes, prit le sac et partit dans la forêt. Il mit du son et une feuille de salade dans le sac, puis il fit semblant de dormir. Bientôt, un jeune lapin entra dans le sac pour manger. Le chat tira vite les cordons et le lapin fut pris. Content de lui, le chat se dirigea vers le château du roi.",
+          "hook": "Content de lui, le chat se dirigea vers le château du roi.",
+          "questions": [
+            {
+              "q": "Que reçut le plus jeune fils ?",
+              "o": [
+                "Le chat",
+                "Le moulin",
+                "L'âne"
+              ],
+              "a": 0,
+              "ev": "n'eut que le chat"
+            },
+            {
+              "q": "Que demanda le chat à son maître ?",
+              "o": [
+                "Un sac et une paire de bottes",
+                "Un chapeau et une épée",
+                "De l'argent"
+              ],
+              "a": 0,
+              "ev": "un sac et une paire de bottes"
+            },
+            {
+              "q": "Qui entra dans le sac ?",
+              "o": [
+                "Un jeune lapin",
+                "Une souris",
+                "Un oiseau"
+              ],
+              "a": 0,
+              "ev": "un jeune lapin entra dans le sac"
+            }
+          ]
+        },
+        {
+          "id": "fr-cha-2",
+          "title": "Le marquis de Carabas",
+          "text": "Devant le roi, le chat s'inclina très bas et dit : « Sire, voici un lapin que mon maître, le marquis de Carabas, vous offre avec respect. » Le roi fut ravi et remercia le chat. Pendant plusieurs mois, le chat apporta ainsi au roi des perdrix et d'autres beaux gibiers. Un jour, il apprit que le roi allait se promener au bord de la rivière avec sa fille, la plus belle princesse du pays. Le chat dit à son maître : « Allez vous baigner dans la rivière, et laissez-moi faire. » Le jeune homme obéit. Quand la voiture du roi passa, le chat se mit à crier de toutes ses forces : « Au secours ! Le marquis de Carabas se noie ! » Le roi fit aussitôt sortir le jeune homme de l'eau et lui offrit de beaux habits. Mais le chat avait encore une idée en tête.",
+          "hook": "Mais le chat avait encore une idée en tête.",
+          "questions": [
+            {
+              "q": "Quel nom le chat donna-t-il à son maître ?",
+              "o": [
+                "Marquis de Carabas",
+                "Prince de Lune",
+                "Comte de Paris"
+              ],
+              "a": 0,
+              "ev": "le marquis de Carabas"
+            },
+            {
+              "q": "Où le roi se promenait-il ?",
+              "o": [
+                "Au bord de la rivière",
+                "Dans la forêt",
+                "Sur la montagne"
+              ],
+              "a": 0,
+              "ev": "au bord de la rivière"
+            },
+            {
+              "q": "Qu'offrit le roi au jeune homme ?",
+              "o": [
+                "De beaux habits",
+                "Un cheval",
+                "Un bateau"
+              ],
+              "a": 0,
+              "ev": "de beaux habits"
+            }
+          ]
+        },
+        {
+          "id": "fr-cha-3",
+          "title": "Le château de l'ogre",
+          "text": "Le chat courut devant la voiture. Dans les champs, il dit aux paysans : « Si vous ne répondez pas au roi que ces terres sont au marquis de Carabas, on vous fera hacher menu comme chair à pâté ! » Tous obéirent. Le chat arriva enfin dans un grand château où vivait un ogre très riche. Il demanda à le voir et lui dit poliment : « On m'a dit que vous pouviez vous changer en n'importe quel animal. Même en lion ? » L'ogre devint un lion terrible, et le chat grimpa sur le toit, effrayé. Puis il ajouta : « Mais en une petite souris ? Cela doit être impossible ! » L'ogre, fier, se changea en souris. D'un bond, le chat l'avala. Quand le roi arriva, le chat l'accueillit : « Bienvenue dans le château de mon maître ! » Le roi, enchanté, donna sa fille au jeune homme, et tous vécurent heureux.",
+          "questions": [
+            {
+              "q": "Que dit le chat aux paysans ?",
+              "o": [
+                "De répondre que les terres sont au marquis",
+                "De se cacher",
+                "De s'enfuir"
+              ],
+              "a": 0,
+              "ev": "ces terres sont au marquis de Carabas"
+            },
+            {
+              "q": "En quel animal l'ogre se changea-t-il pour finir ?",
+              "o": [
+                "En souris",
+                "En lion",
+                "En loup"
+              ],
+              "a": 0,
+              "ev": "se changea en souris"
+            },
+            {
+              "q": "Qui épousa la princesse ?",
+              "o": [
+                "Le jeune homme",
+                "L'ogre",
+                "Le chat"
+              ],
+              "a": 0,
+              "ev": "donna sa fille au jeune homme"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

@@ -295,6 +295,8 @@ const PlatformIdentity = {
         wrap.replaceChildren(modal);
         title.focus();
         const render = () => this._renderFamily(wrap, uid, profile, st, back);
+        // Progress of the little ones (adults only; the page reads children, never the adult's own data)
+        modal.appendChild(this._mk('a', 'pid-btn ghost pid-fam-wide', '📈 ' + t('progBtn'), { id: 'pid-fam-progress', href: new URL('progreso.html', this._siteUrl()).href }));
 
         const safe = p => p.catch(() => null);
         const [guardians, sent, invites, mems] = await Promise.all([

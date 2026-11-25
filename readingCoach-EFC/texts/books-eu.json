@@ -26,6 +26,138 @@
            {"q": "Zer egin zuen Gulliverrek etsaiaren itsasontziekin?", "o": ["Soka batekin lotu zituen", "Hondoratu zituen", "Erre zituen"], "a": 0, "ev": "soka batekin lotu zituen"},
            {"q": "Zer esan zuen erregeak?", "o": ["Zu gure heroia zara", "Zoaz hemendik", "Ez zaitut ezagutzen"], "a": 0, "ev": "Zu gure heroia zara"}]}
       ]
+    },
+    {
+      "id": "eu-sin",
+      "title": "Sinbad marinela",
+      "author": "Mila eta Gau bat (berrekina)",
+      "emoji": "🐦",
+      "color": "#be123c",
+      "bands": [
+        "b910"
+      ],
+      "topics": [
+        "pirates",
+        "nature"
+      ],
+      "source": "Mila eta Gau bat, Sinbad marinelaren bidaiak (XVIII. mendeko europar bertsioa), jabari publikoa; kapitulu laburrak joko honetarako idatziak",
+      "license": "public-domain (original work); original-project retelling",
+      "retelling": "Geure hitzetan berrekina, inongo itzulpen modernorik kopiatu gabe. Euskaldun batek berrikusi behar du.",
+      "chapters": [
+        {
+          "id": "eu-sin-1",
+          "title": "Uharte handia",
+          "text": "Sinbad merkatari aberats bat zen, baina bidaiatzea asko gustatzen zitzaion. Egun batean, itsasontzi batean abiatu zen urrutiko herrialde batzuetara. Hainbat egun nabigatu ondoren, uharte ederra aurkitu zuten. Marinel guztiak lehorrera jaitsi ziren eta sua piztu zuten bazkaltzeko. Baina bat-batean, lurra mugitzen hasi zen! Uhartea ez zen uharte bat: balea erraldoi bat zen, urte askoan lo egon zena. Sua sentitu zuenean, esnatu egin zen eta ur azpira joan zen. Marinelak itsasora erori ziren. Itsasontziak aurrera egin zuen beldurrez, eta Sinbad ur gainean geratu zen, egur zati batean oinarrituta. Sinbadek zeru zabalari begiratu zion eta pentsatu zuen: zorte handia izan zuela bizirik jarraitzeko. Uretatik hondartzara zihoan bitartean, hainbat hegazti ikusi zituen eta etxeko lur gozoa gogoratu zuen. Handik ordu batzuetara, olatuek urrutiko hondartza batera eraman zuten.",
+          "hook": "Handik ordu batzuetara, olatuek urrutiko hondartza batera eraman zuten.",
+          "questions": [
+            {
+              "q": "Zer zen Sinbad?",
+              "o": [
+                "Merkatari aberats bat",
+                "Artzain bat",
+                "Soldadu bat"
+              ],
+              "a": 0,
+              "ev": "merkatari aberats bat zen"
+            },
+            {
+              "q": "Zer zen benetan uhartea?",
+              "o": [
+                "Balea erraldoi bat",
+                "Mendi bat",
+                "Itsasontzi bat"
+              ],
+              "a": 0,
+              "ev": "balea erraldoi bat zen"
+            },
+            {
+              "q": "Zeri eutsi zion Sinbadek uretan?",
+              "o": [
+                "Egur zati bati",
+                "Soka bati",
+                "Arrain bati"
+              ],
+              "a": 0,
+              "ev": "egur zati batean"
+            }
+          ]
+        },
+        {
+          "id": "eu-sin-2",
+          "title": "Arrano erraldoia",
+          "text": "Sinbad beste bidaia batean uharte mugagabe batera iritsi zen. Han, harri zuri handi bat zegoen, itsaso ertzean. Baina ez zen harria: arrano erraldoi baten arrautza zen! Sinbadek bere turbantea arrautzaren hankari lotu zion eta itxaron egin zuen. Gaua hurbildu zenean, hodei beltz bat agertu zen. Arrano erraldoia zen, bere hegalek eguzkia estaltzen zutena. Sinbadek bere burua arrautzari lotu zion, eta arranoak hegan egin zuen. Ez zuen jakin zer gertatuko zen. Arranoak bere habia haranean zeukan, eta Sinbad lurrera erori zen. Arrano erraldoiak gau osoan hegan egin zuen, eta Sinbadek ez zuen ezer ikusten, ilunpea baitzen. Goizean, haran sakon batean zegoela ohartu zen. Mendi garaiek inguratzen zuten haranak, eta ezin zen handik atera bizkor. Haran hartan zeuden suge handiak eta diamante ugari lurrean.",
+          "hook": "Haran hartan zeuden suge handiak eta diamante ugari lurrean.",
+          "questions": [
+            {
+              "q": "Zer zen harri zuri handia?",
+              "o": [
+                "Arrano baten arrautza",
+                "Mendi bat",
+                "Etxe bat"
+              ],
+              "a": 0,
+              "ev": "arrano erraldoi baten arrautza"
+            },
+            {
+              "q": "Zer lotu zion Sinbadek arrautzari?",
+              "o": [
+                "Bere turbantea",
+                "Bere zapata",
+                "Bere ezpata"
+              ],
+              "a": 0,
+              "ev": "bere turbantea"
+            },
+            {
+              "q": "Non zeukan habia arranoak?",
+              "o": [
+                "Haranean",
+                "Itsasoan",
+                "Hirian"
+              ],
+              "a": 0,
+              "ev": "habia haranean"
+            }
+          ]
+        },
+        {
+          "id": "eu-sin-3",
+          "title": "Diamanteen haran",
+          "text": "Sinbad beldurtuta zegoen, baina diamante asko ikusi zituen. Harri bat eta bestea batu zituen poltsikoan. Gero, harkaitz handi baten gainean, haragi zati handi bat erori zen. Sinbadek ulertu zuen: diamanteak biltzen zituzten merkatariek haragia botatzen zuten haranera, eta arranoek haragia hartzen zuten bere harri txikiekin. Sinbadek haragi zati bat bizkarrean lotu zuen, eta arrano batek eraman zuen goraino. Merkatariak harrituta geratu ziren: «Nola iritsi zara hona?» Sinbadek bere istorioa kontatu zien. Merkatariek diamanteak partekatu zituzten berarekin. Sinbad berriz ere itsasontzi batera igo zen, etxera itzultzeko, aberats eta zoriontsu. Merkatariek abesti alaiak abestu zituzten Sinbaden ausardiarengatik, eta berak jai handia egin zuen itsasontzi gainean. Etxera iristean, bere ametsak lagunei kontatu zizkien, eta guztiek harrituta entzun zuten. Sinbadek bere familiari opari ederrak eman zizkion, eta urte askotan lasai bizi izan zen bere herrian.",
+          "questions": [
+            {
+              "q": "Zer bildu zuen Sinbadek poltsikoan?",
+              "o": [
+                "Diamanteak",
+                "Urrezko txanponak",
+                "Fruituak"
+              ],
+              "a": 0,
+              "ev": "diamante asko ikusi zituen"
+            },
+            {
+              "q": "Zerk eraman zuen Sinbad harkaitzeraino?",
+              "o": [
+                "Arrano batek",
+                "Zaldi batek",
+                "Itsasontzi batek"
+              ],
+              "a": 0,
+              "ev": "arrano batek eraman zuen"
+            },
+            {
+              "q": "Nola amaitu zen istorioa?",
+              "o": [
+                "Etxera itzuli zen aberats eta zoriontsu",
+                "Haranean geratu zen",
+                "Itsasoan galdu zen"
+              ],
+              "a": 0,
+              "ev": "aberats eta zoriontsu"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

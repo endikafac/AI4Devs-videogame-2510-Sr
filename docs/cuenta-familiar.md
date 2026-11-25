@@ -144,3 +144,13 @@ Lista **fija** de 14 intereses (`platform/interests.js`, ids: dinosaurs, space, 
 **Dónde se elige.** Selector de baldosas grandes (1 a 5, se puede omitir) la primera vez que se entra en Lectura; se puede cambiar desde "Para ti" en Lectura, desde Familia ("Mis gustos", por niño) y abriendo `readingCoach-EFC/index.html#gustos`.
 
 **Qué hace con ellos.** Lectura: zona "Para ti" (textos del nivel y libros que coinciden), lista ordenada con los textos de sus gustos primero, dos textos parecidos al terminar uno y, con las últimas lecturas y comprensión del nivel, una propuesta opcional de "un poco más difícil" o "uno más fácil" (nunca notas). Hub, perfil niño: fila "Según tus gustos" con los juegos de la tabla `PlatformInterests.GAME_MAP`.
+
+## 13. Panel "Progreso de los pequeños"
+
+Página `progreso.html` (código en `platform/progress-panel.js`), enlazada desde la pantalla Familia y desde el selector de perfil (este solo con un adulto activo). Para cada niño propio o de una familia en la que se es tutor (`owner`, `edit` o `view`) muestra: días jugados, partidas y minutos de los últimos 7 y 30 días, progreso por juego en palabras (zonas, estrellas, contadores, nunca notas ni rankings), puntos fuertes, "a reforzar", una frase semanal y una sugerencia de qué jugar.
+
+**Privacidad.** Solo lee `users/{owner}/players` (lista), `players/{pid}/games` y las membresías propias. Nunca `users/{uid}`, `users/{uid}/games` (datos del adulto) ni nada de otros adultos. El progreso local solo se lee con clave de niño (`<juego>_<uid>_<pid>`); las claves sin `pid` (progreso del adulto) no se tocan. Lo prueban `tests/unit/progress.test.mjs` y `tests/front/progress.test.mjs` (registro de lecturas en el stub).
+
+**Dato nuevo.** `players/{pid}/games/{game}.daily`: mapa `YYYY-MM-DD` (día local) a `{ games, items, minutes, ok }`, escrito por `PlatformFirestore.updateGameStats` (`_addDaily`), últimos 60 días. También `bestWpm` y `lastWpm` en mecanografía. Reglas: `validDaily` (mapa de como máximo 62 días), mismos escritores (`owner`, `edit`); `view` solo lee. No cambia puntuación ni contenido de ningún juego.
+
+**Qué aporta cada fuente.** Cuenta (cualquier dispositivo): actividad diaria de todos los juegos, partidas, tiempo, nivel de MathMaster, velocidad de mecanografía, palabras sobre acierto. Solo este dispositivo (`localStorage`): lectura (ppm, zona, comprensión, libros), mapas (dominados y fallos), vocabulario, unidades de cálculo, relojes y fracciones, repasos. Tablas de multiplicar y mecanografía guardan su detalle sin clave por niño, así que no se usa. El panel avisa de ello.

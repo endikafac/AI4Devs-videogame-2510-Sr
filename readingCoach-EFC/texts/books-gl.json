@@ -26,6 +26,137 @@
            {"q": "Onde se agocharon os mariñeiros?", "o": ["Debaixo das ovellas", "Dentro dos queixos", "Detrás da rocha"], "a": 0, "ev": "debaixo dunha ovella"},
            {"q": "Que fixeron despois de saír?", "o": ["Correron ata o barco", "Volveron á cova", "Durmiron na praia"], "a": 0, "ev": "Correron ata o barco"}]}
       ]
+    },
+    {
+      "id": "gl-ala",
+      "title": "Aladino e a lámpada máxica",
+      "author": "As mil e unha noites (contado)",
+      "emoji": "🪔",
+      "color": "#7c3aed",
+      "bands": [
+        "b910"
+      ],
+      "topics": [
+        "magic"
+      ],
+      "source": "As mil e unha noites, conto de Aladino (versión europea do século XVIII), dominio público; resumo en capítulos escrito para este xogo",
+      "license": "public-domain (original work); original-project retelling",
+      "retelling": "Contado con palabras propias, sen copiar ningunha tradución moderna. Un falante nativo debe revisalo.",
+      "chapters": [
+        {
+          "id": "gl-ala-1",
+          "title": "O feiticeiro e a cova",
+          "text": "Aladino era un rapaz travieso que vivía cunha nai moi pobre nunha cidade de Oriente. Un día apareceu un home forasteiro que dixo ser o seu tío. En realidade era un feiticeiro malvado. Levou o rapaz a un val deserto e acendeu unha lume. Un chan grande abriuse e deixou ver unha escaleira. «Baixa pola cova», dixo o feiticeiro. «Tráeme unha vella lámpada que hai alí. Toma este anel para protexerte.» Aladino baixou e viu árbores con froitas de pedras preciosas e unha lámpada vella nun nicho. Colleuna e volveu cara á saída. Pero a pedra que cubría a entrada era moi alta, e Aladino non podía subir. «Dáme primeiro a lámpada!», berrou o feiticeiro. Aladino negouse. Entón o feiticeiro, furioso, pechou a cova coa pedra.",
+          "hook": "Entón o feiticeiro, furioso, pechou a cova coa pedra.",
+          "questions": [
+            {
+              "q": "Quen dixo ser o tío de Aladino?",
+              "o": [
+                "Un feiticeiro",
+                "Un rei",
+                "Un mercador"
+              ],
+              "a": 0,
+              "ev": "dixo ser o seu tío"
+            },
+            {
+              "q": "Que debía traer Aladino da cova?",
+              "o": [
+                "Unha vella lámpada",
+                "Un tesouro de ouro",
+                "Unha espada"
+              ],
+              "a": 0,
+              "ev": "unha vella lámpada"
+            },
+            {
+              "q": "Que lle deu o feiticeiro para protexerse?",
+              "o": [
+                "Un anel",
+                "Unha capa",
+                "Un cinto"
+              ],
+              "a": 0,
+              "ev": "Toma este anel"
+            }
+          ]
+        },
+        {
+          "id": "gl-ala-2",
+          "title": "O xenio da lámpada",
+          "text": "Aladino quedou pechado na escuridade. Chorou e rezou, e sen querer fregou o anel entre as mans. De súpeto, apareceu un xenio xigante e dixo: «Son o escravo do anel. Que desexas?» Aladino pediu saír da cova e o xenio levouno ata a súa casa. Alí, a súa nai limpou a lámpada para vendela. Ao fregala, apareceu outro xenio, moito máis poderoso. «Son o escravo da lámpada. Mándame o que queiras.» Aladino non o podía crer. Pediu ouro e comida para a súa nai, e logo, pouco a pouco, fíxose rico. Un día viu pasar a filla do sultán, a princesa Badrulbudur, e namorouse dela. Pediu ao xenio un palacio de cristal e xoias para pedirlle a man. O sultán quedou abraiado e aceptou o casamento.",
+          "hook": "O sultán quedou abraiado e aceptou o casamento.",
+          "questions": [
+            {
+              "q": "Que fregou Aladino na cova?",
+              "o": [
+                "O anel",
+                "A lámpada",
+                "A pedra"
+              ],
+              "a": 0,
+              "ev": "fregou o anel"
+            },
+            {
+              "q": "De quen se namorou Aladino?",
+              "o": [
+                "Da filla do sultán",
+                "Da filla do feiticeiro",
+                "Dunha costureira"
+              ],
+              "a": 0,
+              "ev": "a filla do sultán"
+            },
+            {
+              "q": "Que lle pediu ao xenio para a voda?",
+              "o": [
+                "Un palacio de cristal e xoias",
+                "Un barco",
+                "Un exército"
+              ],
+              "a": 0,
+              "ev": "un palacio de cristal e xoias"
+            }
+          ]
+        },
+        {
+          "id": "gl-ala-3",
+          "title": "O palacio voador",
+          "text": "Un día, o feiticeiro soubo que Aladino seguía vivo e que era moi rico. Disfrazouse de vendedor e foi ao palacio gritando: «Troco lámpadas vellas por lámpadas novas!» A princesa, que non sabía o segredo, deulle a lámpada máxica a cambio dunha nova. O feiticeiro fregouna e ordenou ao xenio levar o palacio, con toda a princesa, a un país afastado. Cando Aladino volveu da caza, o palacio xa non estaba. O sultán, moi enfadado, deulle corenta días para atopalo. Aladino fregou o anel e pediu axuda ao xenio, que o levou ata o lugar. Aladino entrou en segredo e pediulle á princesa que lle dese ao feiticeiro un viño que o durmise. Recuperou a lámpada e o palacio voltou á súa cidade. Aladino e a princesa viviron felices moitos anos.",
+          "questions": [
+            {
+              "q": "Como se disfrazou o feiticeiro?",
+              "o": [
+                "De vendedor",
+                "De soldado",
+                "De cociñeiro"
+              ],
+              "a": 0,
+              "ev": "Disfrazouse de vendedor"
+            },
+            {
+              "q": "Que lle ofreceu a cambio da lámpada vella?",
+              "o": [
+                "Unha lámpada nova",
+                "Un anel de ouro",
+                "Unha alfombra"
+              ],
+              "a": 0,
+              "ev": "por lámpadas novas"
+            },
+            {
+              "q": "Cantos días lle deu o sultán a Aladino?",
+              "o": [
+                "Corenta",
+                "Dez",
+                "Cen"
+              ],
+              "a": 0,
+              "ev": "corenta días"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

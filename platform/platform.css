@@ -640,6 +640,7 @@ html[data-large-text]{font-size:125%}
 .pid-fam-input { width: 100%; box-sizing: border-box; min-height: 48px; padding: 10px 12px; font-size: 1rem; font-family: inherit;
   border-radius: var(--radius-sm); border: 1px solid var(--border-color); background: var(--bg-raised); color: var(--text-primary); }
 .pid-fam-wide { width: 100%; min-height: 48px; margin-top: 12px; }
+a.pid-btn { display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; text-decoration: none; text-align: center; }
 .pid-fam-card { margin: 8px 0; padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--bg-raised); }
 .pid-fam-card p { margin: 0 0 8px; font-size: .92rem; line-height: 1.45; }
 .pid-fam-card .pid-actions { margin-top: 8px; }

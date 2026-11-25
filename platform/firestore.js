@@ -601,7 +601,42 @@ const PlatformFirestore = {
         };
     },
 
+    // ── Daily summary (progress panel, platform/progress-panel.js) ───────────
+    // stats.daily maps a local day 'YYYY-MM-DD' to { games, items, minutes, ok }:
+    // sessions played, answers given, minutes played and correct answers that day.
+    // It lets an adult see how often a child plays without reading anything else.
+    // Only the last DAILY_KEEP days are kept (firestore.rules caps the map at 62).
+
+    DAILY_KEEP: 60,
+
+    /** Pure: local calendar day 'YYYY-MM-DD' of a timestamp (default: now). */
+    dayKey(ms) {
+        const d = new Date(ms == null ? Date.now() : ms);
+        const p = n => (n < 10 ? '0' : '') + n;
+        return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+    },
+    /** Pure: adds one finished game to stats.daily (creates it when missing) and prunes old days. Never throws. */
+    _addDaily(stats, gameResult, now) {
+        const num = (v, max) => { const n = Number(v); return Number.isFinite(n) && n > 0 ? Math.min(n, max) : 0; };
+        if (!stats.daily || typeof stats.daily !== 'object' || Array.isArray(stats.daily)) stats.daily = {};
+        const k = this.dayKey(now);
+        const e = stats.daily[k] && typeof stats.daily[k] === 'object' ? stats.daily[k] : {};
+        const items = num(gameResult.totalAttempts, 10000) || num(gameResult.totalQuestions, 10000);
+        stats.daily[k] = {
+            games:   (Number(e.games) || 0) + 1,
+            items:   (Number(e.items) || 0) + Math.round(items),
+            minutes: Math.round(((Number(e.minutes) || 0) + num(gameResult.elapsedSeconds, 14400) / 60) * 10) / 10,
+            ok:      (Number(e.ok) || 0) + Math.round(Math.min(num(gameResult.correctAnswers, 10000), items))
+        };
+        const days = Object.keys(stats.daily).sort();
+        while (days.length > this.DAILY_KEEP) delete stats.daily[days.shift()];
+    },
+
     _mergeStats(stats, gameResult) {
+        this._addDaily(stats, gameResult);
+        // Typing games report words per minute: keep the best and the last one (progress panel).
+        const wpm = Number(gameResult.wpm);
+        if (Number.isFinite(wpm) && wpm >= 0 && wpm <= 400) { stats.lastWpm = Math.round(wpm); stats.bestWpm = Math.max(Number(stats.bestWpm) || 0, Math.round(wpm)); }
         stats.totalGames++;
         stats.totalCorrect  += gameResult.correctAnswers;
         stats.totalAttempts += gameResult.totalAttempts;

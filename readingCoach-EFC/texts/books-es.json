@@ -80,29 +80,104 @@
       ]
     },
     {
-      "id": "es-pan", "title": "Peter Pan", "author": "J. M. Barrie (recontado)", "emoji": "🧚", "color": "#1d4ed8", "bands": ["b78"], "topics": ["magic"],
-      "source": "J. M. Barrie, Peter and Wendy (1911), dominio público en la mayoría de países (en el Reino Unido rigen derechos especiales a favor de un hospital infantil); resumen en capítulos escrito para este juego",
+      "id": "es-pin",
+      "title": "Pinocho",
+      "author": "Carlo Collodi (recontado)",
+      "emoji": "🪵",
+      "color": "#b45309",
+      "bands": [
+        "b78"
+      ],
+      "topics": [
+        "magic"
+      ],
+      "source": "Carlo Collodi, Las aventuras de Pinocho (1883), dominio público; resumen en capítulos escrito para este juego",
       "license": "public-domain (original work); original-project retelling",
       "retelling": "Recontado con palabras propias, sin copiar ninguna traducción moderna.",
       "chapters": [
-        {"id": "es-pan-1", "title": "La ventana abierta",
-         "text": "En una casa de Londres vivían tres hermanos: Wendy, Juan y Miguel. Cada noche, su madre dejaba la ventana abierta. Una noche entró por ella un niño vestido de hojas, con una pequeña luz que volaba a su lado. Era Peter Pan, y la luz era su amiga, el hada Campanilla. «Venid conmigo al País de Nunca Jamás», dijo Peter. «Allí nadie crece.» Los hermanos no sabían volar. Peter sopló un polvo brillante sobre ellos. De pronto, ¡sus pies se despegaron del suelo!",
-         "hook": "De pronto, ¡sus pies se despegaron del suelo!",
-         "questions": [
-           {"q": "¿Cómo se llamaba el hada?", "o": ["Campanilla", "Wendy", "Margarita"], "a": 0, "ev": "el hada Campanilla"},
-           {"q": "¿A dónde invitó Peter a los hermanos?", "o": ["Al País de Nunca Jamás", "A Londres", "A la luna"], "a": 0, "ev": "Venid conmigo al País de Nunca Jamás"}]},
-        {"id": "es-pan-2", "title": "El País de Nunca Jamás",
-         "text": "Volaron toda la noche, siguiendo la segunda estrella a la derecha. Al amanecer vieron una isla verde, con montañas, playas y una laguna con sirenas. Allí vivían los Niños Perdidos, que jugaban todo el día. Pero en la isla también vivía el capitán Garfio, un pirata con un garfio de hierro en lugar de mano. Garfio odiaba a Peter Pan, porque un cocodrilo le había comido la mano. Desde su barco, Garfio vio a los niños llegar y sonrió con maldad.",
-         "hook": "Desde su barco, Garfio vio a los niños llegar y sonrió con maldad.",
-         "questions": [
-           {"q": "¿Qué tenía el capitán Garfio en lugar de mano?", "o": ["Un garfio de hierro", "Una espada", "Un loro"], "a": 0, "ev": "un garfio de hierro en lugar de mano"},
-           {"q": "¿Quiénes jugaban todo el día en la isla?", "o": ["Los Niños Perdidos", "Los piratas", "Las sirenas"], "a": 0, "ev": "los Niños Perdidos, que jugaban todo el día"}]},
-        {"id": "es-pan-3", "title": "Wendy y el pirata",
-         "text": "Esa noche, Garfio capturó a Wendy y a sus hermanos y los llevó a su barco. Pero Peter Pan llegó volando y empezó una gran pelea de espadas. Campanilla ayudó con su luz. Peter venció al capitán, que cayó al mar, donde el cocodrilo lo esperaba con la boca abierta. Los niños, felices, volvieron volando a Londres. Su madre los abrazó con lágrimas de alegría, y la ventana siguió abierta por si Peter volvía.",
-         "hook": "",
-         "questions": [
-           {"q": "¿Quién esperaba a Garfio en el mar?", "o": ["El cocodrilo", "Una ballena", "Un tiburón"], "a": 0, "ev": "el cocodrilo lo esperaba con la boca abierta"},
-           {"q": "¿Qué hizo la madre al ver a sus hijos?", "o": ["Los abrazó", "Los regañó", "Se desmayó"], "a": 0, "ev": "Su madre los abrazó"}]}
+        {
+          "id": "es-pin-1",
+          "title": "El trozo de madera",
+          "text": "Geppetto era un carpintero muy pobre y muy bueno. Un día talló un muñeco de madera y le puso de nombre Pinocho. Apenas terminó de tallarlo, ¡el muñeco empezó a moverse! Pinocho echó a correr por la calle y todos le miraron asombrados. Un grillo muy sabio le dijo: «Hazme caso, niño, y ve a la escuela.» Pinocho no quiso escuchar y se rió del grillo. Aquella tarde llegó a la plaza un teatro de marionetas, y Pinocho vio su gran ocasión.",
+          "hook": "Aquella tarde llegó a la plaza un teatro de marionetas, y Pinocho vio su gran ocasión.",
+          "questions": [
+            {
+              "q": "¿Qué oficio tenía Geppetto?",
+              "o": [
+                "Carpintero",
+                "Pescador",
+                "Panadero"
+              ],
+              "a": 0,
+              "ev": "Geppetto era un carpintero"
+            },
+            {
+              "q": "¿Quién aconsejó a Pinocho que fuera a la escuela?",
+              "o": [
+                "Un grillo",
+                "Un gato",
+                "Una zorra"
+              ],
+              "a": 0,
+              "ev": "Un grillo muy sabio"
+            }
+          ]
+        },
+        {
+          "id": "es-pin-2",
+          "title": "El teatro de marionetas",
+          "text": "Pinocho vendió su libro de la escuela para comprar una entrada. En el teatro, las marionetas lo reconocieron y gritaron de alegría. El dueño, un hombre barbudo y gruñón, quiso quemarlo para cocinar su cena. Pero cuando Pinocho le contó su historia, el hombre se compadeció y le regaló cinco monedas de oro. Por el camino, un gato y una zorra le dijeron: «Si entierras las monedas en un campo, mañana nacerá un árbol lleno de dinero.» Pinocho se fue con ellos muy contento.",
+          "hook": "Pinocho se fue con ellos muy contento.",
+          "questions": [
+            {
+              "q": "¿Qué vendió Pinocho para comprar la entrada?",
+              "o": [
+                "Su libro de la escuela",
+                "Su sombrero",
+                "Su cama"
+              ],
+              "a": 0,
+              "ev": "vendió su libro de la escuela"
+            },
+            {
+              "q": "¿Cuántas monedas de oro le regaló el dueño del teatro?",
+              "o": [
+                "Cinco",
+                "Diez",
+                "Una"
+              ],
+              "a": 0,
+              "ev": "cinco monedas de oro"
+            }
+          ]
+        },
+        {
+          "id": "es-pin-3",
+          "title": "La nariz que crecía",
+          "text": "El gato y la zorra eran unos tramposos y robaron las monedas a Pinocho. El pobre muñeco volvió a casa triste. Un hada de pelo azul lo ayudó, pero le avisó: «Cada vez que mientas, tu nariz crecerá.» Pinocho mintió y su nariz se hizo larguísima. Aprendió la lección. Más tarde, supo que Geppetto se había perdido en el mar dentro de un pez enorme. Pinocho se lanzó al agua, lo salvó y, por ser tan valiente y sincero, el hada lo convirtió en un niño de verdad.",
+          "questions": [
+            {
+              "q": "¿Qué pasaba cuando Pinocho mentía?",
+              "o": [
+                "Su nariz crecía",
+                "Su pelo se volvía azul",
+                "Se quedaba dormido"
+              ],
+              "a": 0,
+              "ev": "tu nariz crecerá"
+            },
+            {
+              "q": "¿Dónde se había perdido Geppetto?",
+              "o": [
+                "En el mar",
+                "En el bosque",
+                "En la montaña"
+              ],
+              "a": 0,
+              "ev": "se había perdido en el mar"
+            }
+          ]
+        }
       ]
     },
     {
@@ -238,6 +313,515 @@
            {"q": "¿Qué trabajo aprendió Lázaro con el capellán?", "o": ["Vender agua por la ciudad", "Fabricar espadas", "Cuidar caballos"], "a": 0, "ev": "vender agua por la ciudad"},
            {"q": "¿Qué empleo le dio dinero y fama?", "o": ["Pregonero", "Escudero", "Pintor"], "a": 0, "ev": "un puesto de pregonero"},
            {"q": "¿Qué decidió hacer Lázaro ante los chismes?", "o": ["No escucharlos", "Pelearse con todos", "Irse a otra ciudad"], "a": 0, "ev": "yo prefería no escuchar los chismes"}]}
+      ]
+    },
+    {
+      "id": "es-bas",
+      "title": "El sabueso de los Baskerville",
+      "author": "Arthur Conan Doyle (recontado)",
+      "emoji": "🐕",
+      "color": "#475569",
+      "bands": [
+        "b1112"
+      ],
+      "topics": [
+        "mystery"
+      ],
+      "source": "Arthur Conan Doyle, El sabueso de los Baskerville (1902), dominio público; resumen en capítulos escrito para este juego",
+      "license": "public-domain (original work); original-project retelling",
+      "retelling": "Recontado con palabras propias, sin copiar ninguna traducción moderna.",
+      "chapters": [
+        {
+          "id": "es-bas-1",
+          "title": "La leyenda del páramo",
+          "text": "Una mañana de lluvia, un médico llamado Mortimer visitó al famoso detective Sherlock Holmes y a su amigo el doctor Watson. Traía un manuscrito muy antiguo. Contaba que, hacía siglos, un señor cruel de la familia Baskerville había muerto en el páramo, destrozado por un enorme perro negro de ojos de fuego. Desde entonces, decían los vecinos, la maldición perseguía a la familia. «Hace poco murió sir Charles Baskerville», explicó el doctor. «Lo encontré tendido en un sendero, sin una sola herida y con el rostro helado de miedo. Y junto a su cuerpo vi unas huellas enormes, de un animal.» Holmes escuchaba con los ojos entrecerrados, como hacía siempre que algo le intrigaba. Mortimer añadió que el heredero, sir Henry, llegaría pronto de América y temía por su vida. Holmes se levantó de un salto, cogió su pipa y se quedó mirando por la ventana. Los hechos le parecían raros, pero él no creía en maldiciones ni en monstruos. Pensaba que detrás de todo había una mano humana. Sin embargo, no podía ir al páramo enseguida, porque tenía otro caso urgente en Londres. Watson, que conocía bien a su amigo, notó que le brillaban los ojos. En Baker Street, el humo de la pipa llenaba el salón mientras el reloj marcaba las horas. Holmes pidió al doctor que repitiera cada detalle: la hora, el camino, el tamaño de las huellas y hasta el tiempo que hacía aquella noche. Cada dato podía ser una pista importante. Miró a su amigo y dijo algo que le inquietó.",
+          "hook": "Miró a su amigo y dijo algo que le inquietó.",
+          "questions": [
+            {
+              "q": "¿Quién visitó a Sherlock Holmes?",
+              "o": [
+                "El doctor Mortimer",
+                "Un policía",
+                "Un marinero"
+              ],
+              "a": 0,
+              "ev": "un médico llamado Mortimer"
+            },
+            {
+              "q": "¿Qué vio el doctor junto al cuerpo de sir Charles?",
+              "o": [
+                "Unas huellas enormes",
+                "Una carta",
+                "Un reloj roto"
+              ],
+              "a": 0,
+              "ev": "unas huellas enormes"
+            },
+            {
+              "q": "¿Qué pensaba Holmes de la maldición?",
+              "o": [
+                "Que detrás había una mano humana",
+                "Que era verdad",
+                "Que no importaba"
+              ],
+              "a": 0,
+              "ev": "detrás de todo había una mano humana"
+            }
+          ]
+        },
+        {
+          "id": "es-bas-2",
+          "title": "La mansión de Baskerville",
+          "text": "«Watson, usted irá con sir Henry al páramo», dijo Holmes. «Será mis ojos y mis oídos. Escríbame todos los días.» Así que Watson viajó con el joven heredero hasta la mansión de los Baskerville, un caserón antiguo rodeado de niebla y de campos desiertos. El mayordomo, un hombre serio llamado Barrymore, los recibió con una reverencia. Por las noches, Watson oía a alguien llorar en la casa. Una madrugada vio a Barrymore en una ventana, con una vela, moviéndola en dirección al páramo. ¿Hacía señales a alguien? Además, en los pantanos vivía un preso peligroso que se había escapado de la cárcel. Watson caminó una tarde hasta el borde de la zona más húmeda. El suelo parecía verde y firme, pero era un barrizal traicionero. Un vecino naturalista, el señor Stapleton, que cazaba mariposas con una red, le advirtió: «Si pisa ahí, el fango se lo traga. Se ha llevado a muchos ponis.» Sir Henry, aunque era valiente, no podía evitar mirar con desconfianza cada sombra. Los criados hablaban en voz baja y los cuadros de los antepasados parecían seguirlos con la mirada. Watson anotó todo en su cuaderno para enviárselo a Holmes: los pasos en el pasillo, la vela, el preso y el extraño aullido. Esa misma noche, mientras Watson miraba el páramo desde su cuarto, llegó desde la oscuridad un aullido largo y lúgubre.",
+          "hook": "Esa misma noche, mientras Watson miraba el páramo desde su cuarto, llegó desde la oscuridad un aullido largo y lúgubre.",
+          "questions": [
+            {
+              "q": "¿A quién acompañó Watson hasta la mansión?",
+              "o": [
+                "A sir Henry",
+                "A Mortimer",
+                "A Stapleton"
+              ],
+              "a": 0,
+              "ev": "viajó con el joven heredero"
+            },
+            {
+              "q": "¿Qué hacía Barrymore con una vela?",
+              "o": [
+                "La movía hacia el páramo",
+                "La apagaba",
+                "La escondía"
+              ],
+              "a": 0,
+              "ev": "moviéndola en dirección al páramo"
+            },
+            {
+              "q": "¿A qué se dedicaba el señor Stapleton?",
+              "o": [
+                "A cazar mariposas",
+                "A pescar",
+                "A vender caballos"
+              ],
+              "a": 0,
+              "ev": "cazaba mariposas con una red"
+            }
+          ]
+        },
+        {
+          "id": "es-bas-3",
+          "title": "La figura sobre la roca",
+          "text": "Al día siguiente, Watson y sir Henry descubrieron que Barrymore hacía señales al preso fugado, que era hermano de su esposa. Barrymore les suplicó que no lo delataran, porque solo quería darle comida y ayudarlo a huir en barco. Los dos hombres aceptaron, pero seguían sin saber quién o qué aullaba en el páramo. Una noche, Watson salió con su linterna y se acercó a una antigua cabaña de piedra. Allí encontró una cama de mantas, latas de comida y una nota con su propio nombre. Alguien lo espiaba. Se escondió y esperó, con el corazón latiéndole muy fuerte. Entonces oyó unos pasos que se acercaban despacio. Se asomó a la puerta y vio, bajo la luna, una silueta alta y delgada, de pie sobre una roca. Aquel hombre no se movía. Parecía vigilar el camino. Watson, con el revólver en la mano, avanzó hacia él. Mientras volvía hacia la mansión, Watson repasó lo que sabía. Había huellas, señales, cartas y una cabaña misteriosa, pero ninguna explicación para el perro. Esa noche apenas durmió, porque el viento hacía crujir las ventanas y, a lo lejos, volvió a oír el eco de los aullidos. De pronto, el desconocido se volvió y le habló con una voz que Watson conocía muy bien.",
+          "hook": "De pronto, el desconocido se volvió y le habló con una voz que Watson conocía muy bien.",
+          "questions": [
+            {
+              "q": "¿Quién era el preso fugado?",
+              "o": [
+                "El hermano de la esposa de Barrymore",
+                "Un vecino del pueblo",
+                "Un criado de Stapleton"
+              ],
+              "a": 0,
+              "ev": "hermano de su esposa"
+            },
+            {
+              "q": "¿Qué encontró Watson en la cabaña de piedra?",
+              "o": [
+                "Una cama de mantas y latas de comida",
+                "Un tesoro",
+                "Un mapa roto"
+              ],
+              "a": 0,
+              "ev": "una cama de mantas"
+            },
+            {
+              "q": "¿Dónde estaba la silueta alta y delgada?",
+              "o": [
+                "Sobre una roca",
+                "En un tejado",
+                "Dentro de un coche"
+              ],
+              "a": 0,
+              "ev": "de pie sobre una roca"
+            }
+          ]
+        },
+        {
+          "id": "es-bas-4",
+          "title": "El perro de fuego",
+          "text": "Era Sherlock Holmes. No se había quedado en Londres: llevaba días escondido en la cabaña para observar sin ser visto. «Querido Watson, el misterio ya casi está resuelto», dijo. El culpable era Stapleton. Quería quedarse con la fortuna de los Baskerville y había preparado un perro enorme, pintado con una sustancia brillante para que pareciera de fuego, y lo usaba para aterrorizar a sus víctimas. Holmes ideó un plan. Dejó que sir Henry cruzara solo el páramo, de noche, con él y Watson escondidos entre las rocas. De la niebla surgió la bestia, de ojos ardientes y colmillos enormes. Se lanzó sobre sir Henry, pero Holmes disparó y el animal cayó al suelo. Sir Henry se salvó por poco. Stapleton huyó hacia el pantano para ocultarse, pero la niebla lo confundió y se perdió. Nadie volvió a verlo. Los vecinos respiraron tranquilos, y sir Henry pudo vivir en la mansión sin miedo. «Ninguna maldición, Watson», concluyó Holmes. «Solo un hombre listo, con una mala idea. Por eso hay que pensar siempre con la cabeza fría.» Sir Henry abrazó a sus dos amigos y les dio las gracias una y otra vez. Después, Holmes explicó a Watson cómo había atado los cabos: la nota, la bota robada, las huellas y el perro. Todo encajaba. Los tres regresaron a la mansión al amanecer, cansados, pero felices de haber resuelto el caso.",
+          "questions": [
+            {
+              "q": "¿Quién era el culpable del misterio?",
+              "o": [
+                "Stapleton",
+                "Barrymore",
+                "El doctor Mortimer"
+              ],
+              "a": 0,
+              "ev": "El culpable era Stapleton"
+            },
+            {
+              "q": "¿Por qué el perro parecía de fuego?",
+              "o": [
+                "Estaba pintado con una sustancia brillante",
+                "Tenía un collar de fuego",
+                "Salía de un volcán"
+              ],
+              "a": 0,
+              "ev": "pintado con una sustancia brillante"
+            },
+            {
+              "q": "¿Dónde se había escondido Holmes?",
+              "o": [
+                "En la cabaña",
+                "En la mansión",
+                "En Londres"
+              ],
+              "a": 0,
+              "ev": "escondido en la cabaña"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "es-san",
+      "title": "Sandokan, el tigre de Malasia",
+      "author": "Emilio Salgari (recontado)",
+      "emoji": "🐯",
+      "color": "#0f766e",
+      "bands": [
+        "b1112"
+      ],
+      "topics": [
+        "pirates",
+        "nature"
+      ],
+      "source": "Emilio Salgari, Los tigres de Mompracem (1900), dominio público; resumen en capítulos escrito para este juego",
+      "license": "public-domain (original work); original-project retelling",
+      "retelling": "Recontado con palabras propias, sin copiar ninguna traducción moderna.",
+      "chapters": [
+        {
+          "id": "es-san-1",
+          "title": "La isla de Mompracem",
+          "text": "En medio de los mares de Malasia, entre selvas y tormentas, se alzaba la isla de Mompracem, guarida de los piratas más temidos de Oriente. Su jefe era Sandokan, al que todos llamaban el Tigre de Malasia. Era alto, de mirada fiera, y tan valiente que ningún barco inglés se atrevía a cruzar sus aguas. Odiaba a los ingleses porque, años atrás, habían destruido su reino y matado a su familia. Su mejor amigo era Yáñez, un portugués sereno y astuto, que siempre encontraba una solución a los peores problemas. Una noche de tormenta, Sandokan paseaba por la playa con el viento desordenándole el pelo. Los truenos retumbaban sobre el mar. Un viejo marinero llegó corriendo y le habló de una joven de ojos azules que vivía en la isla de Labuán, tan bella que la llamaban la Perla de Labuán. Sandokan, que nunca se había enamorado, escuchó atentamente. Después ordenó a sus hombres preparar los barcos más rápidos. Yáñez lo miró con sorpresa, pero comprendió que no podría detenerlo. Mompracem tenía una playa de arena blanca, un fuerte de piedra y una flota de veloces barcos. Los piratas, tostados por el sol, afilaban sus sables y cantaban canciones de mar alrededor de las hogueras. Todos obedecían a Sandokan sin dudar, porque sabían que nunca los abandonaría en el peligro. Aquella misma madrugada zarparon hacia el misterioso lugar.",
+          "hook": "Aquella misma madrugada zarparon hacia el misterioso lugar.",
+          "questions": [
+            {
+              "q": "¿Cómo llamaban a Sandokan?",
+              "o": [
+                "El Tigre de Malasia",
+                "El Rey del Mar",
+                "El Lobo Negro"
+              ],
+              "a": 0,
+              "ev": "el Tigre de Malasia"
+            },
+            {
+              "q": "¿Cómo era Yáñez?",
+              "o": [
+                "Sereno y astuto",
+                "Cruel y torpe",
+                "Tímido y callado"
+              ],
+              "a": 0,
+              "ev": "un portugués sereno y astuto"
+            },
+            {
+              "q": "¿Cómo llamaban a la joven de Labuán?",
+              "o": [
+                "La Perla de Labuán",
+                "La Reina de Oriente",
+                "La Flor del Mar"
+              ],
+              "a": 0,
+              "ev": "la Perla de Labuán"
+            }
+          ]
+        },
+        {
+          "id": "es-san-2",
+          "title": "La Perla de Labuán",
+          "text": "Sandokan y Yáñez desembarcaron de noche en Labuán y avanzaron por la selva. Entre los árboles descubrieron una gran casa rodeada de jardines. Allí vivía lord Guillonk, un gobernador inglés, con su sobrina Marianna, la joven de ojos azules. Sandokan se acercó sin hacer ruido y la vio tocando el piano junto a una ventana. Se quedó clavado en el sitio, sin respirar. Marianna, al darse cuenta, no gritó. Lo miró con curiosidad, y en sus ojos no había miedo. Sandokan, que había cruzado tormentas sin pestañear, se sintió tembloroso. De pronto, unos soldados ingleses lo descubrieron y le dispararon. Una bala lo hirió en el pecho. Sandokan cayó entre las ramas, pero Yáñez lo cargó sobre sus hombros y lo sacó de allí. En la selva, entre fiebres, Sandokan solo murmuraba un nombre. Durante la noche, la selva estaba llena de ruidos: monos que chillaban, pájaros que despertaban y serpientes que se deslizaban entre las hojas. Yáñez cuidó a su amigo con hierbas y agua fresca, y no se separó de su lado hasta que desapareció la fiebre. Cuando se recuperó, decidió volver a entrar en la casa, esta vez disfrazado, para ver otra vez a Marianna y saber qué sentía ella.",
+          "hook": "Cuando se recuperó, decidió volver a entrar en la casa, esta vez disfrazado, para ver otra vez a Marianna y saber qué sentía ella.",
+          "questions": [
+            {
+              "q": "¿Con quién vivía Marianna?",
+              "o": [
+                "Con su tío, lord Guillonk",
+                "Con unos piratas",
+                "Con su madre"
+              ],
+              "a": 0,
+              "ev": "su sobrina Marianna"
+            },
+            {
+              "q": "¿Qué hacía Marianna cuando Sandokan la vio?",
+              "o": [
+                "Tocaba el piano",
+                "Leía un libro",
+                "Dormía"
+              ],
+              "a": 0,
+              "ev": "tocando el piano"
+            },
+            {
+              "q": "¿Quién sacó a Sandokan herido de la selva?",
+              "o": [
+                "Yáñez",
+                "Lord Guillonk",
+                "Marianna"
+              ],
+              "a": 0,
+              "ev": "Yáñez lo cargó sobre sus hombros"
+            }
+          ]
+        },
+        {
+          "id": "es-san-3",
+          "title": "El pirata disfrazado",
+          "text": "Con la ropa de un viajero rico, Sandokan se presentó ante lord Guillonk y se hizo pasar por un príncipe de tierras lejanas. El gobernador, sin sospechar nada, lo invitó a cenar. Marianna lo reconoció al instante, pero guardó silencio. Cuando se quedaron un momento a solas, ella le dijo en voz baja: «Sé quién eres. Eres el pirata que odia mi bandera.» Sandokan no negó nada. Le contó su historia, su reino perdido y su larga venganza. Marianna lo escuchó con atención, y poco a poco dejó de verlo como un enemigo. Los días siguientes, los dos pasearon por el jardín, y Sandokan, el hombre que no temía a nadie, descubrió que tenía miedo de perderla. Pero lord Guillonk acabó descubriendo la verdad por una carta interceptada. Montó en cólera y mandó llamar a toda la guarnición. Cada noche, tras la cena, Sandokan y Marianna hablaban del mar, de las estrellas y de los países lejanos. Ella nunca había conocido a nadie tan valiente y, al mismo tiempo, tan amable. Sandokan, por su parte, cada vez tenía menos ganas de volver a Mompracem. En pocos minutos, soldados armados rodearon la casa mientras Sandokan, tranquilo, apretaba la empuñadura de su espada y miraba hacia la puerta.",
+          "hook": "En pocos minutos, soldados armados rodearon la casa mientras Sandokan, tranquilo, apretaba la empuñadura de su espada y miraba hacia la puerta.",
+          "questions": [
+            {
+              "q": "¿Por quién se hizo pasar Sandokan?",
+              "o": [
+                "Por un príncipe de tierras lejanas",
+                "Por un soldado",
+                "Por un criado"
+              ],
+              "a": 0,
+              "ev": "un príncipe de tierras lejanas"
+            },
+            {
+              "q": "¿Qué hizo Marianna cuando lo reconoció?",
+              "o": [
+                "Guardó silencio",
+                "Gritó pidiendo ayuda",
+                "Se desmayó"
+              ],
+              "a": 0,
+              "ev": "pero guardó silencio"
+            },
+            {
+              "q": "¿Cómo descubrió la verdad lord Guillonk?",
+              "o": [
+                "Por una carta interceptada",
+                "Por un soldado",
+                "Por un sueño"
+              ],
+              "a": 0,
+              "ev": "una carta interceptada"
+            }
+          ]
+        },
+        {
+          "id": "es-san-4",
+          "title": "La huida al mar",
+          "text": "Sandokan abrió la puerta de una patada y se abrió camino entre los soldados con su espada. Yáñez lo esperaba fuera con un grupo de piratas escondidos entre los árboles. Juntos corrieron hasta la playa y subieron a la barca. Marianna, que había decidido seguir a Sandokan, subió con ellos. Los ingleses dispararon desde la orilla, pero la oscuridad los protegió. En alta mar, Sandokan subió a su velero y puso rumbo a Mompracem. Sin embargo, la flota inglesa, más numerosa, los persiguió durante días. Hubo una gran batalla entre cañones y velas rotas. Los piratas lucharon con tanto coraje que los ingleses tuvieron que retirarse, aunque Sandokan perdió muchos de sus barcos. En la cubierta, entre humo y madera quemada, miró a Marianna. «He perdido casi todo», le dijo, «pero te he encontrado a ti.» Y así, el Tigre de Malasia, que había conocido solo la guerra, descubrió por fin lo que era sentirse en paz. Yáñez, que había visto muchas batallas, ayudó a Sandokan a reparar los barcos que quedaban. La tripulación cantó, rió y brindó con agua de coco por la victoria. Y desde aquel día, cada vez que miraban el horizonte, sabían que el Tigre de Malasia seguiría velando por todos ellos.",
+          "questions": [
+            {
+              "q": "¿Quién esperaba a Sandokan fuera de la casa?",
+              "o": [
+                "Yáñez y un grupo de piratas",
+                "Lord Guillonk",
+                "Un barco inglés"
+              ],
+              "a": 0,
+              "ev": "Yáñez lo esperaba fuera"
+            },
+            {
+              "q": "¿Hacia dónde puso rumbo Sandokan?",
+              "o": [
+                "Hacia Mompracem",
+                "Hacia Londres",
+                "Hacia África"
+              ],
+              "a": 0,
+              "ev": "puso rumbo a Mompracem"
+            },
+            {
+              "q": "¿Qué había perdido Sandokan en la batalla?",
+              "o": [
+                "Muchos de sus barcos",
+                "Su espada",
+                "Su isla"
+              ],
+              "a": 0,
+              "ev": "perdió muchos de sus barcos"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "es-ody",
+      "title": "Ulises vuelve a casa",
+      "author": "Homero (recontado)",
+      "emoji": "⛵",
+      "color": "#1d4ed8",
+      "bands": [
+        "b1112"
+      ],
+      "topics": [
+        "magic",
+        "nature"
+      ],
+      "source": "Homero, la Odisea (siglo VIII a. C.), dominio público; resumen en capítulos escrito para este juego",
+      "license": "public-domain (original work); original-project retelling",
+      "retelling": "Recontado con palabras propias, sin copiar ninguna traducción moderna.",
+      "chapters": [
+        {
+          "id": "es-ody-1",
+          "title": "El gigante de un solo ojo",
+          "text": "Tras diez años de guerra en la ciudad de Troya, el rey Ulises quiso volver a su isla, Ítaca, donde lo esperaban su esposa Penélope y su hijo Telémaco. Pero los dioses del mar le pusieron muchos obstáculos. Después de varios días de viaje, él y sus hombres llegaron a una isla desconocida y entraron en una cueva enorme llena de quesos y corderos. De pronto, la tierra tembló. Era Polifemo, un cíclope gigante con un solo ojo en medio de la frente. Cerró la entrada con una roca inmensa y se comió a dos marineros. Ulises, atrapado, pensó en un plan. Le ofreció vino al gigante y, cuando este le preguntó su nombre, respondió: «Me llamo Nadie.» El cíclope, borracho, se durmió. Entonces Ulises y sus hombres afilaron un tronco, lo calentaron al fuego y se lo clavaron en el ojo. Polifemo aulló de dolor. Sus vecinos preguntaron desde fuera qué ocurría, y él gritó: «¡Nadie me hace daño!» Los vecinos se marcharon pensando que no pasaba nada, pero la roca de la entrada seguía cerrada. Los marineros estaban aterrados, porque el gigante era tan alto como una montaña y tenía una voz que hacía temblar las paredes. Ulises, sin embargo, mantuvo la calma. Sabía que no podían matarlo, porque nadie más podría mover la roca de la entrada. ¿Cómo iban a salir de allí?",
+          "hook": "¿Cómo iban a salir de allí?",
+          "questions": [
+            {
+              "q": "¿Cómo se llamaba el cíclope?",
+              "o": [
+                "Polifemo",
+                "Poseidón",
+                "Telémaco"
+              ],
+              "a": 0,
+              "ev": "Era Polifemo"
+            },
+            {
+              "q": "¿Qué nombre dio Ulises al gigante?",
+              "o": [
+                "Nadie",
+                "Ulises",
+                "Troya"
+              ],
+              "a": 0,
+              "ev": "Me llamo Nadie"
+            },
+            {
+              "q": "¿Dónde esperaban a Ulises su esposa y su hijo?",
+              "o": [
+                "En Ítaca",
+                "En Troya",
+                "En una cueva"
+              ],
+              "a": 0,
+              "ev": "su isla, Ítaca"
+            }
+          ]
+        },
+        {
+          "id": "es-ody-2",
+          "title": "El canto de las sirenas",
+          "text": "A la mañana siguiente, Polifemo abrió la cueva para dejar salir a las ovejas. Ulises y sus hombres se agarraron a la barriga de los animales y escaparon sin que el gigante los notara. Navegaron muchos días y llegaron a la isla de Circe, una hechicera que convertía a los hombres en cerdos. Con la ayuda del dios Hermes, Ulises la venció y la obligó a devolver a sus compañeros su forma humana. Circe, agradecida, les dio un consejo para el viaje: «Pronto pasaréis cerca de las sirenas. Su canto es tan hermoso que hace olvidar el camino y estrella los barcos contra las rocas.» Ulises mandó a sus marineros taparse los oídos con cera. Él quiso escuchar el canto, así que se hizo atar con cuerdas al palo mayor. Cuando el barco se acercó, las voces dulces llenaron el aire. Ulises gritó que lo soltaran, pero nadie lo oyó. El barco pasó de largo y el peligro quedó atrás. Durante un año entero, Ulises y sus hombres descansaron en el palacio de Circe, comieron manjares y durmieron en camas blandas. Pero un día los marineros le recordaron a su jefe que Ítaca seguía esperándolos, y decidieron continuar el viaje cuanto antes. Sin embargo, delante de ellos, una nueva amenaza oscurecía el mar.",
+          "hook": "Sin embargo, delante de ellos, una nueva amenaza oscurecía el mar.",
+          "questions": [
+            {
+              "q": "¿Cómo escaparon de la cueva?",
+              "o": [
+                "Agarrados a la barriga de las ovejas",
+                "Rompiendo la roca",
+                "Por un túnel"
+              ],
+              "a": 0,
+              "ev": "se agarraron a la barriga de los animales"
+            },
+            {
+              "q": "¿Qué hacía Circe con los hombres?",
+              "o": [
+                "Los convertía en cerdos",
+                "Los dormía",
+                "Los hacía invisibles"
+              ],
+              "a": 0,
+              "ev": "convertía a los hombres en cerdos"
+            },
+            {
+              "q": "¿Cómo se protegieron los marineros del canto?",
+              "o": [
+                "Con cera en los oídos",
+                "Con gorros",
+                "Con música"
+              ],
+              "a": 0,
+              "ev": "taparse los oídos con cera"
+            }
+          ]
+        },
+        {
+          "id": "es-ody-3",
+          "title": "El remolino y el monstruo",
+          "text": "La amenaza era un estrecho de mar muy angosto. A un lado vivía Escila, un monstruo de seis cabezas que atrapaba marineros desde la roca. Al otro, un remolino gigante llamado Caribdis que se tragaba los barcos enteros. Ulises decidió pasar cerca de Escila, porque era mejor perder a seis hombres que a todos. Fue una decisión durísima, y los marineros que perdió lo acompañaron para siempre en su recuerdo. Después arribaron a la isla del Sol, donde pastaban las vacas sagradas del dios. Ulises les advirtió: «No toquéis a los animales.» Pero los marineros, muertos de hambre, mataron a algunos. Zeus, furioso, lanzó un rayo y hundió el barco. Solo Ulises se salvó, agarrado a un trozo de madera. Las olas lo llevaron durante nueve días hasta la isla de la ninfa Calipso. Ella lo cuidó y lo retuvo siete años a su lado, ofreciéndole la vida eterna. Ulises recordó entonces a sus compañeros caídos, a Penélope y a Telémaco, y se prometió que no se rendiría jamás. Cada noche miraba las estrellas, tal como hacían los marineros para guiarse, y se decía que algún día volvería a pisar su tierra. Pero Ulises, cada día, se sentaba en la orilla y miraba el mar, con los ojos llenos de lágrimas, soñando con Ítaca.",
+          "hook": "Pero Ulises, cada día, se sentaba en la orilla y miraba el mar, con los ojos llenos de lágrimas, soñando con Ítaca.",
+          "questions": [
+            {
+              "q": "¿Cuántas cabezas tenía Escila?",
+              "o": [
+                "Seis",
+                "Tres",
+                "Una"
+              ],
+              "a": 0,
+              "ev": "un monstruo de seis cabezas"
+            },
+            {
+              "q": "¿Quién hundió el barco con un rayo?",
+              "o": [
+                "Zeus",
+                "Circe",
+                "Polifemo"
+              ],
+              "a": 0,
+              "ev": "Zeus, furioso, lanzó un rayo"
+            },
+            {
+              "q": "¿Cuántos años retuvo Calipso a Ulises?",
+              "o": [
+                "Siete",
+                "Diez",
+                "Nueve"
+              ],
+              "a": 0,
+              "ev": "siete años"
+            }
+          ]
+        },
+        {
+          "id": "es-ody-4",
+          "title": "El arco de Ítaca",
+          "text": "Por fin los dioses se apiadaron de Ulises y Calipso lo dejó marchar. Construyó una balsa y, tras otra tormenta, llegó a la costa de Ítaca. La diosa Atenea le cambió el aspecto y lo convirtió en un viejo mendigo, para que nadie lo reconociera. Así descubrió que, en su palacio, decenas de hombres vivían a costa suya. Querían casarse con Penélope y quedarse con el reino. Ella los engañaba desde hacía años, diciendo que elegiría marido cuando terminara de tejer una tela, pero cada noche deshacía lo tejido. Ulises se presentó ante todos con su disfraz. Penélope propuso un reto: se casaría con quien tensara el arco de Ulises y disparara una flecha a través de doce anillos. Ninguno pudo ni doblarlo. El mendigo pidió probar. Los hombres se rieron, pero él tensó el arco sin esfuerzo y la flecha atravesó los doce anillos. Entonces se quitó los harapos y mostró quién era. Penélope lo abrazó, y el largo viaje de Ulises terminó por fin. Telémaco, que había crecido durante los veinte años de ausencia de su padre, ayudó a Ulises a recuperar el palacio. Los pretendientes huyeron o fueron castigados. El pueblo de Ítaca celebró con fiestas la vuelta de su rey, y se cuenta que Penélope y Ulises hablaron toda la noche, contándose todo lo vivido.",
+          "questions": [
+            {
+              "q": "¿En qué convirtió Atenea a Ulises?",
+              "o": [
+                "En un viejo mendigo",
+                "En un águila",
+                "En un rey joven"
+              ],
+              "a": 0,
+              "ev": "un viejo mendigo"
+            },
+            {
+              "q": "¿Qué hacía Penélope cada noche con la tela?",
+              "o": [
+                "La deshacía",
+                "La vendía",
+                "La escondía"
+              ],
+              "a": 0,
+              "ev": "deshacía lo tejido"
+            },
+            {
+              "q": "¿Cuántos anillos atravesó la flecha?",
+              "o": [
+                "Doce",
+                "Cinco",
+                "Veinte"
+              ],
+              "a": 0,
+              "ev": "doce anillos"
+            }
+          ]
+        }
       ]
     }
   ]

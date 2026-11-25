@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="robots" content="noindex">
+    <title>Progreso de los pequeños · Games Hub</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <link rel="stylesheet" href="platform/platform.css">
+    <link rel="stylesheet" href="styles.css">
+    <link href="fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<main id="main-content" class="pg-wrap" tabindex="-1"></main>
+
+<script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore-compat.js"></script>
+<script src="platform/firebase-config.js"></script>
+<script src="platform/i18n-platform.js"></script>
+<script src="platform/auth.js"></script>
+<script src="platform/firestore.js"></script>
+<script src="platform/identity.js"></script>
+<script src="platform/platform-header.js"></script>
+<script src="platform/progress-panel.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    PlatformHeader.init({ gameName: '', gameIcon: '', rootPath: '' });
+    PlatformProgress.mountPage(document.getElementById('main-content'), { rootPath: '' });
+});
+</script>
+<script src="platform/register-sw.js"></script>
+</body>
+</html>

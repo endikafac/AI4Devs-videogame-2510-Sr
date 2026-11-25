@@ -117,6 +117,7 @@ const PlatformProfiles = {
             '.pp-foot{display:flex;flex-direction:column;gap:10px;width:100%;max-width:420px}',
             '.pp-btn{min-height:56px;padding:12px 18px;border-radius:14px;border:2px solid #64748b;background:transparent;color:#f1f5f9;font:inherit;font-size:1.05rem;cursor:pointer}',
             '.pp-btn:hover{background:rgba(255,255,255,.1)}',
+            'a.pp-btn{display:flex;align-items:center;justify-content:center;text-decoration:none;text-align:center}',
             '.pp-pin{display:flex;flex-direction:column;align-items:center;gap:14px;width:100%;max-width:340px}',
             '.pp-dots{display:flex;gap:14px;min-height:28px}',
             '.pp-dot{width:22px;height:22px;border-radius:50%;border:3px solid #94a3b8}',
@@ -181,7 +182,7 @@ const PlatformProfiles = {
         ov.addEventListener('keydown', e => {
             if (e.key === 'Escape' && !ov.querySelector('.pp-pin')) { this._close(ov); return; }
             if (e.key === 'Tab') {
-                const f = Array.from(ov.querySelectorAll('button:not([disabled])'));
+                const f = Array.from(ov.querySelectorAll('button:not([disabled]),a[href]'));
                 if (!f.length) return;
                 const first = f[0], last = f[f.length - 1];
                 if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
@@ -244,6 +245,8 @@ const PlatformProfiles = {
             man.onclick = () => this._manage(ov, uid, base);
             foot.appendChild(man);
         }
+        // Only while an adult is playing: a child at the device does not walk into the family dashboard.
+        if (!activePid && list.some(p => p.kind === 'kid')) foot.appendChild(this._mk('a', 'pp-btn', '📈 ' + this._t('progBtn'), { id: 'pp-progress', href: this._rootPath() + 'progreso.html' }));
         const keep = this._mk('button', 'pp-btn', this._t('pickClose'), { type: 'button', id: 'pp-close' });
         keep.onclick = () => this._close(ov);
         foot.appendChild(keep);
